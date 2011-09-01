@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <project default="buildZip">
-	<description>Buildfile for embossPEF</description>
+	<description>Buildfile for Easy Embossing Utility</description>
 	
 	<!-- ================================================================== -->
 	<!-- Common properties                                                  -->
@@ -22,8 +22,8 @@
 	<property name="catalog.jar.name" value="brailleUtils-catalog-1.2b.jar"/>
 	<property name="braille.jar" value="${lib.dir}/{${braille.jar.name}"/>
 	
-	<property name="jar.file" value="${dist.dir}/embossPEF.jar"/>
-	<property name="distribution.zip" value="${dist.dir}/embossPEF.zip"/>
+	<property name="jar.file" value="${dist.dir}/e2u.jar"/>
+	<property name="distribution.zip" value="${dist.dir}/Easy Embossing Utility.zip"/>
 	<property name="installjar.file" value="${install.dir}/emboss.jar"/>
 	
 	<!-- Requires NSIS with the FontName plugin (http://nsis.sourceforge.net/FontName_plug-in) -->
@@ -58,8 +58,8 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="createZip">
     	<zip destfile="${distribution.zip}">
-    		<zipfileset file="${jar.file}" prefix="EEU/"/>
-    		<zipfileset dir="${lib.dir}" prefix="EEU/lib">
+    		<zipfileset file="${jar.file}" prefix="e2u/"/>
+    		<zipfileset dir="${lib.dir}" prefix="e2u/lib">
     			<include name="*.jar"/>
     		</zipfileset>
     	</zip>

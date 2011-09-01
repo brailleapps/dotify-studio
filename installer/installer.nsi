@@ -6,18 +6,18 @@
 !define /date DATE "%d %b %Y"
 
 # for DetectJRE
-!define PRODUCT_NAME "Emboss PEF"
+!define PRODUCT_NAME "Easy Embossing Utility"
 !define JRE_VERSION "1.6"
 !define JRE_URL "http://javadl.sun.com/webapps/download/AutoDL?BundleId=39502"
 # end for
 
 # define installer name
-Name "Emboss PEF"
-Caption "Emboss PEF"
-outFile "../ant-build/output/dist/embossPEF installer beta (${DATE}).exe"
+Name "Easy Embossing Utility"
+Caption "Easy Embossing Utility"
+outFile "../ant-build/output/dist/Easy Embossing Utility installer beta (${DATE}).exe"
  
 # set desktop as install directory
-InstallDir $PROGRAMFILES\embossPEF
+InstallDir $PROGRAMFILES\e2u
  
 # default section start
 section
@@ -55,11 +55,11 @@ file "docs\Getting started.txt"
 file "docs\Known issues.txt"
 
  # write reg keys
-WriteRegStr HKCR ".pef" "" "EmbossPEF.PortableEmbosserFormat"
-WriteRegStr HKCR "EmbossPEF.PortableEmbosserFormat" "" "Portable Embosser Format"
-WriteRegStr HKCR "EmbossPEF.PortableEmbosserFormat\DefaultIcon" "" "C:\\Program\\embossPEF\\favicon.ico,0"
-WriteRegStr HKCR "EmbossPEF.PortableEmbosserFormat\shell\open\command" "" "javaw -jar $\"$PROGRAMFILES\embossPEF\emboss.jar$\" -view $\"%1$\""
-WriteRegStr HKCR "EmbossPEF.PortableEmbosserFormat\shell\print\command" "" "javaw -jar $\"$PROGRAMFILES\embossPEF\emboss.jar$\" -emboss $\"%1$\""
+WriteRegStr HKCR ".pef" "" "e2u.PortableEmbosserFormat"
+WriteRegStr HKCR "e2u.PortableEmbosserFormat" "" "Portable Embosser Format"
+WriteRegStr HKCR "e2u.PortableEmbosserFormat\DefaultIcon" "" "C:\\Program\\e2u\\favicon.ico,0"
+WriteRegStr HKCR "e2u.PortableEmbosserFormat\shell\open\command" "" "javaw -jar $\"$PROGRAMFILES\e2u\emboss.jar$\" -view $\"%1$\""
+WriteRegStr HKCR "e2u.PortableEmbosserFormat\shell\print\command" "" "javaw -jar $\"$PROGRAMFILES\e2u\emboss.jar$\" -emboss $\"%1$\""
 
 # create shortcut
 CreateDirectory "$SMPROGRAMS\Easy Embossing Utility"
@@ -120,7 +120,7 @@ delete $INSTDIR\examples\8-dot-chart.pef
 
 
 DeleteRegKey HKCR ".pef"
-DeleteRegKey HKCR "EmbossPEF.PortableEmbosserFormat"
+DeleteRegKey HKCR "e2u.PortableEmbosserFormat"
  
 sectionEnd
 
