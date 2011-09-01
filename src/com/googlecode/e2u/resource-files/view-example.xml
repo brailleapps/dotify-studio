@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="pef2xhtml.xsl"?>
+<settings>
+	<param name="uri" value="book-2.pef"/>
+	<param name="toggle-view-label" value="Toggle view"/>
+	<param name="volume" value="1"/>
+</settings>

@@ -1,0 +1,11 @@
+Getting started with Easy Embossing Utility, release 2010-09-27 Beta
+
+The software starts automatically when clicking on a PEF-file. Before you can emboss a file for the first time, the embosser has to be configured. Use one of the embosser test files supplied with the software and follow the setup instructions.
+
+In order to use all features of the preview mode, one of the following fonts must be installed on the system:
+http://www.duxburysystems.com/downloads/Duxbury%20Braille%20fonts.zip
+http://code2000.net/CODE2000.ZIP
+
+Note that Code2000 is the only font that supports all 256 braille patterns.
+
+To uninstall, locate "Uninstall" in the Windows start menu. Note that this will not uninstall plugins or fonts.

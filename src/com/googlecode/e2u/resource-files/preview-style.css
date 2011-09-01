@@ -1,0 +1,238 @@
+	pre {
+		font-size: 20px;
+		margin: 0px;
+		padding: 0px;
+	}
+	pre.text {
+		font-family: monospace;
+		letter-spacing: 1px;		
+	}
+	pre.text span.extended {
+		background-color: #f0f0f0;
+	}
+	pre.braille {
+		font-family: "odt2braille 6 dot", 'odt2braille6dot embedded'; /*if odt2braille is not installed, use embedded font*/
+		font-size: 26px;
+	}
+	@font-face {
+		font-family:'odt2braille6dot embedded';
+		src: url('fonts/odt2braille6.ttf') format('truetype');
+	}
+	p.page-header {
+		text-align: left;
+		margin: 5px 0px 0px 0px;
+		padding: 5px;
+		/*background-color: yellow;*/
+		font-family: sans-serif;
+	}
+	p.volume-header {
+		text-align: right;
+		margin: 0px;
+		padding: 5px;
+		
+		font-family: sans-serif;
+	}
+	p.section-header {
+		text-align: right;
+		margin: 0px;
+		padding: 5px;
+		background-color: white;
+		font-family: sans-serif;
+	}
+	
+	div.page, div.text {
+		border: solid;
+		border-bottom: solid;
+		border-width: 1px;
+		padding: 5px;
+		margin: 0px;
+		background-color: white;
+	}
+	div.text {
+		position: absolute;
+		top: 0px;
+		visibility: visible;
+		-moz-box-shadow: 10px 10px 5px #3060aa;
+		-webkit-box-shadow: 10px 10px 5px #3060aa;
+		box-shadow: 10px 10px 5px #3060aa;
+	}
+	div.page {
+		visibility: hidden;
+		-moz-box-shadow: 10px 10px 5px #3060aa;
+		-webkit-box-shadow: 10px 10px 5px #3060aa;
+		box-shadow: 10px 10px 5px #3060aa;
+	}
+	div.cont {
+		margin-bottom: 50px;
+		
+		/*width: 600px;*/
+	}
+	div.posrel {
+		position: relative;
+		padding-left: 30px;
+	}
+	.first {
+	}
+	.odd {
+		display: inline-block;		
+	}
+	.even {
+		display: inline-block;
+	}
+	.odd div, .first div {
+		border-left-color: silver;
+		border-left-width: 10px;
+	}
+	.even div {
+		border-right-color: silver;
+		border-right-width: 10px;
+	}
+	.active {
+		background-color: white;
+	}
+	div.section {
+		padding: 0px;
+		margin-top: 5px;
+		/* border: dashed;
+		border-width: 1px;
+		border-top-width: 1px;
+		border-color: aqua; */
+	}
+	div.volume {
+		padding: 0px;
+		margin-top: 0px;
+/*
+		border: dashed;
+		border-width: 1px;
+		border-top-width: 1px;
+		
+		border-color: silver;*/
+	}
+
+	div#about {
+		position: fixed;
+		top: 8em;
+		left: 40%;
+		z-index: 1;
+		visibility: hidden;
+		background-color: silver;
+		border-style: solid;
+		border-width: 2px;
+		border-color: white;
+		min-width: 30em;
+		padding: 0em 0em 3em 0em;
+	}
+	div#about-content {
+		padding: 0em 2em 0em 2em;
+	}
+	p#close-bar {
+		background-color: #3080dd;
+		margin: 0px;
+		font-weight: bold;
+		text-align: right;
+	}
+	p#close-bar input {
+		background-color: white;
+		border: 0px;
+	}
+	
+	div.label {
+		border: solid;
+		border-width: 2px;
+		padding: 5px;
+		margin: 5px;
+		border-color: black;
+		background-color: silver;
+		width:0px;
+	}
+	div#navigate {
+		position: fixed;
+		top: 0px;
+		left: 0px;
+		padding: 0px;
+		padding-top: 1em;
+		margin:0em;
+		background-color: silver;
+		overflow: scroll;
+		width: 200px;
+		height: 100%;
+		font-family: sans-serif;
+	}
+	div#navigate ul {
+		padding: 0em;
+		margin: 0em;
+		
+	}
+	div#navigate ul li {
+		padding: 5px;
+		padding-left: 15px;
+		list-style: none;
+	}
+	.highlight {
+		border-top-style: solid;
+		border-top-width: 1px;
+		border-top-color: #eee;
+		border-bottom-style: solid;
+		border-bottom-width: 1px;
+		border-bottom-color: #bbb;
+		background-color: #ddd;
+	}
+	body {
+		font-size: 14px;
+		margin-top: 0em;
+		margin-left: 0em;
+		margin-right: 0em;
+		margin-bottom: 0em;
+		padding-bottom: 3em;
+		font-family: sans-serif;
+		background-color: rgb(101, 146, 205);
+		padding-left: 200px;
+		background-image: url('images/line.jpg');
+		background-repeat:repeat-x;
+		background-attachment: fixed;
+	}
+	
+a {
+	font-weight: bold; 
+	text-decoration: none;
+	color: #3080dd;
+}
+	
+	div#top-nav {
+		position: fixed;
+		bottom: 0em;
+		left: 0em;
+		border: 0em;
+		margin: 0px;
+		margin-left: 200px;
+		padding: 0px;
+		width: 100%;
+		height: 3.5em;
+		background-color: #e0e0e0;
+		border-top: 1px;
+		border-top-style: solid;
+		z-index: 10;
+		background-image: url('images/hline.jpg');
+		background-repeat:repeat-y;
+		background-attachment: fixed;
+	}
+
+	div#top-nav span {
+		margin: 1em;
+		margin-top: 0px;
+		border: 0px;
+		padding: 1em;
+	}
+	
+	div#view {
+		width: 180px;
+		position: fixed;
+		bottom: 10px;
+		right: 30px;
+		background-color: white;
+		border: 1px;
+		border-style: solid;
+		padding: 0px 10px 0px 10px;
+		font-weight: bold;
+		z-index: 20;
+	}

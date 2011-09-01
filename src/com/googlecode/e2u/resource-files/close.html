@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8"></meta>
+		<title><?ajui com.googlecode.e2u.ClosePage title?></title>
+		<link rel="stylesheet" type="text/css" href="style.css"></link>
+		<script type="text/javascript">
+function get() {
+	xmlHttp=GetXmlHttpObject();
+	if (xmlHttp==null) {
+  		return;
+  	} 
+	var url="fakeurltogetietoclose.html";
+	url=url+"?sid="+Math.random();
+	xmlHttp.open("GET",url,false);
+	xmlHttp.send(null);
+}
+
+function GetXmlHttpObject() {
+	var xmlHttp=null;
+	try {
+  		// Firefox, Opera 8.0+, Safari
+  		xmlHttp=new XMLHttpRequest();
+  	} catch (e) {
+  	// Internet Explorer
+  		try {
+    		xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
+    	} catch (e)	{
+    		xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+	}
+	return xmlHttp;
+}
+		</script>
+	</head>
+	<body onload="get()">
+		<div id="main">
+			<div id="content">
+				<?ajui com.googlecode.e2u.ClosePage?>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<title><?ajui com.googlecode.e2u.MainPage title?></title>
+		<link rel="stylesheet" type="text/css" href="style.css" />
+		<script type="text/javascript">
+/* <![CDATA[  */
+var ok = true;
+var sid = Math.random();
+
+function get(url) {
+	xmlHttp=GetXmlHttpObject();
+	if (xmlHttp==null) {
+  		return;
+  	} 
+  	url=url+"?sid="+sid;
+	xmlHttp.open("GET",url,true);
+	xmlHttp.onreadystatechange=function() {
+  		if (xmlHttp.readyState==4) {
+			if (xmlHttp.status!=200) {
+				document.getElementById("connected").style.visibility="hidden";
+				document.getElementById("notConnected").style.visibility="visible";
+				ok = false;
+			} else {
+				var data = xmlHttp.responseXML;
+				for (i=0; i<data.getElementsByTagName("update").length; i++) {
+					var u = data.getElementsByTagName("update")[i];
+					//u.firstChild.nodeValue;
+					var elem = document.getElementById(u.getAttribute('id'));
+					if (elem!=null) {
+						if (elem.hasChildNodes()) {
+						    while ( elem.childNodes.length >= 1 )
+						    {
+						    	elem.removeChild(elem.firstChild);       
+						    } 
+						}
+						if (u.hasChildNodes()) {
+							try {
+								// Gecko- and Webkit-based browsers (Firefox, Chrome), Opera.
+								elem.innerHTML = (new XMLSerializer()).serializeToString(u);
+							} catch (e) {
+							    try {
+									elem.innerHTML = u.xml;
+								} catch (e) {  
+									//Other browsers without XML Serializer
+								    elem.innerHTML = 'Error';
+								}
+							}
+							
+						}
+						/*
+						var old = (elem.parentNode).removeChild(elem);*/
+					}
+				}
+				var t=setTimeout("get('ping.xml?updates=true"+getUpdateString()+"')",10);
+			}
+    	}
+  	} 
+	xmlHttp.send(null);
+}
+
+function getUpdateString() {
+	if (document.getElementById('fileChooser')) {
+		return "&component=fileChooser";
+	} else {
+		return "";
+	}
+}
+
+function GetXmlHttpObject() {
+	var xmlHttp=null;
+	try {
+  		// Firefox, Opera 8.0+, Safari
+  		xmlHttp=new XMLHttpRequest();
+  	} catch (e) {
+  	// Internet Explorer
+  		try {
+    		xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
+    	} catch (e)	{
+			xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+	}
+	return xmlHttp;
+}
+function ping() {
+	
+	if (ok) {
+
+	}
+}
+		/*  ]]> */</script>
+	</head>
+	<body onload="get('ping.xml?updates=true'+getUpdateString())">
+		<div id="view">
+			<p><span id="item-emboss"><?ajui com.googlecode.e2u.L10n Worker.emboss-view?></span><br/>
+			<span id="item-preview"><a href="view2.xml"><?ajui com.googlecode.e2u.L10n Worker.preview-view?></a></span></p>
+		</div>
+		<div id="top-nav">
+
+		</div>
+		<div id="main">
+			<?ajui com.googlecode.e2u.MainPage top-bar?>
+			<div id="content">
+				<?ajui com.googlecode.e2u.MainPage?>
+			</div>
+			<div id="bottom-bar">
+			<p>
+			<a href="index.html?method=emboss"><?ajui com.googlecode.e2u.L10n Worker.menu-main?></a>
+			| <a href="index.html?method=find"><?ajui com.googlecode.e2u.L10n Worker.menu-open?></a>
+			| <a href="index.html?method=setup"><?ajui com.googlecode.e2u.L10n Worker.menu-setup?></a>
+ 			| <a href="index.html?method=about"><?ajui com.googlecode.e2u.L10n Worker.menu-about-software?></a>
+ 			
+</p></div>
+		</div>
+	</body>
+</html>
