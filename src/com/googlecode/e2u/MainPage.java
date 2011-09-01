@@ -106,7 +106,7 @@ public class MainPage extends BasePage implements AListener {
     	previewSettingsView = new PreviewSettingsView(settings, setupMenu);
     	findView = new FindView(settings, openMenu);
     	findView.setIdentifier("fileChooser");
-    	paperView = new PaperView(setupMenu);
+    	paperView = new PaperView(setupMenu, settingsView);
     	File libPath = null;
     	try {
 	    	libPath = new File(settings.getString(Settings.Keys.libraryPath));

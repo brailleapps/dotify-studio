@@ -2,6 +2,7 @@ package com.googlecode.e2u;
 
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import org.daisy.braille.embosser.Embosser;
 import org.daisy.braille.embosser.EmbosserCatalog;
 import org.daisy.braille.embosser.EmbosserProperties;
 import org.daisy.braille.tools.Length;
-
+import org.daisy.paper.PrintPage.Shape;
 
 import com.googlecode.ajui.ALabel;
 import com.googlecode.ajui.AParagraph;
@@ -21,13 +22,14 @@ import com.googlecode.e2u.Settings.Keys;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
 
-public class SettingsView extends AbstractSettingsView {
+public class SettingsView extends AbstractSettingsView implements AListener {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = -3082172015930709465L;
 	private final static String setupTarget = "setup";
 	private final static Map<String, String> printModeNN;
+	private final static Map<String, String> shapeNN;
 	private final static Map<String, String> orientationNN;
 	public final static Map<String, String> lengthNN;
 	private final static Map<String, String> zfoldingNN;
@@ -42,6 +44,11 @@ public class SettingsView extends AbstractSettingsView {
 		printModeNN.put(EmbosserProperties.PrintMode.MAGAZINE.toString(),
 				Messages.getString(L10nKeys.MAGAZINE_PRINT_MODE));
 
+    	shapeNN = new HashMap<String, String>();
+    	shapeNN.put(Shape.LANDSCAPE.toString(), Messages.getString(L10nKeys.LANDSCAPE));
+    	shapeNN.put(Shape.PORTRAIT.toString(), Messages.getString(L10nKeys.PORTRAIT));
+    	shapeNN.put(Shape.SQUARE.toString(), Messages.getString(L10nKeys.SQUARE));
+    	
     	orientationNN = new LinkedHashMap<String, String>();
     	orientationNN.put("DEFAULT", "Default");
     	orientationNN.put("REVERSED", "Reversed");
@@ -163,8 +170,8 @@ public class SettingsView extends AbstractSettingsView {
     			AParagraph p = new AParagraph();
     			p.setClass("desc");
     			if (conf.settingOK()) {
-	    			p.add(new ALabel(MessageFormat.format((conf.getShape()==null?"":conf.getShape().name().toLowerCase()) + 
-	    					": " + Messages.getString(L10nKeys.PAPER_DIM), 
+	    			p.add(new ALabel(MessageFormat.format((conf.getShape()==null?"":shapeNN.get(conf.getShape().name())) + 
+	    					", " + Messages.getString(L10nKeys.PAPER_DIM), 
 	    					conf.getPaperWidth(), conf.getPaperHeight(), conf.getMaxWidth(), conf.getMaxHeight())));
     			}
     			add(p);
@@ -186,6 +193,12 @@ public class SettingsView extends AbstractSettingsView {
 
 	public Configuration getConfiguration() {
 		return conf;
+	}
+
+	@Override
+	public void changeHappened(Object o) {
+		conf = Configuration.getConfiguration(settings);
+		update();
 	}
 
 }

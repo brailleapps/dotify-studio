@@ -8,6 +8,8 @@ import com.googlecode.ajui.AInput;
 import com.googlecode.ajui.ASelect;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
+import com.googlecode.e2u.l10n.L10nKeys;
+import com.googlecode.e2u.l10n.Messages;
 
 public class AddTractorPaperComponent extends AddPaperComponent {
 	/**
@@ -20,14 +22,14 @@ public class AddTractorPaperComponent extends AddPaperComponent {
 	private final AInput heightInput;
 
 	public AddTractorPaperComponent(Map<String, String> fo, String selectName, boolean emptyOption, String target) {
-		super(fo, "New tractor paper", selectName, emptyOption, target, Paper.Type.TRACTOR);
+		super(fo, Messages.getString(L10nKeys.ADD_NEW_TRACTOR_PAPER), selectName, emptyOption, target, Paper.Type.TRACTOR);
 
 		unitInput = new ASelect();
 		widthInput = new AInput();
-		div.add(newLengthInput(fo, "Width", "width", "width-units", unitInput, widthInput, true));
+		div.add(newLengthInput(fo, Messages.getString(L10nKeys.PAPER_WIDTH), "width", "width-units", unitInput, widthInput, true));
 		unitHInput = new ASelect();
 		heightInput = new AInput();
-		div.add(newLengthInput(fo, "Height", "height", "height-units", unitHInput, heightInput, true));
+		div.add(newLengthInput(fo, Messages.getString(L10nKeys.PAPER_HEIGHT), "height", "height-units", unitHInput, heightInput, true));
 	}
 
 	@Override

@@ -91,9 +91,11 @@ public class PreviewController {
 			if (settingsChanged()) {
 				init();
 			}
-			return new InputStreamReader(new FileInputStream(done.get(vol).getFile()));
+			return new InputStreamReader(new FileInputStream(done.get(vol).getFile()), "UTF-8");
 		} catch (FileNotFoundException e) {
 			return new StringReader("Failed to read");
+		} catch (UnsupportedEncodingException e) {
+				return new StringReader("Failed to read");
 		}
 	}
 	

@@ -8,6 +8,8 @@ import com.googlecode.ajui.AInput;
 import com.googlecode.ajui.ASelect;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
+import com.googlecode.e2u.l10n.L10nKeys;
+import com.googlecode.e2u.l10n.Messages;
 
 public class AddRollPaperComponent extends AddPaperComponent {
 	/**
@@ -18,11 +20,11 @@ public class AddRollPaperComponent extends AddPaperComponent {
 	private final AInput widthInput;
 
 	public AddRollPaperComponent(Map<String, String> fo, String selectName, boolean emptyOption, String target) {
-		super(fo, "New roll paper", selectName, emptyOption, target, Paper.Type.ROLL);
+		super(fo, Messages.getString(L10nKeys.ADD_NEW_ROLL_PAPER), selectName, emptyOption, target, Paper.Type.ROLL);
 
 		unitInput = new ASelect();
 		widthInput = new AInput();
-		div.add(newLengthInput(fo, "Length", "width", "width-units", unitInput, widthInput, true));
+		div.add(newLengthInput(fo, Messages.getString(L10nKeys.ROLL_SIZE), "width", "width-units", unitInput, widthInput, true));
 	}
 
 	@Override

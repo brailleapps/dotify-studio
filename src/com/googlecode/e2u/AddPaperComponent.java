@@ -6,6 +6,7 @@ import org.daisy.paper.Paper;
 
 import com.googlecode.ajui.ABlockComponent;
 import com.googlecode.ajui.AContainer;
+import com.googlecode.ajui.AHeading;
 import com.googlecode.ajui.AInput;
 import com.googlecode.ajui.ALabel;
 import com.googlecode.ajui.AOption;
@@ -15,6 +16,8 @@ import com.googlecode.ajui.ASpan;
 import com.googlecode.ajui.AbstractComponent;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
+import com.googlecode.e2u.l10n.L10nKeys;
+import com.googlecode.e2u.l10n.Messages;
 
 public abstract class AddPaperComponent extends AbstractComponent<ABlockComponent> implements ABlockComponent {
 	
@@ -33,9 +36,9 @@ public abstract class AddPaperComponent extends AbstractComponent<ABlockComponen
 		div = new AContainer();
 		{
 			{
-				AParagraph p = new AParagraph();
-				p.add(new ALabel(heading));
-				div.add(p);
+				AHeading h = new AHeading(2);
+				h.add(new ALabel(heading));
+				div.add(h);
 			}
 			{
 				name = new AInput();
@@ -45,7 +48,7 @@ public abstract class AddPaperComponent extends AbstractComponent<ABlockComponen
 				p.addAttribute("class", "newPaper");
 				ASpan s = new ASpan();
 				s.setClass("settingName");
-				s.add(new ALabel("Name "));
+				s.add(new ALabel(Messages.getString(L10nKeys.PAPER_NAME)+" "));
 				p.add(s);
 				p.add(name);
 				div.add(p);
@@ -58,7 +61,7 @@ public abstract class AddPaperComponent extends AbstractComponent<ABlockComponen
 				p.addAttribute("class", "newPaper");
 				ASpan s = new ASpan();
 				s.setClass("settingName");
-				s.add(new ALabel("Description "));
+				s.add(new ALabel(Messages.getString(L10nKeys.PAPER_DESCRIPTION) + " "));
 				p.add(s);
 				p.add(desc);
 				div.add(p);
@@ -86,7 +89,7 @@ public abstract class AddPaperComponent extends AbstractComponent<ABlockComponen
 		{
 			AInput submit = new AInput();
 			submit.addAttribute("type", "submit");
-			submit.addAttribute("value", "Add");
+			submit.addAttribute("value", Messages.getString(L10nKeys.ADD));
 			AParagraph p = new AParagraph();
 			p.add(submit);
 			add(p);

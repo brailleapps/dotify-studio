@@ -103,8 +103,30 @@ public interface L10nKeys {
 	public final static String MAGAZINE_PRINT_MODE = "Worker.magazine-print-mode";
 
 	public final static String REMOVE = "Worker.remove";
+	public final static String CONFIRM_REMOVE = "Worker.confirm-remove";
 	
 	public final static String CUT_LENGTH = "Worker.cut-length";
 	
 	public final static String COULD_NOT_SET_DIRECTORY ="Worker.could-not-set-directory";
+	
+	public final static String PAPER_NAME = "Worker.paper-name";
+	public final static String PAPER_DESCRIPTION = "Worker.paper-description";
+	public final static String PAPER_WIDTH = "Worker.paper-width";
+	public final static String PAPER_HEIGHT = "Worker.paper-height";
+	
+	public final static String ROLL_SIZE = "Worker.roll-size";
+	
+	public final static String CUT_SHEET_PAPER = "Worker.sheet-paper";
+	public final static String TRACTOR_PAPER = "Worker.tractor-paper";
+	public final static String ROLL_PAPER = "Worker.roll-paper";
+	
+	public final static String ADD_NEW_CUT_SHEET_PAPER = "Worker.add-sheet-paper";
+	public final static String ADD_NEW_TRACTOR_PAPER = "Worker.add-tractor-paper";
+	public final static String ADD_NEW_ROLL_PAPER = "Worker.add-roll-paper";
+	public final static String ADD = "Worker.add";
+	
+	public final static String LANDSCAPE = "Worker.landscape";
+	public final static String PORTRAIT = "Worker.portrait";
+	public final static String SQUARE = "Worker.square";
+	
 }

@@ -1,16 +1,17 @@
 package com.googlecode.e2u;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.daisy.braille.tools.Length;
 import org.daisy.paper.CustomPaperCollection;
 import org.daisy.paper.Paper;
 
-
 import com.googlecode.ajui.AContainer;
 import com.googlecode.ajui.ALabel;
 import com.googlecode.ajui.ALink;
 import com.googlecode.ajui.AParagraph;
+import com.googlecode.ajui.ASpan;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
 import com.googlecode.e2u.l10n.L10nKeys;
@@ -24,14 +25,16 @@ public class PaperView extends AContainer {
 	private final AContainer addNew;
 	private final static String paperTarget = "paper";
 	private final MenuSystem menu;
+	private final AListener listener;
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -4415556019420390748L;
 
-	public PaperView(MenuSystem menu) {
+	public PaperView(MenuSystem menu, AListener listener) {
 		coll = CustomPaperCollection.getInstance();
 		this.menu = menu;
+		this.listener = listener;
 
 		newRollPaper = new AddRollPaperComponent(SettingsView.lengthNN, "rollPaper", true, paperTarget);
 		newTractorPaper = new AddTractorPaperComponent(SettingsView.lengthNN, "tractorPaper", true, paperTarget);
@@ -42,19 +45,19 @@ public class PaperView extends AContainer {
 			AParagraph p = new AParagraph();
 			{
 				ALink a = new ALink("?method=paper&add=sheet-paper");
-				a.add(new ALabel("[+] Sheet paper"));
+				a.add(new ALabel("[+] " + Messages.getString(L10nKeys.CUT_SHEET_PAPER)));
 				p.add(a);
 			}
 			{
 				p.add(new ALabel(" | "));
 				ALink a = new ALink("?method=paper&add=tractor-paper");
-				a.add(new ALabel("[+] Tractor paper"));
+				a.add(new ALabel("[+] "+ Messages.getString(L10nKeys.TRACTOR_PAPER)));
 				p.add(a);
 			}
 			{
 				p.add(new ALabel(" | "));
 				ALink a = new ALink("?method=paper&add=roll-paper");
-				a.add(new ALabel("[+] Roll paper"));
+				a.add(new ALabel("[+] " + Messages.getString(L10nKeys.ROLL_PAPER)));
 				p.add(a);
 			}
 			addNew.add(p);
@@ -91,6 +94,7 @@ public class PaperView extends AContainer {
 			if (r!=null) {
 				try {
 					coll.remove(r);
+					listener.changeHappened(this);
 				} catch (IOException e) {
 				}
 			}
@@ -127,6 +131,9 @@ public class PaperView extends AContainer {
 							break;
 					}
 				}
+				if (updateOK) {
+					listener.changeHappened(this);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -148,10 +155,14 @@ public class PaperView extends AContainer {
 				AParagraph p = new AParagraph();
 				ALink a = new ALink(MainPage.TARGET+"?method=paper&remove="+paper.getIdentifier());
 				a.addAttribute("title", Messages.getString(L10nKeys.REMOVE));
+				a.addAttribute("onclick", "return confirm('"+MessageFormat.format(Messages.getString(L10nKeys.CONFIRM_REMOVE), paper.getDisplayName())+"')");
 				ALabel label = new ALabel("[-] ");
 				a.add(label);
 				p.add(a);
-				p.add(new ALabel(paper.getDisplayName()+ " " + paper.getDescription() + " "));
+				ASpan s = new ASpan();
+				s.addAttribute("title", paper.toString());
+				s.add(new ALabel(paper.getDisplayName()+ " " + paper.getDescription() + " "));
+				p.add(s);
 				add(p);
 			}
 			add(addNew);

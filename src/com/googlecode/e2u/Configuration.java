@@ -91,48 +91,50 @@ public class Configuration {
     	pageFormat = null;
     	if (paper!=null && !"".equals(paper)) {
     		p = paperCatalog.get(paper);
-        	switch (p.getType()) {
-        		case SHEET:
-        			pageFormat = new SheetPaperFormat(p.asSheetPaper(), getOrientation(orientation));
-        			isRollPaper = false;
-        			break;
-        		case TRACTOR:
-        			pageFormat = new TractorPaperFormat(p.asTractorPaper());
-        			isRollPaper = false;
-        			break;
-        		case ROLL:
-        			isRollPaper = true;
-        			Length.UnitsOfLength units;
-        			try {
-        				units = Length.UnitsOfLength.valueOf(lengthUnit);
-        			} catch (Exception e) {
-        				break;
-        			}
-        			double val;
-        			try {
-        				val = Double.parseDouble(lengthValue);
-        			} catch (NumberFormatException e) {
-        				val = 0;
-        			}
-        			Length l;
-        			switch (units) {
-        				case MILLIMETER:
-        					l = Length.newMillimeterValue(val);
-        					break;
-        				case CENTIMETER:
-        					l = Length.newCentimeterValue(val);
-        					break;
-        				case INCH:
-        					l = Length.newInchValue(val);
-        					break;
-        				default:
-        					throw new RuntimeException("Coding error");
-        			}
-        			pageFormat = new RollPaperFormat(p.asRollPaper(), l);
-        			break;
-        		default:
-        			throw new RuntimeException("coding error");
-        	}
+    		if (p!=null) {
+	        	switch (p.getType()) {
+	        		case SHEET:
+	        			pageFormat = new SheetPaperFormat(p.asSheetPaper(), getOrientation(orientation));
+	        			isRollPaper = false;
+	        			break;
+	        		case TRACTOR:
+	        			pageFormat = new TractorPaperFormat(p.asTractorPaper());
+	        			isRollPaper = false;
+	        			break;
+	        		case ROLL:
+	        			isRollPaper = true;
+	        			Length.UnitsOfLength units;
+	        			try {
+	        				units = Length.UnitsOfLength.valueOf(lengthUnit);
+	        			} catch (Exception e) {
+	        				break;
+	        			}
+	        			double val;
+	        			try {
+	        				val = Double.parseDouble(lengthValue);
+	        			} catch (NumberFormatException e) {
+	        				val = 0;
+	        			}
+	        			Length l;
+	        			switch (units) {
+	        				case MILLIMETER:
+	        					l = Length.newMillimeterValue(val);
+	        					break;
+	        				case CENTIMETER:
+	        					l = Length.newCentimeterValue(val);
+	        					break;
+	        				case INCH:
+	        					l = Length.newInchValue(val);
+	        					break;
+	        				default:
+	        					throw new RuntimeException("Coding error");
+	        			}
+	        			pageFormat = new RollPaperFormat(p.asRollPaper(), l);
+	        			break;
+	        		default:
+	        			throw new RuntimeException("coding error");
+	        	}
+    		}
 	    	if (pageFormat!=null) {
 	    		PrintPage pp = em.getPrintPage(pageFormat);
 	    		pWidth = Length.newMillimeterValue(Math.round(pp.getWidth()));

@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.daisy.braille.pef.PEFBook;
 
-
 import com.googlecode.ajui.AContainer;
 import com.googlecode.ajui.ALabel;
 import com.googlecode.ajui.ALink;
@@ -27,7 +26,7 @@ public class FindView extends AContainer implements AListener {
 	private static final long serialVersionUID = -1625359388549494302L;
 	private BookScanner bs;
 	private AContainer findResults;
-	private AParagraph libraryPathP;
+	private ALabel libraryPathLabel;
 	private String prevFind = "";
 	private AParagraph scanningInProgress;
 	private ALabel scanningInProgressLabel;
@@ -45,7 +44,9 @@ public class FindView extends AContainer implements AListener {
 
 		*/
 		
-		libraryPathP = new AParagraph(); //h2
+		AParagraph libraryPathP = new AParagraph();
+		libraryPathLabel = new ALabel("");
+		libraryPathP.add(libraryPathLabel);
 		add(libraryPathP);
 		
     	scanningInProgress = new AParagraph();
@@ -78,14 +79,16 @@ public class FindView extends AContainer implements AListener {
     	if (bs!=null) {
     		bs.cancel();
     	}
-   		bs = BookScanner.startScan(settings.getLibraryPath());
+    	File libPath = settings.getLibraryPath();
+   		bs = BookScanner.startScan(libPath);
+   		libraryPathLabel.setText(libPath.getAbsolutePath());
    		bs.setEventListener(this);
     }
-	
+	/*
 	public void setLibraryPath() {
 		libraryPathP.add(new ALabel("Library path: " + bs.getPath().getAbsolutePath()));
 	}
-
+*/
 	@Override
 	public XHTMLTagger getHTML(Context context) {
 		error.clear();
