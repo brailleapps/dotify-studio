@@ -31,12 +31,12 @@ public class PreviewRenderer {
 				        Source xslt = new StreamSource(this.getClass().getResourceAsStream("resource-files/pef2xhtml.xsl"));
 				        Transformer transformer = factory.newTransformer(xslt);
 				        params.put("volume", ""+vol);
-				        params.put("uriString", "view2.xml?book.xml");
+				        params.put("uriString", "view.html?book.xml");
 				        for (String key : params.keySet()) {
 				        	transformer.setParameter(key, params.get(key));
 				        }
 				        //transformer.setParameter("volume", ""+vol);
-				        //transformer.setParameter("uriString", "view2.xml?book.xml");
+				        //transformer.setParameter("uriString", "view.html?book.xml");
 				        transformer.transform(xml1, new StreamResult(t1));
 				        //t.reportDone(vol);
 						return t1;

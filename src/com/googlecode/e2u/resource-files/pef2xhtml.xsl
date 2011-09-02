@@ -7,9 +7,8 @@ xmlns:pef="http://www.daisy.org/ns/2008/pef"
 xmlns:ext="http://www.daisy.org/ns/2008/pef/extended"
 xmlns="http://www.w3.org/1999/xhtml"
 exclude-result-prefixes="dc tpb pef ext">
-<xsl:output doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"/>
 <!-- <xsl:output method="xml" encoding="windows-1252" indent="yes" omit-xml-declaration="yes"/> -->
-<xsl:output method="xml" encoding="UTF-8" indent="yes" omit-xml-declaration="no"/>
+<xsl:output method="xml" encoding="UTF-8" indent="yes" omit-xml-declaration="no" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"/>
 
 <xsl:param name="return-label">
 	<xsl:call-template name="setDefault">
@@ -689,8 +688,7 @@ function ping() {
 				</xsl:for-each>
 			</ul>
 			</div>
-			<div id="bottom">
-			</div>
+			<div id="bottom"><xsl:text> </xsl:text></div>
 		</div>
 		<div id="about">
 			<p id="close-bar"><input type="button" onclick="document.getElementById('about').style.visibility='hidden';" value="X"/></p>

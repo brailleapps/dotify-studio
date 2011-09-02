@@ -53,7 +53,7 @@ public class PreviewController {
 		try {
 			factory.setAttribute("http://saxon.sf.net/feature/version-warning", Boolean.FALSE);
 			BookReaderResult brr = r.getResult();
-			Map<String, String> params = buildParams(settings, "view2.xml", settings.getString(Keys.charset), "book.xml", null);
+			Map<String, String> params = buildParams(settings, "view.html", settings.getString(Keys.charset), "book.xml", null);
 			for (int i=1; i<=r.getResult().getBook().getVolumes(); i++) {
 		        done.put(i, new PreviewRenderer(brr.getURI(), i, factory, this, params));
 			}
