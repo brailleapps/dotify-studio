@@ -62,6 +62,8 @@
     		<zipfileset dir="${lib.dir}" prefix="e2u/lib">
     			<include name="*.jar"/>
     		</zipfileset>
+    		<zipfileset dir="${install.dir}/docs" prefix="e2u/docs"/>
+    		<zipfileset dir="${install.dir}/examples" prefix="e2u/examples"/>
     	</zip>
     </target>
 	

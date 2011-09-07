@@ -1,25 +1,13 @@
-Known issues for Easy Embossing Utility, release 2010-09-27 Beta
-
-- No support for changing paper orientation
-Paper can only be used in the predefined orientation
+Known issues for Easy Embossing Utility, release 2.0 beta
 
 - No support for files containing 8 dot patterns
 While the software is built to support 8 dot in principal, some components do not support 8 dot even if they could.
 
-- Limited paper support for Index Braille Basic V3
-Currently, only a very limited set of papers are recognized as supported, although other sizes could very well be supported by this embosser.
-
-- OS support limited to Windows
-Only Windows is supported. Technically, the software supports other OS's, since it is Java based. However, the installation software and shell intergation are Windows specific.
-
-- Localization is not complete
-Some texts are in English only. A few are in Swedish only!
+- Installation software and shell integration limited to Windows
+The installation software and shell integration are Windows specific.
 
 - Limited locale support
 Supported languages are English and Swedish.
 
 - Accessibility has not been sufficiently tested
 Additional accessibility tests must be performed before the software is released to a wider audience.
-
-- Black startup screen
-The software presents a black screen for a moment during startup.
