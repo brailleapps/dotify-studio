@@ -11,88 +11,146 @@ exclude-result-prefixes="dc tpb pef ext">
 <xsl:output method="xml" encoding="UTF-8" indent="yes" omit-xml-declaration="no" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"/>
 
 <xsl:param name="return-label">
-	<xsl:call-template name="setDefault">
+	<xsl:call-template name="getDefault">
 		<xsl:with-param name="name" select="'return-label'"/>
 		<xsl:with-param name="default" select="'Åter'"/>
 	</xsl:call-template>
 </xsl:param>
 <xsl:param name="toggle-view-label">
-	<xsl:call-template name="setDefault">
+	<xsl:call-template name="getDefault">
 		<xsl:with-param name="name" select="'toggle-view-label'"/>
 		<xsl:with-param name="default" select="'Växla vy'"/>
 	</xsl:call-template>
 </xsl:param>
 <xsl:param name="show-source">
-	<xsl:call-template name="setDefault">
+	<xsl:call-template name="getDefault">
 		<xsl:with-param name="name" select="'show-source'"/>
-		<xsl:with-param name="default" select="'Visa källa'"/>
+		<xsl:with-param name="default" select="'Visa Källa'"/>
 	</xsl:call-template>
 </xsl:param>
 <xsl:param name="emboss-view-label">
-	<xsl:call-template name="setDefault">
+	<xsl:call-template name="getDefault">
 		<xsl:with-param name="name" select="'emboss-view-label'"/>
 		<xsl:with-param name="default" select="'Skriv Ut'"/>
 	</xsl:call-template>
 </xsl:param>
 <xsl:param name="preview-view-label">
-	<xsl:call-template name="setDefault">
+	<xsl:call-template name="getDefault">
 		<xsl:with-param name="name" select="'preview-view-label'"/>
 		<xsl:with-param name="default" select="'FörhandsGranska'"/>
 	</xsl:call-template>
 </xsl:param>
+<xsl:param name="viewing-label">
+	<xsl:call-template name="getDefault">
+		<xsl:with-param name="name" select="'viewing-label'"/>
+		<xsl:with-param name="default" select="'Visar'"/>
+	</xsl:call-template>
+</xsl:param>
+<xsl:param name="about-label">
+	<xsl:call-template name="getDefault">
+		<xsl:with-param name="name" select="'about-label'"/>
+		<xsl:with-param name="default" select="'Om Boken'"/>
+	</xsl:call-template>
+</xsl:param>
+<xsl:param name="go-to-page-label">
+	<xsl:call-template name="getDefault">
+		<xsl:with-param name="name" select="'go-to-page-label'"/>
+		<xsl:with-param name="default" select="'Sida'"/>
+	</xsl:call-template>
+</xsl:param>
+<xsl:param name="page-label">
+	<xsl:call-template name="getDefault">
+		<xsl:with-param name="name" select="'page-label'"/>
+		<xsl:with-param name="default" select="'Sida'"/>
+	</xsl:call-template>
+</xsl:param>
+<xsl:param name="sheets-label">
+	<xsl:call-template name="getDefault">
+		<xsl:with-param name="name" select="'sheets-label'"/>
+		<xsl:with-param name="default" select="'Sheets'"/>
+	</xsl:call-template>
+</xsl:param>
+<xsl:param name="section-label">
+	<xsl:call-template name="getDefault">
+		<xsl:with-param name="name" select="'section-label'"/>
+		<xsl:with-param name="default" select="'Avsnitt'"/>
+	</xsl:call-template>
+</xsl:param>
+<xsl:param name="volume-label">
+	<xsl:call-template name="getDefault">
+		<xsl:with-param name="name" select="'volume-label'"/>
+		<xsl:with-param name="default" select="'Volym'"/>
+	</xsl:call-template>
+</xsl:param>
+<xsl:param name="showing-pages-label">
+	<xsl:call-template name="getDefault">
+		<xsl:with-param name="name" select="'showing-pages-label'"/>
+		<xsl:with-param name="default" select="'Visar Sida'"/>
+	</xsl:call-template>
+</xsl:param>
+<xsl:param name="unknown-author-label">
+	<xsl:call-template name="getDefault">
+		<xsl:with-param name="name" select="'unknown-author-label'"/>
+		<xsl:with-param name="default" select="'[Unknown author]'"/>
+	</xsl:call-template>
+</xsl:param>
+<xsl:param name="unknown-title-label">
+	<xsl:call-template name="getDefault">
+		<xsl:with-param name="name" select="'unknown-title-label'"/>
+		<xsl:with-param name="default" select="'[Unknown title]'"/>
+	</xsl:call-template>
+</xsl:param>
+	<!--
+<xsl:param name="go-to-page-label" select="'Sida'"/>
+<xsl:param name="page-label" select="'Sida'"/>
+<xsl:param name="sheets-label" select="'Sheets'"/>
+<xsl:param name="section-label" select="'Avsnitt'"/>
+<xsl:param name="volume-label" select="'Volym'"/>
+<xsl:param name="showing-pages-label" select="'Visar Sida'"/>
+<xsl:param name="unknown-author-label" select="'[Unknown author]'"/>
+<xsl:param name="unknown-title-label" select="'[Unknown title]'"/>-->
 <xsl:param name="textFont">
-	<xsl:call-template name="setDefault">
+	<xsl:call-template name="getDefault">
 		<xsl:with-param name="name" select="'textFont'"/>
 		<xsl:with-param name="default" select="''"/>
 	</xsl:call-template>
 </xsl:param>
 <xsl:param name="brailleFont">
-	<xsl:call-template name="setDefault">
+	<xsl:call-template name="getDefault">
 		<xsl:with-param name="name" select="'brailleFont'"/>
 		<xsl:with-param name="default" select="''"/>
 	</xsl:call-template>
 </xsl:param>
-<xsl:param name="viewing-label" select="'Visar'"/>
-<xsl:param name="about-label" select="'Om boken'"/>
-<xsl:param name="go-to-page-label" select="'Sida'"/>
-<xsl:param name="page-label" select="'Sida'"/>
-<xsl:param name="section-label" select="'Avsnitt'"/>
-<xsl:param name="volume-label" select="'Volym'"/>
-<xsl:param name="next-label" select="'--&gt;'"/>
-<xsl:param name="previous-label" select="'&lt;--'"/>
-<xsl:param name="showing-pages-label" select="'Visar sida'"/>
 <xsl:param name="number-sign" select="'⠼'"/>
 <!-- Non number characters that do not break the number sequence -->
 <xsl:param name="ignorable-number-separators" select="'⠄⠂'"/>
 <xsl:param name="code">
-	<xsl:call-template name="setDefault">
+	<xsl:call-template name="getDefault">
 		<xsl:with-param name="name" select="'code'"/>
 		<xsl:with-param name="default" select="' a,b.k;l^cif/msp´e:h*o!r~djgäntq_å?ê-u(v@îöë§xèç&quot;û+ü)z=à|ôwï#yùé'"/>
 	</xsl:call-template>
 </xsl:param>
 
-
-
 <xsl:param name="volume">
-	<xsl:call-template name="setDefault">
+	<xsl:call-template name="getDefault">
 		<xsl:with-param name="name" select="'volume'"/>
 		<xsl:with-param name="default" select="''"/>
 	</xsl:call-template>
 </xsl:param>
 
 <xsl:param name="uriString">
-	<xsl:call-template name="setDefault">
+	<xsl:call-template name="getDefault">
 		<xsl:with-param name="name" select="'uri-string'"/>
 		<xsl:with-param name="default" select="''"/>
 	</xsl:call-template>
 </xsl:param>
 
 <!--
-	 Template to set default value for parameters:
+	 Template to get default value for parameters:
 		name - the name of the parameter as identified in a settings file
 		default - the default value to use
 -->
-<xsl:template name="setDefault">
+<xsl:template name="getDefault">
 	<xsl:param name="name"/>
 	<xsl:param name="default"/>
 	<xsl:choose>
@@ -693,29 +751,29 @@ function ping() {
 		<div id="about">
 			<p id="close-bar"><input type="button" onclick="document.getElementById('about').style.visibility='hidden';" value="X"/></p>
 			<div id="about-content">
-				<p><xsl:value-of select="//pef:meta/dc:identifier[1]/text()"/></p>
+				<p><xsl:value-of select="//pef:meta/dc:identifier[1]/text()"/>
+				<xsl:if test="//pef:meta/dc:source"> (<xsl:value-of select="//pef:meta/dc:source[1]/text()"/>)</xsl:if></p>
 				<p><strong>
 					<xsl:choose>
 						<xsl:when test="//pef:meta/dc:title[1]/text()"><xsl:value-of select="//pef:meta/dc:title[1]/text()"/></xsl:when>
-						<xsl:otherwise>[Unknown title]</xsl:otherwise>
+						<xsl:otherwise><xsl:value-of select="$unknown-title-label"/></xsl:otherwise>
 					</xsl:choose>
 				</strong>
 				<br/>
-				by 
+					<strong>
 					<xsl:choose>
 						<xsl:when test="//pef:meta/dc:creator">
 							<xsl:for-each select="//pef:meta/dc:creator">
-								<br/><strong><xsl:value-of select="text()"/></strong>
+								<xsl:if test="position()>1"><xsl:text>; </xsl:text></xsl:if><xsl:value-of select="text()"/>
 							</xsl:for-each>
 						</xsl:when>
-						<xsl:otherwise>[Unknown author]</xsl:otherwise>
+						<xsl:otherwise><xsl:value-of select="$unknown-author-label"/></xsl:otherwise>
 					</xsl:choose>
+					</strong>
 				</p>
-				<p>
-				<strong>Producerad: </strong><xsl:value-of select="concat(//pef:meta/dc:date[last()], ' för ', //pef:meta/dc:publisher[1])"/>
-				<br/>
-				<strong>Källa: </strong><xsl:value-of select="//pef:meta/dc:source[1]/text()"/><br />
-				</p>
+				<xsl:if test="//pef:meta/dc:date">
+				<p><xsl:value-of select="//pef:meta/dc:date[last()]"/></p>
+				</xsl:if>
 				<p><xsl:value-of select="concat($showing-pages-label, ': ', $firstPage, '-', $lastPage)"/></p>
 				<!--
 				<p><strong>Antal blad: </strong><xsl:value-of select="1"/>
@@ -733,7 +791,7 @@ function ping() {
 		<div class="volume" id="{generate-id(.)}">
 			<p class="volume-header">
 				<xsl:value-of select="concat($volume-label, ' ', count(preceding::pef:volume)+1)"/>
-				<xsl:value-of select="concat(' (',(count(descendant::pef:section[ancestor-or-self::pef:*[@duplex][1][@duplex='false']]/descendant::pef:page)*2 + count(descendant::pef:section[ancestor-or-self::pef:*[@duplex][1][@duplex='true']]/descendant::pef:page) + count(descendant::pef:section[count(descendant::pef:page) mod 2 = 1][ancestor-or-self::pef:*[@duplex][1][@duplex='true']])) div 2,' sheets)')"/>
+				<xsl:value-of select="concat(' (',(count(descendant::pef:section[ancestor-or-self::pef:*[@duplex][1][@duplex='false']]/descendant::pef:page)*2 + count(descendant::pef:section[ancestor-or-self::pef:*[@duplex][1][@duplex='true']]/descendant::pef:page) + count(descendant::pef:section[count(descendant::pef:page) mod 2 = 1][ancestor-or-self::pef:*[@duplex][1][@duplex='true']])) div 2,' ', $sheets-label, ')')"/>
 			</p>
 			<xsl:apply-templates/>
 		</div>
@@ -745,7 +803,7 @@ function ping() {
 		<xsl:variable name="volumeid" select="generate-id(ancestor::pef:volume)"/>
 		<p class="section-header">
 			<xsl:value-of select="concat($section-label, ' ', count(preceding::pef:section[generate-id(ancestor::pef:volume)=$volumeid])+1)"/>
-			<xsl:value-of select="concat(' (',(count(self::*[ancestor-or-self::pef:*[@duplex][1][@duplex='false']]/descendant::pef:page)*2 + count(self::*[ancestor-or-self::pef:*[@duplex][1][@duplex='true']]/descendant::pef:page) + count(self::*[count(descendant::pef:page) mod 2 = 1][ancestor-or-self::pef:*[@duplex][1][@duplex='true']])) div 2,' sheets)')"/>
+			<xsl:value-of select="concat(' (',(count(self::*[ancestor-or-self::pef:*[@duplex][1][@duplex='false']]/descendant::pef:page)*2 + count(self::*[ancestor-or-self::pef:*[@duplex][1][@duplex='true']]/descendant::pef:page) + count(self::*[count(descendant::pef:page) mod 2 = 1][ancestor-or-self::pef:*[@duplex][1][@duplex='true']])) div 2,' ', $sheets-label, ')')"/>
 		</p>
 		<xsl:apply-templates/>
 	</div>

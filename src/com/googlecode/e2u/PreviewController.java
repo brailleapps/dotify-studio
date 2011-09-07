@@ -75,8 +75,10 @@ public class PreviewController {
 		String brailleFont = settings.getString(Keys.brailleFont);
 		String textFont = settings.getString(Keys.textFont);
 		String charset = settings.getString(Keys.charset);
-		boolean changed = brailleFont==null || textFont==null || charset==null || 
-			!(this.brailleFont.equals(brailleFont) && this.textFont.equals(textFont) && this.charset.equals(charset));
+		boolean changed = 
+			(this.brailleFont!=null && !this.brailleFont.equals(brailleFont)) ||
+			(this.textFont!=null && !this.textFont.equals(textFont)) ||
+			(this.charset!=null && !this.charset.equals(charset));
 		this.brailleFont = brailleFont;
 		this.textFont = textFont;
 		this.charset = charset;
@@ -145,6 +147,17 @@ public class PreviewController {
 			params.put("return-label", Messages.getString(L10nKeys.XSLT_RETURN_LABEL));
 			params.put("emboss-view-label", Messages.getString(L10nKeys.EMBOSS_VIEW));
 			params.put("preview-view-label", Messages.getString(L10nKeys.PREVIEW_VIEW));
+			params.put("unknown-author-label", Messages.getString(L10nKeys.UNKNOWN_AUTHOR));
+			params.put("unknown-title-label", Messages.getString(L10nKeys.UNKNOWN_TITLE));
+			params.put("showing-pages-label", Messages.getString(L10nKeys.XSLT_SHOWING_PAGES));
+			params.put("about-label", Messages.getString(L10nKeys.XSLT_ABOUT_LABEL));
+			params.put("show-source", Messages.getString(L10nKeys.XSLT_VIEW_SOURCE));
+			params.put("volume-label", Messages.getString(L10nKeys.XSLT_VOLUME_LABEL));
+			params.put("section-label", Messages.getString(L10nKeys.XSLT_SECTION_LABEL));
+			params.put("page-label", Messages.getString(L10nKeys.XSLT_PAGE_LABEL));
+			params.put("sheets-label", Messages.getString(L10nKeys.XSLT_SHEETS_LABEL));
+			params.put("viewing-label", Messages.getString(L10nKeys.XSLT_VIEWING_LABEL));
+			params.put("go-to-page-label", Messages.getString(L10nKeys.XSLT_GO_TO_PAGE_LABEL));
 			params.put("uri-string", target + "?file=" + file + "&charset=" + charset);
 			try {
 				params.put("brailleFont", URLDecoder.decode(settings.getString(Keys.brailleFont, ""), MainPage.ENCODING));

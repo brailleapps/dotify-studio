@@ -30,7 +30,7 @@ public class Start {
 			page = "index.html?method=do";
 		} else if (args.length==2 && args[0].equalsIgnoreCase("-open")) {
 			content = new MainPage(new File(args[1]));
-			page = "view.xml";
+			page = "view.html";
 		} else if (args.length==2 && (args[0].equalsIgnoreCase("-view") || args[0].equalsIgnoreCase("-print"))) {
 			content = new MainPage(new File(args[1]));
 			page = "";

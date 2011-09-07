@@ -13,6 +13,7 @@ import org.daisy.braille.embosser.EmbosserCatalog;
 import org.daisy.braille.embosser.EmbosserProperties;
 import org.daisy.braille.tools.Length;
 import org.daisy.paper.PrintPage.Shape;
+import org.daisy.paper.SheetPaperFormat;
 
 import com.googlecode.ajui.ALabel;
 import com.googlecode.ajui.AParagraph;
@@ -50,8 +51,8 @@ public class SettingsView extends AbstractSettingsView implements AListener {
     	shapeNN.put(Shape.SQUARE.toString(), Messages.getString(L10nKeys.SQUARE));
     	
     	orientationNN = new LinkedHashMap<String, String>();
-    	orientationNN.put("DEFAULT", "Default");
-    	orientationNN.put("REVERSED", "Reversed");
+    	orientationNN.put(SheetPaperFormat.Orientation.DEFAULT.toString(), Messages.getString(L10nKeys.DEFAULT_ORIENTATION));
+    	orientationNN.put(SheetPaperFormat.Orientation.REVERSED.toString(), Messages.getString(L10nKeys.REVERSED_ORIENTATION));
     	
     	zfoldingNN = new LinkedHashMap<String, String>();
     	zfoldingNN.put("OFF", "Off");

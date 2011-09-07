@@ -89,6 +89,15 @@ public interface L10nKeys {
 	public final static String SET_LIBRARY_PATH = "Worker.set-library-path";
 	public final static String XSLT_TOGGLE_VIEW = "xslt.toggle-view-label";
 	public final static String XSLT_RETURN_LABEL = "xslt.return-label";
+	public final static String XSLT_SHOWING_PAGES = "xslt.showing-pages";
+	public final static String XSLT_ABOUT_LABEL = "xslt.about-label";
+	public final static String XSLT_VIEW_SOURCE = "xslt.view-source";
+	public final static String XSLT_VOLUME_LABEL = "xslt.volume-label";
+	public final static String XSLT_SECTION_LABEL = "xslt.section-label";
+	public final static String XSLT_PAGE_LABEL = "xslt.page-label";
+	public final static String XSLT_SHEETS_LABEL = "xslt.sheets-label";
+	public final static String XSLT_VIEWING_LABEL = "xslt.viewing-label";
+	public final static String XSLT_GO_TO_PAGE_LABEL = "xslt.go-to-page-label";
 	public final static String FIND_IN_LIBRARY = "Worker.find-in-library";
 	public final static String BROWSE_FILE_SYSTEM = "Worker.browse-file-system";
 	
@@ -128,5 +137,9 @@ public interface L10nKeys {
 	public final static String LANDSCAPE = "Worker.landscape";
 	public final static String PORTRAIT = "Worker.portrait";
 	public final static String SQUARE = "Worker.square";
+	
+	public final static String DEFAULT_ORIENTATION = "Worker.default-orientation";
+	public final static String REVERSED_ORIENTATION = "Worker.reversed-orientation";
+	
 	
 }
