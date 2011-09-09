@@ -6,6 +6,9 @@
 	<!-- ================================================================== -->
 	<!-- Common properties                                                  -->
 	<!-- ================================================================== -->
+	<property name="release-name" value="Easy Embossing Utility"/>
+	<property name="release-version" value="2.0a"/>
+	<property name="release-url" value="http://code.google.com/p/e2u/"/>
 	
 	<property name="ant-build.dir" value="${basedir}/ant-build"/>
 	<property name="ant-output.dir" value="${ant-build.dir}/output"/>
@@ -29,6 +32,11 @@
 	<!-- Requires NSIS with the FontName plugin (http://nsis.sourceforge.net/FontName_plug-in) -->
 	<property name="nsis.dir" value="C:\Program\NSIS"/>
 	
+	<!-- Timestamp format definition -->
+	<tstamp>
+		<format property="ISO-TODAY" pattern="yyyy-MM-dd"/>
+	</tstamp>
+
 	<taskdef name="nsis" classname="net.sf.nsisant.Task">
 		<classpath location="nsisant-1.2.jar"/>
 	</taskdef>
@@ -111,6 +119,11 @@
 			<manifest>
 				<attribute name="Class-Path" value="lib/${braille.jar.name} lib/${ajui.jar.name} lib/${catalog.jar.name} lib/isorelax.jar lib/jing.jar lib/saxon8.jar lib/xercesImpl.jar lib/xml-apis.jar"/>
 				<attribute name="Main-Class" value="com.googlecode.e2u.Start"/>
+    			<attribute name="Built-By" value="${user.name}"/>
+    			<attribute name="Built-On" value="${ISO-TODAY}"/>
+    			<attribute name="Implementation-Title" value="${release-name}"/>
+    			<attribute name="Implementation-Version" value="${release-version}"/>
+    			<attribute name="Implementation-URL" value="${release-url}"/>
 			</manifest>
 		</jar>
     	<delete dir="${build.dir}"/>
