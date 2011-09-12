@@ -29,17 +29,10 @@
 	<property name="distribution.zip" value="${dist.dir}/Easy Embossing Utility.zip"/>
 	<property name="installjar.file" value="${install.dir}/emboss.jar"/>
 	
-	<!-- Requires NSIS with the FontName plugin (http://nsis.sourceforge.net/FontName_plug-in) -->
-	<property name="nsis.dir" value="C:\Program\NSIS"/>
-	
 	<!-- Timestamp format definition -->
 	<tstamp>
 		<format property="ISO-TODAY" pattern="yyyy-MM-dd"/>
 	</tstamp>
-
-	<taskdef name="nsis" classname="net.sf.nsisant.Task">
-		<classpath location="nsisant-1.2.jar"/>
-	</taskdef>
 	
 	<!-- ================================================================== -->
 	<!-- Private targets                                                    -->
@@ -75,19 +68,6 @@
     	</zip>
     </target>
 	
-	<!-- - - - - - - - - - - - - - - - - - 
-          target: createInstaller                      
-         - - - - - - - - - - - - - - - - - -->
-    <target name="createInstaller">
-    	<!--<delete file="${install.dir}/favicon.ico"/>-->
-    	<!-- <copy file="${src.dir}/www/favicon.ico" tofile="${install.dir}/favicon.ico"/> -->
-    	<copy file="${jar.file}" tofile="${installjar.file}"/>
-    	<nsis script="${install.dir}/installer.nsi" verbosity="2" path="${nsis.dir}"/>
-    	<delete file="${installjar.file}"/>
-    </target>
-
-
-
 	<!-- ================================================================== -->
 	<!-- Public targets                                                     -->
 	<!-- ================================================================== -->
@@ -130,13 +110,6 @@
     </target>
 	
 	<!-- ================================= 
-          target: buildInstaller              
-         ================================= -->
-    <target name="buildInstaller" depends="buildJar, createInstaller" description="Build installer">
-    	<delete file="${jar.file}"/>
-    </target>
-	
-	<!-- ================================= 
           target: buildZip 
          ================================= -->
     <target name="buildZip" depends="buildJar, createZip" description="Build zip distribution">
@@ -146,7 +119,7 @@
 	<!-- ================================= 
           target: all              
          ================================= -->
-    <target name="all" depends="buildJar, createZip, createInstaller" description="All">
+    <target name="all" depends="buildJar, createZip" description="All">
     	<delete file="${jar.file}"/>
     </target>
 
