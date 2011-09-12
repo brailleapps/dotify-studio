@@ -33,7 +33,7 @@ public class FindView extends AContainer implements AListener {
 	private Settings settings;
 	private AParagraph error;
 
-	public FindView(Settings settings, MenuSystem menu) {
+	public FindView(Settings settings, MenuSystem menu, ComponentRegistry registry) {
 		setClass("group");
 		this.settings = settings;
 		add(menu);
@@ -51,6 +51,7 @@ public class FindView extends AContainer implements AListener {
 		
     	scanningInProgress = new AParagraph();
     	scanningInProgress.setIdentifier("scanning-in-progress");
+    	registry.register(scanningInProgress);
     	scanningInProgressLabel = new ALabel("Scanning in progress...");
     	add(scanningInProgress);
     	
@@ -71,6 +72,7 @@ public class FindView extends AContainer implements AListener {
 		findResults = new AContainer();
 		findResults.setClass("findResult");
 		findResults.setIdentifier("findResults");
+		registry.register(findResults);
 		add(findResults);
 		startScanning();
 	}

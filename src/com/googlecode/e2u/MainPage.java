@@ -61,6 +61,8 @@ public class MainPage extends BasePage implements AListener {
 	private final AContainer paperView;
 	private final FindView findView;
 	private final AContainer fileChooser;
+	
+	private final ComponentRegistry registry;
 
 	private final AParagraph okPara;
 	
@@ -100,12 +102,14 @@ public class MainPage extends BasePage implements AListener {
     	buildMenu();
     	bookController = new BookViewController(f, settings, embossMenu);
     	//changeHappened = false;
+    	registry = new ComponentRegistry();
 
     	aboutView = new AboutView();
     	settingsView = new SettingsView(settings, setupMenu);
     	previewSettingsView = new PreviewSettingsView(settings, setupMenu);
-    	findView = new FindView(settings, openMenu);
+    	findView = new FindView(settings, openMenu, registry);
     	findView.setIdentifier("fileChooser");
+    	registry.register(findView);
     	paperView = new PaperView(setupMenu, settingsView);
     	File libPath = null;
     	try {
@@ -166,7 +170,7 @@ public class MainPage extends BasePage implements AListener {
 			boolean updates = context.getArgs().get("updates")!=null;
 			AComponent a = null;
 			if (component!=null && !"".equals(component)) {
-				a = AbstractComponent.getComponent(component);
+				a = registry.getComponent(component);
 			}
 			Date d = new Date(); //FIXME: use correct date
 			for (int i=0; i<20; i++) {
