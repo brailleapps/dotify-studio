@@ -28,9 +28,9 @@ public class AboutView extends AContainer {
     	{
 	    	AParagraph ap = new AParagraph();
 	    	ap.add(new ALabel(Messages.getString(L10nKeys.DESC_MORE_INFO)));
-	    	ALink link = new ALink("http://www.pef-format.org");
+	    	ALink link = new ALink("http://pef-format.org");
 	    	link.addAttribute("target", "_blank");
-	    	link.add(new ALabel("www.pef-format.org"));
+	    	link.add(new ALabel("pef-format.org"));
 	    	ap.add(link);
 	    	this.add(ap);
     	}

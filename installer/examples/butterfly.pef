@@ -6,7 +6,7 @@
 			<dc:creator>Joel Håkansson</dc:creator>
 			<dc:date>2008-09-26</dc:date>
 			<dc:format>application/x-pef+xml</dc:format>
-			<dc:identifier>org.pef.00001</dc:identifier>
+			<dc:identifier>org.pef-format.00001</dc:identifier>
 			<dc:description>The file contains a test pattern that uses all 6-dot patterns and that is 
 				symmetric along both the horizontal and vertical axis. In most cases, a 
 				faulty conversion will render an asymmetrical pattern.</dc:description>
