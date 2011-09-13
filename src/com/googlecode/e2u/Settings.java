@@ -118,4 +118,22 @@ public class Settings {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (Keys v : Keys.values()) {
+			if (first) {
+				first = false;
+			} else {
+				 sb.append(", ");
+			}
+			sb.append(v + "=" + getString(v));
+		}
+		return "Settings [" + sb + "]";
+	}
+
 }

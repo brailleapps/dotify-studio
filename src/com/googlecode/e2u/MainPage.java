@@ -25,12 +25,12 @@ import org.daisy.braille.pef.PEFHandler.Alignment;
 import org.daisy.braille.pef.Range;
 import org.daisy.printing.PrinterDevice;
 
-
 import com.googlecode.ajui.AComponent;
 import com.googlecode.ajui.AContainer;
 import com.googlecode.ajui.ALabel;
+import com.googlecode.ajui.ALink;
 import com.googlecode.ajui.AParagraph;
-import com.googlecode.ajui.AbstractComponent;
+import com.googlecode.ajui.APre;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
 import com.googlecode.ajui.XMLTagger;
@@ -41,7 +41,7 @@ import com.googlecode.e2u.l10n.Messages;
 public class MainPage extends BasePage implements AListener {
 	//201x.m.d
 	public final static String VERSION = "2.0 dev";
-	public final static String BUILD = "2011-09-12";
+	public final static String BUILD = "2011-09-13";
 	final static int MAX_COPIES = 99;
 	final static String ENCODING = "utf-8";
 	
@@ -64,8 +64,6 @@ public class MainPage extends BasePage implements AListener {
 	
 	private final ComponentRegistry registry;
 
-	private final AParagraph okPara;
-	
 	private static boolean closing = false;
     
     static {
@@ -122,8 +120,7 @@ public class MainPage extends BasePage implements AListener {
     	}
     	fileChooser = new AFileChooser(libPath, openMenu);
 
-    	okPara = new AParagraph();
-    	okPara.add(new ALabel(Messages.getString(L10nKeys.FILE_EMBOSSED_OK)));
+
     }
 
     public void buildMenu() {
@@ -370,14 +367,42 @@ public class MainPage extends BasePage implements AListener {
 							}
 						}
 					}
-					return buildHTML(okPara.getHTML(context).getResult(), Messages.getString(L10nKeys.FILE_EMBOSSED), false); //$NON-NLS-1$
+			    	AContainer okDiv = new AContainer();
+			    	{
+			    		AParagraph p = new AParagraph();
+			    		p.add(new ALabel(Messages.getString(L10nKeys.FILE_EMBOSSED_OK)));
+			    		okDiv.add(p);
+			    	}
+			    	{
+			    		AParagraph p = new AParagraph();
+			    		p.add(mailtoDebug());
+			    		okDiv.add(p);
+			    	}
+					return buildHTML(okDiv.getHTML(context).getResult(), Messages.getString(L10nKeys.FILE_EMBOSSED), false); //$NON-NLS-1$
 				} catch (Exception e) {
 					context.log("Exception in parser"  + e.getMessage()); //$NON-NLS-1$
 					e.printStackTrace();
 					StringWriter sw = new StringWriter();
 					e.printStackTrace(new PrintWriter(sw));
 					sw.close();
-					return buildHTML(errorHTML(Messages.getString(L10nKeys.TRANSFORMER_ERROR), sw.toString()), Messages.getString(L10nKeys.ERROR), false); //$NON-NLS-1$
+					AContainer errorDiv = new AContainer();
+					{
+						AParagraph p = new AParagraph();
+						p.add(new ALabel(Messages.getString(L10nKeys.EMBOSSING_FAILED)));
+						errorDiv.add(p);
+					}
+					{
+						AParagraph p = new AParagraph();
+						p.add(mailtoDebug(e.getCause().toString()));
+						errorDiv.add(p);
+					}
+					AContainer preDiv = new AContainer();
+					preDiv.setClass("overflow");
+					APre pre = new APre();
+					pre.add(new ALabel(sw.toString()));
+					preDiv.add(pre);
+					errorDiv.add(preDiv);
+					return buildHTML(errorDiv.getHTML(context).getResult(), Messages.getString(L10nKeys.ERROR), false); //$NON-NLS-1$
 				}
 			} else {
 				if (KEY_TITLE.equals(key)) {
@@ -395,6 +420,62 @@ public class MainPage extends BasePage implements AListener {
 			}
 			return buildHTML(notice + renderView(context, settingsView), Messages.getString(L10nKeys.SETTINGS), true);
 		}
+	}
+	
+	private String mailtoEncode(String s) {
+		String noencode = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.!~*'()";
+		String hexits = "0123456789ABCDEF";
+		StringBuilder ret = new StringBuilder();
+		s = s.replaceAll("\\x0D\\x0A", "\\x0A").replaceAll("\\x0D", "\\x0A");
+		for (char c : s.toCharArray()) {
+			if (c==0x0A) {
+				ret.append("%0D%0A");
+			} else if (noencode.contains("" + c)) {
+				ret.append(c);
+			} else {
+				ret.append("%");
+				ret.append(hexits.charAt((c>>4) & 0x0F));
+				ret.append(hexits.charAt(c & 0x0F));
+			}
+		}
+		//http://shadow2531.com/opera/testcases/mailto/modern_mailto_uri_scheme.html#encoding
+		return ret.toString();
+	}
+
+	private ALink mailtoDebug() {
+		return mailtoDebug(null);
+	}
+
+	private ALink mailtoDebug(String errorMsg) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("\n\nBook: ");
+		try {
+			sb.append(bookController.getBook().toString());
+		} catch (Exception e) {
+			sb.append(e.toString());
+		}/*
+		sb.append("\nEmbosser: ");
+		try {
+			sb.append(settingsView.getConfiguration().getConfiguredEmbosser().toString());
+		} catch (Exception e) {
+			sb.append(e.toString());
+		}*/
+		sb.append("\nSettings: ");
+		try {
+			sb.append(settings.toString());
+		} catch (Exception e) {
+			sb.append(e.toString());
+		}
+		boolean hasErrors = false;
+		if (errorMsg!=null && !"".equals(errorMsg)) {
+			hasErrors = true;
+			sb.append("\nError message: ");
+			sb.append(errorMsg.replaceAll("\\s", " "));
+		}
+		ALink a = new ALink("mailto:?subject="+mailtoEncode("Easy Embossing Utility Feedback " + (hasErrors?"(failure)":"(success)")) +
+    			"&body="+mailtoEncode("Application: " + this.toString() + sb.toString()));
+    	a.add(new ALabel(Messages.getString(L10nKeys.SEND_FEEDBACK)));
+    	return a;
 	}
 	
 	private int parseInt(String intVal, int def) {
@@ -416,15 +497,7 @@ public class MainPage extends BasePage implements AListener {
     	return subview.getHTML(context).getResult();
     }
 
-   private String errorHTML(String heading, String msg) {
-    	XHTMLTagger tagger = new XHTMLTagger();
-    	tagger.tag("p", heading)
-	    	.start("div").attr("class", "overflow")
-	    		.tag("pre", msg)
-	    	.end();
-    	//return tag("p", heading) + tag("div", " class=\"overflow\"", tag("pre", msg)); //$NON-NLS-1$
-    	return tagger.getResult();
-    }
+
 
     private String embossHTML(Context context) {
     	StringBuffer sb = new StringBuffer();
@@ -557,4 +630,13 @@ public class MainPage extends BasePage implements AListener {
 			componentsToUpdate.put(scanningInProgress.getIdentifier(), scanningInProgress);
 		}*/
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Easy Embossing Utility " + VERSION + ", " + BUILD;
+	}
+	
 }

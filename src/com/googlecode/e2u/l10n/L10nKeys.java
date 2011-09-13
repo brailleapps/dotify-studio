@@ -41,7 +41,7 @@ public interface L10nKeys {
 	public final static String DESC_BASED_ON = "Worker.description-based-on";
 	public final static String DESC_MORE_INFO = "Worker.description-more-information";
 	public final static String DESC_VERSION = "Worker.description-version";
-	public final static String TRANSFORMER_ERROR = "Worker.error-transformer";
+	public final static String EMBOSSING_FAILED = "Worker.error-transformer";
 	public final static String FILE_EMBOSSED_OK = "Worker.file-embossed-ok";
 	
 	public final static String MENU_MAIN = "Worker.menu-main";
@@ -141,5 +141,5 @@ public interface L10nKeys {
 	public final static String DEFAULT_ORIENTATION = "Worker.default-orientation";
 	public final static String REVERSED_ORIENTATION = "Worker.reversed-orientation";
 	
-	
+	public final static String SEND_FEEDBACK = "Worker.send-feedback";
 }
