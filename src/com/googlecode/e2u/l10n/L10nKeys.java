@@ -142,4 +142,7 @@ public interface L10nKeys {
 	public final static String REVERSED_ORIENTATION = "Worker.reversed-orientation";
 	
 	public final static String SEND_FEEDBACK = "Worker.send-feedback";
+	
+	public final static String GENERATE_TEST_DOCUMENT = "Worker.generate-test-document";
+	public final static String OPEN_TEST_DOCUMENT = "Worker.open-test-document";
 }

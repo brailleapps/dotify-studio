@@ -16,6 +16,7 @@ import org.daisy.paper.PrintPage.Shape;
 import org.daisy.paper.SheetPaperFormat;
 
 import com.googlecode.ajui.ALabel;
+import com.googlecode.ajui.ALink;
 import com.googlecode.ajui.AParagraph;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
@@ -188,6 +189,15 @@ public class SettingsView extends AbstractSettingsView implements AListener {
     		}
     	}
 
+    	if (conf.settingOK()) {
+    		AParagraph p = new AParagraph();
+            ALink a = new ALink("index.html?method=test");                    
+            ALabel label = new ALabel(Messages.getString(L10nKeys.GENERATE_TEST_DOCUMENT));
+            a.add(label);
+            p.add(a);
+            add(p);
+    	}
+    	
 		return super.getHTML(context);
 	}
 

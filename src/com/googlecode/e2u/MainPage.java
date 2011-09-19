@@ -10,6 +10,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +24,7 @@ import org.daisy.braille.facade.PEFConverterFacade;
 import org.daisy.braille.pef.PEFHandler;
 import org.daisy.braille.pef.PEFHandler.Alignment;
 import org.daisy.braille.pef.Range;
+import org.daisy.braille.pef.PEFGenerator;
 import org.daisy.printing.PrinterDevice;
 
 import com.googlecode.ajui.AComponent;
@@ -310,7 +312,29 @@ public class MainPage extends BasePage implements AListener {
 				return Messages.getString(L10nKeys.ABOUT_THE_SOFTWARE);
 			}
 			return buildHTML(aboutView.getHTML(context).getResult(), Messages.getString(L10nKeys.ABOUT_THE_SOFTWARE), true);
-		} else if (device!=null && settingsView.getConfiguration().settingOK() && align!=null) {
+		} else if ("test".equals(args.get("method")) && settingsView.getConfiguration().settingOK()) {
+                    File temp = File.createTempFile("generated-", ".pef");
+					temp.deleteOnExit();
+                    Map<String,String> keys = new HashMap<String,String>();
+                    keys.put(PEFGenerator.KEY_COLS, String.valueOf(settingsView.getConfiguration().getMaxWidth()));
+                    keys.put(PEFGenerator.KEY_ROWS, String.valueOf(settingsView.getConfiguration().getMaxHeight()));
+                    keys.put(PEFGenerator.KEY_DUPLEX, String.valueOf(true));
+                    keys.put(PEFGenerator.KEY_EIGHT_DOT, String.valueOf(false));
+                    PEFGenerator generator = new PEFGenerator(keys);
+                    try {
+                        generator.generateTestPages(temp);
+                    } catch (Exception e) {
+                    }
+                    String encURL = URLEncoder.encode(temp.getAbsolutePath(), MainPage.ENCODING);
+                    AContainer div = new AContainer();
+		    AParagraph p = new AParagraph();
+                    ALink a = new ALink("index.html?open="+encURL);                    
+                    ALabel label = new ALabel(Messages.getString(L10nKeys.OPEN_TEST_DOCUMENT));
+                    a.add(label);
+                    p.add(a);
+		    div.add(p);
+                    return buildHTML(div.getHTML(context).getResult(), "Test setup", true);
+                } else if (device!=null && settingsView.getConfiguration().settingOK() && align!=null) {
 			if ("do".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				
 				if (KEY_TITLE.equals(key)) {
@@ -415,7 +439,8 @@ public class MainPage extends BasePage implements AListener {
 				return Messages.getString(L10nKeys.SETTINGS);
 			}
 			String notice = "";
-			if ("emboss".equals(args.get("method"))) {
+			if ("emboss".equals(args.get("method")) ||
+                            "test".equals(args.get("method"))) {
 				notice = "<p class=\"warning\">" + Messages.getString(L10nKeys.COMPLETE_SETUP) + "</p>";
 			}
 			return buildHTML(notice + renderView(context, settingsView), Messages.getString(L10nKeys.SETTINGS), true);
