@@ -10,6 +10,7 @@ public interface L10nKeys {
 	public final static String CLOSED = "Worker.heading-close";
 	public final static String OPEN = "Worker.heading-open";
 	public final static String MANAGE_PAPER = "Worker.heading-paper";
+	public final static String TEST_SETUP = "Worker.heading-test-setup";
 	public final static String UNKNOWN_TITLE = "Worker.unknown-title";
 	public final static String UNKNOWN_AUTHOR = "Worker.unknown-author";
 	public final static String EMBOSS_VOLUME = "Worker.emboss-volume";

@@ -313,28 +313,31 @@ public class MainPage extends BasePage implements AListener {
 			}
 			return buildHTML(aboutView.getHTML(context).getResult(), Messages.getString(L10nKeys.ABOUT_THE_SOFTWARE), true);
 		} else if ("test".equals(args.get("method")) && settingsView.getConfiguration().settingOK()) {
-                    File temp = File.createTempFile("generated-", ".pef");
-					temp.deleteOnExit();
-                    Map<String,String> keys = new HashMap<String,String>();
-                    keys.put(PEFGenerator.KEY_COLS, String.valueOf(settingsView.getConfiguration().getMaxWidth()));
-                    keys.put(PEFGenerator.KEY_ROWS, String.valueOf(settingsView.getConfiguration().getMaxHeight()));
-                    keys.put(PEFGenerator.KEY_DUPLEX, String.valueOf(true));
-                    keys.put(PEFGenerator.KEY_EIGHT_DOT, String.valueOf(false));
-                    PEFGenerator generator = new PEFGenerator(keys);
-                    try {
-                        generator.generateTestPages(temp);
-                    } catch (Exception e) {
-                    }
-                    String encURL = URLEncoder.encode(temp.getAbsolutePath(), MainPage.ENCODING);
-                    AContainer div = new AContainer();
+			if (KEY_TITLE.equals(key)) {
+				return Messages.getString(L10nKeys.TEST_SETUP);
+			}
+	        File temp = File.createTempFile("generated-", ".pef");
+			temp.deleteOnExit();
+	        Map<String,String> keys = new HashMap<String,String>();
+	        keys.put(PEFGenerator.KEY_COLS, String.valueOf(settingsView.getConfiguration().getMaxWidth()));
+	        keys.put(PEFGenerator.KEY_ROWS, String.valueOf(settingsView.getConfiguration().getMaxHeight()));
+	        keys.put(PEFGenerator.KEY_DUPLEX, String.valueOf(true));
+	        keys.put(PEFGenerator.KEY_EIGHT_DOT, String.valueOf(false));
+	        PEFGenerator generator = new PEFGenerator(keys);
+	        try {
+	            generator.generateTestPages(temp);
+	        } catch (Exception e) {
+	        }
+	        String encURL = URLEncoder.encode(temp.getAbsolutePath(), MainPage.ENCODING);
+	        AContainer div = new AContainer();
 		    AParagraph p = new AParagraph();
-                    ALink a = new ALink("index.html?open="+encURL);                    
-                    ALabel label = new ALabel(Messages.getString(L10nKeys.OPEN_TEST_DOCUMENT));
-                    a.add(label);
-                    p.add(a);
+            ALink a = new ALink("index.html?open="+encURL);                    
+            ALabel label = new ALabel(Messages.getString(L10nKeys.OPEN_TEST_DOCUMENT));
+            a.add(label);
+            p.add(a);
 		    div.add(p);
-                    return buildHTML(div.getHTML(context).getResult(), "Test setup", true);
-                } else if (device!=null && settingsView.getConfiguration().settingOK() && align!=null) {
+            return buildHTML(div.getHTML(context).getResult(), Messages.getString(L10nKeys.TEST_SETUP), true);
+        } else if (device!=null && settingsView.getConfiguration().settingOK() && align!=null) {
 			if ("do".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				
 				if (KEY_TITLE.equals(key)) {
