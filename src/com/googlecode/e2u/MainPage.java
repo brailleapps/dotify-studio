@@ -43,7 +43,7 @@ import com.googlecode.e2u.l10n.Messages;
 public class MainPage extends BasePage implements AListener {
 	//201x.m.d
 	public final static String VERSION = "2.0 dev";
-	public final static String BUILD = "2011-09-13";
+	public final static String BUILD = "2011-09-20";
 	final static int MAX_COPIES = 99;
 	final static String ENCODING = "utf-8";
 	
