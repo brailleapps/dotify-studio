@@ -9,14 +9,13 @@
 		<script type="text/javascript">
 /* <![CDATA[  */
 var ok = true;
-var sid = Math.random();
 
 function get(url) {
 	xmlHttp=GetXmlHttpObject();
 	if (xmlHttp==null) {
   		return;
   	} 
-  	url=url+"?sid="+sid;
+  	url=url+"?sid="+Math.random();
 	xmlHttp.open("GET",url,true);
 	xmlHttp.onreadystatechange=function() {
   		if (xmlHttp.readyState==4) {
