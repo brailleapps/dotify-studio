@@ -26,7 +26,7 @@ public class BookScanner {
     private SwingWorker<Boolean, PEFBookFile> bookScanner;
     private static BookScanner instance = null;
     private AListener listener;
-    private final PEFLibrary lib;
+    
     private int doneCount = 0;
 
     private BookScanner(File dir) {
@@ -34,13 +34,13 @@ public class BookScanner {
     	index = new Hashtable<String, Hashtable<File, PEFBook>>();
     	books = new ArrayList<PEFBook>();
 
-    	lib = new PEFLibrary(dir);
     	
         bookScanner = new SwingWorker<Boolean, PEFBookFile>() {
         	Date d;
 
 			@Override
 			protected Boolean doInBackground() throws Exception {
+				PEFLibrary lib = new PEFLibrary(path);
 				d = new Date();
 				long diff = 0;
 				for (File f : lib.getFileList()) {
@@ -118,10 +118,6 @@ public class BookScanner {
     
     public void notifyChange() {
     	listener.changeHappened(this);
-    }
-    
-    public int getLibrarySize() {
-    	return lib.getFileList().size();
     }
     
     public int getDoneCount() {

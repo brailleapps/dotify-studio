@@ -31,6 +31,7 @@ public class PEFLibrary {
     	}
 		for (File f : listFiles) {
 			if (f.isDirectory()) {
+				if (debug) System.err.println("Scanning dir " + f);
 				listFiles(f);
 			} else if (f.exists()) {
 				if (debug) System.err.println("Adding file: " + f);

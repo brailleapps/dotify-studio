@@ -174,7 +174,7 @@ public class FindView extends AContainer implements AListener {
 		if (bs.isDone()) {
 			scanningInProgressLabel.setText("");
 		} else {
-			scanningInProgressLabel.setText("Scanning in progress... " + bs.getDoneCount() + "/" +bs.getLibrarySize());
+			scanningInProgressLabel.setText("Scanning in progress... " + bs.getDoneCount());
 		}
 		scanningInProgress.update();
 		//findResults.update();
