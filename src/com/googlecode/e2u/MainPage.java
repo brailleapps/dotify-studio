@@ -59,9 +59,9 @@ public class MainPage extends BasePage implements AListener {
 	
 	private final AContainer aboutView;
 	private final SettingsView settingsView;
-	private final AContainer previewSettingsView;
-	private final AContainer paperView;
-	private final FindView findView;
+	private AContainer previewSettingsView;
+	//private final AContainer paperView;
+	private FindView findView;
 	private final AContainer fileChooser;
 	
 	private final ComponentRegistry registry;
@@ -106,11 +106,10 @@ public class MainPage extends BasePage implements AListener {
 
     	aboutView = new AboutView();
     	settingsView = new SettingsView(settings, setupMenu);
-    	previewSettingsView = new PreviewSettingsView(settings, setupMenu);
-    	findView = new FindView(settings, openMenu, registry);
-    	findView.setIdentifier("fileChooser");
-    	registry.register(findView);
-    	paperView = new PaperView(setupMenu, settingsView);
+    	//previewSettingsView = new PreviewSettingsView(settings, setupMenu);
+    	
+    	
+    	//paperView = new PaperView(setupMenu, settingsView);
     	File libPath = null;
     	try {
 	    	libPath = new File(settings.getString(Settings.Keys.libraryPath));
@@ -120,9 +119,25 @@ public class MainPage extends BasePage implements AListener {
     	} catch (NullPointerException e) {
     		// value was not set
     	}
+    	
     	fileChooser = new AFileChooser(libPath, openMenu);
 
-
+    }
+    
+    private FindView getFindView() {
+    	if (findView==null) {
+    		findView = new FindView(settings, openMenu, registry);
+    		findView.setIdentifier("fileChooser");
+    		registry.register(findView);
+    	}
+    	return findView;
+    }
+    
+    private AContainer getPreviewSettingsView() {
+    	if (previewSettingsView==null) {
+    		previewSettingsView = new PreviewSettingsView(settings, setupMenu);
+    	}
+    	return previewSettingsView;
     }
 
     public void buildMenu() {
@@ -280,7 +295,7 @@ public class MainPage extends BasePage implements AListener {
 			if (KEY_TITLE.equals(key)) {
 				return Messages.getString(L10nKeys.OPEN);
 			}
-			return buildHTML(renderView(context, findView), Messages.getString(L10nKeys.OPEN), true);
+			return buildHTML(renderView(context, getFindView()), Messages.getString(L10nKeys.OPEN), true);
 		} else if (!bookController.bookIsValid()) {
 			if (KEY_TITLE.equals(key)) {
 				return Messages.getString(L10nKeys.VALIDATION);
@@ -295,12 +310,12 @@ public class MainPage extends BasePage implements AListener {
 			if (KEY_TITLE.equals(key)) {
 				return Messages.getString(L10nKeys.SETTINGS);
 			}
-			return buildHTML(renderView(context, previewSettingsView), Messages.getString(L10nKeys.SETTINGS), true); //$NON-NLS-1$
+			return buildHTML(renderView(context, getPreviewSettingsView()), Messages.getString(L10nKeys.SETTINGS), true); //$NON-NLS-1$
 		} else if ("paper".equals(args.get("method"))) {
 			if (KEY_TITLE.equals(key)) {
 				return Messages.getString(L10nKeys.SETTINGS);
 			}
-			return buildHTML(renderView(context, paperView), Messages.getString(L10nKeys.SETTINGS), true);
+			return buildHTML(renderView(context, new PaperView(setupMenu, settingsView)), Messages.getString(L10nKeys.SETTINGS), true);
 		}
 		else if ("meta".equals(args.get("method"))) {  //$NON-NLS-1$ //$NON-NLS-2$
 			if (KEY_TITLE.equals(key)) {
@@ -647,7 +662,9 @@ public class MainPage extends BasePage implements AListener {
 	@Override
 	public void close() {
 		closing = true;
-		findView.close();
+		if (findView!=null) {
+			getFindView().close();
+		}
 		bookController.close();
 	}
 	@Override
