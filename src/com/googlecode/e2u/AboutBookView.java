@@ -71,6 +71,25 @@ public class AboutBookView extends AContainer {
 		}
 		{
 			ADefinitionTerm dt = new ADefinitionTerm();
+			dt.add(new ALabel(Messages.getString(L10nKeys.DUPLEX)));
+			dl.add(dt);
+		}
+		{	
+			ADefinitionDescription dd = new ADefinitionDescription();
+			float ratio = book.getPages()/(float)book.getPageTags();
+			String info;
+			if (ratio<=1) {
+				info = Messages.getString(L10nKeys.DUPLEX_YES);
+			} else if (ratio>=2) {
+				info = Messages.getString(L10nKeys.DUPLEX_NO);
+			} else {
+				info = Messages.getString(L10nKeys.DUPLEX_MIXED);
+			}
+			dd.add(new ALabel(info));
+			dl.add(dd);
+		}
+		{
+			ADefinitionTerm dt = new ADefinitionTerm();
 			dt.add(new ALabel(Messages.getString(L10nKeys.EIGHT_DOT)));
 			dl.add(dt);
 		}

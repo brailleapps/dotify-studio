@@ -26,6 +26,10 @@ public interface L10nKeys {
 	public final static String SIZE_VOLUMES = "Worker.size-volumes";
 	public final static String DIMENSIONS = "Worker.dimensions";
 	public final static String EIGHT_DOT = "Worker.eight-dot";
+	public final static String DUPLEX = "Worker.duplex";
+	public final static String DUPLEX_NO = "Worker.duplex-no";
+	public final static String DUPLEX_YES = "Worker.duplex-yes";
+	public final static String DUPLEX_MIXED = "Worker.duplex-mixed";
 	public final static String YES = "Worker.yes";
 	public final static String NO = "Worker.no";
 	public final static String FILE_DIMENSIONS = "Worker.file-dimensions";

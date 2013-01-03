@@ -7,8 +7,8 @@
 	<!-- Common properties                                                  -->
 	<!-- ================================================================== -->
 	<property name="release-name" value="Easy Embossing Utility"/>
-	<property name="release-version" value="2.0a"/>
-	<property name="release-url" value="http://code.google.com/p/e2u/"/>
+	<property name="release-version" value="snapshot"/>
+	<property name="repository-revision" value="N/A"/> 
 	
 	<property name="ant-build.dir" value="${basedir}/ant-build"/>
 	<property name="ant-output.dir" value="${ant-build.dir}/output"/>
@@ -19,14 +19,14 @@
 	
 	<property name="lib.dir" value="${basedir}/lib"/>
 	<property name="install.dir" value="${basedir}/installer"/>
-	<property name="pipeline.dir" value="../pipeline"/>
-	<property name="braille.jar.name" value="brailleUtils-core-1.2b.jar"/>
+	
+	<property name="braille.jar.name" value="brailleUtils-core.jar"/>
 	<property name="ajui.jar.name" value="ajui-1.0b.jar"/>
-	<property name="catalog.jar.name" value="brailleUtils-catalog-1.2b.jar"/>
+	<property name="catalog.jar.name" value="brailleUtils-catalog.jar"/>
 	<property name="braille.jar" value="${lib.dir}/{${braille.jar.name}"/>
 	
 	<property name="jar.file" value="${dist.dir}/e2u.jar"/>
-	<property name="distribution.zip" value="${dist.dir}/Easy Embossing Utility.zip"/>
+	<property name="distribution.zip" value="${dist.dir}/EasyEmbossingUtility-${release-version}.zip"/>
 	<property name="installjar.file" value="${install.dir}/emboss.jar"/>
 	
 	<!-- Timestamp format definition -->
@@ -101,6 +101,7 @@
 				<attribute name="Main-Class" value="com.googlecode.e2u.Start"/>
     			<attribute name="Built-By" value="${user.name}"/>
     			<attribute name="Built-On" value="${ISO-TODAY}"/>
+				<attribute name="Repository-Revision" value="${repository-revision}"/>
     			<attribute name="Implementation-Title" value="${release-name}"/>
     			<attribute name="Implementation-Version" value="${release-version}"/>
     			<attribute name="Implementation-URL" value="${release-url}"/>

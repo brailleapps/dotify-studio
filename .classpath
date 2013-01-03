@@ -7,8 +7,8 @@
 	<classpathentry kind="lib" path="lib/saxon8.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
-	<classpathentry kind="lib" path="lib/brailleUtils-catalog-1.2b.jar"/>
-	<classpathentry kind="lib" path="lib/brailleUtils-core-1.2b.jar"/>
 	<classpathentry kind="lib" path="lib/ajui-1.0b.jar"/>
+	<classpathentry kind="lib" path="lib/brailleUtils-catalog.jar"/>
+	<classpathentry kind="lib" path="lib/brailleUtils-core.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
