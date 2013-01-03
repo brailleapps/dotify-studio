@@ -23,6 +23,11 @@ import com.googlecode.e2u.Settings.Keys;
 
 
 public class Configuration {
+	enum ErrorCode {
+		NOT_SET,
+		INCOMPLETE,
+		INVALID
+	}
 	private final Settings settings;
 	private final PaperCatalog paperCatalog;
 	private EmbosserCatalog embosserCatalog;
@@ -44,6 +49,7 @@ public class Configuration {
 	private Length pWidth = Length.newMillimeterValue(0);
 	private Length pHeight = Length.newMillimeterValue(0);
 	private Shape s = null;
+	private ErrorCode errorCode = ErrorCode.NOT_SET;
 	
 	
 	private Configuration(Settings settings) {
@@ -63,7 +69,7 @@ public class Configuration {
 
     	String orientation = settings.getString(Keys.orientation, "DEFAULT");
     	String zFolding = settings.getString(Keys.zFolding);
-		
+		errorCode = ErrorCode.INCOMPLETE;
 		if ((em = embosserCatalog.get(embosser))==null) {
 			supportedTables = new ArrayList<Table>();
 			supportedPapers = new ArrayList<Paper>();
@@ -152,6 +158,7 @@ public class Configuration {
 					em.setFeature(EmbosserFeatures.PAGE_FORMAT, pageFormat);
 					settingsOK = true;
 				} catch (IllegalArgumentException e) {
+					errorCode = ErrorCode.INVALID;
 					e.printStackTrace();
 				}
 	    	}
@@ -205,6 +212,10 @@ public class Configuration {
 	
 	public boolean settingOK() {
 		return settingsOK;
+	}
+	
+	public ErrorCode getErrorCode() {
+		return errorCode;
 	}
 	
 	public int getMaxWidth() {

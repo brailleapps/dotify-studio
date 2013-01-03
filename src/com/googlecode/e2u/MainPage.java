@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
@@ -17,14 +19,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import org.daisy.braille.embosser.Embosser;
 import org.daisy.braille.embosser.EmbosserWriter;
 import org.daisy.braille.facade.PEFConverterFacade;
+import org.daisy.braille.pef.PEFGenerator;
 import org.daisy.braille.pef.PEFHandler;
 import org.daisy.braille.pef.PEFHandler.Alignment;
 import org.daisy.braille.pef.Range;
-import org.daisy.braille.pef.PEFGenerator;
 import org.daisy.printing.PrinterDevice;
 
 import com.googlecode.ajui.AComponent;
@@ -42,8 +46,38 @@ import com.googlecode.e2u.l10n.Messages;
 
 public class MainPage extends BasePage implements AListener {
 	//201x.m.d
-	public final static String VERSION = "2.0 dev";
-	public final static String BUILD = "2011-09-20";
+	public final static String VERSION;
+	public final static String BUILD;
+	static {
+		Class<MainPage> clazz = MainPage.class;
+		String className = clazz.getSimpleName() + ".class";
+		String classPath = clazz.getResource(className).toString();
+		boolean failed = false;
+		Attributes attr = null;
+		if (!classPath.startsWith("jar")) {
+		  // Class not from JAR
+			failed = true;
+		} else {
+			String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + 
+			    "/META-INF/MANIFEST.MF";
+			Manifest manifest;
+			try {
+				manifest = new Manifest(new URL(manifestPath).openStream());
+				attr = manifest.getMainAttributes();
+			} catch (MalformedURLException e) {
+				failed = true;
+			} catch (IOException e) {
+				failed = true;
+			}
+		}
+		if (failed || attr == null) {
+			BUILD = "N/A";
+			VERSION = "N/A";
+		} else {
+			VERSION = attr.getValue("Implementation-Version");
+			BUILD = attr.getValue("Repository-Revision");
+		}
+	}
 	final static int MAX_COPIES = 99;
 	final static String ENCODING = "utf-8";
 	
@@ -459,7 +493,15 @@ public class MainPage extends BasePage implements AListener {
 			String notice = "";
 			if ("emboss".equals(args.get("method")) ||
                             "test".equals(args.get("method"))) {
-				notice = "<p class=\"warning\">" + Messages.getString(L10nKeys.COMPLETE_SETUP) + "</p>";
+				
+				switch (settingsView.getConfiguration().getErrorCode()) {
+					case INCOMPLETE:
+						notice = "<p class=\"warning\">" + Messages.getString(L10nKeys.COMPLETE_SETUP) + "</p>";
+						break;
+					case INVALID: case NOT_SET: default:
+						break;
+				}
+				
 			}
 			return buildHTML(notice + renderView(context, settingsView), Messages.getString(L10nKeys.SETTINGS), true);
 		}

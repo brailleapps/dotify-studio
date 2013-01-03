@@ -20,6 +20,7 @@ import com.googlecode.ajui.ALink;
 import com.googlecode.ajui.AParagraph;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
+import com.googlecode.e2u.Configuration.ErrorCode;
 import com.googlecode.e2u.Settings.Keys;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
@@ -196,6 +197,11 @@ public class SettingsView extends AbstractSettingsView implements AListener {
             a.add(label);
             p.add(a);
             add(p);
+    	} else if (conf.getErrorCode()==ErrorCode.INVALID) {
+    		AParagraph p = new AParagraph();
+    		p.setClass("warning");
+    		p.add(new ALabel(Messages.getString(L10nKeys.INVALID_SETUP)));
+    		add(p);
     	}
     	
 		return super.getHTML(context);

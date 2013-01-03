@@ -87,6 +87,7 @@ public interface L10nKeys {
 
 	public final static String EMBOSSER_TABLE = "Worker.embosser-table";
 	public final static String COMPLETE_SETUP = "Worker.must-complete-setup";
+	public final static String INVALID_SETUP = "Worker.invalid-setup";
 	public final static String EMBOSS_VIEW = "Worker.emboss-view";
 	public final static String PREVIEW_VIEW = "Worker.preview-view";
 	public final static String PAPER_VIEW = "Worker.paper-view";
