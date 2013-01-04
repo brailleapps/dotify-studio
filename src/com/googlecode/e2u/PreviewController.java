@@ -10,14 +10,11 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.transform.TransformerFactory;
-
 import org.daisy.braille.BrailleConstants;
 import org.daisy.braille.table.BrailleConverter;
 import org.daisy.braille.table.DefaultTableProvider;
 import org.daisy.braille.table.Table;
 import org.daisy.braille.table.TableCatalog;
-
 
 import com.googlecode.ajui.Context;
 import com.googlecode.e2u.BookReader.BookReaderResult;
@@ -47,15 +44,13 @@ public class PreviewController {
 	}
 	
 	private void init() {
-		final TransformerFactory factory = TransformerFactory.newInstance();
 		saxonNotAvailable = false;
 		done = new HashMap<Integer, PreviewRenderer>();
 		try {
-			factory.setAttribute("http://saxon.sf.net/feature/version-warning", Boolean.FALSE);
 			BookReaderResult brr = r.getResult();
 			Map<String, String> params = buildParams(settings, "view.html", settings.getString(Keys.charset), "book.xml", null);
 			for (int i=1; i<=r.getResult().getBook().getVolumes(); i++) {
-		        done.put(i, new PreviewRenderer(brr.getURI(), i, factory, this, params));
+		        done.put(i, new PreviewRenderer(brr.getURI(), i, this, params));
 			}
 		} catch (IllegalArgumentException iae) { 
 			saxonNotAvailable = true;
