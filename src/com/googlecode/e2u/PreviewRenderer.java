@@ -19,6 +19,7 @@ import javax.xml.transform.stream.StreamSource;
 public class PreviewRenderer {
 	private boolean now = false;
 	private final SwingWorker<File, Void> x;
+	private boolean abort = false;
 
 	public PreviewRenderer(final URI uri, final int vol, final PreviewController t, final Map<String, String> params) {
 		 x = new SwingWorker<File, Void>() {
@@ -26,7 +27,7 @@ public class PreviewRenderer {
 			@Override
 			protected File doInBackground() {
 				long d = 200+(long)(Math.random()*100);
-				while (true) {
+				while (!abort) {
 					if (t.myTurn(vol) || now) {
 						System.err.println("RUNNING VOL " + vol);
 				        File t1 = null;
@@ -71,14 +72,18 @@ public class PreviewRenderer {
 						}
 					}
 				}
+				return null;
 			}
-			
 		};
 		new NewThreadExecutor().execute(x);
 	}
 
 	public boolean isDone() {
 		return x.isDone();
+	}
+	
+	public void abort() {
+		abort = true;
 	}
 
 	public File getFile() {

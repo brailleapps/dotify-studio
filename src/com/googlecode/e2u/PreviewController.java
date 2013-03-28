@@ -7,6 +7,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,10 +25,11 @@ import com.googlecode.e2u.l10n.Messages;
 
 public class PreviewController {
 	private final BookReader r;
-	private HashMap<Integer, PreviewRenderer> done;
+	private Map<Integer, PreviewRenderer> done;
 	private final Settings settings;
 	private boolean saxonNotAvailable;
 	private String brailleFont, textFont, charset;
+	private long lastUpdated;
 
 	/**
 	 * 
@@ -37,19 +39,31 @@ public class PreviewController {
 	public PreviewController(final BookReader r, Settings settings) {
 		this.settings = settings;
 		this.r = r;
-		init();
+		done = Collections.synchronizedMap(new HashMap<Integer, PreviewRenderer>());
+		update();
 		brailleFont = settings.getString(Keys.brailleFont);
 		textFont = settings.getString(Keys.textFont);
 		charset = settings.getString(Keys.charset);
 	}
 	
-	private void init() {
+	private void update() {
 		saxonNotAvailable = false;
-		done = new HashMap<Integer, PreviewRenderer>();
+		if (lastUpdated+10000>System.currentTimeMillis()) {
+			return;
+		}
+		lastUpdated = System.currentTimeMillis();
 		try {
 			BookReaderResult brr = r.getResult();
 			Map<String, String> params = buildParams(settings, "view.html", settings.getString(Keys.charset), "book.xml", null);
 			for (int i=1; i<=r.getResult().getBook().getVolumes(); i++) {
+				PreviewRenderer pr = done.remove(i);
+				if (pr!=null) {
+					pr.abort();
+					if (pr.getFile()!=null) {
+						System.out.println("Removing old renderer");
+						pr.getFile().delete();
+					}
+				}
 		        done.put(i, new PreviewRenderer(brr.getURI(), i, this, params));
 			}
 		} catch (IllegalArgumentException iae) { 
@@ -79,14 +93,22 @@ public class PreviewController {
 		this.charset = charset;
 		return changed;
 	}
+	
+	private boolean fileChanged() {
+		if (r.getResult().getBookFile()==null) {
+			return false;
+		} else {
+			return lastUpdated<r.getResult().getBookFile().lastModified();
+		}
+	}
 
 	public Reader getReader(int vol) {
 		if (saxonNotAvailable) {
 			return new StringReader("Failed to read");
 		}
 		try {
-			if (settingsChanged()) {
-				init();
+			if (settingsChanged() || fileChanged()) {
+				update();
 			}
 			return new InputStreamReader(new FileInputStream(done.get(vol).getFile()), "UTF-8");
 		} catch (FileNotFoundException e) {
