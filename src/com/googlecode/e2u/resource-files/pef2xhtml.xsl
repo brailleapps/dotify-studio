@@ -838,13 +838,19 @@ function ping() {
 		<xsl:text> | </xsl:text>
 		<xsl:value-of select="concat($page-label, ' ', $pagenum)"/>
 	</p>
+	
+	<xsl:variable name="defaultRowgap" select="ancestor::*[@rowgap][1]/@rowgap"/>
+	<xsl:variable name="totalRowgap" select="sum(pef:row[@rowgap]/@rowgap) + count(pef:row[not(@rowgap)]) * $defaultRowgap + count(pef:row) * 4"/>
+	<xsl:variable name="usedLines" select="ceiling($totalRowgap div 4)"/>
+
+	<xsl:comment><xsl:value-of select="$usedLines"/></xsl:comment>
 	<div class="posrel">
 		<div class="page" style="width: {(ancestor::pef:*[@cols][1]/@cols)}em;">
 			<xsl:apply-templates/>
 			<xsl:call-template name="insertRow">
 				<xsl:with-param name="element" select="'pre'"/>
 				<xsl:with-param name="class" select="'braille'"/>
-				<xsl:with-param name="i" select="ancestor::pef:*[@rows][1]/@rows - count(descendant::pef:row)"/>
+				<xsl:with-param name="i" select="ancestor::pef:*[@rows][1]/@rows - $usedLines"/>
 			</xsl:call-template>
 		</div>
 		<div class="text" style=" width: {(ancestor::pef:*[@cols][1]/@cols)}em;">
@@ -853,7 +859,7 @@ function ping() {
 			</xsl:apply-templates>
 			<xsl:call-template name="insertRow">
 				<xsl:with-param name="element" select="'pre'"/>
-				<xsl:with-param name="i" select="ancestor::pef:*[@rows][1]/@rows - count(descendant::pef:row)"/>
+				<xsl:with-param name="i" select="ancestor::pef:*[@rows][1]/@rows - $usedLines"/>
 			</xsl:call-template>
 		</div>
 	</div>
@@ -928,7 +934,7 @@ function ping() {
 			<xsl:when test="@rowgap"><xsl:value-of select="@rowgap"/></xsl:when>
 			<xsl:otherwise><xsl:value-of select="ancestor::*[@rowgap][1]/@rowgap"/></xsl:otherwise>
 		</xsl:choose></xsl:variable>
-		<xsl:if test="$rowgap&gt;0"><xsl:attribute name="style">margin-bottom:<xsl:value-of select="2 + $rowgap * 6"/>px;</xsl:attribute></xsl:if>
+		<xsl:if test="$rowgap&gt;0"><xsl:attribute name="style">line-height:<xsl:value-of select="($rowgap div 4) * 200"/>%;</xsl:attribute></xsl:if>
 		<xsl:choose>
 			<xsl:when test="$translate=true()">
 				<xsl:choose>
