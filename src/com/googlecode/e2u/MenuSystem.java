@@ -64,6 +64,15 @@ public class MenuSystem implements ABlockComponent {
 		return this;
 	}
 	
+	public boolean contains(String key) {
+		for (MenuItem m : list) {
+			if (m.getKey().equals(key)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public XHTMLTagger getHTML(Context context) {
 		XHTMLTagger tagger = new XHTMLTagger();
 		tagger.start("p");

@@ -52,6 +52,24 @@ exclude-result-prefixes="dc tpb pef ext">
 		<xsl:with-param name="default" select="'Om Boken'"/>
 	</xsl:call-template>
 </xsl:param>
+<xsl:param name="find-view-label">
+	<xsl:call-template name="getDefault">
+		<xsl:with-param name="name" select="'find-view-label'"/>
+		<xsl:with-param name="default" select="'Loc?'"/>
+	</xsl:call-template>
+</xsl:param>
+<xsl:param name="setup-view-label">
+	<xsl:call-template name="getDefault">
+		<xsl:with-param name="name" select="'setup-view-label'"/>
+		<xsl:with-param name="default" select="'Loc?'"/>
+	</xsl:call-template>
+</xsl:param>
+<xsl:param name="about-software-label">
+	<xsl:call-template name="getDefault">
+		<xsl:with-param name="name" select="'about-software-label'"/>
+		<xsl:with-param name="default" select="'Loc?'"/>
+	</xsl:call-template>
+</xsl:param>
 <xsl:param name="go-to-page-label">
 	<xsl:call-template name="getDefault">
 		<xsl:with-param name="name" select="'go-to-page-label'"/>
@@ -688,27 +706,43 @@ function ping() {
 	<body>
 		<xsl:copy-of select="@*"/>
 		<div id="view">
-			<p><span id="item-emboss"><a href="/"><xsl:value-of select="$emboss-view-label"/></a></span><br/>
-			<xsl:value-of select="$preview-view-label"/></p>
+			<p>
+				<span id="item-emboss"><a href="/"><xsl:value-of select="$emboss-view-label"/></a></span>
+				<span><a href="view.html"><xsl:value-of select="$preview-view-label"/></a></span>
+				<span><a href="index.html?method=meta"><xsl:value-of select="$about-label"/></a></span>
+				<span><a href="index.html?method=find"><xsl:value-of select="$find-view-label"/></a></span>
+				<span><a href="index.html?method=setup"><xsl:value-of select="$setup-view-label"/></a></span>
+				<span><a href="index.html?method=about"><xsl:value-of select="$about-software-label"/></a></span>
+			</p>
 		</div>
 		<div id="top-nav">
 			<p>
+			<span><a href="#" onclick="toggleViews();return false;" accesskey="V"><xsl:value-of select="$toggle-view-label"/></a></span>
 			<span>
-				<input type="button" onclick="toggleById('about');" value="{$about-label}"/>
+				<a href="#" onclick="window.open('book.xml','source'); return false;"><xsl:value-of select="$show-source"/></a>
 			</span>
-			<span><input type="button" onclick="toggleViews();" accesskey="V" value="{$toggle-view-label}"/></span>
 			<span>
-				<input type="button" onclick="window.open('book.xml','source')" value="{$show-source}"/>
+			 	<select onchange="location = this.options[this.selectedIndex].value;" id="volume-select">
+					<xsl:for-each select="//pef:volume">
+						<xsl:variable name="pos" select="position()"/>
+	
+						<option value="{$uriString}&amp;volume={$pos}" title="{concat(' (',(count(descendant::pef:section[ancestor-or-self::pef:*[@duplex][1][@duplex='false']]/descendant::pef:page)*2 + count(descendant::pef:section[ancestor-or-self::pef:*[@duplex][1][@duplex='true']]/descendant::pef:page) + count(descendant::pef:section[count(descendant::pef:page) mod 2 = 1][ancestor-or-self::pef:*[@duplex][1][@duplex='true']])) div 2,' ', $sheets-label, ')')}"><xsl:if test="position()=$volume">
+								<xsl:attribute name="selected">selected</xsl:attribute>
+							</xsl:if><xsl:value-of select="concat($volume-label, ' ', position())"/>
+						</option>
+						<xsl:for-each select="descendant::pef:section">
+							<option value="{$uriString}&amp;volume={$pos}#{generate-id(.)}" title="{concat(' (',(count(self::*[ancestor-or-self::pef:*[@duplex][1][@duplex='false']]/descendant::pef:page)*2 + count(self::*[ancestor-or-self::pef:*[@duplex][1][@duplex='true']]/descendant::pef:page) + count(self::*[count(descendant::pef:page) mod 2 = 1][ancestor-or-self::pef:*[@duplex][1][@duplex='true']])) div 2,' ', $sheets-label, ')')}">&#xA0;&#xA0;&#xA0;<xsl:value-of select="concat($section-label, ' ', position())"/>
+
+							</option>
+						</xsl:for-each>
+					</xsl:for-each>
+				</select>
 			</span>
 			<span><xsl:value-of select="concat($go-to-page-label, ' ')"/><input id="gotoPage" type="text" size="4"  onkeyup="if (event.keyCode==13) {{gotoPage();}}" value="{$firstPage}"></input>
 			</span>
 
 			</p>
 			
-		</div>
-		<div id="navigate">
-			<div id="inner">
-
 			
 			<!--
         <p>
@@ -717,36 +751,69 @@ function ping() {
 			 <input type="button" onclick="movePage(1);" value="+1" accesskey="z"/>
 			 <input type="button" onclick="movePage(2);" value="+2"/>
 		</p>-->
+		
+		<!--  
+		 -->
+		 
 
+		 
+<!-- 
+ -->
+ <!-- 
 			<ul>
+				<li><xsl:value-of select="$volume-label"/></li>
 				<xsl:for-each select="//pef:volume">
 					<xsl:choose>
 						<xsl:when test="$volume='' or position()=$volume">
-						<li class="highlight"><xsl:value-of select="concat($volume-label, ' ', position())"/>
-						<!--
+						<li class="highlight" 
+						onmouseover="document.getElementById('section-{generate-id(.)}').style.display = 'inline';"
+						onmouseout="document.getElementById('section-{generate-id(.)}').style.display = 'none';"><xsl:value-of select="position()"/>
+						<!-
 							<a href="#{generate-id(descendant::pef:page[1])}">
 								<xsl:if test="position()&lt;=9">
 									<xsl:attribute name="accesskey"><xsl:value-of select="position()"/></xsl:attribute>
 								</xsl:if>
-							<xsl:value-of select="position()"/></a>-->
+							<xsl:value-of select="position()"/></a>->
+			<span id="section-{generate-id(.)}" style="display: none">
+							(
 							<ul>
-								
 								<xsl:for-each select="descendant::pef:section">
-									<li><a href="#{generate-id(descendant::pef:page[1])}"><xsl:value-of select="concat($section-label, ' ', position())"/></a></li>
+								<!-  descendant::pef:page[1] ->
+									<li><a href="#{generate-id(.)}"><xsl:value-of select="position()"/></a></li>
 								</xsl:for-each>
 							</ul>
+							)
+						</span>
 						</li>
 					</xsl:when>
 					<xsl:when test="position()!=$volume and $uriString!=''" >
-						<li><a href="{$uriString}&amp;volume={position()}"><xsl:value-of select="concat($volume-label, ' ', position())"/></a>
+					<xsl:variable name="pos" select="position()"/>
+						<li onmouseover="document.getElementById('section-{generate-id(.)}').style.display = 'inline';"
+						onmouseout="document.getElementById('section-{generate-id(.)}').style.display = 'none';"><a href="{$uriString}&amp;volume={position()}"><xsl:value-of select="position()"/></a>
+			<span id="section-{generate-id(.)}" style="display: none">
+							(
+							<ul>
+								<xsl:for-each select="descendant::pef:section">
+								<!-  descendant::pef:page[1] ->
+									<li><a href="{$uriString}&amp;volume={$pos}#{generate-id(.)}"><xsl:value-of select="position()"/></a></li>
+								</xsl:for-each>
+							</ul>
+							)
+						</span>
 </li>
 					</xsl:when>
 					<xsl:otherwise></xsl:otherwise>
 					</xsl:choose>
 				</xsl:for-each>
 			</ul>
+		
+		<div id="navigate">
+			<div id="inner">
+
 			</div>
-			<div id="bottom"><xsl:text> </xsl:text></div>
+			<div id="bottom"><xsl:text>&#xA0;</xsl:text></div>
+		</div>
+		 -->
 		</div>
 		<div id="about">
 			<p id="close-bar"><input type="button" onclick="document.getElementById('about').style.visibility='hidden';" value="X"/></p>
@@ -789,9 +856,12 @@ function ping() {
 <xsl:template match="pef:volume">
 	<xsl:if test="$volume='' or $volume=count(preceding::pef:volume)+1">
 		<div class="volume" id="{generate-id(.)}">
+
 			<p class="volume-header">
 				<xsl:value-of select="concat($volume-label, ' ', count(preceding::pef:volume)+1)"/>
+				
 				<xsl:value-of select="concat(' (',(count(descendant::pef:section[ancestor-or-self::pef:*[@duplex][1][@duplex='false']]/descendant::pef:page)*2 + count(descendant::pef:section[ancestor-or-self::pef:*[@duplex][1][@duplex='true']]/descendant::pef:page) + count(descendant::pef:section[count(descendant::pef:page) mod 2 = 1][ancestor-or-self::pef:*[@duplex][1][@duplex='true']])) div 2,' ', $sheets-label, ')')"/>
+				
 			</p>
 			<xsl:apply-templates/>
 		</div>
@@ -845,22 +915,26 @@ function ping() {
 
 	<xsl:comment><xsl:value-of select="$usedLines"/></xsl:comment>
 	<div class="posrel">
-		<div class="page" style="width: {(ancestor::pef:*[@cols][1]/@cols)}em;">
+		<div class="page">
+		<table>
 			<xsl:apply-templates/>
 			<xsl:call-template name="insertRow">
-				<xsl:with-param name="element" select="'pre'"/>
+				<xsl:with-param name="element" select="'td'"/>
 				<xsl:with-param name="class" select="'braille'"/>
 				<xsl:with-param name="i" select="ancestor::pef:*[@rows][1]/@rows - $usedLines"/>
 			</xsl:call-template>
+		</table>
 		</div>
-		<div class="text" style=" width: {(ancestor::pef:*[@cols][1]/@cols)}em;">
+		<div class="text">
+		<table>
 			<xsl:apply-templates>
 				<xsl:with-param name="translate" select="true()"/>
 			</xsl:apply-templates>
 			<xsl:call-template name="insertRow">
-				<xsl:with-param name="element" select="'pre'"/>
+				<xsl:with-param name="element" select="'td'"/>
 				<xsl:with-param name="i" select="ancestor::pef:*[@rows][1]/@rows - $usedLines"/>
 			</xsl:call-template>
+		</table>
 		</div>
 	</div>
 	</div>
@@ -870,8 +944,10 @@ function ping() {
 	<xsl:param name="element">p</xsl:param>
 	<xsl:param name="class"/>
 	<xsl:param name="i">0</xsl:param>
-	<xsl:if test="$i&gt;0"><xsl:element name="{$element}">
-		<xsl:if test="$class!=''"><xsl:attribute name="class"><xsl:value-of select="$class"/></xsl:attribute></xsl:if><xsl:text> </xsl:text></xsl:element>
+	<xsl:param name="height">1</xsl:param>
+	<xsl:if test="$i&gt;0"><tr><xsl:element name="{$element}">
+		<xsl:call-template name="heightAttribute"><xsl:with-param name="height" select="$height"></xsl:with-param></xsl:call-template>
+		<xsl:if test="$class!=''"><xsl:attribute name="class"><xsl:value-of select="$class"/></xsl:attribute></xsl:if><xsl:text>&#xA0;</xsl:text></xsl:element></tr>
 	<xsl:call-template name="insertRow">
 			<xsl:with-param name="i" select="$i - 1"/>
 			<xsl:with-param name="element" select="$element"/>
@@ -919,9 +995,15 @@ function ping() {
 	</xsl:if>
 </xsl:template>
 
+<xsl:template name="heightAttribute">
+	<xsl:param name="height">1</xsl:param>
+	<xsl:attribute name="style">height: <xsl:value-of select="$height * 26"/>px;</xsl:attribute>
+</xsl:template>
+
 <xsl:template match="pef:row">
 	<xsl:param name="translate" select="false()"/>
-	<xsl:element name="pre">
+	<xsl:element name="tr">
+	<xsl:element name="td">
 		<xsl:choose>
 			<xsl:when test="$translate=true()">
 				<xsl:attribute name="class">text</xsl:attribute>
@@ -934,7 +1016,8 @@ function ping() {
 			<xsl:when test="@rowgap"><xsl:value-of select="@rowgap"/></xsl:when>
 			<xsl:otherwise><xsl:value-of select="ancestor::*[@rowgap][1]/@rowgap"/></xsl:otherwise>
 		</xsl:choose></xsl:variable>
-		<xsl:if test="$rowgap&gt;0"><xsl:attribute name="style">line-height:<xsl:value-of select="($rowgap div 4) * 200"/>%;</xsl:attribute></xsl:if>
+		<xsl:call-template name="heightAttribute"><xsl:with-param name="height" select="1 + ($rowgap div 4)"></xsl:with-param></xsl:call-template>
+		
 		<xsl:choose>
 			<xsl:when test="$translate=true()">
 				<xsl:choose>
@@ -960,7 +1043,7 @@ function ping() {
 		<xsl:if test="$strLen&lt;ancestor::*[@cols][1]/@cols">
 			<xsl:variable name="char">			
 				<xsl:choose>
-					<xsl:when test="$translate=true()"><xsl:value-of select="' '"/></xsl:when>
+					<xsl:when test="$translate=true()"><xsl:value-of select="'&#xA0;'"/></xsl:when>
 					<xsl:otherwise><xsl:value-of select="'&#x2800;'"/></xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
@@ -969,6 +1052,7 @@ function ping() {
 				<xsl:with-param name="char" select="$char"/>
 			</xsl:call-template>
 		</xsl:if>
+		</xsl:element>
 	</xsl:element>
 </xsl:template>
 

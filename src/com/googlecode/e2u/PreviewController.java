@@ -164,6 +164,9 @@ public class PreviewController {
 			params.put("return-label", Messages.getString(L10nKeys.XSLT_RETURN_LABEL));
 			params.put("emboss-view-label", Messages.getString(L10nKeys.EMBOSS_VIEW));
 			params.put("preview-view-label", Messages.getString(L10nKeys.PREVIEW_VIEW));
+			params.put("find-view-label", Messages.getString(L10nKeys.MENU_OPEN));
+			params.put("setup-view-label", Messages.getString(L10nKeys.MENU_SETUP));
+			params.put("about-software-label", Messages.getString(L10nKeys.MENU_ABOUT_SOFTWARE));
 			params.put("unknown-author-label", Messages.getString(L10nKeys.UNKNOWN_AUTHOR));
 			params.put("unknown-title-label", Messages.getString(L10nKeys.UNKNOWN_TITLE));
 			params.put("showing-pages-label", Messages.getString(L10nKeys.XSLT_SHOWING_PAGES));

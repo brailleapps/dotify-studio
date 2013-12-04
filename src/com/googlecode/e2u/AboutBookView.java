@@ -4,12 +4,13 @@ import java.text.MessageFormat;
 
 import org.daisy.braille.pef.PEFBook;
 
-
 import com.googlecode.ajui.AContainer;
 import com.googlecode.ajui.ADefinitionDescription;
 import com.googlecode.ajui.ADefinitionList;
 import com.googlecode.ajui.ADefinitionTerm;
+import com.googlecode.ajui.AHeading;
 import com.googlecode.ajui.ALabel;
+import com.googlecode.ajui.AParagraph;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
 
@@ -23,6 +24,30 @@ public class AboutBookView extends AContainer {
 	public AboutBookView(PEFBook book, MenuSystem menu) {
 		if (menu!=null) {
 			add(menu);
+		}
+		Iterable<String> data = book.getTitle();
+		if (data==null || !data.iterator().hasNext()) {
+			
+		} else {
+			for (String s: data) {
+				AHeading a = new AHeading(2);
+				a.add(new ALabel(s));
+				add(a);
+			}
+		}
+		data = book.getAuthors();
+		if (data==null || !data.iterator().hasNext()) {
+			
+		} else {
+			StringBuilder sb = new StringBuilder();
+			String delimiter = "";
+			for (String s : data) {
+				sb.append(delimiter + s);
+				delimiter = ", ";
+			}
+			AParagraph p = new AParagraph();
+			p.add(new ALabel(sb.toString()));
+			add(p);
 		}
 		ADefinitionList dl = new ADefinitionList();
 		{
@@ -98,6 +123,8 @@ public class AboutBookView extends AContainer {
 			dd.add(new ALabel((book.containsEightDot() ? Messages.getString(L10nKeys.YES) : Messages.getString(L10nKeys.NO))));
 			dl.add(dd);
 		}
+		add(dl);
+		dl = new ADefinitionList();
     	for (String key : book.getMetadataKeys()) {
     		{
     			ADefinitionTerm dt = new ADefinitionTerm();

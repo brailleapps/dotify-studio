@@ -94,25 +94,27 @@ function ping() {
 	</head>
 	<body onload="get('ping.xml?updates=true'+getUpdateString())">
 		<div id="view">
-			<p><span id="item-emboss"><?ajui com.googlecode.e2u.L10n Worker.emboss-view?></span><br/>
-			<span id="item-preview"><a href="view.html"><?ajui com.googlecode.e2u.L10n Worker.preview-view?></a></span></p>
+			<p>
+			<span id="item-emboss"><a href="index.html?method=emboss"><?ajui com.googlecode.e2u.L10n Worker.emboss-view?></a></span>
+			<span id="item-preview"><a href="view.html"><?ajui com.googlecode.e2u.L10n Worker.preview-view?></a></span>
+			<span><a href="index.html?method=meta"><?ajui com.googlecode.e2u.L10n Worker.menu-about-book?></a></span>
+			<span><a href="index.html?method=find"><?ajui com.googlecode.e2u.L10n Worker.menu-open?></a></span>
+			<span><a href="index.html?method=setup"><?ajui com.googlecode.e2u.L10n Worker.menu-setup?></a></span>
+			<span><a href="index.html?method=about"><?ajui com.googlecode.e2u.L10n Worker.menu-about-software?></a></span>
+			<span id="status"><a id="connected" href="close.html" title="Avsluta"><img src="images/green.gif" alt="connected"></img></a><img id="notConnected" src="images/red.gif" alt="not connected"></img></span>
+			</p>
 		</div>
 		<div id="top-nav">
-
+<p>
+ 			
+</p>
 		</div>
 		<div id="main">
-			<?ajui com.googlecode.e2u.MainPage top-bar?>
 			<div id="content">
 				<?ajui com.googlecode.e2u.MainPage?>
 			</div>
 			<div id="bottom-bar">
-			<p>
-			<a href="index.html?method=emboss"><?ajui com.googlecode.e2u.L10n Worker.menu-main?></a>
-			| <a href="index.html?method=meta"><?ajui com.googlecode.e2u.L10n Worker.menu-about-book?></a>
-			| <a href="index.html?method=find"><?ajui com.googlecode.e2u.L10n Worker.menu-open?></a>
-			| <a href="index.html?method=setup"><?ajui com.googlecode.e2u.L10n Worker.menu-setup?></a>
- 			
-</p></div>
+			</div>
 		</div>
 	</body>
 </html>

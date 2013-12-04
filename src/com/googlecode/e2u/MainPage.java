@@ -82,11 +82,13 @@ public class MainPage extends BasePage implements AListener {
 	final static String ENCODING = "utf-8";
 	
 	final static String KEY_TOP_BAR = "top-bar";
+	final static String KEY_SUB_MENU = "sub-menu";
 	private final static Settings settings;
 	public final static String TARGET = "/index.html";
 
 	private BookViewController bookController;
 
+	private MenuSystem topMenu;
 	private MenuSystem embossMenu;
 	private MenuSystem openMenu;
 	private MenuSystem setupMenu;
@@ -175,14 +177,19 @@ public class MainPage extends BasePage implements AListener {
     }
 
     public void buildMenu() {
-    	MenuSystem topMenu = new MenuSystem("method")
-			.setDivider(" | ")
-			.addMenuItem(new MenuItem("start", "Start"));
+    	topMenu = new MenuSystem("method")
+			.setDivider("")
+			.addMenuItem(new MenuItem("emboss", Messages.getString(L10nKeys.MENU_MAIN)))
+    		.addMenuItem("meta", Messages.getString(L10nKeys.MENU_ABOUT_BOOK))
+    		.addMenuItem("find", Messages.getString(L10nKeys.FIND_IN_LIBRARY))
+    		.addMenuItem("setup", Messages.getString(L10nKeys.EMBOSS_VIEW))
+    		;
     	
-    	embossMenu = new MenuSystem("method", topMenu)
+    	embossMenu = null;
+    	/*new MenuSystem("method", topMenu)
     		.setDivider(" | ")
     		.addMenuItem("emboss", Messages.getString(L10nKeys.MENU_MAIN))
-    		.addMenuItem("meta", Messages.getString(L10nKeys.MENU_ABOUT_BOOK));
+    		.addMenuItem("meta", Messages.getString(L10nKeys.MENU_ABOUT_BOOK));*/
 		openMenu = new MenuSystem("method")
 			.setDivider(" | ")
 			.addMenuItem("find", Messages.getString(L10nKeys.FIND_IN_LIBRARY))
@@ -289,12 +296,13 @@ public class MainPage extends BasePage implements AListener {
 							.start("p")
 								.start("a").attr("href", "index.html?method=about").attr("title", Messages.getString(L10nKeys.TOOLTIP_HELP)).text("?").end()
 								.start("span").attr("id", "software-title").text("Easy Embossing Utility").end()
+								/*
 								.start("span").attr("id", "status")
 									.start("a").attr("id", "connected").attr("href", "close.html").attr("title", Messages.getString(L10nKeys.TOOLTIP_CLOSE))
 										.start("img").attr("src", "images/green.gif").attr("alt", "connected").end()
 									.end()
 									.start("img").attr("id", "notConnected").attr("src", "images/red.gif").attr("alt", "not connected").end()
-								.end()
+								.end()*/
 							.end()
 						.end()
 				.getResult());
@@ -586,7 +594,7 @@ public class MainPage extends BasePage implements AListener {
 
     private String embossHTML(Context context) {
     	StringBuffer sb = new StringBuffer();
-    	sb.append(embossMenu.getHTML(context).getResult());
+    	//sb.append(embossMenu.getHTML(context).getResult());
     	Iterable<String> data;
     	data = bookController.getBook().getTitle();
     	if (data==null || !data.iterator().hasNext()) {
