@@ -17,8 +17,8 @@
 	}
 	p.page-header {
 		text-align: left;
-		margin: 5px 0px 0px 0px;
-		padding: 70px 5px 5px 5px;
+		margin: 0px 0px 0px 0px;
+		padding: 80px 5px 5px 20px;
 		/*background-color: yellow;*/
 		font-family: sans-serif;
 	}
@@ -33,7 +33,6 @@
 		text-align: right;
 		margin: 0px;
 		padding: 5px;
-		background-color: white;
 		font-family: sans-serif;
 	}
 	
@@ -107,8 +106,6 @@
 	}
 	div.section {
 		padding: 0px;
-		padding-top: 30px;
-		margin-top: 5px;
 		/* border: dashed;
 		border-width: 1px;
 		border-top-width: 1px;
@@ -220,19 +217,29 @@ a {
 }
 	
 	div#top-nav {
+	/*
 		position: fixed;
 		top: 35px;
-		left: 0em;
+		left: 0em;*/
 		border: 0em;
 		margin: 0px;
+		margin-top: 8px;
 		padding: 0px;
+		background-color: white;
+		
 		width: 100%;
-		background-color: rgba(230,230,230,0.9);
-		border-bottom: 1px;
-		border-bottom-style: solid;
+		border-top: 1px;
+		border-top-style: solid;
+		font-weight: bold; 
+		/*
+		
+		background-color: rgba(230,230,230,0.9);*/
+
+		/*
 		z-index: 10;
+		
 		background-repeat:repeat-y;
-		background-attachment: fixed;
+		background-attachment: fixed;*/
 	}
 	
 	div#top-nav p, div#view p {
@@ -240,6 +247,9 @@ a {
 		padding: 5px;
 	}
 
+	input, select {
+	font-weight: bold; 
+	}
 	div#top-nav span, div#view span {
 		margin-left: 1em;
 		margin-top: 0px;
@@ -249,7 +259,7 @@ a {
 	
 	div#view {
 		width: 100%;
-		height: 30px;
+		/*height: 30px;*/
 		position: fixed;
 		top: 0px;
 		left: 0px;
@@ -259,6 +269,8 @@ a {
 		padding-top: 5px;
 		margin: 0px;
 		border-style: solid;
+		border-bottom: 1px;
+		border-bottom-style: solid;
 		font-weight: bold;
 		z-index: 20;
 	}
@@ -271,3 +283,21 @@ a {
 	option {
 		border-style: none;
 	}
+	
+	#status {
+	padding-right: 1em;
+	float: right;
+	position: relative;
+}
+
+#connected, #notConnected {
+	position: absolute;
+	left: 0px;
+}
+#notConnected {
+	visibility: hidden;
+}
+
+img {
+	border: none;
+}

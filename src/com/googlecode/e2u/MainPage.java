@@ -220,41 +220,7 @@ public class MainPage extends BasePage implements AListener {
 	@Override
 	public Reader getContent(String key, Context context) throws IOException {
 		if ("status".equals(key)) {
-			XMLTagger xtag = new XMLTagger();
-			String component = context.getArgs().get("component");
-			boolean updates = context.getArgs().get("updates")!=null;
-			AComponent a = null;
-			if (component!=null && !"".equals(component)) {
-				a = registry.getComponent(component);
-			}
-			Date d = new Date(); //FIXME: use correct date
-			for (int i=0; i<20; i++) {
-				if (closing==true || !updates) {
-					break;
-				}
-				try {
-					Thread.sleep(250);
-				} catch (InterruptedException e) {
-					break;
-				}
-				if (a!=null) {
-					List<AComponent> list = getUpdateComponent(a, d);
-					if (list.size()==0) {
-						continue;
-					}
-					for (AComponent a2 : list) {
-						xtag.start("update")
-						.attr("id", a2.getIdentifier());
-						for (AComponent c : a2.getChildren()) {
-							xtag.insert(c.getHTML(context));
-						}
-						xtag.end();
-					}
-					break;
-				}
-			}
-			System.err.println(xtag.getResult());
-			return new StringReader(xtag.getResult());
+			return getStatusContent(context);
 		} else if ("book".equals(key)) {
 	    	return new InputStreamReader(bookController.getBookURI().toURL().openStream(), bookController.getBook().getInputEncoding());
 		} else if ("preview-new".equals(key)) {
@@ -268,27 +234,7 @@ public class MainPage extends BasePage implements AListener {
 			if (v<1) {v=1;}
 	    	return bookController.getPreviewView().getReader(v);
 		} else if ("preview".equals(key)) {
-			Map<String, String> params = PreviewController.buildParamsFromContext(context, settings);
-			String style = context.getArgs().get("style");
-			if (style==null || "".equals(style)) {
-				style = "pef2xhtml.xsl";
-			}
-			if (params.containsKey("uri")) {
-				StringBuilder sb = new StringBuilder();
-				sb.append("<?xml-stylesheet type=\"text/xsl\" href=\"");
-				sb.append(style);
-				sb.append("\"?>");
-				XMLTagger xt = new XMLTagger();
-				xt.start("settings");
-				for (String k : params.keySet()) {
-					xt.start("param").attr("name", k).attr("value", params.get(k)).end();
-				}
-				xt.end();
-				sb.append(xt.getResult());
-				return new StringReader(sb.toString());
-			} else {
-				return new StringReader("Missing required argument(s)");
-			}
+			return getPreviewContent(context);
 		} else if (KEY_TOP_BAR.equals(key)) {
 			return new StringReader(
 					new XHTMLTagger()
@@ -308,6 +254,68 @@ public class MainPage extends BasePage implements AListener {
 				.getResult());
 		} else {
 			return super.getContent(key, context);
+		}
+	}
+	
+	private Reader getStatusContent(Context context) {
+		XMLTagger xtag = new XMLTagger();
+		String component = context.getArgs().get("component");
+		boolean updates = context.getArgs().get("updates")!=null;
+		AComponent a = null;
+		if (component!=null && !"".equals(component)) {
+			a = registry.getComponent(component);
+		}
+		Date d = new Date(); //FIXME: use correct date
+		for (int i=0; i<20; i++) {
+			if (closing==true || !updates) {
+				break;
+			}
+			try {
+				Thread.sleep(250);
+			} catch (InterruptedException e) {
+				break;
+			}
+			if (a!=null) {
+				List<AComponent> list = getUpdateComponent(a, d);
+				if (list.size()==0) {
+					continue;
+				}
+				for (AComponent a2 : list) {
+					xtag.start("update")
+					.attr("id", a2.getIdentifier());
+					for (AComponent c : a2.getChildren()) {
+						xtag.insert(c.getHTML(context));
+					}
+					xtag.end();
+				}
+				break;
+			}
+		}
+		System.err.println(xtag.getResult());
+		return new StringReader(xtag.getResult());
+	}
+	
+	private Reader getPreviewContent(Context context) {
+		Map<String, String> params = PreviewController.buildParamsFromContext(context, settings);
+		String style = context.getArgs().get("style");
+		if (style==null || "".equals(style)) {
+			style = "pef2xhtml.xsl";
+		}
+		if (params.containsKey("uri")) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("<?xml-stylesheet type=\"text/xsl\" href=\"");
+			sb.append(style);
+			sb.append("\"?>");
+			XMLTagger xt = new XMLTagger();
+			xt.start("settings");
+			for (String k : params.keySet()) {
+				xt.start("param").attr("name", k).attr("value", params.get(k)).end();
+			}
+			xt.end();
+			sb.append(xt.getResult());
+			return new StringReader(sb.toString());
+		} else {
+			return new StringReader("Missing required argument(s)");
 		}
 	}
 

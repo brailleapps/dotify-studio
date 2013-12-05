@@ -10,6 +10,7 @@ import com.googlecode.ajui.ADefinitionList;
 import com.googlecode.ajui.ADefinitionTerm;
 import com.googlecode.ajui.AHeading;
 import com.googlecode.ajui.ALabel;
+import com.googlecode.ajui.ALink;
 import com.googlecode.ajui.AParagraph;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
@@ -140,6 +141,13 @@ public class AboutBookView extends AContainer {
     		}
     	}
     	add(dl);
+
+    	AParagraph p = new AParagraph();
+    	ALink a = new ALink("#");
+    	a.addAttribute("onclick", "window.open('book.xml','source'); return false;");
+    	a.add(new ALabel(Messages.getString(L10nKeys.XSLT_VIEW_SOURCE)));
+    	p.add(a);
+    	add(p);
 	}
 
 }

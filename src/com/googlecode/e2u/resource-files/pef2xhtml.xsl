@@ -669,7 +669,18 @@ function get(url) {
   	} 
   	url=url+"?sid="+Math.random();
   	try {
-		xmlHttp.open("GET",url,false);
+		xmlHttp.open("GET",url,true);
+		xmlHttp.onreadystatechange=function() {
+	  		if (xmlHttp.readyState==4) {
+				if (xmlHttp.status!=200) {
+					document.getElementById("connected").style.visibility="hidden";
+					document.getElementById("notConnected").style.visibility="visible";
+					ok = false;
+				} else {
+					var t=setTimeout("ping()",5000);
+				}
+			}
+		}
 		xmlHttp.send(null);
 	} catch (e) {}
 }
@@ -690,7 +701,6 @@ function GetXmlHttpObject() {
 }
 function ping() {
 	get("ping.xml");
-	var t=setTimeout("ping()",5000);
 }
 
 /* ]]> ]]&gt; */</xsl:text>
@@ -713,14 +723,17 @@ function ping() {
 				<span><a href="index.html?method=find"><xsl:value-of select="$find-view-label"/></a></span>
 				<span><a href="index.html?method=setup"><xsl:value-of select="$setup-view-label"/></a></span>
 				<span><a href="index.html?method=about"><xsl:value-of select="$about-software-label"/></a></span>
+				<span id="status"><a id="connected" href="close.html" title="Avsluta"><img src="images/green.gif" alt="connected"></img></a><img id="notConnected" src="images/red.gif" alt="not connected"></img></span>
 			</p>
-		</div>
+
 		<div id="top-nav">
 			<p>
 			<span><a href="#" onclick="toggleViews();return false;" accesskey="V"><xsl:value-of select="$toggle-view-label"/></a></span>
+			<!-- 
 			<span>
 				<a href="#" onclick="window.open('book.xml','source'); return false;"><xsl:value-of select="$show-source"/></a>
 			</span>
+			 -->
 			<span>
 			 	<select onchange="location = this.options[this.selectedIndex].value;" id="volume-select">
 					<xsl:for-each select="//pef:volume">
@@ -815,6 +828,7 @@ function ping() {
 		</div>
 		 -->
 		</div>
+	</div>
 		<div id="about">
 			<p id="close-bar"><input type="button" onclick="document.getElementById('about').style.visibility='hidden';" value="X"/></p>
 			<div id="about-content">
