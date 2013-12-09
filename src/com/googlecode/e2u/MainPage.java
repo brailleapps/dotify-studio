@@ -346,11 +346,6 @@ public class MainPage extends BasePage implements AListener {
 				return Messages.getString(L10nKeys.OPEN);
 			}
 			return buildHTML(renderView(context, getFindView()), Messages.getString(L10nKeys.OPEN), true);
-		} else if (!bookController.bookIsValid()) {
-			if (KEY_TITLE.equals(key)) {
-				return Messages.getString(L10nKeys.VALIDATION);
-			}
-			return buildHTML(renderView(context, bookController.getValidationView()), Messages.getString(L10nKeys.VALIDATION), false);
 		} else if ("setup".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
 			if (KEY_TITLE.equals(key)) {
 				return Messages.getString(L10nKeys.SETTINGS);
@@ -366,12 +361,6 @@ public class MainPage extends BasePage implements AListener {
 				return Messages.getString(L10nKeys.SETTINGS);
 			}
 			return buildHTML(renderView(context, new PaperView(setupMenu, settingsView)), Messages.getString(L10nKeys.SETTINGS), true);
-		}
-		else if ("meta".equals(args.get("method"))) {  //$NON-NLS-1$ //$NON-NLS-2$
-			if (KEY_TITLE.equals(key)) {
-				return Messages.getString(L10nKeys.ABOUT_THE_BOOK);
-			}
-			return buildHTML(renderView(context, bookController.getAboutBookView()), Messages.getString(L10nKeys.ABOUT_THE_BOOK), true);
 		} else if ("about".equals(args.get("method"))) {
 			if (KEY_TITLE.equals(key)) {
 				return Messages.getString(L10nKeys.ABOUT_THE_SOFTWARE);
@@ -402,7 +391,17 @@ public class MainPage extends BasePage implements AListener {
             p.add(a);
 		    div.add(p);
             return buildHTML(div.getHTML(context).getResult(), Messages.getString(L10nKeys.TEST_SETUP), true);
-        } else if (device!=null && settingsView.getConfiguration().settingOK() && align!=null) {
+        } else if (!bookController.bookIsValid()) {
+			if (KEY_TITLE.equals(key)) {
+				return Messages.getString(L10nKeys.VALIDATION);
+			}
+			return buildHTML(renderView(context, bookController.getValidationView()), Messages.getString(L10nKeys.VALIDATION), false);
+		} else if ("meta".equals(args.get("method"))) {  //$NON-NLS-1$ //$NON-NLS-2$
+			if (KEY_TITLE.equals(key)) {
+				return Messages.getString(L10nKeys.ABOUT_THE_BOOK);
+			}
+			return buildHTML(renderView(context, bookController.getAboutBookView()), Messages.getString(L10nKeys.ABOUT_THE_BOOK), true);
+		} else if (device!=null && settingsView.getConfiguration().settingOK() && align!=null) {
 			if ("do".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				
 				if (KEY_TITLE.equals(key)) {

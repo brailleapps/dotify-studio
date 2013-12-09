@@ -8,6 +8,7 @@ import org.daisy.validator.Validator;
 
 import com.googlecode.ajui.AContainer;
 import com.googlecode.ajui.ALabel;
+import com.googlecode.ajui.ALink;
 import com.googlecode.ajui.AParagraph;
 import com.googlecode.ajui.APre;
 import com.googlecode.e2u.l10n.L10nKeys;
@@ -34,7 +35,7 @@ public class ValidationView extends AContainer {
 			}
 			{
 				AContainer div = new AContainer();
-				div.setClass("overflow");
+				//div.setClass("overflow");
 				APre pre = new APre();
 				InputStreamReader isr = new InputStreamReader(v.getReportStream());
 				int c;
@@ -53,6 +54,12 @@ public class ValidationView extends AContainer {
 				}
 				div.add(pre);
 				add(div);
+		    	AParagraph p = new AParagraph();
+		    	ALink a = new ALink("#");
+		    	a.addAttribute("onclick", "window.open('book.xml','source'); return false;");
+		    	a.add(new ALabel(Messages.getString(L10nKeys.XSLT_VIEW_SOURCE)));
+		    	p.add(a);
+		    	add(p);
 			}
 		} else {
 			AParagraph p = new AParagraph();
