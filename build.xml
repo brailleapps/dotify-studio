@@ -104,7 +104,7 @@
 				<attribute name="Repository-Revision" value="${repository-revision}"/>
     			<attribute name="Implementation-Title" value="${release-name}"/>
     			<attribute name="Implementation-Version" value="${release-version}"/>
-    			<attribute name="Implementation-URL" value="${release-url}"/>
+    			<attribute name="Implementation-URL" value="http://code.google.com/p/e2u/"/>
 			</manifest>
 		</jar>
     	<delete dir="${build.dir}"/>
