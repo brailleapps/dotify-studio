@@ -7,9 +7,9 @@ import org.daisy.braille.embosser.Embosser;
 import org.daisy.braille.embosser.EmbosserCatalog;
 import org.daisy.braille.embosser.EmbosserFeatures;
 import org.daisy.braille.embosser.EmbosserProperties.PrintMode;
-import org.daisy.braille.table.Table;
 import org.daisy.braille.table.TableCatalog;
 import org.daisy.braille.tools.Length;
+import org.daisy.factory.FactoryProperties;
 import org.daisy.paper.PageFormat;
 import org.daisy.paper.Paper;
 import org.daisy.paper.PaperCatalog;
@@ -33,7 +33,7 @@ public class Configuration {
 	private EmbosserCatalog embosserCatalog;
 	private TableCatalog tableCatalog;
 	private Embosser em;
-	private Collection<Table> supportedTables;
+	private Collection<FactoryProperties> supportedTables;
 	private ArrayList<Paper> supportedPapers; 
 	private PageFormat pageFormat;
 	private final Paper p;
@@ -71,7 +71,7 @@ public class Configuration {
     	String zFolding = settings.getString(Keys.zFolding);
 		errorCode = ErrorCode.INCOMPLETE;
 		if ((em = embosserCatalog.get(embosser))==null) {
-			supportedTables = new ArrayList<Table>();
+			supportedTables = new ArrayList<FactoryProperties>();
 			supportedPapers = new ArrayList<Paper>();
 		} else {
 			try {
@@ -178,11 +178,15 @@ public class Configuration {
 		}
 	}
 	
+	public EmbosserCatalog getEmbosserCatalog() {
+		return embosserCatalog;
+	}
+
 	public Settings getSettings() {
 		return settings;
 	}
 	
-	public Collection<Table> getSupportedTables() {
+	public Collection<FactoryProperties> getSupportedTables() {
 		return supportedTables;
 	}
 	

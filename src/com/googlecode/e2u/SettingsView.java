@@ -12,6 +12,7 @@ import org.daisy.braille.embosser.Embosser;
 import org.daisy.braille.embosser.EmbosserCatalog;
 import org.daisy.braille.embosser.EmbosserProperties;
 import org.daisy.braille.tools.Length;
+import org.daisy.factory.FactoryProperties;
 import org.daisy.paper.PrintPage.Shape;
 import org.daisy.paper.SheetPaperFormat;
 
@@ -101,7 +102,7 @@ public class SettingsView extends AbstractSettingsView implements AListener {
     	zFoldingSelect = new SelectComponent(zfoldingNN, "zfolding", Messages.getString(L10nKeys.Z_FOLDING), false, setupTarget);
 
     	{
-	    	Collection<Embosser> embossers = EmbosserCatalog.newInstance().list();
+	    	Collection<FactoryProperties> embossers = EmbosserCatalog.newInstance().list();
 	    	embosserSelect = new SelectComponent(embossers, "embosser", null, Messages.getString(L10nKeys.EMBOSSER), true, setupTarget);
     	}
     	

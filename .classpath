@@ -2,13 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="lib/isorelax.jar"/>
-	<classpathentry kind="lib" path="lib/jing.jar"/>
-	<classpathentry kind="lib" path="lib/saxon8.jar"/>
-	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
-	<classpathentry kind="lib" path="lib/ajui-1.0b.jar"/>
-	<classpathentry kind="lib" path="lib/brailleUtils-catalog.jar"/>
-	<classpathentry kind="lib" path="lib/brailleUtils-core.jar"/>
+	<classpathentry exported="true" kind="con" path="org.springsource.ide.eclipse.gradle.classpathcontainer"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

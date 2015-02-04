@@ -1,0 +1,68 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'maven'
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+javadoc.options.encoding = 'UTF-8'
+sourceCompatibility = '1.6'
+targetCompatibility = '1.6'
+
+group = "com.googlecode.e2u"
+version = "$releaseVersion"
+
+sourceSets {
+	main {
+		java {
+			srcDir 'src'
+		}
+		resources {
+			srcDir 'src'
+		}
+	}
+	test {
+		java {
+			srcDir 'test'
+		}
+		resources {
+			srcDir 'test'
+		}
+	}
+}
+
+jar {
+	doFirst {
+		manifest {
+	    	attributes ('Built-By': System.getProperty("user.name"),
+	    	'Built-On': new Date().format("yyyy-MM-dd"),
+			'Repository-Revision': "$repositoryRevision",
+			'Implementation-Title': "$releaseName",
+			'Implementation-Version': "$releaseVersion",
+			'Implementation-URL': "$releaseURL",
+			'Main-Class': 'com.googlecode.e2u.Start',
+			'Class-Path': configurations.compile.collect { it.getName() }.join(' lib/')	,
+			)
+		}
+	}
+	from sourceSets.main.allJava
+	baseName = 'e2u'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+	compile group: 'org.daisy.braille', name:'brailleUtils-core', version:'2.0-SNAPSHOT'
+	compile group: 'org.daisy.braille', name:'brailleUtils-catalog', version:'2.0-SNAPSHOT'
+	compile group: 'com.googlecode.ajui', name:'ajui', version:'1.0b'
+}
+
+applicationDistribution.from(file('installer/docs')) {
+    into 'docs'
+}
+
+applicationDistribution.from(file('installer/examples')) {
+	into 'examples'
+}

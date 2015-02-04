@@ -11,6 +11,8 @@ import org.daisy.braille.table.Table;
 import org.daisy.braille.table.TableCatalog;
 
 
+import org.daisy.factory.FactoryProperties;
+
 import com.googlecode.ajui.ALabel;
 import com.googlecode.ajui.AParagraph;
 import com.googlecode.ajui.Context;
@@ -58,7 +60,7 @@ public class PreviewSettingsView extends AbstractSettingsView {
     	textFontSelect = new SelectComponent(allFonts, "textFont", Messages.getString(L10nKeys.PREVIEW_TEXT_FONT), false, previewSetupTarget);
     	brailleFontSelect = new SelectComponent(brailleFonts, "brailleFont", Messages.getString(L10nKeys.PREIVEW_BRAILLE_FONT), false, previewSetupTarget);
     	{
-	    	Collection<Table> tc = TableCatalog.newInstance().list();
+	    	Collection<FactoryProperties> tc = TableCatalog.newInstance().list();
 	    	charsetSelect = new SelectComponent(tc, "charset", null, Messages.getString(L10nKeys.PREVIEW_CHARSET), true, previewSetupTarget);
     	}
 		setClass("group");

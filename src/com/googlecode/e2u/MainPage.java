@@ -451,7 +451,7 @@ public class MainPage extends BasePage implements AListener {
 						        }
 								phb.align(alignment);
 							}
-							PEFConverterFacade.parsePefFile(iss, phb.build());
+							new PEFConverterFacade(settingsView.getConfiguration().getEmbosserCatalog()).parsePefFile(iss, phb.build());
 						} finally {
 							if (iss!=null) {
 								iss.close();

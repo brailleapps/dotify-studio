@@ -3,11 +3,12 @@ package com.googlecode.e2u;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.daisy.factory.Factory;
+import org.daisy.factory.FactoryProperties;
 
 import com.googlecode.ajui.ABlockComponent;
 import com.googlecode.ajui.AContainer;
@@ -78,12 +79,18 @@ public class SelectComponent extends AbstractComponent<ABlockComponent> implemen
 		descriptions = new HashMap<String, String>();
 	}
 
-	public SelectComponent(Collection<? extends Factory> fo, String selectName, HashMap<String, String> nn, String displayName, boolean emptyOption, String target) {
+	public SelectComponent(Collection<? extends FactoryProperties> fo, String selectName, HashMap<String, String> nn, String displayName, boolean emptyOption, String target) {
 		addAttribute("action", "/index.html");
 		addAttribute("method", "get");
-		List<Factory> list = new ArrayList<Factory>();
+		List<FactoryProperties> list = new ArrayList<FactoryProperties>();
     	list.addAll(fo);
-    	Collections.sort(list);
+    	Collections.sort(list, new Comparator<FactoryProperties>() {
+
+			@Override
+			public int compare(FactoryProperties o1, FactoryProperties o2) {
+				return o1.getDisplayName().compareTo(o2.getDisplayName());
+			}
+		});
     	AContainer div = new AContainer();
     	{
 			AParagraph p = new AParagraph();
@@ -98,7 +105,7 @@ public class SelectComponent extends AbstractComponent<ABlockComponent> implemen
 				select.add(new AOption("", ""));
 			}
 			descriptions = new HashMap<String, String>();
-	    	for (Factory o : list) {
+	    	for (FactoryProperties o : list) {
 		    	String disp;
 		    	if (nn!=null && nn.containsKey(o.getIdentifier())) {
 		    		disp = nn.get(o.getIdentifier());
