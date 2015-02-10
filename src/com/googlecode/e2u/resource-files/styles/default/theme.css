@@ -1,0 +1,99 @@
+.active {
+	background-color: white;
+}
+.error {
+	color: red;
+}
+.even div {
+	border-right-color: silver;
+}
+.highlight {
+	border-color: white;
+}
+.menuItem.active a {
+	color: #808080;
+}
+.odd div, .first div {
+	border-left-color: silver;
+}
+.overflow {
+	border-color: #3080dd;
+}
+.settingName {
+	color: #404040;
+}
+.warning {
+	color: red;
+}
+#software-title {
+	color: #808080;
+}
+body.ui {
+	background-color: white;
+}
+body.preview {
+	background-color: rgb(101, 146, 205);
+	background-image: url('../../images/line.jpg');
+	background-repeat:repeat-x;
+	background-attachment: fixed;
+}
+
+div.dirSelect, div.fileSelect {
+	border-color: #3080dd;
+}
+div.label {
+	border-color: black;
+	background-color: silver;
+}
+div.page {
+	-moz-box-shadow: 10px 10px 5px #3060aa;
+	-webkit-box-shadow: 10px 10px 5px #3060aa;
+	box-shadow: 10px 10px 5px #3060aa;
+}
+div.page, div.text {
+	background-color: white;
+}
+div.text {
+	-moz-box-shadow: 10px 10px 5px #3060aa;
+	-webkit-box-shadow: 10px 10px 5px #3060aa;
+	box-shadow: 10px 10px 5px #3060aa;
+}
+div.text span.extended {
+	background-color: #f0f0f0;
+}
+div#about {
+	background-color: silver;
+	border-color: white;
+}
+div#navigate {
+	background-color: rgba(230,230,230,0.9);	
+}
+div#top-nav {
+	background-color: rgba(230,230,230,0.9);
+	background-repeat:repeat-y;
+	background-attachment: fixed;
+}
+body.preview div#top-nav {
+	background-color: white;
+}
+
+div#view {
+	background-color: rgba(230,230,230,0.9);
+}
+
+p.desc {
+	color: green;
+}
+p#close-bar {
+	background-color: #3080dd;
+}
+p#close-bar input {
+	background-color: white;
+}
+
+select#volume-select {
+	scroll-bar: red;
+}
+ul.fileChooser li.file a {
+	color: green;
+}

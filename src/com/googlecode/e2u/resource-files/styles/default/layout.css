@@ -1,0 +1,371 @@
+body {
+	margin: 0em;
+	padding: 0em;
+}
+
+body.preview {
+	margin-top: 70px;
+	margin-left: 0em;
+	margin-right: 0em;
+	margin-bottom: 0em;
+	padding-bottom: 3em;
+}	
+
+div#main {
+	padding: 0.5em 2.5em 3em 2.5em;
+	width: 30em;
+	margin-top: 5em;
+	margin-bottom: 5em;
+}
+
+div#content {
+	height: 23em; /* ie treats as min-height */
+	min-height: 23em; /* ie ignores */ 
+	margin-bottom: 1em;
+}
+
+
+div#about {
+	position: fixed;
+	top: 8em;
+	left: 40%;
+	z-index: 1;
+	visibility: hidden;
+	border-style: solid;
+	border-width: 2px;
+	min-width: 30em;
+	padding: 0em 0em 3em 0em;
+}
+
+div#about-content {
+	padding: 0em 2em 0em 2em;
+}
+*>div#content {
+	height: auto; /* ie ignores child selector, modern browsers replace height declaration */
+}
+
+a#close {
+	float: right;
+}
+
+.overflow {
+	padding: 0.5em;
+	height: 17em;
+	overflow: auto;
+	border: solid;
+	border-width: 1px;
+}
+p.desc {
+	text-align: right;
+	width: 100%;
+	font-size: 0.8em;
+}
+p.page-header {
+	text-align: left;
+	margin: 0px 0px 0px 0px;
+	padding: 80px 5px 5px 20px;
+	font-family: sans-serif;
+}
+p.volume-header {
+	text-align: right;
+	margin: 0px;
+	padding: 5px;
+	
+	font-family: sans-serif;
+}
+p.section-header {
+	text-align: right;
+	margin: 0px;
+	padding: 5px;
+	font-family: sans-serif;
+}
+
+
+p#close-bar {
+	margin: 0px;
+	font-weight: bold;
+	text-align: right;
+}
+
+p#close-bar input {
+	border: 0px;
+}
+body.ui select, p.newPaper input[type='text'], p.find input[type='text'] {
+	float: right;
+	width: 18em;
+}
+
+select#volume-select {
+	width: 180px;
+	scroll-bar: red;
+}
+
+span.length {
+	float: right;
+}
+
+span.length select {
+	width: 6em;	
+}
+
+span.length input {
+	width: 3em;
+	float: none;
+	margin-right: 0.5em;
+	height: 1.05em;
+	float: clear;
+}
+
+.settingName {
+	font-weight: bold;
+}
+
+.first {
+	display: table;
+}
+
+
+
+.highlight {
+	border-style: solid;
+	border-width: 1px;
+	padding: 5px;
+	border-bottom-style: none;
+	border-bottom-width: 0px;
+}
+
+.odd {
+	display: inline-block;
+}
+
+.even {
+	display: inline-block;
+}
+
+.odd div, .first div {
+	border-left-width: 10px;
+}
+
+.even div {
+	border-right-width: 10px;
+}
+
+#status {
+	padding-right: 1em;
+	float: right;
+	position: relative;
+}
+
+#connected, #notConnected {
+	position: absolute;
+	left: 0px;
+}
+
+div#navigate {
+	padding: 0.5em;
+	padding-left: 2em;
+	margin:0em;
+	width: 100%;
+	font-family: sans-serif;
+	font-weight: bold;
+	
+	border-bottom: 1px;
+	border-bottom-style: solid;
+	z-index: 10;
+}
+
+div#navigate ul {
+	padding: 0em;
+	margin: 0em;
+	display: inline;
+}
+
+
+div#navigate ul li {
+	padding-left: 8px;
+	padding-right: 8px;
+	list-style: none;
+	display: inline;	
+}
+
+div#navigate ul li ul li {
+	padding: 5px;
+}
+
+body.ui div#top-nav {
+	position: fixed;
+	top: 30px;
+	left: 0em;
+	border: 0em;
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
+	border-bottom: 1px;
+	border-bottom-style: solid;
+	z-index: 10;
+}
+
+body.preview div#top-nav {
+	border: 0em;
+	margin: 0px;
+	margin-top: 8px;
+	padding: 0px;
+	width: 100%;
+	border-top: 1px;
+	border-top-style: solid;
+	font-weight: bold; 
+}
+
+div#top-nav p, div#view p {
+	margin: 0px;
+	padding: 5px;
+}
+
+div#top-nav span, div#view span {
+	margin-left: 1em;
+	margin-top: 0px;
+	border: 0px;
+	padding-left: 1em;
+}
+
+body.ui div#view {
+	width: 100%;
+	height: 30px;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	border: 0px;
+	padding: 0px;
+	padding-top: 5px;
+	margin: 0px;
+	border-style: solid;
+	font-weight: bold;
+	z-index: 20;
+}
+
+body.preview div#view {
+	width: 100%;
+	/*height: 30px;*/
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	border: 0px;
+	padding: 0px;
+	padding-top: 5px;
+	margin: 0px;
+	border-style: solid;
+	border-bottom: 1px;
+	border-bottom-style: solid;
+	font-weight: bold;
+	z-index: 20;
+}
+
+#software-title {
+	font-weight: bold;
+	left: 30%;
+	position: relative;
+}
+
+ul.fileChooser {
+	list-style-type: none;
+	margin: 0px;
+	padding-left: 0px;
+}
+
+ul.fileChooser li.dir {
+	list-style-type: none;
+	margin: 0px;
+	padding: 0px;
+}
+
+div.dirSelect, div.fileSelect  {
+	white-space: nowrap;
+	width: 45%;
+	padding: 0.5em;
+	margin-bottom: 2em;
+	border-width: 1px;
+	border-style: solid;
+	overflow: scroll;
+	height: 292px;
+}
+
+div.dirSelect {
+	float: left;
+}
+
+div.fileSelect {
+	float: right;
+}
+
+div.findResult {
+	white-space: nowrap;
+	padding: 1.4em;
+}
+
+div.findResult ul {
+	margin: 0px;
+	margin-left: 1em; 
+	padding: 0px;
+}
+
+div.path select {
+	width: 27em;
+}
+
+div.path img {
+	padding-left: 0.5em;
+}
+
+
+div.section {
+	padding: 0px;
+}
+
+div.volume {
+	padding: 0px;
+	margin-top: 0px;
+}
+div.text {
+	font-family: monospace;
+	letter-spacing: 1px;
+	font-size: 20px;
+}
+div.page, div.text {
+	margin: 0px;
+	padding: 0px 20px 0px 20px;
+	border: solid;
+	border-bottom: solid;
+	border-width: 1px;
+}
+div.text {
+	position: absolute;
+	top: 0px;
+}
+div.cont {
+	margin-bottom: 10px;
+	padding: 10px;
+	/*width: 600px;*/
+}
+
+div.posrel {
+	position: relative;
+	padding-left: 20px;
+}
+
+
+div.label {
+	border: solid;
+	border-width: 2px;
+	padding: 5px;
+	margin: 5px;
+	width:0px;
+}
+
+div.page {
+	font-family: "odt2braille 6 dot", 'odt2braille6dot embedded'; /*if odt2braille is not installed, use embedded font*/
+	font-size: 26px;
+}
+@font-face {
+	font-family:'odt2braille6dot embedded';
+	src: url('../../fonts/odt2braille6.ttf') format('truetype');
+}

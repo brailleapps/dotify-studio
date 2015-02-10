@@ -5,7 +5,10 @@
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<title><?ajui com.googlecode.e2u.MainPage title?></title>
-		<link rel="stylesheet" type="text/css" href="style.css" />
+		<link rel="stylesheet" type="text/css" href="styles/default/base.css"></link>
+		<link rel="stylesheet" type="text/css" href="styles/default/theme.css"></link>
+		<link rel="stylesheet" type="text/css" href="styles/default/layout.css"></link>
+		<link rel="stylesheet" type="text/css" href="styles/default/state.css"></link>
 		<script type="text/javascript">
 /* <![CDATA[  */
 var ok = true;
@@ -92,7 +95,7 @@ function ping() {
 }
 		/*  ]]> */</script>
 	</head>
-	<body onload="get('ping.xml?updates=true'+getUpdateString())">
+	<body onload="get('ping.xml?updates=true'+getUpdateString())" class="ui">
 		<div id="view">
 			<p>
 			<span id="item-emboss"><a href="index.html?method=emboss"><?ajui com.googlecode.e2u.L10n Worker.emboss-view?></a></span>

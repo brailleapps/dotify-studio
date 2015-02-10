@@ -1,0 +1,11 @@
+div.text {
+	visibility: visible;
+}
+
+div.page {
+	visibility: hidden;
+}
+
+#notConnected {
+	visibility: hidden;
+}

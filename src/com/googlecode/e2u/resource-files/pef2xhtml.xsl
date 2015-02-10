@@ -244,7 +244,10 @@ exclude-result-prefixes="dc tpb pef ext">
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<meta http-equiv="Content-Style-Type" content="text/css" />
 		<xsl:apply-templates/>
-		<link rel="stylesheet" type="text/css" href="preview-style.css"/>
+		<link rel="stylesheet" type="text/css" href="styles/default/base.css"/>
+		<link rel="stylesheet" type="text/css" href="styles/default/layout.css"/>
+		<link rel="stylesheet" type="text/css" href="styles/default/theme.css"/>
+		<link rel="stylesheet" type="text/css" href="styles/default/state.css"/>
 		<xsl:if test="$textFont!='' or $brailleFont!=''">
 			<!-- Only output this tag if either text or braille font has a value -->
 			<style type="text/css">
@@ -713,7 +716,7 @@ function ping() {
 <xsl:template match="pef:body">
 	<xsl:param name="firstPage"/>
 	<xsl:param name="lastPage"/>
-	<body>
+	<body class="preview">
 		<xsl:copy-of select="@*"/>
 		<div id="view">
 			<p>
