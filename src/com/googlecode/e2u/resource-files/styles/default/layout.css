@@ -150,15 +150,14 @@ span.length input {
 	border-right-width: 10px;
 }
 
-#status {
-	padding-right: 1em;
-	float: right;
-	position: relative;
-}
-
 #connected, #notConnected {
 	position: absolute;
-	left: 0px;
+	right: 10px;
+	padding:0;
+	margin:0;
+	border-style: none;
+	width: 16px;
+	height: 16px;
 }
 
 div#navigate {
@@ -312,6 +311,13 @@ div.path select {
 	width: 27em;
 }
 
+a#homeLibrary {
+	display: inline-block;
+	margin-left: 6px;
+	width: 16px;
+	height: 16px;
+}
+
 div.path img {
 	padding-left: 0.5em;
 }
@@ -368,4 +374,12 @@ div.page {
 @font-face {
 	font-family:'odt2braille6dot embedded';
 	src: url('../../fonts/odt2braille6.ttf') format('truetype');
+}
+a.folder {
+	padding: 1px;
+	display: block;
+	text-indent: 24px;
+	border-radius: 2px;
+	border-style: solid;
+	border-width: 1px;
 }

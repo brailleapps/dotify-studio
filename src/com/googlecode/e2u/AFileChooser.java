@@ -73,11 +73,12 @@ public class AFileChooser extends AContainer {
 			ALink a = null;
 			try {
 				a = new ALink("index.html?method=find&path="+URLEncoder.encode(currentDir.getAbsolutePath(), MainPage.ENCODING));
+				a.setIdentifier("homeLibrary");
 				a.addAttribute("title", "Click to set library path");
 				a.addAttribute("onclick", "return confirm('"+MessageFormat.format(Messages.getString(L10nKeys.SET_LIBRARY_PATH), currentDir.getAbsolutePath().replaceAll("\\\\", "\\\\\\\\"))+"')");
-				AImage img = new AImage("images/home.png");
-				img.addAttribute("border", "0");
-				a.add(img);
+				//AImage img = new AImage("images/home.png");
+				//img.addAttribute("border", "0");
+				//a.add(img);
 
 			} catch (UnsupportedEncodingException e) { }
 			SelectComponent sc = new SelectComponent(roots, a, "dir", "Path", false, "choose");
@@ -110,9 +111,7 @@ public class AFileChooser extends AContainer {
 					AListItem li = new AListItem();
 					li.setClass("dir");
 					ALink a = new ALink("index.html?method=choose&dir=" + URLEncoder.encode(currentDir.getParentFile().getAbsolutePath(), MainPage.ENCODING));
-					AImage img = new AImage("images/folder.gif");
-					img.addAttribute("border", "0");
-					a.add(img);
+					a.setClass("folder");
 					a.add(new ALabel(".."));
 					li.add(a);
 					ul.add(li);
@@ -124,9 +123,7 @@ public class AFileChooser extends AContainer {
 					AListItem li = new AListItem();
 					li.setClass("dir");
 					ALink a = new ALink("index.html?method=choose&dir=" + encURL);
-					AImage img = new AImage("images/folder.gif");
-					img.addAttribute("border", "0");
-					a.add(img);
+					a.setClass("folder");
 					a.add(new ALabel(f.getName()));
 					li.add(a);
 					ul.add(li);

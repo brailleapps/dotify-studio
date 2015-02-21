@@ -97,3 +97,23 @@ select#volume-select {
 ul.fileChooser li.file a {
 	color: green;
 }
+a.folder {
+	background-image: url('../../images/folder.gif');
+	background-repeat: no-repeat;
+	background-position: top left;
+	border-color: white;
+}
+#connected {
+	cursor: pointer;
+	background-image: url('../../images/green.gif');
+}
+
+#notConnected {
+	background-image: url('../../images/red.gif');
+}
+
+a#homeLibrary {
+	background-image: url('../../images/home.png');
+	background-position: right bottom;
+	background-repeat: no-repeat;
+}

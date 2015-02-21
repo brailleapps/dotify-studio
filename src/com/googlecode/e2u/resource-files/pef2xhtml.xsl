@@ -719,6 +719,7 @@ function ping() {
 	<body class="preview">
 		<xsl:copy-of select="@*"/>
 		<div id="view">
+			<form action="close.html" method="get">
 			<p>
 				<span id="item-emboss"><a href="/"><xsl:value-of select="$emboss-view-label"/></a></span>
 				<span><a href="view.html"><xsl:value-of select="$preview-view-label"/></a></span>
@@ -726,8 +727,10 @@ function ping() {
 				<span><a href="index.html?method=find"><xsl:value-of select="$find-view-label"/></a></span>
 				<span><a href="index.html?method=setup"><xsl:value-of select="$setup-view-label"/></a></span>
 				<span><a href="index.html?method=about"><xsl:value-of select="$about-software-label"/></a></span>
-				<span id="status"><a id="connected" href="close.html" title="Avsluta"><img src="images/green.gif" alt="connected"></img></a><img id="notConnected" src="images/red.gif" alt="not connected"></img></span>
+				<input id="connected" type="submit" value="" title="Avsluta"></input>
+				<input id="notConnected" type="submit" value="" title="Avsluta" disabled="disabled"></input>
 			</p>
+			</form>
 
 		<div id="top-nav">
 			<p>

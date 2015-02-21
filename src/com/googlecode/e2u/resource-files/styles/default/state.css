@@ -9,3 +9,8 @@ div.page {
 #notConnected {
 	visibility: hidden;
 }
+
+a.folder:HOVER {
+	background-color: #f0f0f0;
+	border-color: rgb(101, 146, 205);
+}
