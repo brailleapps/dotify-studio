@@ -54,8 +54,8 @@ repositories {
 }
 
 dependencies {
-	compile group: 'org.daisy.braille', name:'brailleUtils-core', version:'2.0-SNAPSHOT'
-	compile group: 'org.daisy.braille', name:'brailleUtils-catalog', version:'2.0-SNAPSHOT'
+	compile group: 'org.daisy.braille', name:'brailleUtils-core', version:'2.0.0-SNAPSHOT'
+	compile group: 'org.daisy.braille', name:'brailleUtils-catalog', version:'2.0.0-SNAPSHOT'
 	compile group: 'com.googlecode.ajui', name:'ajui', version:'1.0b'
 }
 
