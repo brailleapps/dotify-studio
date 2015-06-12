@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.daisy.factory.FactoryProperties;
+import org.daisy.braille.api.factory.FactoryProperties;
 
 import com.googlecode.ajui.ABlockComponent;
 import com.googlecode.ajui.AContainer;

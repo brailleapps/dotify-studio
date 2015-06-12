@@ -2,7 +2,6 @@ package com.googlecode.e2u;
 
 import java.text.MessageFormat;
 
-
 import com.googlecode.ajui.AContainer;
 import com.googlecode.ajui.ALabel;
 import com.googlecode.ajui.ALink;

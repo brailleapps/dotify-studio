@@ -2,7 +2,7 @@ package com.googlecode.e2u;
 
 import java.util.Map;
 
-import org.daisy.paper.Paper;
+import org.daisy.braille.api.paper.Paper;
 
 import com.googlecode.ajui.AInput;
 import com.googlecode.ajui.ASelect;

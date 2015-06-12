@@ -7,11 +7,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.daisy.braille.BrailleConstants;
-import org.daisy.braille.table.Table;
-import org.daisy.braille.table.TableCatalog;
-
-
-import org.daisy.factory.FactoryProperties;
+import org.daisy.braille.api.factory.FactoryProperties;
+import org.daisy.braille.consumer.table.TableCatalog;
 
 import com.googlecode.ajui.ALabel;
 import com.googlecode.ajui.AParagraph;

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
-
 import com.googlecode.ajui.Content;
 import com.googlecode.ajui.Context;
 import com.googlecode.e2u.l10n.Messages;

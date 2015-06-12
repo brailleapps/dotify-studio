@@ -9,8 +9,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
+import org.daisy.braille.consumer.validator.ValidatorFactory;
 import org.daisy.braille.pef.PEFBook;
-import org.daisy.validator.ValidatorFactory;
 
 public class BookReader {
 	
@@ -22,9 +22,9 @@ public class BookReader {
     	private final File bookFile;
     	private final URI uri;
     	private final boolean validateOK;
-    	private final org.daisy.validator.Validator pv;
+    	private final org.daisy.braille.api.validator.Validator pv;
     	
-    	private BookReaderResult(PEFBook book, File bookFile, URI uri, boolean validateOK, org.daisy.validator.Validator pv) {
+    	private BookReaderResult(PEFBook book, File bookFile, URI uri, boolean validateOK, org.daisy.braille.api.validator.Validator pv) {
     		this.book = book;
     		this.bookFile = bookFile;
     		this.uri = uri;
@@ -48,7 +48,7 @@ public class BookReader {
     		return validateOK;
     	}
     	
-    	public org.daisy.validator.Validator getValidator() {
+    	public org.daisy.braille.api.validator.Validator getValidator() {
     		return pv;
     	}
     }
@@ -79,7 +79,7 @@ public class BookReader {
 			protected BookReaderResult doInBackground() throws Exception {
 				d = new Date();
 				ValidatorFactory factory = ValidatorFactory.newInstance();
-				org.daisy.validator.Validator pv = factory.newValidator("org.daisy.braille.pef.PEFValidator");
+				org.daisy.braille.api.validator.Validator pv = factory.newValidator("org.daisy.braille.pef.PEFValidator");
 				boolean validateOK = false;
 				if (pv != null) {
 					try {

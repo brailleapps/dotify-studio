@@ -3,8 +3,7 @@ package com.googlecode.e2u;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.daisy.validator.Validator;
-
+import org.daisy.braille.api.validator.Validator;
 
 import com.googlecode.ajui.AContainer;
 import com.googlecode.ajui.ALabel;

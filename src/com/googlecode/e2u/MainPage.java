@@ -22,9 +22,9 @@ import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import org.daisy.braille.embosser.Embosser;
-import org.daisy.braille.embosser.EmbosserWriter;
-import org.daisy.braille.facade.PEFConverterFacade;
+import org.daisy.braille.api.embosser.Embosser;
+import org.daisy.braille.api.embosser.EmbosserWriter;
+import org.daisy.braille.pef.PEFConverterFacade;
 import org.daisy.braille.pef.PEFGenerator;
 import org.daisy.braille.pef.PEFHandler;
 import org.daisy.braille.pef.PEFHandler.Alignment;

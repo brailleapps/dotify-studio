@@ -8,13 +8,12 @@ import java.util.Map;
 
 import javax.print.PrintService;
 
-import org.daisy.braille.embosser.Embosser;
-import org.daisy.braille.embosser.EmbosserCatalog;
-import org.daisy.braille.embosser.EmbosserProperties;
-import org.daisy.braille.tools.Length;
-import org.daisy.factory.FactoryProperties;
-import org.daisy.paper.PrintPage.Shape;
-import org.daisy.paper.SheetPaperFormat;
+import org.daisy.braille.api.embosser.EmbosserProperties;
+import org.daisy.braille.api.embosser.PrintPage.Shape;
+import org.daisy.braille.api.factory.FactoryProperties;
+import org.daisy.braille.api.paper.Length;
+import org.daisy.braille.api.paper.SheetPaperFormat;
+import org.daisy.braille.consumer.embosser.EmbosserCatalog;
 
 import com.googlecode.ajui.ALabel;
 import com.googlecode.ajui.ALink;

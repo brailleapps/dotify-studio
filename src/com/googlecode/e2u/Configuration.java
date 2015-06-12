@@ -3,21 +3,21 @@ package com.googlecode.e2u;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.daisy.braille.embosser.Embosser;
-import org.daisy.braille.embosser.EmbosserCatalog;
-import org.daisy.braille.embosser.EmbosserFeatures;
-import org.daisy.braille.embosser.EmbosserProperties.PrintMode;
-import org.daisy.braille.table.TableCatalog;
-import org.daisy.braille.tools.Length;
-import org.daisy.factory.FactoryProperties;
-import org.daisy.paper.PageFormat;
-import org.daisy.paper.Paper;
-import org.daisy.paper.PaperCatalog;
-import org.daisy.paper.PrintPage;
-import org.daisy.paper.PrintPage.Shape;
-import org.daisy.paper.RollPaperFormat;
-import org.daisy.paper.SheetPaperFormat;
-import org.daisy.paper.TractorPaperFormat;
+import org.daisy.braille.api.embosser.Embosser;
+import org.daisy.braille.api.embosser.EmbosserFeatures;
+import org.daisy.braille.api.embosser.EmbosserProperties.PrintMode;
+import org.daisy.braille.api.embosser.PrintPage;
+import org.daisy.braille.api.embosser.PrintPage.Shape;
+import org.daisy.braille.api.factory.FactoryProperties;
+import org.daisy.braille.api.paper.Length;
+import org.daisy.braille.api.paper.PageFormat;
+import org.daisy.braille.api.paper.Paper;
+import org.daisy.braille.api.paper.RollPaperFormat;
+import org.daisy.braille.api.paper.SheetPaperFormat;
+import org.daisy.braille.api.paper.TractorPaperFormat;
+import org.daisy.braille.consumer.embosser.EmbosserCatalog;
+import org.daisy.braille.consumer.paper.PaperCatalog;
+import org.daisy.braille.consumer.table.TableCatalog;
 
 import com.googlecode.e2u.Settings.Keys;
 

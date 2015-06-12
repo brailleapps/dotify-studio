@@ -3,9 +3,9 @@ package com.googlecode.e2u;
 import java.io.IOException;
 import java.text.MessageFormat;
 
-import org.daisy.braille.tools.Length;
-import org.daisy.paper.CustomPaperCollection;
-import org.daisy.paper.Paper;
+import org.daisy.braille.api.paper.CustomPaperCollection;
+import org.daisy.braille.api.paper.Length;
+import org.daisy.braille.api.paper.Paper;
 
 import com.googlecode.ajui.AContainer;
 import com.googlecode.ajui.ALabel;
