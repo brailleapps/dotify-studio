@@ -28,8 +28,8 @@ import org.daisy.braille.pef.PEFConverterFacade;
 import org.daisy.braille.pef.PEFGenerator;
 import org.daisy.braille.pef.PEFHandler;
 import org.daisy.braille.pef.PEFHandler.Alignment;
+import org.daisy.braille.pef.PrinterDevice;
 import org.daisy.braille.pef.Range;
-import org.daisy.printing.PrinterDevice;
 
 import com.googlecode.ajui.AComponent;
 import com.googlecode.ajui.AContainer;

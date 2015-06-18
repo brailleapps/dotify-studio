@@ -4,7 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import org.daisy.braille.tools.FileTools;
+import org.daisy.braille.pef.FileTools;
 
 import com.googlecode.ajui.BrowserUI;
 
