@@ -55,10 +55,10 @@ repositories {
 }
 
 dependencies {
-	compile group: 'org.daisy.braille', name:'braille-utils.api', version:'2.0.0'
-	compile group: 'org.daisy.braille', name:'brailleUtils-catalog', version:'2.0.0-SNAPSHOT'
-	compile 'org.daisy.braille:braille-utils.pef-tools:1.0.0-SNAPSHOT'
-	compile group: 'com.googlecode.ajui', name:'ajui', version:'1.0b'
+	compile 'org.daisy.braille:braille-utils.api:2.0.0'
+	compile 'org.daisy.braille:braille-utils.impl:2.0.0'
+	compile 'org.daisy.braille:braille-utils.pef-tools:1.0.0'
+	compile 'com.googlecode.ajui:ajui:1.0b'
 }
 
 applicationDistribution.from(file('installer/docs')) {
