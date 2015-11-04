@@ -71,8 +71,8 @@ public class Configuration {
     	String zFolding = settings.getString(Keys.zFolding);
 		errorCode = ErrorCode.INCOMPLETE;
 		if ((em = embosserCatalog.get(embosser))==null) {
-			supportedTables = new ArrayList<FactoryProperties>();
-			supportedPapers = new ArrayList<Paper>();
+			supportedTables = new ArrayList<>();
+			supportedPapers = new ArrayList<>();
 		} else {
 			try {
 				em.setFeature(EmbosserFeatures.TABLE, table);
@@ -84,7 +84,7 @@ public class Configuration {
 				em.setFeature(EmbosserFeatures.SADDLE_STITCH, PrintMode.MAGAZINE.toString().equals(printMode));
 			}
 			supportedTables = tableCatalog.list(em.getTableFilter());
-	    	supportedPapers = new ArrayList<Paper>();
+	    	supportedPapers = new ArrayList<>();
 			for (Paper p : paperCatalog.list()) {
 				if (em.supportsPaper(p)) {
 					supportedPapers.add(p);

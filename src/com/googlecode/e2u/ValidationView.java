@@ -36,9 +36,8 @@ public class ValidationView extends AContainer {
 				AContainer div = new AContainer();
 				//div.setClass("overflow");
 				APre pre = new APre();
-				InputStreamReader isr = new InputStreamReader(v.getReportStream());
 				int c;
-				try {
+				try (InputStreamReader isr = new InputStreamReader(v.getReportStream())) {
 					StringBuilder sb = new StringBuilder();
 					while ((c = isr.read())>-1) {
 						sb.append(((char)c));
@@ -46,10 +45,6 @@ public class ValidationView extends AContainer {
 					pre.add(new ALabel(sb.toString()));
 				} catch (IOException e) {
 					e.printStackTrace();
-				} finally {
-					try {
-						isr.close();
-					} catch (IOException e) {}
 				}
 				div.add(pre);
 				add(div);

@@ -5,9 +5,12 @@ apply plugin: 'maven'
 mainClassName = "com.googlecode.e2u.Start"
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
-javadoc.options.encoding = 'UTF-8'
-sourceCompatibility = '1.6'
-targetCompatibility = '1.6'
+javadoc {
+	options.encoding = 'UTF-8'
+	options.links('http://docs.oracle.com/javase/7/docs/api/');
+}
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
 
 group = "com.googlecode.e2u"
 version = "$releaseVersion"

@@ -50,6 +50,7 @@ public class Settings {
     		case orientation : {
     			return  getHash(Keys.device) + ":" + getHash(Keys.embosser) + ":" + getHash(Keys.paper) + ":orientation";
     		}
+    		default:break;
     	}
     	return key.toString();
     }

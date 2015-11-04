@@ -71,7 +71,7 @@ public class LengthSelectComponent extends AbstractComponent<ABlockComponent> im
 			p.add(input);
 			add(p);
 		}
-		descriptions = new HashMap<String, String>();
+		descriptions = new HashMap<>();
 	}
 
 	public void setSelected(String value) {

@@ -138,7 +138,7 @@ public class PreviewController {
 	}
 	
 	public static Map<String, String> buildParams(Settings settings, String target, String charset, String file, String volume) {
-		HashMap<String, String> params = new HashMap<String, String>();
+		HashMap<String, String> params = new HashMap<>();
 		if (file!=null) {
 			Table table = null;
 			if (charset!=null) { 

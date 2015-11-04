@@ -49,7 +49,7 @@ public class AFileChooser extends AContainer {
 		clear();
 		add(menu);
 
-		Map<String, String> roots = new LinkedHashMap<String, String>();
+		Map<String, String> roots = new LinkedHashMap<>();
 		{
 			List<File> c = getRoot(currentDir);
 			for (File r : File.listRoots()) {
@@ -85,8 +85,8 @@ public class AFileChooser extends AContainer {
 			add(div);
 		}
 	
-		ArrayList<File> dirs = new ArrayList<File>();
-		ArrayList<File> files = new ArrayList<File>();
+		ArrayList<File> dirs = new ArrayList<>();
+		ArrayList<File> files = new ArrayList<>();
 		// optimize for speed by not using listFiles(FileFilter)
 		{
 			File c;
@@ -157,7 +157,7 @@ public class AFileChooser extends AContainer {
 	}
 	
 	private List<File> getRoot(File f) {
-		ArrayList<File> ret = new ArrayList<File>();
+		ArrayList<File> ret = new ArrayList<>();
 		while (f!=null) {
 			ret.add(0, f);
 			f = f.getParentFile();

@@ -30,7 +30,7 @@ public class MenuSystem implements ABlockComponent {
 		this.getKey = getKey;
 		//this.name = name;
 		this.parent = parent;
-		this.list = new ArrayList<MenuItem>();
+		this.list = new ArrayList<>();
 		this.clickActive = true;
 	}
 	

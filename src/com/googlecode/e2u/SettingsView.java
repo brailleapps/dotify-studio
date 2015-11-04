@@ -41,31 +41,31 @@ public class SettingsView extends AbstractSettingsView implements AListener {
 	static {
 		printers = PrinterLookup.getInstance();
 
-		printModeNN = new LinkedHashMap<String, String>();
+		printModeNN = new LinkedHashMap<>();
 		printModeNN.put(EmbosserProperties.PrintMode.REGULAR.toString(),
 				Messages.getString(L10nKeys.REGULAR_PRINT_MODE));
 		printModeNN.put(EmbosserProperties.PrintMode.MAGAZINE.toString(),
 				Messages.getString(L10nKeys.MAGAZINE_PRINT_MODE));
 
-    	shapeNN = new HashMap<String, String>();
+    	shapeNN = new HashMap<>();
     	shapeNN.put(Shape.LANDSCAPE.toString(), Messages.getString(L10nKeys.LANDSCAPE));
     	shapeNN.put(Shape.PORTRAIT.toString(), Messages.getString(L10nKeys.PORTRAIT));
     	shapeNN.put(Shape.SQUARE.toString(), Messages.getString(L10nKeys.SQUARE));
     	
-    	orientationNN = new LinkedHashMap<String, String>();
+    	orientationNN = new LinkedHashMap<>();
     	orientationNN.put(SheetPaperFormat.Orientation.DEFAULT.toString(), Messages.getString(L10nKeys.DEFAULT_ORIENTATION));
     	orientationNN.put(SheetPaperFormat.Orientation.REVERSED.toString(), Messages.getString(L10nKeys.REVERSED_ORIENTATION));
     	
-    	zfoldingNN = new LinkedHashMap<String, String>();
+    	zfoldingNN = new LinkedHashMap<>();
     	zfoldingNN.put("OFF", "Off");
     	zfoldingNN.put("ON", "On");
 
-    	lengthNN = new LinkedHashMap<String, String>();
+    	lengthNN = new LinkedHashMap<>();
     	lengthNN.put(Length.UnitsOfLength.INCH.toString(), "inch");
     	lengthNN.put(Length.UnitsOfLength.CENTIMETER.toString(), "cm");
     	lengthNN.put(Length.UnitsOfLength.MILLIMETER.toString(), "mm");
 
-    	alignNN = new LinkedHashMap<String, String>();
+    	alignNN = new LinkedHashMap<>();
     	alignNN.put("center_inner", Messages.getString(L10nKeys.PAGE_ALIGNMENT_CENTER));
     	alignNN.put("inner", Messages.getString(L10nKeys.PAGE_ALIGNMENT_INNER));
     	alignNN.put("outer", Messages.getString(L10nKeys.PAGE_ALIGNMENT_OUTER));
@@ -136,7 +136,7 @@ public class SettingsView extends AbstractSettingsView implements AListener {
     		add(menu);
     	}
 		if (deviceSelect==null) {
-	    	Map<String, String> printerNames = new LinkedHashMap<String, String>();
+	    	Map<String, String> printerNames = new LinkedHashMap<>();
 	    	for (PrintService s : printers.getPrinters()) {
 	    		printerNames.put(s.getName(), s.getName());
 	    	}

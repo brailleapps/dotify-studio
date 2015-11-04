@@ -16,7 +16,7 @@ public class PEFLibrary {
     };
     
 	public PEFLibrary(File dir) {
-    	files = new ArrayList<File>();
+    	files = new ArrayList<>();
     	listFiles(dir);
 	}
 	

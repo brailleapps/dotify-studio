@@ -31,8 +31,8 @@ public class BookScanner {
 
     private BookScanner(File dir) {
     	this.path = dir;
-    	index = new Hashtable<String, Hashtable<File, PEFBook>>();
-    	books = new ArrayList<PEFBook>();
+    	index = new Hashtable<>();
+    	books = new ArrayList<>();
 
     	
         bookScanner = new SwingWorker<Boolean, PEFBookFile>() {
@@ -99,7 +99,7 @@ public class BookScanner {
 				if (debug)  System.err.println("Adding index: " + indx);
 				Hashtable<File, PEFBook> c = index.get(indx);
 				if (c==null) {
-					c = new Hashtable<File, PEFBook>();
+					c = new Hashtable<>();
 					index.put(indx, c);
 				}
 				c.put(f, p);
@@ -156,14 +156,14 @@ public class BookScanner {
     	Hashtable<File, PEFBook> books = index.get(str);
     	
     	if (books==null) {
-    		return new Hashtable<File, PEFBook>();
+    		return new Hashtable<>();
     	}
     	return books;
     }
     
     public Hashtable<File, PEFBook> containsAll(String str) {
     	String[] t = str.replaceAll(REGEX, " ").split("\\s");
-    	ArrayList<String> ret = new ArrayList<String>();
+    	ArrayList<String> ret = new ArrayList<>();
     	for (String s : t) {
     		if (!"".equals(s) && s!=null) {
     			ret.add(s);
@@ -173,7 +173,7 @@ public class BookScanner {
     }
     
     public Hashtable<File, PEFBook> containsAll(Iterable<String> strs) {
-    	Hashtable<File, PEFBook> result = new Hashtable<File, PEFBook>();
+    	Hashtable<File, PEFBook> result = new Hashtable<>();
     	//HashMap<File, Integer> toRemove = new HashMap<File, Integer>();
     	boolean first = true;
     	for (String s : strs) {
@@ -210,23 +210,23 @@ public class BookScanner {
     	}
     	System.out.println("Get books...");
     	{
-	    	ArrayList<String> st = new ArrayList<String>();
+	    	ArrayList<String> st = new ArrayList<>();
 	    	st.add("rum");
 	    	bs.printSearch(st);
     	}
     	{
-	    	ArrayList<String> st = new ArrayList<String>();
+	    	ArrayList<String> st = new ArrayList<>();
 	    	st.add("TPB");
     		bs.printSearch(st);
     	}
     	{
-	    	ArrayList<String> st = new ArrayList<String>();
+	    	ArrayList<String> st = new ArrayList<>();
 	    	st.add("polis");
 	    	st.add("tåg");
     		bs.printSearch(st);
     	}
     	{
-	    	ArrayList<String> st = new ArrayList<String>();
+	    	ArrayList<String> st = new ArrayList<>();
 	    	st.add("P10367");
     		bs.printSearch(st);
     	}

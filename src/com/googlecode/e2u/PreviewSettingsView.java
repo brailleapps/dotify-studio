@@ -26,8 +26,8 @@ public class PreviewSettingsView extends AbstractSettingsView {
 	private final static Map<String, String> brailleFonts;
 	private final static Map<String, String> allFonts;
 	static {
-    	brailleFonts = new TreeMap<String, String>();
-    	allFonts = new TreeMap<String, String>();
+    	brailleFonts = new TreeMap<>();
+    	allFonts = new TreeMap<>();
     	brailleFonts.put("", Messages.getString(L10nKeys.USE_DEFAULT));
     	allFonts.put("", Messages.getString(L10nKeys.USE_DEFAULT));
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();

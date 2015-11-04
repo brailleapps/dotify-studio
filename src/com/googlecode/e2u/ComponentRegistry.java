@@ -7,7 +7,7 @@ import com.googlecode.ajui.AComponent;
 public class ComponentRegistry {
 	private Hashtable<String, AComponent> registry;
 	public ComponentRegistry() {
-		registry = new Hashtable<String, AComponent>();
+		registry = new Hashtable<>();
 	}
 	
 	public synchronized void register(AComponent c) {

@@ -76,13 +76,13 @@ public class SelectComponent extends AbstractComponent<ABlockComponent> implemen
 			p.add(input);
 			add(p);
 		}
-		descriptions = new HashMap<String, String>();
+		descriptions = new HashMap<>();
 	}
 
 	public SelectComponent(Collection<? extends FactoryProperties> fo, String selectName, HashMap<String, String> nn, String displayName, boolean emptyOption, String target) {
 		addAttribute("action", "/index.html");
 		addAttribute("method", "get");
-		List<FactoryProperties> list = new ArrayList<FactoryProperties>();
+		List<FactoryProperties> list = new ArrayList<>();
     	list.addAll(fo);
     	Collections.sort(list, new Comparator<FactoryProperties>() {
 
@@ -104,7 +104,7 @@ public class SelectComponent extends AbstractComponent<ABlockComponent> implemen
 			if (emptyOption) {
 				select.add(new AOption("", ""));
 			}
-			descriptions = new HashMap<String, String>();
+			descriptions = new HashMap<>();
 	    	for (FactoryProperties o : list) {
 		    	String disp;
 		    	if (nn!=null && nn.containsKey(o.getIdentifier())) {

@@ -35,8 +35,7 @@ public class PEFBookFile {
 		File serial = new File(dir, f.getName()+"-"+f.hashCode()+".meta");
 		PEFBook book;
 		if (serial.exists() && serial.lastModified()>f.lastModified()) {
-			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(serial));
-			try {
+			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(serial))) {
 				book = (PEFBook)ois.readObject();
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
@@ -44,16 +43,11 @@ public class PEFBookFile {
 				if (!serial.delete()) {
 					serial.deleteOnExit();
 				}
-			} finally {
-				ois.close();
 			}
 		} else {
 			book = PEFBook.load(f.toURI());
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(serial));
-			try {
+			try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(serial))) {
 				oos.writeObject(book);
-			} finally {
-				oos.close();
 			}
 		}
 		return new PEFBookFile(book, f);

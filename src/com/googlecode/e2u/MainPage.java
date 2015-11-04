@@ -88,7 +88,7 @@ public class MainPage extends BasePage implements AListener {
 
 	private BookViewController bookController;
 
-	private MenuSystem topMenu;
+	//private MenuSystem topMenu;
 	private MenuSystem embossMenu;
 	private MenuSystem openMenu;
 	private MenuSystem setupMenu;
@@ -105,7 +105,7 @@ public class MainPage extends BasePage implements AListener {
 	private static boolean closing = false;
     
     static {
-        HashMap<String, String> def = new HashMap<String, String>();
+        HashMap<String, String> def = new HashMap<>();
         def.put(Settings.Keys.align.toString(), "center_inner");
         settings = new Settings("/EasyEmbossingUtility"+VERSION, def);
     }
@@ -177,6 +177,7 @@ public class MainPage extends BasePage implements AListener {
     }
 
     public void buildMenu() {
+    	/*
     	topMenu = new MenuSystem("method")
 			.setDivider("")
 			.addMenuItem(new MenuItem("emboss", Messages.getString(L10nKeys.MENU_MAIN)))
@@ -184,7 +185,7 @@ public class MainPage extends BasePage implements AListener {
     		.addMenuItem("find", Messages.getString(L10nKeys.FIND_IN_LIBRARY))
     		.addMenuItem("setup", Messages.getString(L10nKeys.EMBOSS_VIEW))
     		;
-    	
+    	*/
     	embossMenu = null;
     	/*new MenuSystem("method", topMenu)
     		.setDivider(" | ")
@@ -202,7 +203,7 @@ public class MainPage extends BasePage implements AListener {
     }
     
     private List<AComponent> getUpdateComponent(AComponent a, Date since) {
-    	ArrayList<AComponent> ret = new ArrayList<AComponent>();
+    	ArrayList<AComponent> ret = new ArrayList<>();
     	if (a.hasIdentifer() && a.hasUpdates(since)) {
     		ret.add(a);
     		return ret;
@@ -372,7 +373,7 @@ public class MainPage extends BasePage implements AListener {
 			}
 	        File temp = File.createTempFile("generated-", ".pef");
 			temp.deleteOnExit();
-	        Map<String,String> keys = new HashMap<String,String>();
+	        Map<String,String> keys = new HashMap<>();
 	        keys.put(PEFGenerator.KEY_COLS, String.valueOf(settingsView.getConfiguration().getMaxWidth()));
 	        keys.put(PEFGenerator.KEY_ROWS, String.valueOf(settingsView.getConfiguration().getMaxHeight()));
 	        keys.put(PEFGenerator.KEY_DUPLEX, String.valueOf(true));
@@ -432,9 +433,8 @@ public class MainPage extends BasePage implements AListener {
 		        }
 				try {
 					for (int i=0; i<copies; i++) {
-						InputStream iss = null;
-						try {
-							iss = bookController.getBookURI().toURL().openStream(); //$NON-NLS-1$
+						try (InputStream iss = bookController.getBookURI().toURL().openStream()){
+							; //$NON-NLS-1$
 							Embosser emb = settingsView.getConfiguration().getConfiguredEmbosser();
 							PrinterDevice bd = new PrinterDevice(URLDecoder.decode(device, ENCODING), false);
 							EmbosserWriter writer = emb.newEmbosserWriter(bd);
@@ -452,10 +452,6 @@ public class MainPage extends BasePage implements AListener {
 								phb.align(alignment);
 							}
 							new PEFConverterFacade(settingsView.getConfiguration().getEmbosserCatalog()).parsePefFile(iss, phb.build());
-						} finally {
-							if (iss!=null) {
-								iss.close();
-							}
 						}
 					}
 			    	AContainer okDiv = new AContainer();
