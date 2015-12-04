@@ -55,13 +55,14 @@ jar {
 repositories {
     mavenCentral()
     mavenLocal()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
 }
 
 dependencies {
 	compile 'org.daisy.braille:braille-utils.api:2.0.0'
 	compile 'org.daisy.braille:braille-utils.impl:2.0.0'
 	compile 'org.daisy.braille:braille-utils.pef-tools:1.0.0'
-	compile 'com.googlecode.ajui:ajui:1.0b'
+	compile 'com.googlecode.ajui:ajui:1.0.0-SNAPSHOT'
 }
 
 applicationDistribution.from(file('installer/docs')) {
