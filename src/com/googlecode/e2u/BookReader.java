@@ -64,6 +64,7 @@ public class BookReader {
 				return new BookReaderResult(p, null, uri, true, null);
 			}
 			
+                @Override
 	       protected void done() {
 	    	   System.out.println("Book Reader (resource): " + (new Date().getTime() - d.getTime()));
 	       }
@@ -95,6 +96,7 @@ public class BookReader {
 		    	return new BookReaderResult(p, f, uri, validateOK, pv);
 			}
 			
+                @Override
 	       protected void done() {
 	    	   System.out.println("Book Reader (file): " + (new Date().getTime() - d.getTime()));
 	       }
@@ -111,10 +113,7 @@ public class BookReader {
     	if (book==null) {
     		try {
 				book = bookReader.get();
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ExecutionException e1) {
+			} catch (InterruptedException | ExecutionException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}

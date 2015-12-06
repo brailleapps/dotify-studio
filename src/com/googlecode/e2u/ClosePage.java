@@ -10,6 +10,7 @@ import com.googlecode.e2u.l10n.Messages;
 
 public class ClosePage extends BasePage {
 	
+        @Override
 	public String getContentString(String key, Context context) {
 		if (KEY_TITLE.equals(key)) {
 			return Messages.getString(L10nKeys.CLOSED);

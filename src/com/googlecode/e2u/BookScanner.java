@@ -60,6 +60,7 @@ public class BookScanner {
 				return true;
 			}
 			
+                @Override
 			protected void process(List<PEFBookFile> loaded) {
 				PEFBook p;
 				File f;
@@ -105,6 +106,7 @@ public class BookScanner {
 				c.put(f, p);
 			}
 			
+                @Override
 			protected void done() {
 				try {
 					System.out.println("Book Scanner " + (get()?"completed":"interrupted")+ ": " + (new Date().getTime() - d.getTime()));

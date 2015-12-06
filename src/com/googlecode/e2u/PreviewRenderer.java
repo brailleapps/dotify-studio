@@ -92,13 +92,11 @@ public class PreviewRenderer {
 				now = true;
 			}
 			return x.get();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
+		} catch (InterruptedException | ExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+            // TODO Auto-generated catch block
 		return null;
 	}
 }

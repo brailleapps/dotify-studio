@@ -22,6 +22,7 @@ public class PrinterLookup {
 				return PrintServiceLookup.lookupPrintServices(null, null);
 			}
 			
+                @Override
 	       protected void done() {
 	    	   System.out.println("Printer lookup: " + (new Date().getTime() - d.getTime()));
 	       }
@@ -45,10 +46,7 @@ public class PrinterLookup {
     	if (printers==null) {
     		try {
 				printers = printerLookup.get();
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ExecutionException e1) {
+			} catch (InterruptedException | ExecutionException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}

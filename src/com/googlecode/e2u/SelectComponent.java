@@ -135,6 +135,7 @@ public class SelectComponent extends AbstractComponent<ABlockComponent> implemen
 		}
 	}
 	
+        @Override
 	public void setSelected(String value) {
 		String d = descriptions.get(value);
 		desc.clear();

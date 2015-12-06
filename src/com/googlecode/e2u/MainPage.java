@@ -320,6 +320,7 @@ public class MainPage extends BasePage implements AListener {
 		}
 	}
 
+        @Override
 	public String getContentString(String key, Context context) throws IOException {
 		// settings ok?
 		HashMap<String, String> args = context.getArgs();
