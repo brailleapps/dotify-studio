@@ -35,7 +35,7 @@ public class AboutView extends AContainer {
     	}
     	{
 	    	AParagraph ap = new AParagraph();
-	    	ap.add(new ALabel(MessageFormat.format(Messages.getString(L10nKeys.DESC_VERSION), MainPage.VERSION, MainPage.BUILD)));
+	    	ap.add(new ALabel(MessageFormat.format(Messages.getString(L10nKeys.DESC_VERSION), BuildInfo.VERSION, BuildInfo.BUILD)));
 	    	this.add(ap);
     	}
     	{

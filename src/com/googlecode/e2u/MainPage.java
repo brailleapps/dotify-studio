@@ -9,8 +9,6 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
@@ -19,8 +17,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 import org.daisy.braille.api.embosser.Embosser;
 import org.daisy.braille.api.embosser.EmbosserWriter;
@@ -46,38 +42,7 @@ import com.googlecode.e2u.l10n.Messages;
 
 public class MainPage extends BasePage implements AListener {
 	//201x.m.d
-	public final static String VERSION;
-	public final static String BUILD;
-	static {
-		Class<MainPage> clazz = MainPage.class;
-		String className = clazz.getSimpleName() + ".class";
-		String classPath = clazz.getResource(className).toString();
-		boolean failed = false;
-		Attributes attr = null;
-		if (!classPath.startsWith("jar")) {
-		  // Class not from JAR
-			failed = true;
-		} else {
-			String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + 
-			    "/META-INF/MANIFEST.MF";
-			Manifest manifest;
-			try {
-				manifest = new Manifest(new URL(manifestPath).openStream());
-				attr = manifest.getMainAttributes();
-			} catch (MalformedURLException e) {
-				failed = true;
-			} catch (IOException e) {
-				failed = true;
-			}
-		}
-		if (failed || attr == null) {
-			BUILD = "N/A";
-			VERSION = "N/A";
-		} else {
-			VERSION = attr.getValue("Implementation-Version");
-			BUILD = attr.getValue("Repository-Revision");
-		}
-	}
+
 	final static int MAX_COPIES = 99;
 	final static String ENCODING = "utf-8";
 	
@@ -107,7 +72,7 @@ public class MainPage extends BasePage implements AListener {
     static {
         HashMap<String, String> def = new HashMap<>();
         def.put(Settings.Keys.align.toString(), "center_inner");
-        settings = new Settings("/EasyEmbossingUtility"+VERSION, def);
+        settings = new Settings("/EasyEmbossingUtility"+BuildInfo.VERSION, def);
     }
     /*
     public static InputStream getInputStreamForBook() {
@@ -735,7 +700,7 @@ public class MainPage extends BasePage implements AListener {
 	 */
 	@Override
 	public String toString() {
-		return "Easy Embossing Utility " + VERSION + ", " + BUILD;
+		return "Easy Embossing Utility " + BuildInfo.VERSION + ", " + BuildInfo.BUILD;
 	}
 	
 }
