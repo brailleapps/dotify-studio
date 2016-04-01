@@ -291,6 +291,7 @@ exclude-result-prefixes="dc tpb pef ext">
 					</xsl:if>
 			</style>
 		</xsl:if>
+		<script src="script/shortcuts.js"/>
 		<script src="script/preview.js"/>
 	</head>
 </xsl:template>
