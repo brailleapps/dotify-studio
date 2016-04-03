@@ -14,30 +14,36 @@ public abstract class BasePage implements Content {
 
 	public BasePage() { }
 
-	protected String buildHTML(String content, String title, boolean footer) {
+	protected String buildHTML(XHTMLTagger content, String title, boolean footer) {
 		return buildHTML(content, title, footer, true);
 	}
 	
-	protected String buildHTML(String content, String title, boolean footer, boolean header) {
+	protected String buildHTML(XHTMLTagger content, String title, boolean footer, boolean header) {
 		if (title==null) {
 			title = "";
 		}
 		if (content==null) {
-			content = "";
+			content = new XHTMLTagger();
 		}
     	StringBuffer sb = new StringBuffer();
+    	//Header
     	if (!"".equals(title)) {
     		sb.append(
     				new XHTMLTagger().tag("h1", title).getResult()
     				//tag("h1", title)
     			); //$NON-NLS-1$
     	}
-    	sb.append(content);
+    	sb.append(content.getResult());
+    	//Footer
+    	sb.append(
+    			new XHTMLTagger().getResult()
+    	);
     	return sb.toString();
     }
 	
 	public abstract String getContentString(String key, Context context) throws IOException;
 
+	@Override
 	public Reader getContent(String key, Context context) throws IOException {
 		return new StringReader(getContentString(key, context));
 	}

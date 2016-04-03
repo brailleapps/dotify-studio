@@ -332,7 +332,7 @@ public class MainPage extends BasePage implements AListener {
 			if (KEY_TITLE.equals(key)) {
 				return Messages.getString(L10nKeys.ABOUT_THE_SOFTWARE);
 			}
-			return buildHTML(aboutView.getHTML(context).getResult(), Messages.getString(L10nKeys.ABOUT_THE_SOFTWARE), true);
+			return buildHTML(aboutView.getHTML(context), Messages.getString(L10nKeys.ABOUT_THE_SOFTWARE), true);
 		} else if ("test".equals(args.get("method")) && settingsView.getConfiguration().settingOK()) {
 			if (KEY_TITLE.equals(key)) {
 				return Messages.getString(L10nKeys.TEST_SETUP);
@@ -357,7 +357,7 @@ public class MainPage extends BasePage implements AListener {
             a.add(label);
             p.add(a);
 		    div.add(p);
-            return buildHTML(div.getHTML(context).getResult(), Messages.getString(L10nKeys.TEST_SETUP), true);
+            return buildHTML(div.getHTML(context), Messages.getString(L10nKeys.TEST_SETUP), true);
         } else if (!bookController.bookIsValid()) {
 			if (KEY_TITLE.equals(key)) {
 				return Messages.getString(L10nKeys.VALIDATION);
@@ -431,7 +431,7 @@ public class MainPage extends BasePage implements AListener {
 			    		p.add(mailtoDebug());
 			    		okDiv.add(p);
 			    	}
-					return buildHTML(okDiv.getHTML(context).getResult(), Messages.getString(L10nKeys.FILE_EMBOSSED), false); //$NON-NLS-1$
+					return buildHTML(okDiv.getHTML(context), Messages.getString(L10nKeys.FILE_EMBOSSED), false); //$NON-NLS-1$
 				} catch (Exception e) {
 					context.log("Exception in parser"  + e.getMessage()); //$NON-NLS-1$
 					e.printStackTrace();
@@ -455,7 +455,7 @@ public class MainPage extends BasePage implements AListener {
 					pre.add(new ALabel(sw.toString()));
 					preDiv.add(pre);
 					errorDiv.add(preDiv);
-					return buildHTML(errorDiv.getHTML(context).getResult(), Messages.getString(L10nKeys.ERROR), false); //$NON-NLS-1$
+					return buildHTML(errorDiv.getHTML(context), Messages.getString(L10nKeys.ERROR), false); //$NON-NLS-1$
 				}
 			} else {
 				if (KEY_TITLE.equals(key)) {
@@ -467,20 +467,7 @@ public class MainPage extends BasePage implements AListener {
 			if (KEY_TITLE.equals(key)) {
 				return Messages.getString(L10nKeys.SETTINGS);
 			}
-			String notice = "";
-			if ("emboss".equals(args.get("method")) ||
-                            "test".equals(args.get("method"))) {
-				
-				switch (settingsView.getConfiguration().getErrorCode()) {
-					case INCOMPLETE:
-						notice = "<p class=\"warning\">" + Messages.getString(L10nKeys.COMPLETE_SETUP) + "</p>";
-						break;
-					case INVALID: case NOT_SET: default:
-						break;
-				}
-				
-			}
-			return buildHTML(notice + renderView(context, settingsView), Messages.getString(L10nKeys.SETTINGS), true);
+			return buildHTML(renderView(context, settingsView), Messages.getString(L10nKeys.SETTINGS), true);
 		}
 	}
 	
@@ -555,115 +542,115 @@ public class MainPage extends BasePage implements AListener {
 		return tagger.getResult();
 	}
 */
-    private String renderView(Context context, AContainer subview) {
-    	return subview.getHTML(context).getResult();
+    private XHTMLTagger renderView(Context context, AContainer subview) {
+    	return subview.getHTML(context);
     }
 
 
 
-    private String embossHTML(Context context) {
-    	StringBuffer sb = new StringBuffer();
+    private XHTMLTagger embossHTML(Context context) {
+    	XHTMLTagger ret = new XHTMLTagger();
     	//sb.append(embossMenu.getHTML(context).getResult());
     	Iterable<String> data;
     	data = bookController.getBook().getTitle();
     	if (data==null || !data.iterator().hasNext()) {
-    		sb.append(new XHTMLTagger().tag("p",  Messages.getString(L10nKeys.UNKNOWN_TITLE)).getResult());
+    		ret.insert(new XHTMLTagger().tag("p",  Messages.getString(L10nKeys.UNKNOWN_TITLE)));
     	} else {
     		for (String s: data) {
-    			sb.append(new XHTMLTagger().tag("h2", s).getResult());
+    			ret.insert(new XHTMLTagger().tag("h2", s));
     			//insertElement(sb, "h2", s); //$NON-NLS-1$
     		}
     	}
     	data = bookController.getBook().getAuthors();
     	if (data==null || !data.iterator().hasNext()) {
-    		sb.append(new XHTMLTagger().tag("p", Messages.getString(L10nKeys.UNKNOWN_AUTHOR)).getResult());
+    		ret.insert(new XHTMLTagger().tag("p", Messages.getString(L10nKeys.UNKNOWN_AUTHOR)));
     	} else {
-    		sb.append("<p>");
+    		ret.start("p");
     		String delimiter = "";
     		for (String s: data) {
-    			sb.append(delimiter + s);
+    			ret.text(delimiter + s);
     			delimiter = ", "; //$NON-NLS-1$
     		}
-    		sb.append("</p>");
+    		ret.end();
     	}
-    	sb.append(
-    			new XHTMLTagger().tag("p", MessageFormat.format(Messages.getString(L10nKeys.FILE_DIMENSIONS), bookController.getBook().getMaxWidth(), bookController.getBook().getMaxHeight())).getResult()
+    	ret.insert(
+    			new XHTMLTagger().tag("p", MessageFormat.format(Messages.getString(L10nKeys.FILE_DIMENSIONS), bookController.getBook().getMaxWidth(), bookController.getBook().getMaxHeight()))
     		);
     	
     	//Paper paper = settings.getPaper();
     	//Embosser emb = settings.getEmbosser();
+    	ret.start("form");
+    	ret.attr("action", MainPage.TARGET);
+    	ret.attr("method", "get");
+    	ret.start("div");
+    	ret.attr("class", "group");
 
-    	sb.append("<form action=\""); //$NON-NLS-1$
-    	sb.append(MainPage.TARGET);
-    	sb.append("\" method=\"get\">\n"); //$NON-NLS-1$
-    	
-    	sb.append("<div class=\"group\">");
-    	sb.append(
-    			new XHTMLTagger().tag("p", showOptions(context)).getResult()
+    	ret.insert(
+    			new XHTMLTagger().tag("p", showOptions(context))
     			//tag("p", showOptions(context))
     		); //$NON-NLS-1$
     	if ("options".equals(context.getArgs().get("show"))) { //$NON-NLS-1$ //$NON-NLS-2$
     		
     		if (bookController.getBook().getVolumes()>1) {
-				sb.append("<p>");
-				sb.append(Messages.getString(L10nKeys.EMBOSS_VOLUME));
+    			ret.start("p");
+    			ret.text(Messages.getString(L10nKeys.EMBOSS_VOLUME));
 		    	for (int i=1; i<=bookController.getBook().getVolumes(); i++) {
-		    		sb.append("<label><input type=\"radio\" name=\"embossSelection\" value=\"");
-		    		sb.append(i);
-		    		sb.append("\" onclick=\"var from = document.getElementById('pagesFrom');var to = document.getElementById('pagesTo');from.value=");
-		    		sb.append(bookController.getBook().getFirstPage(i));
-		    		sb.append(";to.value=");
-		    		sb.append(bookController.getBook().getLastPage(i)+";\" ></input>");
-		    		sb.append(i);
-		    		sb.append(" </label>");
+		    		ret.start("label")
+		    			.start("input").attr("type", "radio").attr("name", "embossSelection").attr("value", ""+i)
+		    			.attr("onclick", "var from = document.getElementById('pagesFrom');var to = document.getElementById('pagesTo');from.value="+
+		    				bookController.getBook().getFirstPage(i)+
+		    				";to.value="+
+		    				bookController.getBook().getLastPage(i)+";").end().text(""+i)
+		    			.end();
 		    	}
-		    	sb.append("</p>");
+		    	ret.end();
     		}
-    		sb.append("<p>");
-    		sb.append(MessageFormat.format(
-    				Messages.getString(L10nKeys.EMBOSS_PAGES_FROM_TO),
-    				"<input type=\"radio\" name=\"embossSelection\" value=\"pages\" id=\"embossPagesRadio\" checked=\"checked\"></input>",
-    				"<input type=\"text\" name=\"pagesFrom\" id=\"pagesFrom\" maxlength=\"5\" size=\"3\" value=\"1\" onfocus=\"document.getElementById('embossPagesRadio').checked='checked'\"/>",
-    				"<input type=\"text\" name=\"pagesTo\" id=\"pagesTo\" maxlength=\"5\" size=\"3\" value=\"" + bookController.getBook().getPages() + "\" onfocus=\"document.getElementById('embossPagesRadio').checked='checked'\"/>")); //$NON-NLS-1$
-			sb.append("</p>"); //$NON-NLS-1$
-			sb.append("<p>");
-			sb.append(Messages.getString(L10nKeys.EMBOSS_COPIES) + " <input type=\"text\" name=\"copies\" id=\"copies\" maxlength=\"2\" size=\"3\" value=\"1\" /> " + MessageFormat.format(Messages.getString(L10nKeys.EMBOSS_COPIES_MAX), MAX_COPIES));
-			sb.append("</p>");
+    		ret.start("p");
+    		ret.text(Messages.getString(L10nKeys.EMBOSS_PAGES_FROM)+" ");
+    		ret.start("input").attr("type", "radio").attr("name", "embossSelection").attr("value", "pages").attr("id", "embossPagesRadio").attr("checked", "checked").end();
+    		ret.text(" ");
+    		ret.start("input").attr("type", "text").attr("name", "pagesFrom").attr("id", "pagesFrom").attr("maxlength", "5")
+    			.attr("size", "3").attr("value", "1").attr("onfocus", "document.getElementById('embossPagesRadio').checked='checked'").end();
+    		ret.text(" " + Messages.getString(L10nKeys.EMBOSS_PAGES_TO) + " ");
+    		ret.start("input").attr("type", "text").attr("name", "pagesTo").attr("id", "pagesTo")
+    			.attr("size", "3").attr("value", bookController.getBook().getPages()+"").attr("onfocus", "document.getElementById('embossPagesRadio').checked='checked'").end();
+			ret.end();
+			ret.start("p").text(Messages.getString(L10nKeys.EMBOSS_COPIES));
+			ret.start("input").attr("type", "text").attr("name", "copies").attr("id", "copies").attr("maxlength", "2")
+			.attr("size", "3").attr("value", "1").end()
+			.text(MessageFormat.format(Messages.getString(L10nKeys.EMBOSS_COPIES_MAX), MAX_COPIES));
+			ret.end();
     	}
     	
-    	sb.append("</div>");
+    	ret.end();
     	//PageFormat pf = settingsView.getPageFormat();
     	Configuration conf = settingsView.getConfiguration();
     	if (bookController.getBook().containsEightDot()) {
-    		sb.append("<p>");
-    		sb.append(Messages.getString(L10nKeys.EIGHT_DOT_NOT_SUPPORTED));
-    		sb.append("</p>");
+    		ret.start("p").text(Messages.getString(L10nKeys.EIGHT_DOT_NOT_SUPPORTED)).end();
     	} else if (!conf.settingOK()) {
-    		sb.append(
-    				new XHTMLTagger().start("p").attr("class", "warning").text("Unknown paper").end().getResult()
+    		ret.start("p").attr("class", "warning").text("Unknown paper").end();
     				//tag("p", " class=\"warning\"", "Unknown paper")
-    				
-    		);
     		settings.resetKey(Keys.paper);
     	} else if (conf.getMaxWidth()<bookController.getBook().getMaxWidth()) {
     		String papername = conf.getPaperName();
-			sb.append(
+			ret.insert(
 					new XHTMLTagger().start("p").attr("class", "warning")
 							.text(MessageFormat.format(Messages.getString(L10nKeys.CURRENT_PAPER_TOO_NARROW), papername))
-						.end().getResult()
+						.end()
 			);
 		} else if (conf.getMaxHeight()<bookController.getBook().getMaxHeight()) {
     		String papername = conf.getPaperName();
-			sb.append(
-					new XHTMLTagger().start("p").attr("class", "warning").text(MessageFormat.format(Messages.getString(L10nKeys.CURRENT_PAPER_TOO_SHORT), papername)).end().getResult()
+			ret.insert(
+					new XHTMLTagger().start("p").attr("class", "warning").text(MessageFormat.format(Messages.getString(L10nKeys.CURRENT_PAPER_TOO_SHORT), papername)).end()
 			);
 		} else {
-	    	sb.append("<p><input type=\"hidden\" name=\"method\" value=\"do\" /><input type=\"submit\" value=\""); //$NON-NLS-1$
-	    	sb.append(Messages.getString(L10nKeys.BUTTON_EMBOSS));
-	    	sb.append("\" /></p>\n"); //$NON-NLS-1$
+			ret.start("p")
+				.start("input").attr("type", "hidden").attr("name", "method").attr("value", "do").end()
+				.start("input").attr("type", "submit").attr("value", Messages.getString(L10nKeys.BUTTON_EMBOSS)).end()
+				.end();
     	}
-    	sb.append("</form>\n"); //$NON-NLS-1$
-    	return sb.toString();
+    	ret.end();
+    	return ret;
     }
    
 

@@ -113,6 +113,19 @@ public class SettingsView extends AbstractSettingsView implements AListener {
 	
 	@Override
 	public XHTMLTagger getHTML(Context context) {
+		Map<String, String> args = context.getArgs();
+		if ("emboss".equals(args.get("method")) || "test".equals(args.get("method"))) {
+			switch (getConfiguration().getErrorCode()) {
+				case INCOMPLETE:
+					AParagraph p = new AParagraph();
+					p.setClass("warining");
+					p.add(new ALabel(Messages.getString(L10nKeys.COMPLETE_SETUP)));
+					add(p);
+					break;
+				case INVALID: case NOT_SET: default:
+					break;
+			}
+		}
 		//update settings
     	String device = settings.getSetPref(Keys.device, context.getArgs().get("device"));
     	String embosser = settings.getSetPref(Keys.embosser, context.getArgs().get("embosser"));

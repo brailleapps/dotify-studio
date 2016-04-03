@@ -20,8 +20,8 @@ public class ClosePage extends BasePage {
 		return ret; 
 	}
 
-    private String closeHTML() {
-    	return new XHTMLTagger().tag("p", Messages.getString(L10nKeys.TOOLTIP_CLOSED)).getResult(); //$NON-NLS-1$
+    private XHTMLTagger closeHTML() {
+    	return new XHTMLTagger().tag("p", Messages.getString(L10nKeys.TOOLTIP_CLOSED)); //$NON-NLS-1$
     }
 
 	@Override

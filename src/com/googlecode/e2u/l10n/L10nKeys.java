@@ -14,7 +14,9 @@ public interface L10nKeys {
 	public final static String UNKNOWN_TITLE = "Worker.unknown-title";
 	public final static String UNKNOWN_AUTHOR = "Worker.unknown-author";
 	public final static String EMBOSS_VOLUME = "Worker.emboss-volume";
-	public final static String EMBOSS_PAGES_FROM_TO = "Worker.emboss-pages-from-to";
+	public final static String EMBOSS_PAGES_FROM = "Worker.emboss-pages-from";
+	public final static String EMBOSS_PAGES_TO = "Worker.emboss-pages-to";
+	//public final static String EMBOSS_PAGES_FROM_TO = "Worker.emboss-pages-from-to";
 	public final static String EMBOSS_COPIES = "Worker.emboss-copies";
 	public final static String EMBOSS_COPIES_MAX = "Worker.emboss-copies-max";
 	public final static String EMBOSS_RESET_OPTIONS = "Worker.reset-options";
