@@ -3,6 +3,9 @@ package com.googlecode.e2u;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.googlecode.ajui.Content;
 import com.googlecode.ajui.Context;
@@ -20,14 +23,27 @@ public abstract class BasePage implements Content {
 		return buildHTML(content, title, footer, true);
 	}
 	
+	protected abstract Map<String, String> getBodyAttributes();
+	protected abstract List<String> getStylePaths();
+	protected abstract List<String> getScriptPaths();
+
 	protected String buildHTML(XHTMLTagger content, String title, boolean footer, boolean header) {
-		if (title==null) {
-			title = "";
-		}
-		if (content==null) {
-			content = new XHTMLTagger();
-		}
 		XHTMLTagger sb = new XHTMLTagger();
+		sb.start("html").attr("xmlns", "http://www.w3.org/1999/xhtml")
+		.start("head")
+			.start("meta").attr("http-equiv", "content-type").attr("content", "text/html; charset=UTF-8").end()
+			.start("title").text(title).end();
+		for (String style : getStylePaths()) {
+			sb.start("link").attr("rel", "stylesheet").attr("type", "text/css").attr("href", style).end();
+		}
+		for (String script : getScriptPaths()) {
+			sb.start("script").attr("src", script).end();
+		}
+		sb.end();
+		sb.start("body");
+		for (Entry<String, String> entry : getBodyAttributes().entrySet()) {
+			sb.attr(entry.getKey(), entry.getValue());
+		}
     	//Header
 		if (header) {
 			sb.start("div").attr("id", "view");
@@ -56,18 +72,22 @@ public abstract class BasePage implements Content {
 			sb.start("div").attr("id", "top-nav").start("p").end().end();
 		}
 		sb.start("div").attr("id", "main").start("div").attr("id", "content");
-    	if (!"".equals(title)) {
+    	if (title!=null && !"".equals(title)) {
     		sb.tag("h1", title)
     				//tag("h1", title)
     			; //$NON-NLS-1$
     	}
-    	sb.insert(content);
+		if (content!=null) {
+			sb.insert(content);
+		}
     	sb.end().end().start("div").attr("id", "bottom-bar").end();
     	
     	//Footer
     	sb.insert(
     			new XHTMLTagger()
     	);
+    	sb.end();
+    	sb.end();
     	return sb.getResult();
     }
 	

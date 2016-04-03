@@ -689,5 +689,31 @@ public class MainPage extends BasePage implements AListener {
 	public String toString() {
 		return "Easy Embossing Utility " + BuildInfo.VERSION + ", " + BuildInfo.BUILD;
 	}
+
+	@Override
+	protected Map<String, String> getBodyAttributes() {
+		// onload="get('ping.xml?updates=true'+getUpdateString())" class="ui"
+		HashMap<String, String> bodyAtts = new HashMap<>();
+		bodyAtts.put("onload", "get('ping.xml?updates=true'+getUpdateString())");
+		bodyAtts.put("class", "ui");
+		return bodyAtts;
+	}
+
+	@Override
+	protected List<String> getStylePaths() {
+		List<String> styles = new ArrayList<>();
+		styles.add("styles/default/base.css");
+		styles.add("styles/default/theme.css");
+		styles.add("styles/default/layout.css");
+		styles.add("styles/default/state.css");
+		return styles;
+	}
+
+	@Override
+	protected List<String> getScriptPaths() {
+		List<String> scripts = new ArrayList<>();
+		scripts.add("script/index.js");
+		return scripts;
+	}
 	
 }
