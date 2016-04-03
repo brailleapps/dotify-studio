@@ -12,31 +12,6 @@
 		<script src="script/index.js"></script>
 	</head>
 	<body onload="get('ping.xml?updates=true'+getUpdateString())" class="ui">
-		<div id="view">
-			<form action="close.html" method="get">
-			<p>
-			<span id="item-emboss"><a href="index.html?method=emboss"><?ajui com.googlecode.e2u.L10n Worker.emboss-view?></a></span>
-			<span id="item-preview"><a href="view.html"><?ajui com.googlecode.e2u.L10n Worker.preview-view?></a></span>
-			<span><a href="index.html?method=meta"><?ajui com.googlecode.e2u.L10n Worker.menu-about-book?></a></span>
-			<span><a href="index.html?method=find"><?ajui com.googlecode.e2u.L10n Worker.menu-open?></a></span>
-			<span><a href="index.html?method=setup"><?ajui com.googlecode.e2u.L10n Worker.menu-setup?></a></span>
-			<span><a href="index.html?method=about"><?ajui com.googlecode.e2u.L10n Worker.menu-about-software?></a></span>
-			<input id="connected" type="submit" value="" title="Avsluta"></input>
-			<input id="notConnected" type="submit" value="" title="Avsluta" disabled="disabled"></input>
-			</p>
-			</form>
-		</div>
-		<div id="top-nav">
-<p>
- 			
-</p>
-		</div>
-		<div id="main">
-			<div id="content">
-				<?ajui com.googlecode.e2u.MainPage?>
-			</div>
-			<div id="bottom-bar">
-			</div>
-		</div>
+		<?ajui com.googlecode.e2u.MainPage?>
 	</body>
 </html>
