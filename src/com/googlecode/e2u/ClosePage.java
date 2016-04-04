@@ -17,9 +17,6 @@ public class ClosePage extends BasePage {
 	
         @Override
 	public String getContentString(String key, Context context) {
-		if (KEY_TITLE.equals(key)) {
-			return Messages.getString(L10nKeys.CLOSED);
-		}
 		String ret = buildHTML(closeHTML(), Messages.getString(L10nKeys.CLOSED), true, false);
 		context.close();
 		return ret; 

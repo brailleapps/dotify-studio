@@ -14,8 +14,6 @@ import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
 
 public abstract class BasePage implements Content {
-    //final static String APP_PAGE = "index.html";
-	final static String KEY_TITLE = "title";
 
 	public BasePage() { }
 

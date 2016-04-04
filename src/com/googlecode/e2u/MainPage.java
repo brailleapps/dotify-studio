@@ -294,7 +294,7 @@ public class MainPage extends BasePage implements AListener {
 
 		// open new book
 		String open = args.get("open");
-		if (open !=null && !KEY_TITLE.equals(key)) {
+		if (open !=null) {
 			open = URLDecoder.decode(open, ENCODING);
 			File f = new File(open);
 			if (f.exists()) {
@@ -304,39 +304,18 @@ public class MainPage extends BasePage implements AListener {
 			}
 		}
 		if ("choose".equals(args.get("method"))) {
-				if (KEY_TITLE.equals(key)) {
-					return Messages.getString(L10nKeys.OPEN);
-				}
-				return buildHTML(renderView(context, fileChooser), Messages.getString(L10nKeys.OPEN), true);
+			return buildHTML(renderView(context, fileChooser), Messages.getString(L10nKeys.OPEN), true);
 		} else if ("find".equals(args.get("method"))) {
-			if (KEY_TITLE.equals(key)) {
-				return Messages.getString(L10nKeys.OPEN);
-			}
 			return buildHTML(renderView(context, getFindView()), Messages.getString(L10nKeys.OPEN), true);
 		} else if ("setup".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
-			if (KEY_TITLE.equals(key)) {
-				return Messages.getString(L10nKeys.SETTINGS);
-			}
 			return buildHTML(renderView(context, settingsView), Messages.getString(L10nKeys.SETTINGS), true); //$NON-NLS-1$
 		} else if ("setup-preview".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
-			if (KEY_TITLE.equals(key)) {
-				return Messages.getString(L10nKeys.SETTINGS);
-			}
 			return buildHTML(renderView(context, getPreviewSettingsView()), Messages.getString(L10nKeys.SETTINGS), true); //$NON-NLS-1$
 		} else if ("paper".equals(args.get("method"))) {
-			if (KEY_TITLE.equals(key)) {
-				return Messages.getString(L10nKeys.SETTINGS);
-			}
 			return buildHTML(renderView(context, new PaperView(setupMenu, settingsView)), Messages.getString(L10nKeys.SETTINGS), true);
 		} else if ("about".equals(args.get("method"))) {
-			if (KEY_TITLE.equals(key)) {
-				return Messages.getString(L10nKeys.ABOUT_THE_SOFTWARE);
-			}
 			return buildHTML(aboutView.getHTML(context), Messages.getString(L10nKeys.ABOUT_THE_SOFTWARE), true);
 		} else if ("test".equals(args.get("method")) && settingsView.getConfiguration().settingOK()) {
-			if (KEY_TITLE.equals(key)) {
-				return Messages.getString(L10nKeys.TEST_SETUP);
-			}
 	        File temp = File.createTempFile("generated-", ".pef");
 			temp.deleteOnExit();
 	        Map<String,String> keys = new HashMap<>();
@@ -359,21 +338,11 @@ public class MainPage extends BasePage implements AListener {
 		    div.add(p);
             return buildHTML(div.getHTML(context), Messages.getString(L10nKeys.TEST_SETUP), true);
         } else if (!bookController.bookIsValid()) {
-			if (KEY_TITLE.equals(key)) {
-				return Messages.getString(L10nKeys.VALIDATION);
-			}
 			return buildHTML(renderView(context, bookController.getValidationView()), Messages.getString(L10nKeys.VALIDATION), false);
 		} else if ("meta".equals(args.get("method"))) {  //$NON-NLS-1$ //$NON-NLS-2$
-			if (KEY_TITLE.equals(key)) {
-				return Messages.getString(L10nKeys.ABOUT_THE_BOOK);
-			}
 			return buildHTML(renderView(context, bookController.getAboutBookView()), Messages.getString(L10nKeys.ABOUT_THE_BOOK), true);
 		} else if (device!=null && settingsView.getConfiguration().settingOK() && align!=null) {
 			if ("do".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
-				
-				if (KEY_TITLE.equals(key)) {
-					return "Transformer result";
-				}
 				context.log("Settings ok! " + device + " : " + align); //$NON-NLS-1$
 
 		        int pMin;
@@ -458,15 +427,9 @@ public class MainPage extends BasePage implements AListener {
 					return buildHTML(errorDiv.getHTML(context), Messages.getString(L10nKeys.ERROR), false); //$NON-NLS-1$
 				}
 			} else {
-				if (KEY_TITLE.equals(key)) {
-					return Messages.getString(L10nKeys.EMBOSS_PEF);
-				}
 				return buildHTML(embossHTML(context), Messages.getString(L10nKeys.EMBOSS_PEF), true); //$NON-NLS-1$
 			}
 		} else {
-			if (KEY_TITLE.equals(key)) {
-				return Messages.getString(L10nKeys.SETTINGS);
-			}
 			return buildHTML(renderView(context, settingsView), Messages.getString(L10nKeys.SETTINGS), true);
 		}
 	}
