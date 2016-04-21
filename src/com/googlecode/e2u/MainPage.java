@@ -323,7 +323,7 @@ public class MainPage extends BasePage implements AListener {
         @Override
 	public String getContentString(String key, Context context) throws IOException {
 		// settings ok?
-		HashMap<String, String> args = context.getArgs();
+		Map<String, String> args = context.getArgs();
 		String device = settings.getString(Keys.device); //$NON-NLS-1$
 		String align = settings.getString(Keys.align);
 

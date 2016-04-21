@@ -117,7 +117,7 @@ public class PreviewController {
 	}
 	
 	public static Map<String, String> buildParamsFromContext(Context context, Settings settings) {
-		HashMap<String, String> args = context.getArgs();
+		Map<String, String> args = context.getArgs();
 		String file = args.get("file");
 
 		String charset = args.get("charset");

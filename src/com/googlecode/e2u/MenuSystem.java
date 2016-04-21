@@ -3,6 +3,7 @@ package com.googlecode.e2u;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.googlecode.ajui.ABlockComponent;
 import com.googlecode.ajui.AComponent;
@@ -73,6 +74,7 @@ public class MenuSystem implements ABlockComponent {
 		return false;
 	}
 	
+	@Override
 	public XHTMLTagger getHTML(Context context) {
 		XHTMLTagger tagger = new XHTMLTagger();
 		tagger.start("p");
@@ -132,6 +134,13 @@ public class MenuSystem implements ABlockComponent {
 	public void update() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean processEvent(String key, String type,
+			Map<String, String> data) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
