@@ -140,7 +140,7 @@ public class PaperView extends AContainer {
 		}
 		
 		//update view
-		clear();
+		removeAll();
 		if (menu!=null) {
 			add(menu);
 		}

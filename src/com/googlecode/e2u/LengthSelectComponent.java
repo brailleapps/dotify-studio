@@ -77,7 +77,7 @@ public class LengthSelectComponent extends AbstractComponent<ABlockComponent> im
         @Override
 	public void setSelected(String value) {
 		String d = descriptions.get(value);
-		desc.clear();
+		desc.removeAll();
     	if (d!=null && !"".equals(d)) {
     		desc.add(new ALabel(d));
     	}

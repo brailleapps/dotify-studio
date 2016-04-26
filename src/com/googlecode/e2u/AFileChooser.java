@@ -46,7 +46,7 @@ public class AFileChooser extends AContainer {
 	}
 	
 	private void rebuild() {
-		clear();
+		removeAll();
 		add(menu);
 
 		Map<String, String> roots = new LinkedHashMap<>();
@@ -168,7 +168,7 @@ public class AFileChooser extends AContainer {
 	@Override
 	public XHTMLTagger getHTML(Context context) {
 		String startDir = context.getArgs().get("dir");
-		error.clear();
+		error.removeAll();
 		if (startDir!=null) {
 			try {
 				File f = new File(URLDecoder.decode(startDir, MainPage.ENCODING));

@@ -93,7 +93,7 @@ public class FindView extends AContainer implements AListener {
 */
 	@Override
 	public XHTMLTagger getHTML(Context context) {
-		error.clear();
+		error.removeAll();
 		String find = context.getArgs().get("this");
 
 		if (context.getArgs().get("path")!=null) { 
@@ -110,7 +110,7 @@ public class FindView extends AContainer implements AListener {
 				}
 			}
 		}
-		scanningInProgress.clear();
+		scanningInProgress.removeAll();
 		if (!bs.isDone()) {
 			scanningInProgress.add(scanningInProgressLabel);
 		}
@@ -123,7 +123,7 @@ public class FindView extends AContainer implements AListener {
 				prevFind = find;
 			} catch (UnsupportedEncodingException e) {}
 		}
-		findResults.clear();
+		findResults.removeAll();
 		if (!"".equals(find)) {
 			Hashtable<File, PEFBook> res = bs.containsAll(find);
 			Set<File> set = res.keySet();

@@ -138,7 +138,7 @@ public class SelectComponent extends AbstractComponent<ABlockComponent> implemen
         @Override
 	public void setSelected(String value) {
 		String d = descriptions.get(value);
-		desc.clear();
+		desc.removeAll();
     	if (d!=null && !"".equals(d)) {
     		desc.add(new ALabel(d));
     	}

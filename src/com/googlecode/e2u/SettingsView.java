@@ -131,7 +131,7 @@ public class SettingsView extends AbstractSettingsView implements AListener {
     	}
 
     	//update view
-    	clear();
+    	removeAll();
     	if (menu!=null) {
     		add(menu);
     	}
