@@ -143,4 +143,10 @@ public class MenuSystem implements ABlockComponent {
 		return false;
 	}
 
+	@Override
+	public boolean hasUpdate(Date since) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
