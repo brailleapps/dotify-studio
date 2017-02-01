@@ -49,7 +49,6 @@ jar {
 		}
 	}
 	from sourceSets.main.allJava
-	baseName = 'e2u'
 }
 
 repositories {
