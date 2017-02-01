@@ -71,3 +71,7 @@ applicationDistribution.from(file('installer/docs')) {
 applicationDistribution.from(file('installer/examples')) {
 	into 'examples'
 }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.0'
+}
