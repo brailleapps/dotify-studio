@@ -15,6 +15,10 @@ public class Start {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
+		run(args, true);
+	}
+	
+	public static String run(String[] args, boolean display) throws Exception {
 		BrowserUI.Builder buildUi = new BrowserUI.Builder("com/googlecode/e2u/resource-files");
 		buildUi.timeout(5000);
 		String page = "";
@@ -58,7 +62,12 @@ public class Start {
 		}
 		BrowserUI ui = buildUi.build();
 		ui.registerContents(content);
-		ui.display(page);
+		if (display) {
+			ui.display(page);
+			return null;
+		} else {
+			return ui.start(page);
+		}
 	}
 
 }
