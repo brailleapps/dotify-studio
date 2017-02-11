@@ -1,20 +1,26 @@
 package application;
 
 import java.io.File;
-import java.util.Optional;
+import java.io.IOException;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
  
 public class MainFx extends Application {
 	private TabPane tabPane;
@@ -24,14 +30,21 @@ public class MainFx extends Application {
     }
     
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException {
         primaryStage.setTitle("Dotify Studio");
+        primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("resource-files/icon.png")));
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+
+        primaryStage.setX(bounds.getMinX());
+        primaryStage.setY(bounds.getMinY());
+        primaryStage.setWidth(bounds.getWidth());
+        primaryStage.setHeight(bounds.getHeight());
         
         VBox root = new VBox();
-        Scene scene = new Scene(root, 800, 450);
+        Scene scene = new Scene(root);
 
         tabPane = new TabPane();
-
         
         String[] args = getParameters().getRaw().toArray(new String[]{});
         if (args.length>0) {
@@ -47,7 +60,7 @@ public class MainFx extends Application {
     	MenuBar menuBar = new MenuBar();
 		Menu menuFile = new Menu("File");
 		MenuItem open = new MenuItem("Open...");
-		open.setAccelerator(KeyCombination.keyCombination("CTRL+O"));
+		open.setAccelerator(KeyCombination.keyCombination("shortcut+O"));
 		open.setOnAction(e->showOpenDialog(stage));
 		MenuItem saveAs = new MenuItem("Save...");
 		MenuItem importItem = new MenuItem("Import...");
@@ -65,7 +78,16 @@ public class MainFx extends Application {
 
 		menuEdit.getItems().addAll(refresh);
 		Menu menuView = new Menu("View");
-		menuBar.getMenus().addAll(menuFile, menuEdit, menuView);
+		Menu menuHelp = new Menu("Help");
+		MenuItem about = new MenuItem("About");
+		about.setOnAction(e -> {
+			AboutView dialog = new AboutView();
+			dialog.initOwner(stage);
+			dialog.initModality(Modality.APPLICATION_MODAL); 
+			dialog.showAndWait();
+		});
+		menuHelp.getItems().addAll(about);
+		menuBar.getMenus().addAll(menuFile, menuEdit, menuView, menuHelp);
 		return menuBar;
     }
     
