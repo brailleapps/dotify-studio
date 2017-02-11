@@ -1,4 +1,4 @@
-package org.daisy.dotify.studio;
+package application;
 
 import java.io.File;
 import java.util.Optional;

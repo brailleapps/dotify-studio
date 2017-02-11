@@ -1,4 +1,4 @@
-package org.daisy.dotify.studio;
+package application;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
