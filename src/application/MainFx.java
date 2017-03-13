@@ -3,8 +3,9 @@ package application;
 import java.io.File;
 import java.io.IOException;
 
+import application.l10n.Messages;
+import application.prefs.PreferencesView;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -21,7 +22,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
  
 public class MainFx extends Application {
 	private TabPane tabPane;
@@ -81,6 +81,15 @@ public class MainFx extends Application {
 
 		menuEdit.getItems().addAll(refresh);
 		Menu menuView = new Menu("View");
+		Menu menuWindow = new Menu("Window");
+		MenuItem preferences = new MenuItem(Messages.PREFERENCES_MENU_ITEM.localize());
+		preferences.setOnAction(e -> {
+			PreferencesView dialog = new PreferencesView();
+			dialog.initOwner(stage);
+			dialog.initModality(Modality.APPLICATION_MODAL);
+			dialog.showAndWait();
+		});
+		menuWindow.getItems().addAll(preferences);
 		Menu menuHelp = new Menu("Help");
 		MenuItem about = new MenuItem("About");
 		about.setOnAction(e -> {
@@ -90,7 +99,7 @@ public class MainFx extends Application {
 			dialog.showAndWait();
 		});
 		menuHelp.getItems().addAll(about);
-		menuBar.getMenus().addAll(menuFile, menuEdit, menuView, menuHelp);
+		menuBar.getMenus().addAll(menuFile, menuEdit, menuView, menuWindow, menuHelp);
 		return menuBar;
     }
     

@@ -70,9 +70,7 @@ public class MainPage extends BasePage implements AListener {
 	private static boolean closing = false;
     
     static {
-        HashMap<String, String> def = new HashMap<>();
-        def.put(Settings.Keys.align.toString(), "center_inner");
-        settings = new Settings("/EasyEmbossingUtility"+BuildInfo.VERSION, def);
+        settings = Settings.getSettings();
     }
     /*
     public static InputStream getInputStreamForBook() {

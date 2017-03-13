@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<TabPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.prefs.PreferencesController">
+   <tabs>
+      <Tab fx:id="previewTab" closable="false" text="Preview">
+         <content>
+            <VBox>
+               <children>
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="179.0" minWidth="10.0" prefWidth="162.0" />
+                      <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="175.0" minWidth="10.0" prefWidth="175.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="0.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label fx:id="previewTranslation" prefHeight="17.0" prefWidth="182.0" text="Label" />
+                        <Label fx:id="brailleFont" prefHeight="17.0" prefWidth="187.0" text="Label" GridPane.rowIndex="2" />
+                        <Label fx:id="textFont" prefHeight="17.0" prefWidth="212.0" text="Label" GridPane.rowIndex="3" />
+                        <ComboBox fx:id="selectBrailleFont" prefHeight="25.0" prefWidth="183.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <ComboBox fx:id="selectTextFont" prefHeight="25.0" prefWidth="181.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label fx:id="previewDescription" alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="341.0" text="Label" textAlignment="RIGHT" wrapText="true" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="selectTable" prefHeight="25.0" prefWidth="186.0" GridPane.columnIndex="1" />
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </GridPane>
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+      <Tab closable="false" text="Emboss">
+      	<content>
+      	</content>
+      </Tab>
+   </tabs>
+</TabPane>

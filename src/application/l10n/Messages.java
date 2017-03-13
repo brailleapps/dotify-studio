@@ -11,7 +11,15 @@ public enum Messages {
 	APPLICATION_DESCRIPTION("application-description"),
 	APPLICATION_VERSION("application-version"),
 	APPLICATION_ABOUT_PEF("application-about-pef"),
-	BUTTON_OK("button-ok")
+	BUTTON_OK("button-ok"),
+	LABEL_BRAILLE_FONT("label-braille-font"),
+	LABEL_TEXT_FONT("label-text-font"),
+	LABEL_TRANSLATION("label-translation"),
+	MESSAGE_SIX_DOT_ONLY("message-six-dot-only"),
+	PREFERENCES_MENU_ITEM("preferences-menu-item"),
+	PREFERENCES_WINDOW_TITLE("preferences-window-title"),
+	TAB_PREVIEW("tab-preview"),
+	VALUE_USE_DEFAULT("value-use-default")
 	;
 	
 	private static final String BUNDLE_NAME = Messages.class.getPackage().getName() + ".messages"; //$NON-NLS-1$

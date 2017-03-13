@@ -9,6 +9,7 @@ public class Settings {
 	public enum Keys {version, device, embosser, printMode, table, paper, cutLengthValue, cutLengthUnit, orientation, zFolding, charset, align, brailleFont, textFont, libraryPath}; 
 	public final static String VERSION = "2011-09-01";
     private Preferences p;
+    private static Settings settings;
     //private PaperCatalog paperFactory;
   //  private EmbosserCatalog embosserFactory;
 	
@@ -26,6 +27,15 @@ public class Settings {
         }
         //paperFactory = PaperCatalog.newInstance();
         //embosserFactory = EmbosserCatalog.newInstance();
+    }
+    
+    public synchronized static Settings getSettings() {
+    	if (settings==null) {
+    		HashMap<String, String> def = new HashMap<>();
+    		def.put(Settings.Keys.align.toString(), "center_inner");
+    		settings = new Settings("/EasyEmbossingUtility"+BuildInfo.VERSION, def);
+    	}
+    	return settings;
     }
     
     private String getHash(Keys key) {
@@ -68,7 +78,7 @@ public class Settings {
     	return cval;		
 	}
 	
-	private void put(Keys key, String value) {
+	public void put(Keys key, String value) {
 		p.put(getRegKey(key), value); //$NON-NLS-1$
 	}
 	
