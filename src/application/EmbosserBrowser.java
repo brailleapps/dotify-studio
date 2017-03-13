@@ -6,13 +6,13 @@ import java.util.logging.Logger;
 import com.googlecode.e2u.Start;
 
 import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class EmbosserBrowser extends VBox {
+public class EmbosserBrowser extends BorderPane {
 	private WebView browser;
 
 	public EmbosserBrowser(String[] args) {
@@ -35,7 +35,7 @@ public class EmbosserBrowser extends VBox {
                 return wv2.getEngine();
             }
         );
-        getChildren().addAll(browser);
+        setCenter(browser);
 	}
 	
 	public void reload() {

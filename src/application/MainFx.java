@@ -14,6 +14,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -41,7 +42,7 @@ public class MainFx extends Application {
         primaryStage.setWidth(bounds.getWidth());
         primaryStage.setHeight(bounds.getHeight());
         
-        VBox root = new VBox();
+        BorderPane root = new BorderPane();
         Scene scene = new Scene(root);
 
         tabPane = new TabPane();
@@ -51,7 +52,9 @@ public class MainFx extends Application {
         	addTab(null, args);
         }
 
-        ((VBox)scene.getRoot()).getChildren().addAll(makeMenu(primaryStage), tabPane);
+        root.setTop(makeMenu(primaryStage));
+        root.setCenter(tabPane);
+
         primaryStage.setScene(scene);
         primaryStage.show();
     }
