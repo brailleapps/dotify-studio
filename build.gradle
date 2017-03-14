@@ -46,7 +46,7 @@ jar {
 			'Implementation-Version': version,
 			'Implementation-URL': "$repositoryURL",
 			'Main-Class': 'com.googlecode.e2u.Start',
-			'Class-Path': configurations.compile.collect { it.getName() }.join(' lib/')	,
+			'Class-Path': configurations.compile.collect { it.getName() }.join(' ')
 			)
 		}
 	}
