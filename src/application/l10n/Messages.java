@@ -15,9 +15,18 @@ public enum Messages {
 	LABEL_BRAILLE_FONT("label-braille-font"),
 	LABEL_TEXT_FONT("label-text-font"),
 	LABEL_TRANSLATION("label-translation"),
+	LABEL_DEVICE("label-device"),
+	LABEL_EMBOSSER("label-embosser"),
+	LABEL_PRINT_MODE("label-print-mode"),
+	LABEL_TABLE("label-table"),
+	LABEL_PAPER("label-paper"),
+	LABEL_ORIENTATION("label-orientation"),
+	LABEL_Z_FOLDING("label-z-folding"),
+	LABEL_ALIGNMENT("label-alignment"),
 	MESSAGE_SIX_DOT_ONLY("message-six-dot-only"),
 	PREFERENCES_MENU_ITEM("preferences-menu-item"),
 	PREFERENCES_WINDOW_TITLE("preferences-window-title"),
+	TAB_EMBOSS("tab-emboss"),
 	TAB_PREVIEW("tab-preview"),
 	VALUE_USE_DEFAULT("value-use-default")
 	;

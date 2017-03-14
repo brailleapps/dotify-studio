@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+
 import org.daisy.braille.api.factory.FactoryProperties;
 import org.daisy.braille.api.table.BrailleConstants;
 import org.daisy.braille.consumer.table.TableCatalog;
@@ -22,8 +25,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 
 public class PreferencesController {
+
+	@FXML
+	public void initialize() {
+		initPreview();
+		initEmboss();
+	}
+	
 	@FXML private Tab previewTab;
-	@FXML private Tab embossTab;
 	@FXML private Label previewTranslation;
 	@FXML private Label brailleFont;
 	@FXML private Label textFont;
@@ -31,9 +40,8 @@ public class PreferencesController {
 	@FXML private ComboBox<FactoryPropertiesAdapter> selectTable;
 	@FXML private ComboBox<FontEntry> selectBrailleFont;
 	@FXML private ComboBox<FontEntry> selectTextFont;
-
-	@FXML
-	public void initialize() {
+	
+	private void initPreview() {
 		previewTab.setText(Messages.TAB_PREVIEW.localize());
 		previewDescription.setText("");
 		previewTranslation.setText(Messages.LABEL_TRANSLATION.localize());
@@ -68,10 +76,69 @@ public class PreferencesController {
 		});
 		Thread th = new Thread(fontScanner);
 		th.setDaemon(true);
+		th.start();		
+	}
+	
+	@FXML private Tab embossTab;
+	@FXML private Label deviceLabel;
+	@FXML private Label embosserLabel;
+	@FXML private Label printModeLabel;
+	@FXML private Label tableLabel;
+	@FXML private Label paperLabel;
+	@FXML private Label orentationLabel;
+	@FXML private Label zFoldingLabel;
+	@FXML private Label alignLabel;
+	@FXML private ComboBox<PrintServiceAdapter> deviceSelect;
+	
+	private void initEmboss() {
+		embossTab.setText(Messages.TAB_EMBOSS.localize());
+		// init labels
+		deviceLabel.setText(Messages.LABEL_DEVICE.localize());
+		embosserLabel.setText(Messages.LABEL_EMBOSSER.localize());
+		printModeLabel.setText(Messages.LABEL_PRINT_MODE.localize());
+		tableLabel.setText(Messages.LABEL_TABLE.localize());
+		paperLabel.setText(Messages.LABEL_PAPER.localize());
+		orentationLabel.setText(Messages.LABEL_ORIENTATION.localize());
+		zFoldingLabel.setText(Messages.LABEL_Z_FOLDING.localize());
+		alignLabel.setText(Messages.LABEL_ALIGNMENT.localize());
+		DeviceScanner deviceScanner = new DeviceScanner();
+		deviceScanner.setOnSucceeded(ev -> {
+			deviceSelect.getItems().addAll(deviceScanner.getValue());
+			if (deviceScanner.currentValue!=null) {
+				deviceSelect.valueProperty().setValue(deviceScanner.currentValue);
+			}
+			deviceSelect.valueProperty().addListener((ov, t0, t1)-> { 
+				Settings.getSettings().put(Keys.device, t1.p.getName());
+			});
+		});
+		newThread(deviceScanner);
+	}
+	
+	private void newThread(Runnable r) {
+		Thread th = new Thread(r);
+		th.setDaemon(true);
 		th.start();
 	}
 	
-	private class TableScanner extends Task<List<FactoryPropertiesAdapter>> {
+	private static class DeviceScanner extends Task<List<PrintServiceAdapter>> {
+		private final String currentDevice = Settings.getSettings().getString(Keys.device, "");
+		private PrintServiceAdapter currentValue; 
+		@Override
+		protected List<PrintServiceAdapter> call() throws Exception {
+			PrintService[] printers = PrintServiceLookup.lookupPrintServices(null, null);
+			List<PrintServiceAdapter> ret = new ArrayList<>();
+			for (PrintService p : printers) {
+				PrintServiceAdapter ap = new PrintServiceAdapter(p);
+				ret.add(ap);
+				if (p.getName().equals(currentDevice)) {
+					currentValue = ap;
+				}
+			}
+			return ret;
+		}
+	}
+	
+	private static class TableScanner extends Task<List<FactoryPropertiesAdapter>> {
 		private final String currentTable = Settings.getSettings().getString(Keys.charset, "");
 		private FactoryPropertiesAdapter currentValue;
 
@@ -128,6 +195,18 @@ public class PreferencesController {
 			}
 		}
 		
+	}
+	
+	private static class PrintServiceAdapter {
+		private final PrintService p;
+		private PrintServiceAdapter(PrintService p) {
+			this.p = p;
+		}
+
+		@Override
+		public String toString() {
+			return p.getName();
+		}
 	}
 	
 	private static class FactoryPropertiesAdapter implements Comparable<FactoryPropertiesAdapter> {
