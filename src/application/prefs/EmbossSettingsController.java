@@ -13,6 +13,7 @@ import org.daisy.braille.api.factory.FactoryProperties;
 import org.daisy.braille.api.table.BrailleConstants;
 import org.daisy.braille.consumer.table.TableCatalog;
 
+import com.googlecode.e2u.Configuration;
 import com.googlecode.e2u.Settings;
 import com.googlecode.e2u.Settings.Keys;
 
@@ -34,6 +35,8 @@ public class EmbossSettingsController {
 	@FXML private Label zFoldingLabel;
 	@FXML private Label alignLabel;
 	@FXML private ComboBox<PrintServiceAdapter> deviceSelect;
+	@FXML private ComboBox<String> embosserSelect;
+	private Configuration conf;
 
 	@FXML
 	public void initialize() {
@@ -45,9 +48,11 @@ public class EmbossSettingsController {
 			}
 			deviceSelect.valueProperty().addListener((ov, t0, t1)-> { 
 				Settings.getSettings().put(Keys.device, t1.p.getName());
+				updateComponents();
 			});
 		});
 		newThread(deviceScanner);
+		updateComponents();
 	}
 	
 	private void newThread(Runnable r) {
@@ -72,6 +77,25 @@ public class EmbossSettingsController {
 			}
 			return ret;
 		}
+	}
+	
+	@FXML
+	public void updateComponents() {
+		Settings settings = Settings.getSettings();
+    	if (conf==null) {
+    		conf = Configuration.getConfiguration(settings);
+    	}
+    	if (!"".equals(settings.getString(Keys.device, ""))) {
+    		//Enable embosser
+    		setEmbosserVisible(true);
+    	} else {
+    		setEmbosserVisible(false);
+    	}
+	}
+	
+	private void setEmbosserVisible(boolean value) {
+		embosserSelect.setVisible(value);
+		embosserLabel.setVisible(value);
 	}
 	
 	private static class PrintServiceAdapter {

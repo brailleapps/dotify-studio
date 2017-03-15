@@ -3,11 +3,9 @@ package application.prefs;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
 
 import org.daisy.braille.api.factory.FactoryProperties;
 import org.daisy.braille.api.table.BrailleConstants;
@@ -22,7 +20,6 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
 
 public class PreviewSettingsController {
 	@FXML private Label previewTranslation;
@@ -37,16 +34,16 @@ public class PreviewSettingsController {
 	@FXML
 	public void initialize() {
 		previewDescription.setText("");
-		TableScanner tableScanner = new TableScanner();
+		FactoryPropertiesScanner tableScanner = new FactoryPropertiesScanner(()->TableCatalog.newInstance().list(), Keys.charset);
 		tableScanner.setOnSucceeded(ev -> {
 			selectTable.getItems().addAll(tableScanner.getValue());
-			if (tableScanner.currentValue!=null) {
-				selectTable.setValue(tableScanner.currentValue);
-				previewDescription.setText(tableScanner.currentValue.p.getDescription());
+			if (tableScanner.getCurrentValue()!=null) {
+				selectTable.setValue(tableScanner.getCurrentValue());
+				previewDescription.setText(tableScanner.getCurrentValue().getProperties().getDescription());
 			}
 			selectTable.valueProperty().addListener((ov, t0, t1)-> { 
-				Settings.getSettings().put(Keys.charset, t1.p.getIdentifier());
-				previewDescription.setText(t1.p.getDescription());
+				Settings.getSettings().put(Keys.charset, t1.getProperties().getIdentifier());
+				previewDescription.setText(t1.getProperties().getDescription());
 			});
 		});
 		Thread th1 = new Thread(tableScanner);
@@ -74,27 +71,7 @@ public class PreviewSettingsController {
 		th.setDaemon(true);
 		th.start();
 	}
-		
-	private static class TableScanner extends Task<List<FactoryPropertiesAdapter>> {
-		private final String currentTable = Settings.getSettings().getString(Keys.charset, "");
-		private FactoryPropertiesAdapter currentValue;
 
-		@Override
-		protected List<FactoryPropertiesAdapter> call() throws Exception {
-			List<FactoryPropertiesAdapter> tc = new ArrayList<>();
-			for (FactoryProperties p : TableCatalog.newInstance().list()) {
-				FactoryPropertiesAdapter ap = new FactoryPropertiesAdapter(p);
-				tc.add(ap);
-				if (p.getIdentifier().equals(currentTable)) {
-					currentValue = ap; 
-				}
-			}
-			Collections.sort(tc);
-			return tc;
-		}
-		
-	}
-	
 	private class FontScanner extends Task<Void> {
 		private final String currentBrailleFont = Settings.getSettings().getString(Keys.brailleFont, "");
 		private final String currentTextFont = Settings.getSettings().getString(Keys.textFont, "");
@@ -132,24 +109,6 @@ public class PreviewSettingsController {
 			}
 		}
 		
-	}
-	
-	private static class FactoryPropertiesAdapter implements Comparable<FactoryPropertiesAdapter> {
-		private final FactoryProperties p;
-		private FactoryPropertiesAdapter(FactoryProperties p) {
-			this.p = p;
-		}
-		
-		@Override
-		public int compareTo(FactoryPropertiesAdapter o) {
-			return p.getDisplayName().compareTo(o.p.getDisplayName());
-		}
-		
-		@Override
-		public String toString() {
-			return p.getDisplayName();
-		}
-
 	}
 
 	private static class FontEntry {

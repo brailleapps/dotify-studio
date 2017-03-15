@@ -18,6 +18,7 @@
        <rowConstraints>
          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -28,20 +29,21 @@
         <children>
            <Label fx:id="deviceLabel" text="%label-device" />
            <Label fx:id="embosserLabel" text="%label-embosser" GridPane.rowIndex="1" />
-           <Label fx:id="tableLabel" text="%label-table" GridPane.rowIndex="3" />
-           <Label fx:id="paperLabel" text="%label-paper" GridPane.rowIndex="4" />
-           <Label fx:id="orentationLabel" text="%label-orientation" GridPane.rowIndex="5" />
-           <Label fx:id="zFoldingLabel" text="%label-z-folding" GridPane.rowIndex="6" />
-           <Label fx:id="alignLabel" text="%label-alignment" GridPane.rowIndex="7" />
-           <Label fx:id="printModeLabel" text="%label-print-mode" GridPane.rowIndex="2" />
+           <Label fx:id="tableLabel" text="%label-table" GridPane.rowIndex="4" />
+           <Label fx:id="paperLabel" text="%label-paper" GridPane.rowIndex="5" />
+           <Label fx:id="orentationLabel" text="%label-orientation" GridPane.rowIndex="6" />
+           <Label fx:id="zFoldingLabel" text="%label-z-folding" GridPane.rowIndex="7" />
+           <Label fx:id="alignLabel" text="%label-alignment" GridPane.rowIndex="8" />
+           <Label fx:id="printModeLabel" text="%label-print-mode" GridPane.rowIndex="3" />
            <ComboBox fx:id="deviceSelect" prefHeight="25.0" prefWidth="185.0" GridPane.columnIndex="1" />
-           <ComboBox prefHeight="25.0" prefWidth="175.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-           <ComboBox prefHeight="25.0" prefWidth="175.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-           <ComboBox prefHeight="25.0" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-           <ComboBox prefHeight="25.0" prefWidth="176.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-           <ComboBox prefHeight="25.0" prefWidth="173.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-           <ComboBox prefHeight="25.0" prefWidth="185.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-           <ComboBox prefHeight="25.0" prefWidth="183.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+           <ComboBox fx:id="embosserSelect" prefHeight="25.0" prefWidth="175.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+           <ComboBox prefHeight="25.0" prefWidth="175.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+           <ComboBox prefHeight="25.0" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+           <ComboBox prefHeight="25.0" prefWidth="176.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+           <ComboBox prefHeight="25.0" prefWidth="173.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+           <ComboBox prefHeight="25.0" prefWidth="185.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+           <ComboBox prefHeight="25.0" prefWidth="183.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="280.0" text="Label" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
         </children>
         <VBox.margin>
            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
