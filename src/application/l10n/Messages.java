@@ -24,7 +24,7 @@ public enum Messages {
 	LABEL_Z_FOLDING("label-z-folding"),
 	LABEL_ALIGNMENT("label-alignment"),
 	MESSAGE_SIX_DOT_ONLY("message-six-dot-only"),
-	PREFERENCES_MENU_ITEM("preferences-menu-item"),
+	PREFERENCES_MENU_ITEM("menu-item-preferences"),
 	PREFERENCES_WINDOW_TITLE("preferences-window-title"),
 	TAB_EMBOSS("tab-emboss"),
 	TAB_PREVIEW("tab-preview"),

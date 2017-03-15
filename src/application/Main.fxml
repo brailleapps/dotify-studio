@@ -29,7 +29,7 @@
                      </accelerator>
                   </MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" onAction="#openPreferences" text="%preferences-menu-item" />
+                  <MenuItem mnemonicParsing="false" onAction="#openPreferences" text="%menu-item-preferences" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#closeApplication" text="%menu-item-quit" />
             </items>
