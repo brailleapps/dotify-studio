@@ -38,6 +38,10 @@ public enum Messages {
 	private Messages(String key) {
 		this.key = key;
 	}
+	
+	public static ResourceBundle getBundle() {
+		return RESOURCE_BUNDLE;
+	}
 
 	public String localize() {
 		try {

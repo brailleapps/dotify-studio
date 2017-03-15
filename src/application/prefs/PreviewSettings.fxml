@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="application.prefs.PreviewSettingsController">
+<VBox xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.prefs.PreviewSettingsController">
 	<children>
 	   <GridPane>
 	     <columnConstraints>
@@ -22,9 +22,9 @@
 	         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 	     </rowConstraints>
 	      <children>
-	         <Label fx:id="previewTranslation" prefHeight="17.0" prefWidth="182.0" text="Label" />
-	         <Label fx:id="brailleFont" prefHeight="17.0" prefWidth="187.0" text="Label" GridPane.rowIndex="2" />
-	         <Label fx:id="textFont" prefHeight="17.0" prefWidth="212.0" text="Label" GridPane.rowIndex="3" />
+	         <Label fx:id="previewTranslation" prefHeight="17.0" prefWidth="182.0" text="%label-translation" />
+	         <Label fx:id="brailleFont" prefHeight="17.0" prefWidth="187.0" text="%label-braille-font" GridPane.rowIndex="2" />
+	         <Label fx:id="textFont" prefHeight="17.0" prefWidth="212.0" text="%label-text-font" GridPane.rowIndex="3" />
 	         <ComboBox fx:id="selectBrailleFont" prefHeight="25.0" prefWidth="183.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 	         <ComboBox fx:id="selectTextFont" prefHeight="25.0" prefWidth="181.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 	         <Label fx:id="previewDescription" alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="341.0" text="Label" textAlignment="RIGHT" wrapText="true" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />

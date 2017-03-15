@@ -37,7 +37,6 @@ public class PreviewSettingsController {
 	@FXML
 	public void initialize() {
 		previewDescription.setText("");
-		previewTranslation.setText(Messages.LABEL_TRANSLATION.localize());
 		TableScanner tableScanner = new TableScanner();
 		tableScanner.setOnSucceeded(ev -> {
 			selectTable.getItems().addAll(tableScanner.getValue());
@@ -54,8 +53,6 @@ public class PreviewSettingsController {
 		th1.setDaemon(true);
 		th1.start();
 		
-		brailleFont.setText(Messages.LABEL_BRAILLE_FONT.localize());
-		textFont.setText(Messages.LABEL_TEXT_FONT.localize());
 		FontEntry defaultBrailleFont = new FontEntry("", Messages.VALUE_USE_DEFAULT.localize(), true);
 		selectBrailleFont.getItems().add(defaultBrailleFont);
 		selectBrailleFont.setValue(defaultBrailleFont);

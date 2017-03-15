@@ -15,7 +15,7 @@ public class AboutView extends Stage {
 
 	public AboutView() {
 		try {
-			Parent root = FXMLLoader.load(this.getClass().getResource("About.fxml"));
+			Parent root = FXMLLoader.load(this.getClass().getResource("About.fxml"), Messages.getBundle());
 	    	setScene(new Scene(root));
 	    	setResizable(false);
 		} catch (IOException e) {

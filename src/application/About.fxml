@@ -10,17 +10,17 @@
 
 <AnchorPane prefHeight="274.0" prefWidth="357.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.AboutController">
    <children>
-      <Label fx:id="title" layoutX="25.0" layoutY="28.0" prefHeight="35.0" prefWidth="220.0" text="Title">
+      <Label fx:id="title" layoutX="25.0" layoutY="28.0" prefHeight="35.0" prefWidth="220.0" text="%application-title">
          <font>
             <Font name="System Bold" size="24.0" />
          </font>
       </Label>
-      <Label fx:id="description" alignment="TOP_LEFT" layoutX="25.0" layoutY="71.0" prefHeight="35.0" prefWidth="305.0" text="Description" wrapText="true" />
-      <Label fx:id="version" layoutX="25.0" layoutY="106.0" prefHeight="17.0" prefWidth="258.0" text="Version" />
-      <Button fx:id="ok" layoutX="139.0" layoutY="221.0" mnemonicParsing="false" onAction="#closeWindow" prefHeight="25.0" prefWidth="78.0" text="Button" />
+      <Label fx:id="description" alignment="TOP_LEFT" layoutX="25.0" layoutY="71.0" prefHeight="35.0" prefWidth="305.0" text="%application-description" wrapText="true" />
+      <Label fx:id="version" layoutX="25.0" layoutY="106.0" prefHeight="17.0" prefWidth="258.0" text="%application-version" />
+      <Button fx:id="ok" layoutX="139.0" layoutY="221.0" mnemonicParsing="false" onAction="#closeWindow" prefHeight="25.0" prefWidth="78.0" text="%button-ok" />
       <TextFlow layoutX="25.0" layoutY="142.0" prefHeight="61.0" prefWidth="305.0">
          <children>
-            <Text fx:id="moreAboutPef" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <Text fx:id="moreAboutPef" strokeType="OUTSIDE" strokeWidth="0.0" text="%application-about-pef" />
             <Hyperlink fx:id="pefLink" onAction="#visitPefFormat" text="Hyperlink" />
          </children>
       </TextFlow>

@@ -37,15 +37,6 @@ public class EmbossSettingsController {
 
 	@FXML
 	public void initialize() {
-		// init labels
-		deviceLabel.setText(Messages.LABEL_DEVICE.localize());
-		embosserLabel.setText(Messages.LABEL_EMBOSSER.localize());
-		printModeLabel.setText(Messages.LABEL_PRINT_MODE.localize());
-		tableLabel.setText(Messages.LABEL_TABLE.localize());
-		paperLabel.setText(Messages.LABEL_PAPER.localize());
-		orentationLabel.setText(Messages.LABEL_ORIENTATION.localize());
-		zFoldingLabel.setText(Messages.LABEL_Z_FOLDING.localize());
-		alignLabel.setText(Messages.LABEL_ALIGNMENT.localize());
 		DeviceScanner deviceScanner = new DeviceScanner();
 		deviceScanner.setOnSucceeded(ev -> {
 			deviceSelect.getItems().addAll(deviceScanner.getValue());

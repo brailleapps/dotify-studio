@@ -15,7 +15,7 @@ public class PreferencesView extends Stage {
 
 	public PreferencesView() {
 		try {
-			Parent root = FXMLLoader.load(this.getClass().getResource("Preferences.fxml"));
+			Parent root = FXMLLoader.load(this.getClass().getResource("Preferences.fxml"), Messages.getBundle());
 	    	setScene(new Scene(root));
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Failed to load view", e);

@@ -31,8 +31,6 @@ public class PreferencesController {
 
 	@FXML
 	public void initialize() {
-		previewTab.setText(Messages.TAB_PREVIEW.localize());
-		embossTab.setText(Messages.TAB_EMBOSS.localize());
 	}
 
 }

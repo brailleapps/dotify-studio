@@ -27,12 +27,8 @@ public class AboutController {
 
 	@FXML
 	public void initialize() {
-		title.setText(Messages.APPLICATION_TITLE.localize());
-		description.setText(Messages.APPLICATION_DESCRIPTION.localize());
 		version.setText(Messages.APPLICATION_VERSION.localize(BuildInfo.VERSION, BuildInfo.BUILD));
-		moreAboutPef.setText(Messages.APPLICATION_ABOUT_PEF.localize());
 		pefLink.setText(PEF_URL);
-		ok.setText(Messages.BUTTON_OK.localize());
 	}
 	
 	@FXML
