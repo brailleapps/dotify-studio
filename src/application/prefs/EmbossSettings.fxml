@@ -33,15 +33,15 @@
            <Label fx:id="orentationLabel" text="%label-orientation" GridPane.rowIndex="5" />
            <Label fx:id="zFoldingLabel" text="%label-z-folding" GridPane.rowIndex="6" />
            <Label fx:id="alignLabel" text="%label-alignment" GridPane.rowIndex="7" />
+           <Label fx:id="printModeLabel" text="%label-print-mode" GridPane.rowIndex="2" />
            <ComboBox fx:id="deviceSelect" prefHeight="25.0" prefWidth="185.0" GridPane.columnIndex="1" />
            <ComboBox prefHeight="25.0" prefWidth="175.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+           <ComboBox prefHeight="25.0" prefWidth="175.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
            <ComboBox prefHeight="25.0" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
            <ComboBox prefHeight="25.0" prefWidth="176.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
            <ComboBox prefHeight="25.0" prefWidth="173.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
            <ComboBox prefHeight="25.0" prefWidth="185.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
            <ComboBox prefHeight="25.0" prefWidth="183.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-           <Label fx:id="printModeLabel" text="%label-print-mode" GridPane.rowIndex="2" />
-           <ComboBox prefHeight="25.0" prefWidth="175.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
         </children>
         <VBox.margin>
            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

@@ -25,10 +25,10 @@
 	         <Label fx:id="previewTranslation" prefHeight="17.0" prefWidth="182.0" text="%label-translation" />
 	         <Label fx:id="brailleFont" prefHeight="17.0" prefWidth="187.0" text="%label-braille-font" GridPane.rowIndex="2" />
 	         <Label fx:id="textFont" prefHeight="17.0" prefWidth="212.0" text="%label-text-font" GridPane.rowIndex="3" />
+	         <ComboBox fx:id="selectTable" prefHeight="25.0" prefWidth="186.0" GridPane.columnIndex="1" />
 	         <ComboBox fx:id="selectBrailleFont" prefHeight="25.0" prefWidth="183.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 	         <ComboBox fx:id="selectTextFont" prefHeight="25.0" prefWidth="181.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 	         <Label fx:id="previewDescription" alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="341.0" text="Label" textAlignment="RIGHT" wrapText="true" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
-	         <ComboBox fx:id="selectTable" prefHeight="25.0" prefWidth="186.0" GridPane.columnIndex="1" />
 	      </children>
 	      <padding>
 	         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

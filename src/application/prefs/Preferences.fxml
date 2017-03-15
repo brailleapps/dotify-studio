@@ -2,14 +2,19 @@
 
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.BorderPane?>
 
-<TabPane prefHeight="425.0" prefWidth="357.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.prefs.PreferencesController">
-   <tabs>
-      <Tab fx:id="previewTab" closable="false" text="%tab-preview">
-         <fx:include source="PreviewSettings.fxml" />
-      </Tab>
-      <Tab fx:id="embossTab" closable="false" text="%tab-emboss">
-         <fx:include source="EmbossSettings.fxml" />
-      </Tab>
-   </tabs>
-</TabPane>
+<BorderPane prefHeight="425.0" prefWidth="357.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"  fx:controller="application.prefs.PreferencesController">
+   <center>
+		<TabPane prefHeight="425.0" prefWidth="357.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+		   <tabs>
+		      <Tab fx:id="previewTab" closable="false" text="%tab-preview">
+		         <fx:include source="PreviewSettings.fxml" />
+		      </Tab>
+		      <Tab fx:id="embossTab" closable="false" text="%tab-emboss">
+		         <fx:include source="EmbossSettings.fxml" />
+		      </Tab>
+		   </tabs>
+		</TabPane>
+	</center>
+</BorderPane>
