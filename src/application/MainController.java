@@ -3,19 +3,15 @@ package application;
 import java.io.File;
 
 import application.about.AboutView;
-import application.l10n.Messages;
 import application.prefs.PreferencesView;
 import javafx.fxml.FXML;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 
 public class MainController {
@@ -103,6 +99,10 @@ public class MainController {
     	if (selected!=null) {
     		addTab(selected);
     	}
+    }
+    @FXML
+    public void closeApplication() {
+    	((Stage)root.getScene().getWindow()).close();
     }
     
     private void addTab(File f) { 

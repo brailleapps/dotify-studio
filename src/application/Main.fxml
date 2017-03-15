@@ -30,6 +30,8 @@
                   </MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#openPreferences" text="%preferences-menu-item" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#closeApplication" text="%menu-item-quit" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="%menu-item-edit">
