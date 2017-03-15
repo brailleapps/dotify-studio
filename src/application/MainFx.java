@@ -3,6 +3,7 @@ package application;
 import java.io.File;
 import java.io.IOException;
 
+import application.about.AboutView;
 import application.l10n.Messages;
 import application.prefs.PreferencesView;
 import javafx.application.Application;

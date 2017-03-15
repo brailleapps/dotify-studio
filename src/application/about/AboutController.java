@@ -1,4 +1,4 @@
-package application;
+package application.about;
 
 
 import java.awt.Desktop;
