@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -13,84 +14,10 @@
 <TabPane prefHeight="425.0" prefWidth="357.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.prefs.PreferencesController">
    <tabs>
       <Tab fx:id="previewTab" closable="false" text="Preview">
-         <content>
-            <VBox>
-               <children>
-                  <GridPane>
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="179.0" minWidth="10.0" prefWidth="162.0" />
-                      <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="175.0" minWidth="10.0" prefWidth="175.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="0.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Label fx:id="previewTranslation" prefHeight="17.0" prefWidth="182.0" text="Label" />
-                        <Label fx:id="brailleFont" prefHeight="17.0" prefWidth="187.0" text="Label" GridPane.rowIndex="2" />
-                        <Label fx:id="textFont" prefHeight="17.0" prefWidth="212.0" text="Label" GridPane.rowIndex="3" />
-                        <ComboBox fx:id="selectBrailleFont" prefHeight="25.0" prefWidth="183.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <ComboBox fx:id="selectTextFont" prefHeight="25.0" prefWidth="181.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <Label fx:id="previewDescription" alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="341.0" text="Label" textAlignment="RIGHT" wrapText="true" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
-                        <ComboBox fx:id="selectTable" prefHeight="25.0" prefWidth="186.0" GridPane.columnIndex="1" />
-                     </children>
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                  </GridPane>
-               </children>
-            </VBox>
-         </content>
+         <fx:include source="PreviewSettings.fxml"/>
       </Tab>
       <Tab fx:id="embossTab" closable="false" text="Emboss">
-      	<content>
-      	</content>
-         <content>
-            <VBox prefHeight="200.0" prefWidth="100.0">
-               <children>
-                  <GridPane>
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Label fx:id="deviceLabel" text="Device" />
-                        <Label fx:id="embosserLabel" text="Embosser" GridPane.rowIndex="1" />
-                        <Label fx:id="tableLabel" text="Table" GridPane.rowIndex="3" />
-                        <Label fx:id="paperLabel" text="Paper" GridPane.rowIndex="4" />
-                        <Label fx:id="orentationLabel" text="Orientation" GridPane.rowIndex="5" />
-                        <Label fx:id="zFoldingLabel" text="Z-folding" GridPane.rowIndex="6" />
-                        <Label fx:id="alignLabel" text="Aligning" GridPane.rowIndex="7" />
-                        <ComboBox fx:id="deviceSelect" prefHeight="25.0" prefWidth="185.0" GridPane.columnIndex="1" />
-                        <ComboBox prefHeight="25.0" prefWidth="175.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <ComboBox prefHeight="25.0" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <ComboBox prefHeight="25.0" prefWidth="176.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <ComboBox prefHeight="25.0" prefWidth="173.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                        <ComboBox prefHeight="25.0" prefWidth="185.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                        <ComboBox prefHeight="25.0" prefWidth="183.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                        <Label fx:id="printModeLabel" text="Print mode" GridPane.rowIndex="2" />
-                        <ComboBox prefHeight="25.0" prefWidth="175.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                     </children>
-                     <VBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </VBox.margin>
-                  </GridPane>
-                  <Label alignment="CENTER" prefHeight="17.0" prefWidth="361.0" text="Status" />
-               </children>
-            </VBox>
-         </content>
+         <fx:include source="EmbossSettings.fxml"/>
       </Tab>
    </tabs>
 </TabPane>
