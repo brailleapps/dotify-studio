@@ -14,15 +14,21 @@ import javafx.stage.StageStyle;
 
 public class EmbosserBrowser extends BorderPane {
 	private WebView browser;
+	private final String url;
 
 	public EmbosserBrowser(String[] args) {
 
-        String url = getClass().getResource("resource-files/fail.html").toString();
+        String url = null;
         try {
 			url = Start.run(args, false);
 		} catch (Exception e1) {
 			Logger.getLogger(this.getClass().getCanonicalName()).log(Level.SEVERE, "Failed to load server.", e1);;
 		}
+        this.url = url;
+       
+        if (url==null) {
+        	url = getClass().getResource("resource-files/fail.html").toString();
+        }
         browser = new WebView();
 
         WebEngine webEngine = browser.getEngine();
@@ -40,6 +46,10 @@ public class EmbosserBrowser extends BorderPane {
 	
 	public void reload() {
 		browser.getEngine().reload();
+	}
+	
+	public String getURL() {
+		return url;
 	}
 
 }

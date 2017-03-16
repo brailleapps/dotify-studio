@@ -1,6 +1,10 @@
 package application;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import application.about.AboutView;
 import application.l10n.Messages;
@@ -104,6 +108,19 @@ public class MainController {
 			((EmbosserBrowser)t.getContent()).reload();
 		}
     }
+    
+    @FXML
+	public void openInBrowser() {
+		if (Desktop.isDesktopSupported()) {
+			try {
+				Tab t = tabPane.getSelectionModel().getSelectedItem();
+				if (t!=null) {
+					Desktop.getDesktop().browse(new URI(((EmbosserBrowser)t.getContent()).getURL()));
+				}				
+			} catch (IOException | URISyntaxException e) {
+			}
+		}
+	}
     
     @FXML
     public void closeTab() {

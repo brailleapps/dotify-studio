@@ -46,6 +46,7 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="F5" control="UP" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#openInBrowser" text="%menu-item-open-browser" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="%menu-item-window">
