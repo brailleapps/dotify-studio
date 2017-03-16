@@ -1,39 +1,18 @@
 package application;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-
-import org.daisy.braille.pef.PEFBook;
-import org.daisy.braille.pef.PEFBookLoader;
-import org.daisy.braille.pef.PEFLibrary;
-import org.daisy.braille.pef.PEFSearchIndex;
-import org.xml.sax.SAXException;
-
-import com.googlecode.e2u.Settings;
 
 import application.about.AboutView;
-import application.l10n.Messages;
 import application.prefs.PreferencesView;
-import javafx.application.Platform;
+import application.search.SearchController;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.Parent;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
@@ -43,37 +22,17 @@ import javafx.stage.Window;
 public class MainController {
 	@FXML private BorderPane root;
 	@FXML private TabPane tabPane;
-	@FXML private Button expandButton;
-	@FXML private Button folderButton;
-	@FXML private TextField searchFor;
-	@FXML private ListView<PefBookAdapter> listView;
+	@FXML private TabPane toolsPane;
 	@FXML private SplitPane splitPane;
-	@FXML private ProgressBar searchProgress;
-	BookScanner bookScanner;
 	private final double dividerPosition = 0.2;
-	ExecutorService exeService;
+	private Tab searchTab;
+
 
 	@FXML
 	public void initialize() {
-		exeService = Executors.newWorkStealingPool();
-		startScanning();
 		splitPane.setDividerPosition(0, dividerPosition);
 	}
 	
-	private void startScanning() {
-		if (bookScanner!=null) {
-			bookScanner.cancel();
-		}
-		bookScanner = new BookScanner();
-		searchProgress.progressProperty().bind(bookScanner.progressProperty());
-		bookScanner.setOnSucceeded(ev -> {
-			if (!"".equals(searchFor.getText())) {
-				searchChanged();
-			}
-		});
-		exeService.submit(bookScanner);
-	}
-
 	void openArgs(String[] args) {
         if (args.length>0) {
         	addTab(null, args);
@@ -130,30 +89,21 @@ public class MainController {
     }
     
     @FXML
-    public void searchChanged() {
-    	Platform.runLater(()-> {
-        	listView.getItems().clear();
-	    	String search = searchFor.getText();
-	    	for (PEFBook p : bookScanner.search.containsAll(search)) {
-	    		listView.getItems().add(new PefBookAdapter(p));
-	    	}
-    	});
-    }
-    
-    @FXML
     public void toggleSearchArea() {
     	ObservableList<Divider> dividers = splitPane.getDividers();
     	//TODO: observe changes and restore to that value
     	if (dividers.get(0).getPosition()>dividerPosition/2) {
     		splitPane.setDividerPosition(0, 0);
+    		/*
     		expandButton.setText(">");
     		listView.setVisible(false);
-    		searchFor.setVisible(false);
+    		searchFor.setVisible(false);*/
     	} else {
-    		expandButton.setText("<");
+    		//expandButton.setText("<");
     		splitPane.setDividerPosition(0, dividerPosition);
+    		/*
     		listView.setVisible(true);
-    		searchFor.setVisible(true);
+    		searchFor.setVisible(true);*/
     	}
     }
     
@@ -174,6 +124,35 @@ public class MainController {
     }
     
     @FXML
+    public void showSearch() {
+    	if (searchTab==null || !toolsPane.getTabs().contains(searchTab)) {
+    		searchTab = addTabToTools(new SearchController(), "Search");
+    	} else {
+    		//focus
+    		toolsPane.getSelectionModel().select(searchTab);
+    	}
+    }
+    
+    private Tab addTabToTools(Parent component, String title) {
+        Tab tab = new Tab();
+        if (title!=null) {
+        	tab.setText(title);
+        }
+        tab.setContent(component);
+        tab.setOnClosed(ev -> {
+        	if (toolsPane.getTabs().size()==0) {
+        		splitPane.setDividerPosition(0, 0);
+        	}
+        });
+        if (toolsPane.getTabs().size()==0) {
+    		splitPane.setDividerPosition(0, dividerPosition);
+    	}
+        toolsPane.getTabs().add(tab);
+        toolsPane.getSelectionModel().select(tab);
+        return tab;
+    }
+    
+    @FXML
     public void showOpenDialog() {
     	Window stage = root.getScene().getWindow();
     	FileChooser fileChooser = new FileChooser();
@@ -184,20 +163,7 @@ public class MainController {
     		addTab(selected);
     	}
     }
-    
-    @FXML
-    public void showOpenFolder() {
-    	Window stage = root.getScene().getWindow();
-    	DirectoryChooser chooser = new DirectoryChooser();
-    	chooser.setTitle("Set search folder");
-    	chooser.setInitialDirectory(Settings.getSettings().getLibraryPath());
-    	File selected = chooser.showDialog(stage);
-    	if (selected!=null) {
-    		Settings.getSettings().setLibraryPath(selected.getAbsolutePath());
-    		startScanning();
-    	}
-    }
-    
+        
     @FXML
     public void closeApplication() {
     	((Stage)root.getScene().getWindow()).close();
@@ -219,53 +185,5 @@ public class MainController {
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().select(tab);
     }
-    
-	private class BookScanner extends Task<PEFSearchIndex> {
-		PEFSearchIndex search = new PEFSearchIndex();
-
-		@Override
-		protected PEFSearchIndex call() throws Exception {
-			PEFBookLoader loader = new PEFBookLoader();
-			Collection<File> files = PEFLibrary.listFiles(Settings.getSettings().getLibraryPath(), true);
-			int i = 0;
-			updateProgress(i, files.size());
-			for (File f : files) {
-				if (isCancelled()) {
-					break;
-				}
-				try {
-					search.add(loader.load(f));
-				} catch (XPathExpressionException | ParserConfigurationException | SAXException | IOException e) {
-					//e.printStackTrace();
-				}
-				i++;
-				updateProgress(i, files.size());
-			}
-			return null;
-		}		
-	}
-	
-	private static class PefBookAdapter {
-		private final PEFBook book;
-		private final String display;
-		
-		public PefBookAdapter(PEFBook book) {
-			this.book = book;
-	    	String untitled = Messages.MESSAGE_UNKNOWN_TITLE.localize();
-	    	String unknown = Messages.MESSAGE_UNKNOWN_AUTHOR.localize();
-			Iterable<String> title = book.getTitle(); 
-			Iterable<String> authors = book.getAuthors();
-			this.display = Messages.MESSAGE_SEARCH_RESULT.localize((title==null?untitled:title.iterator().next()), (authors==null?unknown:authors.iterator().next()));
-		}
-		
-		PEFBook getBook() {
-			return book;
-		}
-		
-		@Override
-		public String toString() {
-			return display;
-		}
-	}
 
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ListView?>
+
+<fx:root type="javafx.scene.layout.VBox" prefHeight="200.0" prefWidth="100.0" xmlns:fx="http://javafx.com/fxml/1"  xmlns="http://javafx.com/javafx/8.0.111">
+   <children>
+      <HBox alignment="CENTER_RIGHT">
+         <children>
+            <Button fx:id="folderButton" mnemonicParsing="false" onAction="#showOpenFolder" text="H" />
+            <Button fx:id="expandButton" mnemonicParsing="false" onAction="#toggleSearchArea" text="&gt;" />
+         </children>
+      </HBox>
+      <ProgressBar fx:id="searchProgress" prefWidth="200.0" progress="0.0" />
+      <TextField fx:id="searchFor" onKeyTyped="#searchChanged" />
+      <ListView fx:id="listView" VBox.vgrow="ALWAYS" />
+   </children>
+</fx:root>
+

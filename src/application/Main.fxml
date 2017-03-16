@@ -1,37 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 
 <BorderPane fx:id="root" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
    <center>
-      <SplitPane fx:id="splitPane" dividerPositions="0.1" BorderPane.alignment="CENTER">
+      <SplitPane fx:id="splitPane" dividerPositions="0.0" BorderPane.alignment="CENTER">
          <items>
-            <VBox prefHeight="200.0" prefWidth="100.0">
-               <children>
-                  <HBox alignment="CENTER_RIGHT">
-                     <children>
-                        <Button fx:id="folderButton" mnemonicParsing="false" onAction="#showOpenFolder" text="H" />
-                        <Button fx:id="expandButton" mnemonicParsing="false" onAction="#toggleSearchArea" text="&gt;" />
-                     </children>
-                  </HBox>
-                  <ProgressBar fx:id="searchProgress" prefWidth="200.0" progress="0.0" />
-                  <TextField fx:id="searchFor" onKeyTyped="#searchChanged" />
-                  <ListView fx:id="listView" VBox.vgrow="ALWAYS" />
-               </children>
-            </VBox>
+            <TabPane fx:id="toolsPane" />
             <TabPane fx:id="tabPane" prefHeight="392.0" prefWidth="595.0" tabClosingPolicy="ALL_TABS" />
          </items>
       </SplitPane>
@@ -66,6 +48,11 @@
                      </accelerator></MenuItem>
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="Window">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#showSearch" text="Show Search" />
+              </items>
+            </Menu>
           <Menu mnemonicParsing="false" text="%menu-item-help">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#openAbout" text="%menu-item-about" />
