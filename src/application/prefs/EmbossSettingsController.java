@@ -11,6 +11,7 @@ import javax.print.PrintServiceLookup;
 
 import org.daisy.braille.api.factory.FactoryProperties;
 import org.daisy.braille.api.table.BrailleConstants;
+import org.daisy.braille.consumer.embosser.EmbosserCatalog;
 import org.daisy.braille.consumer.table.TableCatalog;
 
 import com.googlecode.e2u.Configuration;
@@ -28,6 +29,7 @@ import javafx.scene.control.Tab;
 public class EmbossSettingsController {
 	@FXML private Label deviceLabel;
 	@FXML private Label embosserLabel;
+	@FXML private Label embosserDetailsLabel;
 	@FXML private Label printModeLabel;
 	@FXML private Label tableLabel;
 	@FXML private Label paperLabel;
@@ -35,7 +37,7 @@ public class EmbossSettingsController {
 	@FXML private Label zFoldingLabel;
 	@FXML private Label alignLabel;
 	@FXML private ComboBox<PrintServiceAdapter> deviceSelect;
-	@FXML private ComboBox<String> embosserSelect;
+	@FXML private ComboBox<FactoryPropertiesAdapter> embosserSelect;
 	private Configuration conf;
 
 	@FXML
@@ -52,6 +54,8 @@ public class EmbossSettingsController {
 			});
 		});
 		newThread(deviceScanner);
+		FactoryPropertiesScanner embosserScanner = new FactoryPropertiesScanner(()->EmbosserCatalog.newInstance().list(), Keys.embosser);
+		newThread(embosserScanner);
 		updateComponents();
 	}
 	
@@ -96,6 +100,7 @@ public class EmbossSettingsController {
 	private void setEmbosserVisible(boolean value) {
 		embosserSelect.setVisible(value);
 		embosserLabel.setVisible(value);
+		embosserDetailsLabel.setVisible(value);
 	}
 	
 	private static class PrintServiceAdapter {

@@ -18,7 +18,7 @@
        <rowConstraints>
          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -43,7 +43,7 @@
            <ComboBox prefHeight="25.0" prefWidth="173.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
            <ComboBox prefHeight="25.0" prefWidth="185.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
            <ComboBox prefHeight="25.0" prefWidth="183.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-            <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="280.0" text="Label" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
+            <Label fx:id="embosserDetailsLabel" alignment="CENTER_RIGHT" text="Description" textAlignment="RIGHT" wrapText="true" GridPane.columnSpan="2147483647" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
         </children>
         <VBox.margin>
            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
