@@ -14,6 +14,10 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -28,11 +32,30 @@ public class MainController {
 	@FXML private SplitPane splitPane;
 	private final double dividerPosition = 0.2;
 	private Tab searchTab;
-
+	static final KeyCombination CTRL_F4 = new KeyCodeCombination(KeyCode.F4, KeyCombination.CONTROL_DOWN);
 
 	@FXML
 	public void initialize() {
 		splitPane.setDividerPosition(0, dividerPosition);
+		toolsPane.addEventHandler(KeyEvent.KEY_RELEASED, ev-> {
+			if (CTRL_F4.match(ev)) {
+				Tab t = toolsPane.getSelectionModel().getSelectedItem();
+				if (t!=null) {
+					toolsPane.getTabs().remove(t);
+				}
+				adjustToolsArea();
+				ev.consume();
+			}
+		});
+		tabPane.addEventHandler(KeyEvent.KEY_RELEASED, ev -> {
+			if (CTRL_F4.match(ev)) {
+				Tab t = tabPane.getSelectionModel().getSelectedItem();
+				if (t!=null) {
+					tabPane.getTabs().remove(t);
+				}
+				ev.consume();
+			}
+		});
 	}
 	
 	void openArgs(String[] args) {
@@ -149,9 +172,7 @@ public class MainController {
         }
         tab.setContent(component);
         tab.setOnClosed(ev -> {
-        	if (toolsPane.getTabs().size()==0) {
-        		splitPane.setDividerPosition(0, 0);
-        	}
+        	adjustToolsArea();
         });
         if (toolsPane.getTabs().size()==0) {
     		splitPane.setDividerPosition(0, dividerPosition);
@@ -159,6 +180,12 @@ public class MainController {
         toolsPane.getTabs().add(tab);
         toolsPane.getSelectionModel().select(tab);
         return tab;
+    }
+    
+    private void adjustToolsArea() {
+    	if (toolsPane.getTabs().size()==0) {
+    		splitPane.setDividerPosition(0, 0);
+    	}
     }
     
     @FXML
