@@ -22,6 +22,7 @@ import com.googlecode.e2u.Settings;
 import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -30,6 +31,9 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
@@ -98,6 +102,22 @@ public class SearchController extends VBox {
     	}
     }
     
+    @FXML void openBook(KeyEvent event) {
+    	if (event.getCode()==KeyCode.ENTER) {
+    		fireEvent(new ActionEvent());
+    	}
+    }
+    
+    @FXML void openBookMouse(MouseEvent event) {
+    	if (event.getClickCount()>1) {
+    		fireEvent(new ActionEvent());
+    	}
+    }
+    
+    public PefBookAdapter getSelectedItem() {
+    	return listView.getSelectionModel().getSelectedItem();
+    }
+    
     private void configureFolderLabel(String text) {
     	currentFolder.setText(text);
     	currentFolder.setTooltip(new Tooltip(text));
@@ -128,27 +148,4 @@ public class SearchController extends VBox {
 		}		
 	}
 	
-	private static class PefBookAdapter {
-		private final PEFBook book;
-		private final String display;
-		
-		public PefBookAdapter(PEFBook book) {
-			this.book = book;
-	    	String untitled = Messages.MESSAGE_UNKNOWN_TITLE.localize();
-	    	String unknown = Messages.MESSAGE_UNKNOWN_AUTHOR.localize();
-			Iterable<String> title = book.getTitle(); 
-			Iterable<String> authors = book.getAuthors();
-			this.display = Messages.MESSAGE_SEARCH_RESULT.localize((title==null?untitled:title.iterator().next()), (authors==null?unknown:authors.iterator().next()));
-		}
-		
-		PEFBook getBook() {
-			return book;
-		}
-		
-		@Override
-		public String toString() {
-			return display;
-		}
-	}
-
 }

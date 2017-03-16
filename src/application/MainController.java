@@ -7,6 +7,7 @@ import application.l10n.Messages;
 import application.prefs.PreferencesView;
 import application.search.SearchController;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.SplitPane;
@@ -127,7 +128,11 @@ public class MainController {
     @FXML
     public void showSearch() {
     	if (searchTab==null || !toolsPane.getTabs().contains(searchTab)) {
-    		searchTab = addTabToTools(new SearchController(), Messages.TAB_SEARCH.localize());
+    		SearchController controller = new SearchController();
+    		controller.addEventHandler(ActionEvent.ACTION, ev -> {
+    			addTab(new File(controller.getSelectedItem().getBook().getURI()));
+    		});
+    		searchTab = addTabToTools(controller, Messages.TAB_SEARCH.localize());
     	} else {
     		//focus
     		toolsPane.getSelectionModel().select(searchTab);
