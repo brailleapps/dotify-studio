@@ -12,6 +12,7 @@ public enum Messages {
 	APPLICATION_VERSION("application-version"),
 	APPLICATION_ABOUT_PEF("application-about-pef"),
 	BUTTON_OK("button-ok"),
+	TITLE_SET_SEARCH_FOLDER("title-set-search-folder"),
 	LABEL_BRAILLE_FONT("label-braille-font"),
 	LABEL_TEXT_FONT("label-text-font"),
 	LABEL_TRANSLATION("label-translation"),
@@ -31,6 +32,7 @@ public enum Messages {
 	PREFERENCES_WINDOW_TITLE("preferences-window-title"),
 	TAB_EMBOSS("tab-emboss"),
 	TAB_PREVIEW("tab-preview"),
+	TAB_SEARCH("tab-search"),
 	VALUE_USE_DEFAULT("value-use-default")
 	;
 	

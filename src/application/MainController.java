@@ -3,6 +3,7 @@ package application;
 import java.io.File;
 
 import application.about.AboutView;
+import application.l10n.Messages;
 import application.prefs.PreferencesView;
 import application.search.SearchController;
 import javafx.collections.ObservableList;
@@ -126,10 +127,13 @@ public class MainController {
     @FXML
     public void showSearch() {
     	if (searchTab==null || !toolsPane.getTabs().contains(searchTab)) {
-    		searchTab = addTabToTools(new SearchController(), "Search");
+    		searchTab = addTabToTools(new SearchController(), Messages.TAB_SEARCH.localize());
     	} else {
     		//focus
     		toolsPane.getSelectionModel().select(searchTab);
+    		if (splitPane.getDividerPositions()[0]<dividerPosition/3) {
+    			splitPane.setDividerPosition(0, dividerPosition);
+    		}
     	}
     }
     

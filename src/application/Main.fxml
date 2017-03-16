@@ -48,9 +48,12 @@
                      </accelerator></MenuItem>
             </items>
           </Menu>
-            <Menu mnemonicParsing="false" text="Window">
+            <Menu mnemonicParsing="false" text="%menu-item-window">
               <items>
-                <MenuItem mnemonicParsing="false" onAction="#showSearch" text="Show Search" />
+                <MenuItem mnemonicParsing="false" onAction="#showSearch" text="%menu-item-show-search">
+                     <accelerator>
+                        <KeyCodeCombination alt="DOWN" code="F" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator></MenuItem>
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="%menu-item-help">

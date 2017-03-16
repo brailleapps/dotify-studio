@@ -25,9 +25,11 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
@@ -37,6 +39,7 @@ public class SearchController extends VBox {
 	@FXML private Button expandButton;
 	@FXML private Button folderButton;
 	@FXML private TextField searchFor;
+	@FXML private Label currentFolder;
 	@FXML private ListView<PefBookAdapter> listView;
 	@FXML private ProgressBar searchProgress;
 	BookScanner bookScanner;
@@ -51,6 +54,7 @@ public class SearchController extends VBox {
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Failed to load view", e);
 		}
+		configureFolderLabel(Settings.getSettings().getLibraryPath().getAbsolutePath());
 		exeService = Executors.newWorkStealingPool();
 		startScanning();
 	}
@@ -84,18 +88,19 @@ public class SearchController extends VBox {
     public void showOpenFolder() {
     	Window stage = folderButton.getScene().getWindow();
     	DirectoryChooser chooser = new DirectoryChooser();
-    	chooser.setTitle("Set search folder");
+    	chooser.setTitle(Messages.TITLE_SET_SEARCH_FOLDER.localize());
     	chooser.setInitialDirectory(Settings.getSettings().getLibraryPath());
     	File selected = chooser.showDialog(stage);
     	if (selected!=null) {
     		Settings.getSettings().setLibraryPath(selected.getAbsolutePath());
-    		//startScanning();
+    		configureFolderLabel(Settings.getSettings().getLibraryPath().getAbsolutePath());
+    		startScanning();
     	}
     }
     
-    @FXML
-    public void toggleSearchArea() {
-    	
+    private void configureFolderLabel(String text) {
+    	currentFolder.setText(text);
+    	currentFolder.setTooltip(new Tooltip(text));
     }
 	
 	private class BookScanner extends Task<PEFSearchIndex> {
