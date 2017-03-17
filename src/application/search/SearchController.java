@@ -80,11 +80,14 @@ public class SearchController extends VBox {
     @FXML
     public void searchChanged() {
     	Platform.runLater(()-> {
-        	listView.getItems().clear();
-	    	String search = searchFor.getText();
-	    	for (PEFBook p : bookScanner.search.containsAll(search)) {
-	    		listView.getItems().add(new PefBookAdapter(p));
-	    	}
+    		PEFSearchIndex index = bookScanner.getValue();
+    		if (index!=null) {
+	        	listView.getItems().clear();
+		    	String search = searchFor.getText();
+		    	for (PEFBook p : index.containsAll(search)) {
+		    		listView.getItems().add(new PefBookAdapter(p));
+		    	}
+    		}
     	});
     }
     
@@ -124,10 +127,10 @@ public class SearchController extends VBox {
     }
 	
 	private class BookScanner extends Task<PEFSearchIndex> {
-		PEFSearchIndex search = new PEFSearchIndex();
-
+		
 		@Override
 		protected PEFSearchIndex call() throws Exception {
+			PEFSearchIndex search = new PEFSearchIndex();
 			PEFBookLoader loader = new PEFBookLoader();
 			Collection<File> files = PEFLibrary.listFiles(Settings.getSettings().getLibraryPath(), true);
 			int i = 0;
@@ -144,8 +147,8 @@ public class SearchController extends VBox {
 				i++;
 				updateProgress(i, files.size());
 			}
-			return null;
-		}		
+			return search;
+		}
 	}
 	
 }
