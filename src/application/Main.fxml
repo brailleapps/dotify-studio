@@ -13,7 +13,7 @@
    <center>
       <SplitPane fx:id="splitPane" dividerPositions="0.0" BorderPane.alignment="CENTER">
          <items>
-            <TabPane fx:id="toolsPane" />
+            <TabPane fx:id="toolsPane" SplitPane.resizableWithParent="false" />
             <TabPane fx:id="tabPane" prefHeight="392.0" prefWidth="595.0" tabClosingPolicy="ALL_TABS" />
          </items>
       </SplitPane>

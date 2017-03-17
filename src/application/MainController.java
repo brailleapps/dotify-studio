@@ -40,7 +40,6 @@ public class MainController {
 
 	@FXML
 	public void initialize() {
-		splitPane.setDividerPosition(0, dividerPosition);
 		toolsPane.addEventHandler(KeyEvent.KEY_RELEASED, ev-> {
 			if (CTRL_F4.match(ev)) {
 				Tab t = toolsPane.getSelectionModel().getSelectedItem();
