@@ -55,15 +55,17 @@ public abstract class BasePage implements Content {
 				.start("span")
 					.start("a").attr("href", "index.html?method=meta").text(Messages.getString(L10nKeys.MENU_ABOUT_BOOK)).end()
 				.end()
+				/*
 				.start("span")
 					.start("a").attr("href", "index.html?method=find").text(Messages.getString(L10nKeys.MENU_OPEN)).end()
-				.end()
+				.end()*/
 				.start("span")
 					.start("a").attr("href", "index.html?method=setup").text(Messages.getString(L10nKeys.MENU_SETUP)).end()
 				.end()
+				/*
 				.start("span")
 					.start("a").attr("href", "index.html?method=about").text(Messages.getString(L10nKeys.MENU_ABOUT_SOFTWARE)).end()
-				.end()
+				.end()*/
 				.start("input").attr("id", "connected").attr("type", "submit").attr("value", "").attr("title", "Avsluta").end()
 				.start("input").attr("id", "notConnected").attr("type", "submit").attr("value", "").attr("title", "Avsluta").attr("disabled", "disabled").end()
 			.end().end().end();
