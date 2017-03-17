@@ -48,18 +48,6 @@ public class Start {
 			content = new MainPage(null);
 			System.exit(-1);
 		}
-		//TODO: check error conditions, such as null
-		File parent = new File((Start.class.getProtectionDomain().getCodeSource().getLocation()).toURI()).getParentFile();
-		System.out.println(parent);
-		// list jars and convert to URL's
-		URL[] jars = FileTools.toURL(FileTools.listFiles(new File(parent, "plugins"), ".jar"));
-		for (URL u : jars) {
-			System.out.println("Found jar " + u);
-		}
-		// set context class loader
-		if (jars.length>0) {
-			Thread.currentThread().setContextClassLoader(new URLClassLoader(jars));
-		}
 		BrowserUI ui = buildUi.build();
 		ui.registerContents(content);
 		if (display) {
