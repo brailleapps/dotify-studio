@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -38,6 +39,9 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.SplitPane.Divider;
@@ -318,6 +322,11 @@ public class MainController {
 	    		dt.setOnSucceeded(ev -> {
 	    			addTab(out);
 	    		});
+	    		dt.setOnFailed(ev->{
+	    			logger.log(Level.WARNING, "Import failed.", dt.getException());
+		    		Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
+		    		alert.showAndWait();
+	    		});
 	    		exeService.submit(dt);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -343,20 +352,13 @@ public class MainController {
     		AnnotatedFile ai = IdentityProvider.newInstance().identify(inputFile);
     		String inputFormat = getFormatString(ai);
     		TaskSystem ts;
-    		try {
-    			ts = TaskSystemFactoryMaker.newInstance().newTaskSystem(inputFormat, "pef", locale);
-    			logger.info("About to run with parameters " + params);
-    			
-    			logger.info("Thread: " + Thread.currentThread().getThreadGroup());
-    			CompiledTaskSystem tl = ts.compile(params);
-    			TaskRunner.Builder builder = TaskRunner.withName(ts.getName());
-    			return builder.build().runTasks(ai, outputFile, tl);
-    		} catch (TaskSystemFactoryException | IOException | TaskSystemException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    			// FIXME: set to failed...
-    		}
-    		return null;
+			ts = TaskSystemFactoryMaker.newInstance().newTaskSystem(inputFormat, "pef", locale);
+			logger.info("About to run with parameters " + params);
+			
+			logger.info("Thread: " + Thread.currentThread().getThreadGroup());
+			CompiledTaskSystem tl = ts.compile(params);
+			TaskRunner.Builder builder = TaskRunner.withName(ts.getName());
+			return builder.build().runTasks(ai, outputFile, tl);
     	}
 
     	//FIXME: Duplicated from Dotify CLI. If this function is needed to run Dotify, find a home for it
