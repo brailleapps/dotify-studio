@@ -1,10 +1,9 @@
 package com.googlecode.e2u;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
-
-import org.daisy.braille.pef.FileTools;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 import com.googlecode.ajui.BrowserUI;
 
@@ -19,8 +18,15 @@ public class Start {
 	}
 	
 	public static String run(String[] args, boolean display) throws Exception {
+		return run(args, display, true);
+	}
+
+	public static String run(String[] args, boolean display, boolean log) throws Exception {
 		BrowserUI.Builder buildUi = new BrowserUI.Builder("com/googlecode/e2u/resource-files");
 		buildUi.timeout(5000);
+		if (!log) { 
+			buildUi.logStream(null);
+		}
 		String page = "";
 		MainPage content;
 		if (args.length==0) {

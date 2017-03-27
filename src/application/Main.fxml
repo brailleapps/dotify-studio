@@ -1,20 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.TextFlow?>
 
 <BorderPane fx:id="root" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
    <center>
       <SplitPane fx:id="splitPane" dividerPositions="0.0" BorderPane.alignment="CENTER">
          <items>
             <TabPane fx:id="toolsPane" SplitPane.resizableWithParent="false" />
-            <TabPane fx:id="tabPane" prefHeight="392.0" prefWidth="595.0" tabClosingPolicy="ALL_TABS" />
+            <SplitPane dividerPositions="1.0" orientation="VERTICAL" SplitPane.resizableWithParent="false">
+               <items>
+                  <TabPane fx:id="tabPane" prefHeight="392.0" prefWidth="595.0" tabClosingPolicy="ALL_TABS" />
+                  <ScrollPane fx:id="consoleScroll" vvalue="1.0" SplitPane.resizableWithParent="false">
+                     <content>
+                        <TextFlow fx:id="console" />
+                     </content>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </ScrollPane>
+               </items>
+            </SplitPane>
          </items>
       </SplitPane>
    </center>
@@ -29,6 +44,11 @@
                      </accelerator>
                   </MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
+                  <Menu mnemonicParsing="false" text="%menu-item-import">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#showImportDialog" text="%menu-item-import-document" />
+                    </items>
+                  </Menu>
                   <MenuItem mnemonicParsing="false" onAction="#closeTab" text="%menu-item-close">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="W" control="UP" meta="UP" shift="UP" shortcut="DOWN" />

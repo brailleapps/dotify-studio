@@ -20,7 +20,7 @@ public class EmbosserBrowser extends BorderPane {
 
         String url = null;
         try {
-			url = Start.run(args, false);
+			url = Start.run(args, false, false);
 		} catch (Exception e1) {
 			Logger.getLogger(this.getClass().getCanonicalName()).log(Level.SEVERE, "Failed to load server.", e1);;
 		}
