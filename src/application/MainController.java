@@ -124,11 +124,11 @@ public class MainController {
 	}
 
 	private class ConsoleStream extends OutputStream {
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		boolean hasNewLine;
+		ByteArrayOutputStream bytes;
 		private final Color color;
 		
 		ConsoleStream(Color color) {
+			this.bytes = new ByteArrayOutputStream();
 			this.color = color;
 		}
 		
@@ -147,21 +147,14 @@ public class MainController {
 		
 		@Override
 		public void write(int b) throws IOException {
-			if (hasNewLine && !isNewLine(b)) {
-				hasNewLine=false;
+			if (b=='\n') {
+				bytes.write('\n');
 				write(new String(bytes.toByteArray()));
 				bytes.reset();
-			}
-			bytes.write(b);
-			if (isNewLine(b)) {
-				hasNewLine = true;
+			} else if (b!='\r') {
+				bytes.write(b);
 			}
 		}
-		
-		private boolean isNewLine(int b) {
-			return b==13 || b==10;
-		}
-		
 	}
 	
 	void openArgs(String[] args) {
