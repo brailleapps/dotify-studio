@@ -49,6 +49,7 @@
                       <MenuItem mnemonicParsing="false" onAction="#showImportDialog" text="%menu-item-import-document" />
                     </items>
                   </Menu>
+                  <MenuItem mnemonicParsing="false" onAction="#exportFile" text="%menu-item-export" />
                   <MenuItem mnemonicParsing="false" onAction="#closeTab" text="%menu-item-close">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="W" control="UP" meta="UP" shift="UP" shortcut="DOWN" />

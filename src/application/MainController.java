@@ -3,6 +3,8 @@ package application;
 import java.awt.Desktop;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -13,26 +15,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import org.daisy.dotify.api.tasks.AnnotatedFile;
-import org.daisy.dotify.api.tasks.CompiledTaskSystem;
-import org.daisy.dotify.api.tasks.TaskSystem;
-import org.daisy.dotify.api.tasks.TaskSystemException;
-import org.daisy.dotify.api.tasks.TaskSystemFactoryException;
-import org.daisy.dotify.consumer.identity.IdentityProvider;
-import org.daisy.dotify.consumer.tasks.TaskSystemFactoryMaker;
-import org.daisy.dotify.tasks.runner.RunnerResult;
-import org.daisy.dotify.tasks.runner.TaskRunner;
-
-import application.about.AboutView;
-import application.l10n.Messages;
-import application.prefs.PreferencesView;
-import application.search.SearchController;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -61,6 +50,31 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.daisy.braille.api.embosser.Embosser;
+import org.daisy.braille.api.embosser.EmbosserCatalogService;
+import org.daisy.braille.api.embosser.EmbosserFeatures;
+import org.daisy.braille.api.embosser.EmbosserWriter;
+import org.daisy.braille.consumer.embosser.EmbosserCatalog;
+import org.daisy.braille.pef.PEFHandler;
+import org.daisy.dotify.api.tasks.AnnotatedFile;
+import org.daisy.dotify.api.tasks.CompiledTaskSystem;
+import org.daisy.dotify.api.tasks.TaskSystem;
+import org.daisy.dotify.consumer.identity.IdentityProvider;
+import org.daisy.dotify.consumer.tasks.TaskSystemFactoryMaker;
+import org.daisy.dotify.tasks.runner.RunnerResult;
+import org.daisy.dotify.tasks.runner.TaskRunner;
+
+import application.about.AboutView;
+import application.l10n.Messages;
+import application.prefs.PreferencesView;
+import application.search.SearchController;
+
+import com.googlecode.e2u.Settings;
+import com.googlecode.e2u.Settings.Keys;
 
 public class MainController {
 	private static final Logger logger = Logger.getLogger(MainController.class.getCanonicalName());
@@ -374,6 +388,50 @@ public class MainController {
     		}
     	}
 
+    }
+    
+    @FXML
+    public void exportFile() {
+    	Tab t = tabPane.getSelectionModel().getSelectedItem();
+		if (t!=null) {
+			Optional<URI> bookUri = ((EmbosserBrowser)t.getContent()).getBookURI();
+			if (bookUri.isPresent()) {
+				File input = new File(bookUri.get());
+		    	Window stage = root.getScene().getWindow();
+		    	FileChooser fileChooser = new FileChooser();
+		    	fileChooser.setTitle(Messages.TITLE_IMPORT_DIALOG.localize());
+		    	File selected = fileChooser.showSaveDialog(stage);
+		    	if (selected!=null) {
+			    	Task<Void> exportTask = new Task<Void>(){
+						@Override
+						protected Void call() throws Exception {
+							//TODO: sync this with the embossing code and its settings
+					    	OutputStream os = new FileOutputStream(selected);
+					    	EmbosserCatalogService ef = EmbosserCatalog.newInstance();
+					    	Embosser emb = ef.newEmbosser("org_daisy.GenericEmbosserProvider.EmbosserType.NONE");
+					    	String table = Settings.getSettings().getString(Keys.charset);
+					    	if (table!=null) {
+					    		emb.setFeature(EmbosserFeatures.TABLE, table);
+					    	}
+							EmbosserWriter embosser = emb.newEmbosserWriter(os);
+							PEFHandler ph = new PEFHandler.Builder(embosser).build();
+							FileInputStream is = new FileInputStream(input);
+							SAXParserFactory spf = SAXParserFactory.newInstance();
+							spf.setNamespaceAware(true);
+							SAXParser sp = spf.newSAXParser();
+							sp.parse(is, ph);
+							return null;
+						}
+			    	};
+			    	exportTask.setOnFailed(e->{
+			    		exportTask.getException().printStackTrace();
+			    		Alert alert = new Alert(AlertType.ERROR, exportTask.getException().toString(), ButtonType.OK);
+			    		alert.showAndWait();
+			    	});
+			    	exeService.submit(exportTask);
+				}	
+	    	}
+		}
     }
  
     @FXML

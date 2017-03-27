@@ -14,6 +14,7 @@ public enum Messages {
 	BUTTON_OK("button-ok"),
 	TITLE_SET_SEARCH_FOLDER("title-set-search-folder"),
 	TITLE_IMPORT_DIALOG("title-import-dialog"),
+	TITLE_EXPORT_DIALOG("title-export-dialog"),
 	LABEL_BRAILLE_FONT("label-braille-font"),
 	LABEL_TEXT_FONT("label-text-font"),
 	LABEL_TRANSLATION("label-translation"),

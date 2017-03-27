@@ -1,9 +1,9 @@
 package application;
 
+import java.net.URI;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.googlecode.e2u.Start;
 
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -12,15 +12,19 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import com.googlecode.e2u.Start;
+
 public class EmbosserBrowser extends BorderPane {
 	private WebView browser;
 	private final String url;
+	private Start start;
 
 	public EmbosserBrowser(String[] args) {
 
         String url = null;
         try {
-			url = Start.run(args, false, false);
+        	start = new Start();
+			url = start.start(args, false, false);
 		} catch (Exception e1) {
 			Logger.getLogger(this.getClass().getCanonicalName()).log(Level.SEVERE, "Failed to load server.", e1);;
 		}
@@ -50,6 +54,14 @@ public class EmbosserBrowser extends BorderPane {
 	
 	public String getURL() {
 		return url;
+	}
+	
+	public Optional<URI> getBookURI() {
+		if (start!=null) {
+			return start.getMainPage().getBookURI();
+		} else {
+			return Optional.<URI>empty();
+		}
 	}
 
 }

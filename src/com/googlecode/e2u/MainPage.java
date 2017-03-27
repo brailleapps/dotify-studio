@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
@@ -17,6 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.daisy.braille.api.embosser.Embosser;
 import org.daisy.braille.api.embosser.EmbosserWriter;
@@ -163,6 +165,14 @@ public class MainPage extends BasePage implements AListener {
 			.addMenuItem("setup", Messages.getString(L10nKeys.EMBOSS_VIEW))
 			.addMenuItem("setup-preview", Messages.getString(L10nKeys.PREVIEW_VIEW))
 			.addMenuItem("paper", Messages.getString(L10nKeys.PAPER_VIEW));
+    }
+    
+    public Optional<URI> getBookURI() {
+    	if (bookController!=null) {
+    		return Optional.of(bookController.getBookURI());
+    	} else {
+    		return Optional.<URI>empty();
+    	}
     }
     
     private List<AComponent> getUpdateComponent(AComponent a, Date since) {

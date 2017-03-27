@@ -1,13 +1,11 @@
 package com.googlecode.e2u;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 
 import com.googlecode.ajui.BrowserUI;
 
 public class Start {
+	private MainPage content;
 
 	/**
 	 * @param args
@@ -22,13 +20,16 @@ public class Start {
 	}
 
 	public static String run(String[] args, boolean display, boolean log) throws Exception {
+		return new Start().start(args, display, log);
+	}
+	
+	public String start(String[] args, boolean display, boolean log) throws Exception  {
 		BrowserUI.Builder buildUi = new BrowserUI.Builder("com/googlecode/e2u/resource-files");
 		buildUi.timeout(5000);
 		if (!log) { 
 			buildUi.logStream(null);
 		}
 		String page = "";
-		MainPage content;
 		if (args.length==0) {
 			page = "";
 			content = new MainPage(null);
@@ -62,6 +63,10 @@ public class Start {
 		} else {
 			return ui.start(page);
 		}
+	}
+	
+	public MainPage getMainPage() {
+		return content;
 	}
 
 }
