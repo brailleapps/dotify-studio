@@ -2,6 +2,7 @@ package com.googlecode.e2u;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Map;
@@ -37,8 +38,8 @@ public class PreviewRenderer {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						try {
-							StreamSource xml1 = new StreamSource(uri.toURL().openStream());
+						try (InputStream is = uri.toURL().openStream()){
+							StreamSource xml1 = new StreamSource(is);
 
 					        t1.deleteOnExit();
 					        Source xslt = new StreamSource(this.getClass().getResourceAsStream("resource-files/pef2xhtml.xsl"));

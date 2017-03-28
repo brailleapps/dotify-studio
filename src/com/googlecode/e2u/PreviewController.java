@@ -40,15 +40,15 @@ public class PreviewController {
 		this.settings = settings;
 		this.r = r;
 		done = Collections.synchronizedMap(new HashMap<Integer, PreviewRenderer>());
-		update();
+		update(false);
 		brailleFont = settings.getString(Keys.brailleFont);
 		textFont = settings.getString(Keys.textFont);
 		charset = settings.getString(Keys.charset);
 	}
 	
-	private void update() {
+	private void update(boolean force) {
 		saxonNotAvailable = false;
-		if (lastUpdated+10000>System.currentTimeMillis()) {
+		if (!force && lastUpdated+10000>System.currentTimeMillis()) {
 			return;
 		}
 		lastUpdated = System.currentTimeMillis();
@@ -107,8 +107,9 @@ public class PreviewController {
 			return new StringReader("Failed to read");
 		}
 		try {
-			if (settingsChanged() || fileChanged()) {
-				update();
+			boolean fileChanged = fileChanged();
+			if (settingsChanged() || fileChanged) {
+				update(fileChanged);
 			}
 			return new InputStreamReader(new FileInputStream(done.get(vol).getFile()), "UTF-8");
 		} catch (FileNotFoundException | UnsupportedEncodingException e) {

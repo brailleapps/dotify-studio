@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.daisy.braille.api.embosser.Embosser;
 import org.daisy.braille.api.embosser.EmbosserWriter;
@@ -43,6 +45,7 @@ import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
 
 public class MainPage extends BasePage implements AListener {
+	private static final Logger logger = Logger.getLogger(MainPage.class.getCanonicalName());
 	//201x.m.d
 
 	final static int MAX_COPIES = 99;
@@ -265,7 +268,9 @@ public class MainPage extends BasePage implements AListener {
 				break;
 			}
 		}
-		System.err.println(xtag.getResult());
+		if (logger.isLoggable(Level.FINER)) {
+			logger.finer(xtag.getResult());
+		}
 		return new StringReader(xtag.getResult());
 	}
 	

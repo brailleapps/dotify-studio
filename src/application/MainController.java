@@ -392,7 +392,7 @@ public class MainController {
 				File input = new File(bookUri.get());
 		    	Window stage = root.getScene().getWindow();
 		    	FileChooser fileChooser = new FileChooser();
-		    	fileChooser.setTitle(Messages.TITLE_IMPORT_DIALOG.localize());
+		    	fileChooser.setTitle(Messages.TITLE_EXPORT_DIALOG.localize());
 		    	File selected = fileChooser.showSaveDialog(stage);
 		    	if (selected!=null) {
 			    	Task<Void> exportTask = new Task<Void>(){
