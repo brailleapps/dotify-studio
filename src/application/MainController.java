@@ -18,10 +18,35 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.daisy.braille.api.embosser.Embosser;
+import org.daisy.braille.api.embosser.EmbosserCatalogService;
+import org.daisy.braille.api.embosser.EmbosserFeatures;
+import org.daisy.braille.api.embosser.EmbosserWriter;
+import org.daisy.braille.consumer.embosser.EmbosserCatalog;
+import org.daisy.braille.pef.PEFHandler;
+import org.daisy.dotify.api.tasks.AnnotatedFile;
+import org.daisy.dotify.api.tasks.CompiledTaskSystem;
+import org.daisy.dotify.api.tasks.TaskSystem;
+import org.daisy.dotify.consumer.identity.IdentityProvider;
+import org.daisy.dotify.consumer.tasks.TaskSystemFactoryMaker;
+import org.daisy.dotify.tasks.runner.RunnerResult;
+import org.daisy.dotify.tasks.runner.TaskRunner;
+
+import com.googlecode.e2u.Settings;
+import com.googlecode.e2u.Settings.Keys;
+
+import application.about.AboutView;
+import application.l10n.Messages;
+import application.prefs.PreferencesView;
+import application.search.SearchController;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -50,31 +75,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.daisy.braille.api.embosser.Embosser;
-import org.daisy.braille.api.embosser.EmbosserCatalogService;
-import org.daisy.braille.api.embosser.EmbosserFeatures;
-import org.daisy.braille.api.embosser.EmbosserWriter;
-import org.daisy.braille.consumer.embosser.EmbosserCatalog;
-import org.daisy.braille.pef.PEFHandler;
-import org.daisy.dotify.api.tasks.AnnotatedFile;
-import org.daisy.dotify.api.tasks.CompiledTaskSystem;
-import org.daisy.dotify.api.tasks.TaskSystem;
-import org.daisy.dotify.consumer.identity.IdentityProvider;
-import org.daisy.dotify.consumer.tasks.TaskSystemFactoryMaker;
-import org.daisy.dotify.tasks.runner.RunnerResult;
-import org.daisy.dotify.tasks.runner.TaskRunner;
-
-import application.about.AboutView;
-import application.l10n.Messages;
-import application.prefs.PreferencesView;
-import application.search.SearchController;
-
-import com.googlecode.e2u.Settings;
-import com.googlecode.e2u.Settings.Keys;
 
 public class MainController {
 	private static final Logger logger = Logger.getLogger(MainController.class.getCanonicalName());
@@ -321,13 +321,15 @@ public class MainController {
     	File selected = fileChooser.showOpenDialog(stage);
     	if (selected!=null) {
     		//convert then add tab
-    		System.out.println("Selected: " + selected);
     		try {
 				File out = File.createTempFile("dotify-studio", ".pef");
 				// FIXME: Locale MUST be a setting
 	    		DotifyTask dt = new DotifyTask(selected, out, Locale.getDefault().toString().replace('_', '-'), Collections.emptyMap());
 	    		dt.setOnSucceeded(ev -> {
 	    			addTab(out);
+		    		Thread th = new Thread(new SourceDocumentWatcher(selected, out));
+		    		th.setDaemon(true);
+		    		th.start();
 	    		});
 	    		dt.setOnFailed(ev->{
 	    			logger.log(Level.WARNING, "Import failed.", dt.getException());
@@ -339,6 +341,51 @@ public class MainController {
 				e.printStackTrace();
 			}
     	}
+    }
+    
+    class SourceDocumentWatcher implements Runnable {
+    	private final File input;
+    	private final File output;
+    	private long modified;
+    	SourceDocumentWatcher(File input, File output) {
+    		this.input = input;
+    		this.output = output;
+    		this.modified = input.lastModified();
+    	}
+
+		@Override
+		public void run() {
+			//FIXME: this criteria is not enough 
+			while (input.exists()) {
+				if (modified<input.lastModified()) {
+					modified = input.lastModified();
+					try {
+						// FIXME: Locale MUST be a setting
+			    		DotifyTask dt = new DotifyTask(input, output, Locale.getDefault().toString().replace('_', '-'), Collections.emptyMap());
+			    		dt.setOnFailed(ev->{
+			    			logger.log(Level.WARNING, "Update failed.", dt.getException());
+				    		Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
+				    		alert.showAndWait();
+			    		});
+			    		dt.setOnSucceeded(ev -> {
+			    			Platform.runLater(() -> {
+			    				// FIXME: we're assuming that the file we're updating is the current tab which might not be the case
+			    				refresh();
+			    			});
+			    		});
+			    		exeService.submit(dt);
+					} catch (Exception e) { 
+						logger.log(Level.SEVERE, "A severe error occurred.", e);
+					}
+					logger.info("Waiting for changes in " + input);
+				}
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+    	
     }
     
     class DotifyTask extends Task<List<RunnerResult>> {
