@@ -41,6 +41,7 @@ import org.daisy.dotify.tasks.runner.TaskRunner;
 
 import com.googlecode.e2u.Settings;
 import com.googlecode.e2u.Settings.Keys;
+import com.sun.glass.events.ViewEvent;
 
 import application.about.AboutView;
 import application.l10n.Messages;
@@ -321,113 +322,8 @@ public class MainController {
     	File selected = fileChooser.showOpenDialog(stage);
     	if (selected!=null) {
     		//convert then add tab
-    		try {
-				File out = File.createTempFile("dotify-studio", ".pef");
-				// FIXME: Locale MUST be a setting
-	    		DotifyTask dt = new DotifyTask(selected, out, Locale.getDefault().toString().replace('_', '-'), Collections.emptyMap());
-	    		dt.setOnSucceeded(ev -> {
-	    			addTab(out);
-		    		Thread th = new Thread(new SourceDocumentWatcher(selected, out));
-		    		th.setDaemon(true);
-		    		th.start();
-	    		});
-	    		dt.setOnFailed(ev->{
-	    			logger.log(Level.WARNING, "Import failed.", dt.getException());
-		    		Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
-		    		alert.showAndWait();
-	    		});
-	    		exeService.submit(dt);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+    		addSourceTab(selected);
     	}
-    }
-    
-    class SourceDocumentWatcher implements Runnable {
-    	private final File input;
-    	private final File output;
-    	private long modified;
-    	SourceDocumentWatcher(File input, File output) {
-    		this.input = input;
-    		this.output = output;
-    		this.modified = input.lastModified();
-    	}
-
-		@Override
-		public void run() {
-			//FIXME: this criteria is not enough 
-			while (input.exists()) {
-				if (modified<input.lastModified()) {
-					modified = input.lastModified();
-					try {
-						// FIXME: Locale MUST be a setting
-			    		DotifyTask dt = new DotifyTask(input, output, Locale.getDefault().toString().replace('_', '-'), Collections.emptyMap());
-			    		dt.setOnFailed(ev->{
-			    			logger.log(Level.WARNING, "Update failed.", dt.getException());
-				    		Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
-				    		alert.showAndWait();
-			    		});
-			    		dt.setOnSucceeded(ev -> {
-			    			Platform.runLater(() -> {
-			    				// FIXME: we're assuming that the file we're updating is the current tab which might not be the case
-			    				refresh();
-			    			});
-			    		});
-			    		exeService.submit(dt);
-					} catch (Exception e) { 
-						logger.log(Level.SEVERE, "A severe error occurred.", e);
-					}
-					logger.info("Waiting for changes in " + input);
-				}
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-				}
-			}
-		}
-    	
-    }
-    
-    class DotifyTask extends Task<List<RunnerResult>> {
-    	private final File inputFile;
-    	private final File outputFile;
-    	private final String locale;
-    	private final Map<String, Object> params;
-    	
-    	DotifyTask(File inputFile, File outputFile, String locale, Map<String, Object> params) {
-    		this.inputFile = inputFile;
-    		this.outputFile = outputFile;
-    		this.locale = locale;
-    		this.params = new HashMap<>(params);
-    	}
-    	
-    	@Override
-    	protected List<RunnerResult> call() throws Exception {
-    		AnnotatedFile ai = IdentityProvider.newInstance().identify(inputFile);
-    		String inputFormat = getFormatString(ai);
-    		TaskSystem ts;
-			ts = TaskSystemFactoryMaker.newInstance().newTaskSystem(inputFormat, "pef", locale);
-			logger.info("About to run with parameters " + params);
-			
-			logger.info("Thread: " + Thread.currentThread().getThreadGroup());
-			CompiledTaskSystem tl = ts.compile(params);
-			TaskRunner.Builder builder = TaskRunner.withName(ts.getName());
-			return builder.build().runTasks(ai, outputFile, tl);
-    	}
-
-    	//FIXME: Duplicated from Dotify CLI. If this function is needed to run Dotify, find a home for it
-    	private String getFormatString(AnnotatedFile f) {
-    		if (f.getFormatName()!=null) {
-    			return f.getFormatName();
-    		} else if (f.getExtension()!=null) {
-    			return f.getExtension();
-    		} else if (f.getMediaType()!=null) {
-    			return f.getMediaType();
-    		} else {
-    			return null;
-    		}
-    	}
-
     }
     
     @FXML
@@ -492,7 +388,23 @@ public class MainController {
         	tab.setText(title);
         }
         PreviewController prv = new PreviewController();
+        tab.setOnClosed(ev ->  {
+        	prv.closing();
+        });
         prv.open(args);
+        tab.setContent(prv);
+        tabPane.getTabs().add(tab);
+        tabPane.getSelectionModel().select(tab);
+    }
+    
+    private void addSourceTab(File source) {
+        Tab tab = new Tab();
+        tab.setText(source.getName());
+        PreviewController prv = new PreviewController();
+        tab.setOnClosed(ev ->  {
+        	prv.closing();
+        });
+        prv.convertAndOpen(source);
         tab.setContent(prv);
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().select(tab);
