@@ -3,7 +3,7 @@ apply plugin: 'application'
 apply plugin: 'maven'
 apply plugin: "signing"
 
-mainClassName = "com.googlecode.e2u.Start"
+mainClassName = "application.MainFx"
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 javadoc {
@@ -45,7 +45,7 @@ jar {
 			'Implementation-Title': "$releaseName",
 			'Implementation-Version': version,
 			'Implementation-URL': "$repositoryURL",
-			'Main-Class': 'com.googlecode.e2u.Start',
+			'Main-Class': 'application.MainFx',
 			'Class-Path': configurations.compile.collect { it.getName() }.join(' ')
 			)
 		}
