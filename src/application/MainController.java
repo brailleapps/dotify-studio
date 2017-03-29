@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -46,6 +45,7 @@ import com.googlecode.e2u.Settings.Keys;
 import application.about.AboutView;
 import application.l10n.Messages;
 import application.prefs.PreferencesView;
+import application.preview.PreviewController;
 import application.search.SearchController;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -200,7 +200,7 @@ public class MainController {
     public void refresh() {
 		Tab t = tabPane.getSelectionModel().getSelectedItem();
 		if (t!=null) {
-			((EmbosserBrowser)t.getContent()).reload();
+			((PreviewController)t.getContent()).reload();
 		}
     }
     
@@ -210,7 +210,7 @@ public class MainController {
 			try {
 				Tab t = tabPane.getSelectionModel().getSelectedItem();
 				if (t!=null) {
-					Desktop.getDesktop().browse(new URI(((EmbosserBrowser)t.getContent()).getURL()));
+					Desktop.getDesktop().browse(new URI(((PreviewController)t.getContent()).getURL()));
 				}				
 			} catch (IOException | URISyntaxException e) {
 			}
@@ -434,7 +434,7 @@ public class MainController {
     public void exportFile() {
     	Tab t = tabPane.getSelectionModel().getSelectedItem();
 		if (t!=null) {
-			Optional<URI> bookUri = ((EmbosserBrowser)t.getContent()).getBookURI();
+			Optional<URI> bookUri = ((PreviewController)t.getContent()).getBookURI();
 			if (bookUri.isPresent()) {
 				File input = new File(bookUri.get());
 		    	Window stage = root.getScene().getWindow();
@@ -491,7 +491,9 @@ public class MainController {
         if (title!=null) {
         	tab.setText(title);
         }
-        tab.setContent(new EmbosserBrowser(args));
+        PreviewController prv = new PreviewController();
+        prv.open(args);
+        tab.setContent(prv);
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().select(tab);
     }
