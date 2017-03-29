@@ -1,6 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'maven'
+apply plugin: "signing"
 
 mainClassName = "com.googlecode.e2u.Start"
 compileJava.options.encoding = 'UTF-8'
@@ -12,8 +13,9 @@ javadoc {
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-group = "com.googlecode.e2u"
-version = "$releaseVersion"
+def repoRevision = System.getenv("REPO_REVISION")!=null?System.getenv("REPO_REVISION"):repositoryRevision
+
+group = "org.daisy.dotify"
 
 sourceSets {
 	main {
@@ -39,12 +41,12 @@ jar {
 		manifest {
 	    	attributes ('Built-By': System.getProperty("user.name"),
 	    	'Built-On': new Date().format("yyyy-MM-dd"),
-			'Repository-Revision': "$repositoryRevision",
+			'Repository-Revision': "$repoRevision",
 			'Implementation-Title': "$releaseName",
-			'Implementation-Version': "$releaseVersion",
-			'Implementation-URL': "$releaseURL",
+			'Implementation-Version': version,
+			'Implementation-URL': "$repositoryURL",
 			'Main-Class': 'com.googlecode.e2u.Start',
-			'Class-Path': configurations.compile.collect { it.getName() }.join(' lib/')	,
+			'Class-Path': configurations.compile.collect { it.getName() }.join(' ')
 			)
 		}
 	}
@@ -90,6 +92,68 @@ applicationDistribution.from(file('installer/docs')) {
 
 applicationDistribution.from(file('installer/examples')) {
 	into 'examples'
+}
+
+task javadocJar(type: Jar) {
+	classifier = 'javadoc'
+	from javadoc
+}
+
+task sourcesJar(type: Jar) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+artifacts {
+	archives javadocJar, sourcesJar
+}
+
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+
+signing {
+	required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
+	sign configurations.archives
+}
+
+uploadArchives {
+	//Only upload if a git hash is supplied. On Travis only upload snapshots.
+	enabled = repoRevision.size()==40 && System.getenv("TRAVIS_BUILD_ID")!=null
+	repositories {
+		mavenDeployer {
+			if (isReleaseVersion) {
+				beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+			}
+			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+				authentication(userName: sonatypeUsername, password: sonatypePassword)
+			}
+			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+				authentication(userName: sonatypeUsername, password: sonatypePassword)
+			}
+            pom.project {
+				name 'dotify-studio'
+				packaging 'jar'
+				description 'Dotify Studio'
+				url "$repositoryURL"
+				scm {
+					connection "$repositorySCM"
+					developerConnection "$repositorySCM"
+					url "$repositoryURL"
+				}
+                licenses {
+					license {
+						name 'LGPL'
+						url 'http://www.gnu.org/licenses/lgpl.html'
+					}
+                }
+				developers {
+					developer {
+						id 'joel'
+						name 'Joel Håkansson'
+					}
+				}
+			}
+		}
+	}
 }
 
 task wrapper(type: Wrapper) {
