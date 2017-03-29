@@ -130,7 +130,7 @@ public class SearchController extends VBox {
 		
 		@Override
 		protected PEFSearchIndex call() throws Exception {
-			PEFSearchIndex search = new PEFSearchIndex();
+			PEFSearchIndex search = new PEFSearchIndex(1);
 			PEFBookLoader loader = new PEFBookLoader();
 			Collection<File> files = PEFLibrary.listFiles(Settings.getSettings().getLibraryPath(), true);
 			int i = 0;
