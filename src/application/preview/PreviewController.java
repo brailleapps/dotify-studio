@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 
 import org.daisy.dotify.api.tasks.AnnotatedFile;
 import org.daisy.dotify.api.tasks.CompiledTaskSystem;
+import org.daisy.dotify.api.tasks.TaskOption;
 import org.daisy.dotify.api.tasks.TaskSystem;
 import org.daisy.dotify.consumer.identity.IdentityProvider;
 import org.daisy.dotify.consumer.tasks.TaskSystemFactoryMaker;
@@ -43,6 +44,7 @@ public class PreviewController extends BorderPane {
 	private static final Logger logger = Logger.getLogger(PreviewController.class.getCanonicalName());
 	@FXML
 	public WebView browser;
+	public OptionsController options;
 	private String url;
 	private Start start;
 	private ExecutorService exeService;
@@ -78,6 +80,7 @@ public class PreviewController extends BorderPane {
 			DotifyTask dt = new DotifyTask(selected, out, Locale.getDefault().toString().replace('_', '-'), Collections.emptyMap());
 			dt.setOnSucceeded(ev -> {
 				open(new String[]{"-open", out.getAbsolutePath()});
+				updateOptions(dt.getValue());
 	    		Thread th = new Thread(new SourceDocumentWatcher(selected, out));
 	    		th.setDaemon(true);
 	    		th.start();
@@ -90,6 +93,20 @@ public class PreviewController extends BorderPane {
 			exeService.submit(dt);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private void updateOptions(List<RunnerResult> opts) {
+		if (options==null) {
+			options = new OptionsController();
+			setLeft(options);
+		}
+		options.clear();
+		for (RunnerResult r : opts) {
+			//test.appendText(r.getTask().getName()+"\n");
+			for (TaskOption o : r.getTask().getOptions()) {
+				options.addItem(o);
+			}
 		}
 	}
 	
