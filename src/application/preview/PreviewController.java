@@ -96,18 +96,14 @@ public class PreviewController extends BorderPane {
 		}
 	}
 	
-	private void updateOptions(List<RunnerResult> opts) {
+	private void updateOptions(DotifyResult dr) {
 		if (options==null) {
 			options = new OptionsController();
 			setLeft(options);
 		}
 		options.clear();
-		for (RunnerResult r : opts) {
-			//test.appendText(r.getTask().getName()+"\n");
-			for (TaskOption o : r.getTask().getOptions()) {
-				options.addItem(o);
-			}
-		}
+		options.addAll(dr.getTaskSystem(), dr.getResults());
+
 	}
 	
     class SourceDocumentWatcher implements Runnable {
@@ -152,8 +148,27 @@ public class PreviewController extends BorderPane {
 			logger.info("Removing watcher...");
 		}
     }
+    
+    private static class DotifyResult {
+    	private final CompiledTaskSystem taskSystem;
+    	private final List<RunnerResult> results;
+    	
+    	private DotifyResult(CompiledTaskSystem taskSystem, List<RunnerResult> results) {
+    		this.taskSystem = taskSystem;
+    		this.results = results;
+    	}
+
+		private CompiledTaskSystem getTaskSystem() {
+			return taskSystem;
+		}
+
+		private List<RunnerResult> getResults() {
+			return results;
+		}
+    	
+    }
 	
-    class DotifyTask extends Task<List<RunnerResult>> {
+    class DotifyTask extends Task<DotifyResult> {
     	private final File inputFile;
     	private final File outputFile;
     	private final String locale;
@@ -167,7 +182,7 @@ public class PreviewController extends BorderPane {
     	}
     	
     	@Override
-    	protected List<RunnerResult> call() throws Exception {
+    	protected DotifyResult call() throws Exception {
     		AnnotatedFile ai = IdentityProvider.newInstance().identify(inputFile);
     		String inputFormat = getFormatString(ai);
     		TaskSystem ts;
@@ -177,7 +192,7 @@ public class PreviewController extends BorderPane {
 			logger.info("Thread: " + Thread.currentThread().getThreadGroup());
 			CompiledTaskSystem tl = ts.compile(params);
 			TaskRunner.Builder builder = TaskRunner.withName(ts.getName());
-			return builder.build().runTasks(ai, outputFile, tl);
+			return new DotifyResult(tl, builder.build().runTasks(ai, outputFile, tl));
     	}
 
     	//FIXME: Duplicated from Dotify CLI. If this function is needed to run Dotify, find a home for it
