@@ -44,6 +44,8 @@
                      </accelerator>
                   </MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveAs" text="%menu-item-save-as" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
                   <Menu mnemonicParsing="false" text="%menu-item-import">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#showImportDialog" text="%menu-item-import-document" />

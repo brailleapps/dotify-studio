@@ -10,6 +10,8 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -227,6 +229,41 @@ public class MainController {
     }
     
     @FXML
+    public void saveAs() {
+    	Tab t = tabPane.getSelectionModel().getSelectedItem();
+		if (t!=null) {
+			PreviewController controller = ((PreviewController)t.getContent());
+			// display save dialog
+			Window stage = root.getScene().getWindow();
+	    	FileChooser fileChooser = new FileChooser();
+	    	fileChooser.setTitle(Messages.TITLE_SAVE_AS_DIALOG.localize());
+	    	fileChooser.getExtensionFilters().add(new ExtensionFilter("PEF-file", ".pef"));
+	    	File selected = fileChooser.showSaveDialog(stage);
+	    	if (selected!=null) {
+				// get the url of the current tab
+				Optional<URI> _uri = controller.getBookURI();
+				if (_uri.isPresent()) {
+					URI uri = _uri.get();
+					// store to selected location
+					try {
+						Files.copy(Paths.get(uri), new FileOutputStream(selected));
+					} catch (IOException e) {
+						// Display error
+						e.printStackTrace();
+					}
+					// stop watching
+					controller.closing();
+					// update contents of tab
+					setTab(t, selected.getName(), toArgs(selected));
+					// TODO: Restore document position
+				} else {
+					// TODO: Display error
+				}
+	    	}
+		}
+    }
+    
+    @FXML
     public void toggleSearchArea() {
     	ObservableList<Divider> dividers = splitPane.getDividers();
     	//TODO: observe changes and restore to that value
@@ -376,12 +413,22 @@ public class MainController {
     }
     
     private void addTab(File f) { 
-    	addTab(f.getName(), new String[]{"-open", f.getAbsolutePath()});
+    	addTab(f.getName(), toArgs(f));
+    }
+    
+    private String[] toArgs(File f) {
+    	return new String[]{"-open", f.getAbsolutePath()};
     }
     
     private void addTab(String title, String[] args) {
         Tab tab = new Tab();
-        if (title==null && args.length>=2) {
+        setTab(tab, title, args);
+        tabPane.getTabs().add(tab);
+        tabPane.getSelectionModel().select(tab);
+    }
+    
+    private void setTab(Tab tab, String title, String[] args) {
+    	if (title==null && args.length>=2) {
         	title = args[1];
         }
         if (title!=null) {
@@ -393,8 +440,7 @@ public class MainController {
         });
         prv.open(args);
         tab.setContent(prv);
-        tabPane.getTabs().add(tab);
-        tabPane.getSelectionModel().select(tab);
+
     }
     
     private void addSourceTab(File source) {
