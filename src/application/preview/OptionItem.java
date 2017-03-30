@@ -47,4 +47,32 @@ public class OptionItem extends BorderPane {
 		setAlignment(description, Pos.CENTER_RIGHT);
 	}
 
+	public String getKey() {
+		return key.getText();
+	}
+	
+	public void setValue(String value) {
+		if (choiceValue!=null) {
+			for (TaskOptionValueAdapter tva : choiceValue.getItems()) {
+				if (value.equals(tva.getValue().getName())) {
+					choiceValue.getSelectionModel().select(tva);
+					break;
+				}
+			}
+		} else if (stringValue!=null) {
+			stringValue.setText(value);
+		} else {
+			throw new RuntimeException("Error in code.");
+		}
+	}
+	
+	public String getValue() {
+		if (choiceValue!=null) {
+			return choiceValue.getSelectionModel().getSelectedItem().getValue().getName();
+		} else if (stringValue!=null) {
+			return stringValue.getText();
+		} else {
+			throw new RuntimeException("Error in code.");
+		}
+	}
 }

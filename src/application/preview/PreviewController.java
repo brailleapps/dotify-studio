@@ -80,7 +80,7 @@ public class PreviewController extends BorderPane {
 			DotifyTask dt = new DotifyTask(selected, out, Locale.getDefault().toString().replace('_', '-'), Collections.emptyMap());
 			dt.setOnSucceeded(ev -> {
 				open(new String[]{"-open", out.getAbsolutePath()});
-				updateOptions(dt.getValue());
+				updateOptions(dt.getValue(), Collections.emptyMap());
 	    		Thread th = new Thread(new SourceDocumentWatcher(selected, out));
 	    		th.setDaemon(true);
 	    		th.start();
@@ -96,13 +96,13 @@ public class PreviewController extends BorderPane {
 		}
 	}
 	
-	private void updateOptions(DotifyResult dr) {
+	private void updateOptions(DotifyResult dr, Map<String, Object> opts) {
 		if (options==null) {
 			options = new OptionsController();
 			setLeft(options);
 		}
 		options.clear();
-		options.addAll(dr.getTaskSystem(), dr.getResults());
+		options.addAll(dr.getTaskSystem(), dr.getResults(), opts);
 
 	}
 	
@@ -122,8 +122,9 @@ public class PreviewController extends BorderPane {
 				if (modified<input.lastModified()) {
 					modified = input.lastModified();
 					try {
+						Map<String, Object> opts = options.getParams();
 						// FIXME: Locale MUST be a setting
-			    		DotifyTask dt = new DotifyTask(input, output, Locale.getDefault().toString().replace('_', '-'), Collections.emptyMap());
+			    		DotifyTask dt = new DotifyTask(input, output, Locale.getDefault().toString().replace('_', '-'), opts);
 			    		dt.setOnFailed(ev->{
 			    			logger.log(Level.WARNING, "Update failed.", dt.getException());
 				    		Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
@@ -131,6 +132,7 @@ public class PreviewController extends BorderPane {
 			    		});
 			    		dt.setOnSucceeded(ev -> {
 			    			Platform.runLater(() -> {
+			    				updateOptions(dt.getValue(), opts);
 			    				reload();
 			    			});
 			    		});

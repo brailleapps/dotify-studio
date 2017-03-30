@@ -12,6 +12,10 @@ public class TaskOptionValueAdapter {
 	public TaskOptionValueAdapter(TaskOptionValue value) {
 		this.value = value;
 	}
+	
+	public TaskOptionValue getValue() {
+		return value;
+	}
 
 	@Override
 	public String toString() {
