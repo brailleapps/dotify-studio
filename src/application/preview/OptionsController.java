@@ -1,11 +1,13 @@
 package application.preview;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.daisy.dotify.api.tasks.CompiledTaskSystem;
 import org.daisy.dotify.api.tasks.TaskOption;
@@ -56,7 +58,12 @@ public class OptionsController extends ScrollPane {
 			return;
 		}
 		addGroupTitle(title);
-		for (TaskOption o : options) {
+		List<TaskOption> sortedOptions = options.stream()
+				.sorted((o1, o2) -> {
+					return o1.getKey().compareTo(o2.getKey());
+				})
+				.collect(Collectors.toList());
+		for (TaskOption o : sortedOptions) {
 			addItem(o, prvOpts);
 		}
 	}
