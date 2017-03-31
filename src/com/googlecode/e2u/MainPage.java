@@ -311,7 +311,9 @@ public class MainPage extends BasePage implements AListener {
 			open = URLDecoder.decode(open, ENCODING);
 			File f = new File(open);
 			if (f.exists()) {
-				System.err.println("open book" + f);
+				if (logger.isLoggable(Level.FINE)) {
+					logger.fine("open book" + f);
+				}
 				bookController.close();
 				bookController = new BookViewController(f, settings, embossMenu);
 			}

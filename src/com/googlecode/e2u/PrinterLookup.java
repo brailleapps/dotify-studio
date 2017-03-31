@@ -2,12 +2,14 @@ package com.googlecode.e2u;
 
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.swing.SwingWorker;
 
 public class PrinterLookup {
+	private static final Logger logger = Logger.getLogger(PrinterLookup.class.getCanonicalName());
 	private static PrinterLookup instance = null;
     private SwingWorker<PrintService[], Void> printerLookup;
     private PrintService[] printers = null;
@@ -24,7 +26,7 @@ public class PrinterLookup {
 			
                 @Override
 	       protected void done() {
-	    	   System.out.println("Printer lookup: " + (new Date().getTime() - d.getTime()));
+	    	   logger.info("Printer lookup: " + (new Date().getTime() - d.getTime()));
 	       }
        	
         };

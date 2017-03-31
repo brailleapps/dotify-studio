@@ -10,6 +10,7 @@ import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.daisy.braille.api.table.BrailleConstants;
 import org.daisy.braille.api.table.BrailleConverter;
@@ -24,6 +25,7 @@ import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
 
 public class PreviewController {
+	private static final Logger logger = Logger.getLogger(PreviewController.class.getCanonicalName());
 	private final BookReader r;
 	private Map<Integer, PreviewRenderer> done;
 	private final Settings settings;
@@ -60,7 +62,7 @@ public class PreviewController {
 				if (pr!=null) {
 					pr.abort();
 					if (pr.getFile()!=null) {
-						System.out.println("Removing old renderer");
+						logger.fine("Removing old renderer");
 						pr.getFile().delete();
 					}
 				}

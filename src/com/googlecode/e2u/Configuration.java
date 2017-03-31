@@ -2,6 +2,8 @@ package com.googlecode.e2u;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.daisy.braille.api.embosser.Embosser;
 import org.daisy.braille.api.embosser.EmbosserFeatures;
@@ -23,6 +25,7 @@ import com.googlecode.e2u.Settings.Keys;
 
 
 public class Configuration {
+	private static final Logger logger = Logger.getLogger(Configuration.class.getCanonicalName());
 	enum ErrorCode {
 		NOT_SET,
 		INCOMPLETE,
@@ -172,8 +175,7 @@ public class Configuration {
 		try {
 			return SheetPaperFormat.Orientation.valueOf(orientation);
 		} catch (Exception e) {
-			System.err.println(orientation);
-			e.printStackTrace();
+			logger.log(Level.WARNING, "Error getting orientation: " + orientation, e);
 			return SheetPaperFormat.Orientation.DEFAULT;
 		}
 	}
