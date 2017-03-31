@@ -27,6 +27,7 @@ public enum Messages {
 	LABEL_ORIENTATION("label-orientation"),
 	LABEL_Z_FOLDING("label-z-folding"),
 	LABEL_ALIGNMENT("label-alignment"),
+	LABEL_EDIT_ABOVE("label-edit-above"),
 	MESSAGE_SIX_DOT_ONLY("message-six-dot-only"),
 	MESSAGE_SEARCH_RESULT("message-search-result"),
 	MESSAGE_UNKNOWN_AUTHOR("message-unknown-author"),

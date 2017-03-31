@@ -3,24 +3,32 @@ package application.preview;
 import org.daisy.dotify.api.tasks.TaskOption;
 import org.daisy.dotify.api.tasks.TaskOptionValue;
 
+import application.l10n.Messages;
 import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 public class OptionItem extends BorderPane {
+	private final boolean disabled;
 	private Label key;
 	private ChoiceBox<TaskOptionValueAdapter> choiceValue;
 	private TextField stringValue;
 	private Label description;
 
-	public OptionItem(TaskOption o) {
+	public OptionItem(TaskOption o, boolean disabled) {
+		this.disabled = disabled;
 		key = new Label(o.getKey());
 		setLeft(key);
-		if (o.hasValues()) {
+		if (disabled) {
+			Label above = new Label(Messages.LABEL_EDIT_ABOVE.localize());
+			above.setTextFill(Paint.valueOf("#808080"));
+			setRight(above);
+		} else if (o.hasValues()) {
 			choiceValue = new ChoiceBox<>();
 			TaskOptionValueAdapter selected = null;
 			for (TaskOptionValue v : o.getValues()) {
@@ -61,7 +69,7 @@ public class OptionItem extends BorderPane {
 			}
 		} else if (stringValue!=null) {
 			stringValue.setText(value);
-		} else {
+		} else if (!disabled) {
 			throw new RuntimeException("Error in code.");
 		}
 	}
@@ -71,6 +79,8 @@ public class OptionItem extends BorderPane {
 			return choiceValue.getSelectionModel().getSelectedItem().getValue().getName();
 		} else if (stringValue!=null) {
 			return stringValue.getText();
+		} else if (disabled) {
+			return "";
 		} else {
 			throw new RuntimeException("Error in code.");
 		}

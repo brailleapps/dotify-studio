@@ -1,10 +1,11 @@
 package application.preview;
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ public class OptionsController extends ScrollPane {
 	@FXML private Button applyButton;
 	@FXML private CheckBox monitorCheckbox;
 	private boolean refreshRequested;
+	private Set<TaskOption> values;
 
 	public OptionsController() {
 		try {
@@ -47,6 +49,7 @@ public class OptionsController extends ScrollPane {
 	
 	public void setOptions(CompiledTaskSystem ts, List<RunnerResult> opts, Map<String, Object> prvOpts) {
 		clear();
+		values = new HashSet<>();
 		displayItems(ts.getName(), ts.getOptions(), prvOpts);
 		for (RunnerResult r : opts) {
 			displayItems(r.getTask().getName(), r.getTask().getOptions(), prvOpts);
@@ -77,13 +80,14 @@ public class OptionsController extends ScrollPane {
 	}
 	
 	private void addItem(TaskOption o, Map<String, Object> setOptions) {
-		OptionItem item = new OptionItem(o);
+		OptionItem item = new OptionItem(o, values.contains(o));
 		Object value = setOptions.get(o.getKey());
 		if (value!=null) {
 			item.setValue(value.toString());
 		}
 		VBox.setMargin(item, new Insets(0, 0, 10, 0));
 		vbox.getChildren().add(item);
+		values.add(o);
 	}
 	
 	private void clear() {
