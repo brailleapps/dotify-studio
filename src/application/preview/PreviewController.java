@@ -76,10 +76,13 @@ public class PreviewController extends BorderPane {
 		try {
 			File out = File.createTempFile("dotify-studio", ".pef");
 			// FIXME: Locale MUST be a setting
-			DotifyTask dt = new DotifyTask(selected, out, Locale.getDefault().toString().replace('_', '-'), Collections.emptyMap());
+			// FIXME: Setting a default splitter max because the true default is useless
+			Map<String, Object> options = new HashMap<>();
+			options.put("splitterMax", 50);
+			DotifyTask dt = new DotifyTask(selected, out, Locale.getDefault().toString().replace('_', '-'), options);
 			dt.setOnSucceeded(ev -> {
 				open(new String[]{"-open", out.getAbsolutePath()});
-				updateOptions(dt.getValue(), Collections.emptyMap());
+				updateOptions(dt.getValue(), options);
 	    		Thread th = new Thread(new SourceDocumentWatcher(selected, out));
 	    		th.setDaemon(true);
 	    		th.start();
