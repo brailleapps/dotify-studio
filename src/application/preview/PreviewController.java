@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 
 import org.daisy.dotify.api.tasks.AnnotatedFile;
 import org.daisy.dotify.api.tasks.CompiledTaskSystem;
-import org.daisy.dotify.api.tasks.TaskOption;
 import org.daisy.dotify.api.tasks.TaskSystem;
 import org.daisy.dotify.consumer.identity.IdentityProvider;
 import org.daisy.dotify.consumer.tasks.TaskSystemFactoryMaker;
@@ -101,8 +100,7 @@ public class PreviewController extends BorderPane {
 			options = new OptionsController();
 			setLeft(options);
 		}
-		options.clear();
-		options.addAll(dr.getTaskSystem(), dr.getResults(), opts);
+		options.setOptions(dr.getTaskSystem(), dr.getResults(), opts);
 
 	}
 	
@@ -119,7 +117,7 @@ public class PreviewController extends BorderPane {
 		@Override
 		public void run() { 
 			while (input.exists() && !closing) {
-				if (modified<input.lastModified()) {
+				if ((modified<input.lastModified() && options.isWatching()) || options.refreshRequested()) {
 					modified = input.lastModified();
 					try {
 						Map<String, Object> opts = options.getParams();

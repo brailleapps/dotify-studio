@@ -16,6 +16,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
@@ -24,8 +26,10 @@ import javafx.scene.text.Font;
 
 public class OptionsController extends ScrollPane {
 	private static final Logger logger = Logger.getLogger(OptionsController.class.getCanonicalName());
-	@FXML
-	public VBox vbox;
+	@FXML public VBox vbox;
+	@FXML private Button applyButton;
+	@FXML private CheckBox monitorCheckbox;
+	private boolean refreshRequested;
 
 	public OptionsController() {
 		try {
@@ -36,13 +40,15 @@ public class OptionsController extends ScrollPane {
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Failed to load view", e);
 		}
+		refreshRequested = false;
 	}
 	
-	public void addAll(CompiledTaskSystem ts, List<RunnerResult> opts, Map<String, Object> prvOpts) {
+	public void setOptions(CompiledTaskSystem ts, List<RunnerResult> opts, Map<String, Object> prvOpts) {
+		clear();
 		displayItems(ts.getName(), ts.getOptions(), prvOpts);
 		for (RunnerResult r : opts) {
 			displayItems(r.getTask().getName(), r.getTask().getOptions(), prvOpts);
-		}	
+		}
 	}
 	
 	private void displayItems(String title, List<TaskOption> options, Map<String, Object> prvOpts) {
@@ -63,7 +69,7 @@ public class OptionsController extends ScrollPane {
 		vbox.getChildren().add(label);
 	}
 	
-	public void addItem(TaskOption o, Map<String, Object> setOptions) {
+	private void addItem(TaskOption o, Map<String, Object> setOptions) {
 		OptionItem item = new OptionItem(o);
 		Object value = setOptions.get(o.getKey());
 		if (value!=null) {
@@ -73,7 +79,7 @@ public class OptionsController extends ScrollPane {
 		vbox.getChildren().add(item);
 	}
 	
-	public void clear() {
+	private void clear() {
 		vbox.getChildren().clear();
 	}
 	
@@ -92,4 +98,21 @@ public class OptionsController extends ScrollPane {
 		return opts;
 	}
 	
+	@FXML
+	public void requestRefresh() {
+		refreshRequested = true;
+	}
+	
+	boolean isWatching() {
+		return monitorCheckbox.isSelected();
+	}
+	
+	boolean refreshRequested() {
+		if (refreshRequested) {
+			refreshRequested = false;
+			return true;
+		}
+		return false;
+	}
+
 }
