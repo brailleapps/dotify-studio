@@ -36,7 +36,9 @@ public enum Messages {
 	TAB_EMBOSS("tab-emboss"),
 	TAB_PREVIEW("tab-preview"),
 	TAB_SEARCH("tab-search"),
-	VALUE_USE_DEFAULT("value-use-default")
+	VALUE_USE_DEFAULT("value-use-default"),
+	EXTENSION_FILTER_SUPPORTED_FILES("extension-filter-supported-files"),
+	EXTENSION_FILTER_ALL_FILES("extension-filter-all-files")
 	;
 	
 	private static final String BUNDLE_NAME = Messages.class.getPackage().getName() + ".messages"; //$NON-NLS-1$

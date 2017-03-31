@@ -12,17 +12,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -33,17 +29,10 @@ import org.daisy.braille.api.embosser.EmbosserFeatures;
 import org.daisy.braille.api.embosser.EmbosserWriter;
 import org.daisy.braille.consumer.embosser.EmbosserCatalog;
 import org.daisy.braille.pef.PEFHandler;
-import org.daisy.dotify.api.tasks.AnnotatedFile;
-import org.daisy.dotify.api.tasks.CompiledTaskSystem;
-import org.daisy.dotify.api.tasks.TaskSystem;
-import org.daisy.dotify.consumer.identity.IdentityProvider;
-import org.daisy.dotify.consumer.tasks.TaskSystemFactoryMaker;
-import org.daisy.dotify.tasks.runner.RunnerResult;
-import org.daisy.dotify.tasks.runner.TaskRunner;
+import org.daisy.dotify.consumer.tasks.TaskGroupFactoryMaker;
 
 import com.googlecode.e2u.Settings;
 import com.googlecode.e2u.Settings.Keys;
-import com.sun.glass.events.ViewEvent;
 
 import application.about.AboutView;
 import application.l10n.Messages;
@@ -356,6 +345,13 @@ public class MainController {
     	Window stage = root.getScene().getWindow();
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle(Messages.TITLE_IMPORT_DIALOG.localize());
+		List<String> exts = TaskGroupFactoryMaker.newInstance().listAll().stream()
+			.map(spec -> "*."+spec.getInputFormat())
+			.distinct().collect(Collectors.toList());
+		// TODO: not all formats in this list are actually extensions, but it will have to do for now, since the TaskGroupFactory doesn't provide this information
+		fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_SUPPORTED_FILES.localize(), exts));
+		// TODO: add all extensions individually as well, requires additional information from the TaskGroupFactory about the formats (i.e. descriptions)
+		fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_ALL_FILES.localize(), "*.*"));
     	File selected = fileChooser.showOpenDialog(stage);
     	if (selected!=null) {
     		//convert then add tab
