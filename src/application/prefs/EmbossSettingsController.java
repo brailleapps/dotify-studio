@@ -1,18 +1,15 @@
 package application.prefs;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 
 import org.daisy.braille.api.factory.FactoryProperties;
-import org.daisy.braille.api.table.BrailleConstants;
-import org.daisy.braille.consumer.embosser.EmbosserCatalog;
-import org.daisy.braille.consumer.table.TableCatalog;
 
 import com.googlecode.e2u.Configuration;
 import com.googlecode.e2u.Settings;
@@ -24,7 +21,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
+import javafx.scene.layout.VBox;
 
 public class EmbossSettingsController {
 	@FXML private Label deviceLabel;
@@ -32,39 +29,168 @@ public class EmbossSettingsController {
 	@FXML private Label embosserDetailsLabel;
 	@FXML private Label printModeLabel;
 	@FXML private Label tableLabel;
+	@FXML private Label tableDetailsLabel;
 	@FXML private Label paperLabel;
+	@FXML private Label paperDetailsLabel;
 	@FXML private Label orentationLabel;
 	@FXML private Label zFoldingLabel;
 	@FXML private Label alignLabel;
+	@FXML private Label status;
 	@FXML private ComboBox<PrintServiceAdapter> deviceSelect;
 	@FXML private ComboBox<FactoryPropertiesAdapter> embosserSelect;
-	private Configuration conf;
+	@FXML private ComboBox<NiceName> printModeSelect;
+	@FXML private ComboBox<FactoryPropertiesAdapter> tableSelect;
+	@FXML private ComboBox<FactoryPropertiesAdapter> paperSelect;
+	@FXML private ComboBox<NiceName> orentationSelect;
+	@FXML private ComboBox<NiceName> zFoldingSelect;
+	@FXML private ComboBox<NiceName> alignSelect;
+	@FXML private VBox parent;
+	private PreferenceItem deviceItem;
+	private PreferenceItem embosserItem;
+	private PreferenceItem printModeItem;
+	private PreferenceItem tableItem;
+	private PreferenceItem paperItem;
+	private PreferenceItem orientationItem;
+	private PreferenceItem zFoldingItem;
+	private PreferenceItem alignItem;
+	private ExecutorService exeService;
+	private final OptionNiceNames nn = new OptionNiceNames();
+	private DeviceScanner deviceScanner;
+	
 
 	@FXML
 	public void initialize() {
-		DeviceScanner deviceScanner = new DeviceScanner();
+		exeService = Executors.newSingleThreadExecutor();
+		deviceScanner = new DeviceScanner();
 		deviceScanner.setOnSucceeded(ev -> {
-			deviceSelect.getItems().addAll(deviceScanner.getValue());
-			if (deviceScanner.currentValue!=null) {
-				deviceSelect.valueProperty().setValue(deviceScanner.currentValue);
-			}
-			deviceSelect.valueProperty().addListener((ov, t0, t1)-> { 
-				Settings.getSettings().put(Keys.device, t1.p.getName());
-				updateComponents();
-			});
+			updateComponents();
 		});
-		newThread(deviceScanner);
-		FactoryPropertiesScanner embosserScanner = new FactoryPropertiesScanner(()->EmbosserCatalog.newInstance().list(), Keys.embosser);
-		newThread(embosserScanner);
-		updateComponents();
+		exeService.submit(deviceScanner);
+		exeService.shutdown();
 	}
 	
-	private void newThread(Runnable r) {
-		Thread th = new Thread(r);
+	private void updateComponents() {
+		Task<Configuration> readConfig = new Task<Configuration>() {
+			@Override
+			protected Configuration call() throws Exception {
+				return Configuration.getConfiguration(Settings.getSettings());
+			}
+		};
+		readConfig.setOnSucceeded(ev -> {
+			Platform.runLater(()-> {
+				updateComponentsInner(readConfig.getValue());
+			});
+		});
+		Thread th = new Thread(readConfig);
 		th.setDaemon(true);
 		th.start();
 	}
+
+	//FIXME: roll paper, description (portrait), description alignment
+	private void updateComponentsInner(Configuration conf) {
+		Config config = new Config();
+		config.update();
+		parent.getChildren().clear();
+		
+		deviceItem = new PreferenceItem(Messages.LABEL_DEVICE.localize(), deviceScanner.getValue(), config.device, (o, t0, t1) -> {
+			Settings.getSettings().put(Keys.device, t1.getKey());
+			updateComponents();
+		});
+		parent.getChildren().add(deviceItem);
+
+		if (!"".equals(config.device)) {
+			embosserItem = new PreferenceItem(Messages.LABEL_EMBOSSER.localize(), wrap(conf.getEmbossers()), config.embosser, (o, t0, t1) -> {
+				Settings.getSettings().put(Keys.embosser, t1.getKey());
+				updateComponents();
+			});
+			parent.getChildren().add(embosserItem);
+			
+			if (!"".equals(config.embosser)) {
+				if (conf.supportsBothPrintModes()) {
+					printModeItem = new PreferenceItem(Messages.LABEL_PRINT_MODE.localize(), nn.getPrintModeNN(), config.printMode, (o, t0, t1) -> {
+						Settings.getSettings().put(Keys.printMode, t1.getKey());
+						updateComponents();
+					});
+					parent.getChildren().add(printModeItem);
+				} else {
+					printModeItem = null;
+				}
+		
+				if (conf.getSupportedTables().size()>1) {
+					tableItem = new PreferenceItem(Messages.LABEL_TABLE.localize(), wrap(conf.getSupportedTables()), config.table, (o, t0, t1) -> {
+						Settings.getSettings().put(Keys.table, t1.getKey());
+						updateComponents();
+					});
+					parent.getChildren().add(tableItem);
+				} else {
+					tableItem = null;
+				}
+				
+				paperItem = new PreferenceItem(Messages.LABEL_PAPER.localize(), wrap(conf.getSupportedPapers()), config.paper, (o, t0, t1) -> {
+					Settings.getSettings().put(Keys.paper, t1.getKey());
+					updateComponents();
+				});
+				parent.getChildren().add(paperItem);
 	
+				if (conf.isRollPaper()) {
+					
+				}
+				
+				if (conf.supportsOrientation()) {
+					orientationItem = new PreferenceItem(Messages.LABEL_ORIENTATION.localize(), nn.getOrientationNN(), config.orientation, (o, t0, t1) -> {
+								Settings.getSettings().put(Keys.orientation, t1.getKey());
+								updateComponents();
+							});
+					parent.getChildren().add(orientationItem);
+				} else {
+					orientationItem = null;
+				}
+				
+				//
+    			if (conf.settingOK()) {
+    				parent.getChildren().add(
+    						PreferenceItem.newDescriptionLabel(
+    						Messages.LABEL_PAPER_DIMENSIONS.localize(//conf.getShape()==null?"":nn.getShapeNN()), 
+    						conf.getPaperWidth(), conf.getPaperHeight(), conf.getMaxWidth(), conf.getMaxHeight()
+    				)));
+    			}
+				
+				if (conf.supportsZFolding()) {
+					zFoldingItem = new PreferenceItem(Messages.LABEL_Z_FOLDING.localize(), nn.getZfoldingNN(), config.zFolding, (o, t0, t1) -> {
+						Settings.getSettings().put(Keys.zFolding, t1.getKey());
+						updateComponents();
+					});
+					parent.getChildren().add(zFoldingItem);
+				} else {
+					zFoldingItem = null;
+				}
+				if (conf.supportsAligning()) {
+					alignItem = new PreferenceItem(Messages.LABEL_ALIGNMENT.localize(), nn.getAlignNN(), config.align, (o, t0, t1) -> {
+						Settings.getSettings().put(Keys.align, t1.getKey());
+						updateComponents();
+					});
+					parent.getChildren().add(alignItem);
+				} else {
+					alignItem = null;
+				}
+			}
+		}
+		
+		if (conf.settingOK()) {
+			status.setText("");
+		} else {
+			status.setText(Messages.LABEL_SETUP_INVALID.localize());
+		}
+	}
+	
+	private static List<FactoryPropertiesAdapter> wrap(Collection<? extends FactoryProperties> props) {
+		List<FactoryPropertiesAdapter> ad = new ArrayList<>();
+		for (FactoryProperties p : props) {
+			ad.add(new FactoryPropertiesAdapter(p));
+		}
+		return ad;
+	}
+
 	private static class DeviceScanner extends Task<List<PrintServiceAdapter>> {
 		private final String currentDevice = Settings.getSettings().getString(Keys.device, "");
 		private PrintServiceAdapter currentValue; 
@@ -83,36 +209,39 @@ public class EmbossSettingsController {
 		}
 	}
 	
-	@FXML
-	public void updateComponents() {
-		Settings settings = Settings.getSettings();
-    	if (conf==null) {
-    		conf = Configuration.getConfiguration(settings);
-    	}
-    	if (!"".equals(settings.getString(Keys.device, ""))) {
-    		//Enable embosser
-    		setEmbosserVisible(true);
-    	} else {
-    		setEmbosserVisible(false);
-    	}
+	private class Config {
+		String device;
+		String embosser;
+		String printMode;
+		String paper;
+		String lengthValue;
+		String lengthUnit;
+		String align;
+		String table;
+		String orientation;
+		String zFolding;
+		private void update() {
+			Settings settings = Settings.getSettings();
+	    	device = settings.getString(Keys.device, "");
+	    	embosser = settings.getString(Keys.embosser, "");
+	    	printMode = settings.getString(Keys.printMode, "");
+	    	paper = settings.getString(Keys.paper, "");
+	    	lengthValue = settings.getString(Keys.cutLengthValue, "");
+	    	lengthUnit = settings.getString(Keys.cutLengthUnit, "");
+	    	align = settings.getString(Keys.align, "");
+	    	table = settings.getString(Keys.table, "");
+	    	orientation = settings.getString(Keys.orientation, "DEFAULT");
+	    	zFolding = settings.getString(Keys.zFolding, "OFF");
+		}
 	}
 	
-	private void setEmbosserVisible(boolean value) {
-		embosserSelect.setVisible(value);
-		embosserLabel.setVisible(value);
-		embosserDetailsLabel.setVisible(value);
-	}
-	
-	private static class PrintServiceAdapter {
+	private static class PrintServiceAdapter extends NiceName {
 		private final PrintService p;
 		private PrintServiceAdapter(PrintService p) {
+			super(p.getName(), p.getName());
 			this.p = p;
 		}
 
-		@Override
-		public String toString() {
-			return p.getName();
-		}
 	}	
 
 }

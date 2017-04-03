@@ -6,5 +6,5 @@ import org.daisy.braille.api.factory.FactoryProperties;
 
 @FunctionalInterface
 interface ListFactoryProperties {
-	Collection<FactoryProperties> list();
+	Collection<? extends FactoryProperties> list();
 }

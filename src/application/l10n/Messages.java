@@ -28,6 +28,9 @@ public enum Messages {
 	LABEL_Z_FOLDING("label-z-folding"),
 	LABEL_ALIGNMENT("label-alignment"),
 	LABEL_EDIT_ABOVE("label-edit-above"),
+	LABEL_SETUP_VALID("label-setup-valid"),
+	LABEL_SETUP_INVALID("label-setup-invalid"),
+	LABEL_PAPER_DIMENSIONS("label-paper-dimensions"),
 	MESSAGE_SIX_DOT_ONLY("message-six-dot-only"),
 	MESSAGE_SEARCH_RESULT("message-search-result"),
 	MESSAGE_UNKNOWN_AUTHOR("message-unknown-author"),
@@ -39,9 +42,21 @@ public enum Messages {
 	TAB_SEARCH("tab-search"),
 	VALUE_USE_DEFAULT("value-use-default"),
 	EXTENSION_FILTER_SUPPORTED_FILES("extension-filter-supported-files"),
-	EXTENSION_FILTER_ALL_FILES("extension-filter-all-files")
+	EXTENSION_FILTER_ALL_FILES("extension-filter-all-files"),
+	OPTION_VALUE_LANDSCAPE("option-value-landscape"),
+	OPTION_VALUE_PORTRAIT("option-value-portrait"),
+	OPTION_VALUE_SQUARE("option-value-square"),
+	OPTION_VALUE_DEFAULT_ORIENTATION("option-value-default-orientation"),
+	OPTION_VALUE_REVERSED_ORIENTATION("option-value-reversed-orientation"),
+	OPTION_VALUE_PAGE_ALIGNMENT_LEFT("option-value-page-alignment-left"),
+	OPTION_VALUE_PAGE_ALIGNMENT_CENTER("option-value-page-alignment-center"),
+	OPTION_VALUE_PAGE_ALIGNMENT_RIGHT("option-value-page-alignment-right"),
+	OPTION_VALUE_PAGE_ALIGNMENT_INNER("option-value-page-alignment-inner"),
+	OPTION_VALUE_PAGE_ALIGNMENT_OUTER("option-value-page-alignment-outer"),
+	OPTION_VALUE_REGULAR_PRINT_MODE("option-value-regular-print-mode"),
+	OPTION_VALUE_MAGAZINE_PRINT_MODE("option-value-magazine-print-mode")
 	;
-	
+
 	private static final String BUNDLE_NAME = Messages.class.getPackage().getName() + ".messages"; //$NON-NLS-1$
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME, Locale.getDefault());
 	private final String key;

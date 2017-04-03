@@ -33,6 +33,7 @@ public class Configuration {
 	}
 	private final Settings settings;
 	private final PaperCatalog paperCatalog;
+	private final Collection<FactoryProperties> embossers;
 	private EmbosserCatalog embosserCatalog;
 	private TableCatalog tableCatalog;
 	private Embosser em;
@@ -60,6 +61,7 @@ public class Configuration {
 		this.paperCatalog = PaperCatalog.newInstance();
 		this.embosserCatalog = EmbosserCatalog.newInstance();
 		this.tableCatalog = TableCatalog.newInstance();
+		this.embossers = embosserCatalog.list();
 		
     	//String device = settings.getString(Keys.device);
     	String embosser = settings.getString(Keys.embosser);
@@ -182,6 +184,10 @@ public class Configuration {
 	
 	public EmbosserCatalog getEmbosserCatalog() {
 		return embosserCatalog;
+	}
+	
+	public Collection<FactoryProperties> getEmbossers() {
+		return embossers;
 	}
 
 	public Settings getSettings() {
