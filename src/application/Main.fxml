@@ -17,7 +17,7 @@
       <SplitPane fx:id="splitPane" dividerPositions="0.0" BorderPane.alignment="CENTER">
          <items>
             <TabPane fx:id="toolsPane" SplitPane.resizableWithParent="false" />
-            <SplitPane dividerPositions="1.0" orientation="VERTICAL" SplitPane.resizableWithParent="false">
+            <SplitPane dividerPositions="0.8" orientation="VERTICAL" SplitPane.resizableWithParent="false">
                <items>
                   <TabPane fx:id="tabPane" prefHeight="392.0" prefWidth="595.0" tabClosingPolicy="ALL_TABS" />
                   <ScrollPane fx:id="consoleScroll" vvalue="1.0" SplitPane.resizableWithParent="false">
