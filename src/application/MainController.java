@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,6 +31,9 @@ import org.daisy.braille.api.embosser.EmbosserWriter;
 import org.daisy.braille.consumer.embosser.EmbosserCatalog;
 import org.daisy.braille.pef.PEFHandler;
 import org.daisy.dotify.consumer.tasks.TaskGroupFactoryMaker;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.googlecode.e2u.Settings;
 import com.googlecode.e2u.Settings.Keys;
@@ -58,10 +62,8 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
@@ -76,7 +78,7 @@ public class MainController {
 	@FXML private TabPane tabPane;
 	@FXML private TabPane toolsPane;
 	@FXML private SplitPane splitPane;
-	@FXML private TextFlow console;
+	@FXML private WebView console;
 	@FXML private ScrollPane consoleScroll;
 	private final double dividerPosition = 0.2;
 	private Tab searchTab;
@@ -104,9 +106,12 @@ public class MainController {
 				ev.consume();
 			}
 		});
+		console.getEngine().loadContent("<html><body></body></html>");
+		console.getEngine().setUserStyleSheetLocation(this.getClass().getResource("resource-files/console.css").toString());
+		
 		exeService = Executors.newWorkStealingPool();
-		System.setOut(new PrintStream(new ConsoleStream(Color.BLACK)));
-		System.setErr(new PrintStream(new ConsoleStream(Color.RED)));
+		System.setOut(new PrintStream(new ConsoleStream("out")));
+		System.setErr(new PrintStream(new ConsoleStream("err")));
 		try {
 			//this is done to reinitialize the console logger so that it redirects to the new print streams set above
 			LogManager.getLogManager().readConfiguration();
@@ -117,23 +122,26 @@ public class MainController {
 
 	private class ConsoleStream extends OutputStream {
 		ByteArrayOutputStream bytes;
-		private final Color color;
+		private final String name;
 		
-		ConsoleStream(Color color) {
+		ConsoleStream(String name) {
+			Objects.requireNonNull(name);
 			this.bytes = new ByteArrayOutputStream();
-			this.color = color;
+			this.name = name;
 		}
 		
 		void write(String s) {
 			Platform.runLater(()->{
-			     Text text1 = new Text(s);
-			     text1.setFill(color);
-			     text1.setFont(CONSOLE_FONT);
-			     console.getChildren().add(text1);
-			     while (console.getChildren().size()>CONSOLE_MESSAGE_LIMIT) {
-			    	 console.getChildren().remove(0);
+			     Document doc = console.getEngine().getDocument();
+			     Node body = doc.getElementsByTagName("body").item(0);
+			     Element p = doc.createElement("p");
+			     p.setAttribute("class", name);
+			     p.appendChild(doc.createTextNode(s));
+			     body.appendChild(p);
+			     while (body.getChildNodes().getLength()>CONSOLE_MESSAGE_LIMIT) {
+			    	 body.removeChild(body.getChildNodes().item(0));
 			     }
-			     consoleScroll.setVvalue(consoleScroll.getVmax());
+			     console.getEngine().executeScript("window.scrollTo(0, document.body.scrollHeight);");
 			});
 		}
 		
