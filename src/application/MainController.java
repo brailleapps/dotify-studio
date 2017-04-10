@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -30,13 +31,16 @@ import org.daisy.braille.api.embosser.EmbosserCatalogService;
 import org.daisy.braille.api.embosser.EmbosserFeatures;
 import org.daisy.braille.api.embosser.EmbosserWriter;
 import org.daisy.braille.consumer.embosser.EmbosserCatalog;
+import org.daisy.braille.consumer.table.TableCatalog;
 import org.daisy.braille.pef.PEFHandler;
+import org.daisy.braille.pef.TextConverterFacade;
 import org.daisy.dotify.consumer.tasks.TaskGroupFactoryMaker;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import application.about.AboutView;
+import application.imports.ImportBrailleView;
 import application.l10n.Messages;
 import application.prefs.PreferencesView;
 import application.preview.PreviewController;
@@ -67,11 +71,11 @@ import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import shared.Settings;
-import shared.Settings.Keys;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import shared.Settings;
+import shared.Settings.Keys;
 
 public class MainController {
 	private static final Logger logger = Logger.getLogger(MainController.class.getCanonicalName());
@@ -334,13 +338,52 @@ public class MainController {
     		addTab(selected);
     	}
     }
-        
-    
+
+    @FXML
+    public void showImportBrailleDialog() {
+    	Window stage = root.getScene().getWindow();
+    	FileChooser fileChooser = new FileChooser();
+    	fileChooser.setTitle(Messages.TITLE_IMPORT_BRAILLE_TEXT_DIALOG.localize());
+    	File selected = fileChooser.showOpenDialog(stage);
+    	if (selected!=null) {
+    		ImportBrailleView brailleView = new ImportBrailleView(selected);
+    		brailleView.showAndWait();
+    		Map<String, String> settings = brailleView.getOptions();
+    		if (settings!=null) {
+				try {
+					File output = File.createTempFile(selected.getName(), ".pef");
+					output.deleteOnExit();
+			    	Task<Void> importTask = new Task<Void>(){
+						@Override
+						protected Void call() throws Exception {
+				    		TextConverterFacade f = new TextConverterFacade(TableCatalog.newInstance());
+				    		f.parseTextFile(selected, output, settings);
+							return null;
+						}
+			    	};
+			    	importTask.setOnFailed(e->{
+			    		logger.log(Level.WARNING, "Import failed.", importTask.getException());
+			    		Alert alert = new Alert(AlertType.ERROR, importTask.getException().toString(), ButtonType.OK);
+			    		alert.showAndWait();
+			    	});
+			    	importTask.setOnSucceeded(e->{
+			    		Platform.runLater(()->{
+			    			addTab(output);
+			    		});
+			    	});
+			    	exeService.submit(importTask);
+				} catch (IOException e1) {
+					logger.log(Level.WARNING, "Failed to create temporary file.", e1);
+				}
+    		}
+    	}
+    }
+
     @FXML
     public void showImportDialog() {
     	Window stage = root.getScene().getWindow();
     	FileChooser fileChooser = new FileChooser();
-    	fileChooser.setTitle(Messages.TITLE_IMPORT_DIALOG.localize());
+    	fileChooser.setTitle(Messages.TITLE_IMPORT_SOURCE_DOCUMENT_DIALOG.localize());
 		List<String> exts = TaskGroupFactoryMaker.newInstance().listAll().stream()
 			.filter(spec -> !"pef".equals(spec.getInputFormat()))
 			.map(spec -> "*."+spec.getInputFormat())

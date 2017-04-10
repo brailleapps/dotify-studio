@@ -40,6 +40,7 @@
                   <Menu mnemonicParsing="false" text="%menu-item-import">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#showImportDialog" text="%menu-item-import-document" />
+                        <MenuItem mnemonicParsing="false" onAction="#showImportBrailleDialog" text="%menu-item-import-braille-document" />
                     </items>
                   </Menu>
                   <MenuItem fx:id="exportMenuItem" mnemonicParsing="false" onAction="#exportFile" text="%menu-item-export" />
