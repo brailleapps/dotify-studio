@@ -42,6 +42,7 @@ import application.about.AboutView;
 import application.l10n.Messages;
 import application.prefs.PreferencesView;
 import application.preview.PreviewController;
+import application.search.PefBookAdapter;
 import application.search.SearchController;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -300,7 +301,10 @@ public class MainController {
     	if (searchTab==null || !toolsPane.getTabs().contains(searchTab)) {
     		SearchController controller = new SearchController();
     		controller.addEventHandler(ActionEvent.ACTION, ev -> {
-    			addTab(new File(controller.getSelectedItem().getBook().getURI()));
+    			PefBookAdapter book = controller.getSelectedItem();
+    			if (book!=null) {
+    				addTab(new File(book.getBook().getURI()));
+    			}
     		});
     		searchTab = addTabToTools(controller, Messages.TAB_SEARCH.localize());
     	} else {
