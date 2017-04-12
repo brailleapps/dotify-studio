@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -44,6 +45,7 @@ import application.prefs.PreferencesView;
 import application.preview.PreviewController;
 import application.search.PefBookAdapter;
 import application.search.SearchController;
+import application.template.TemplateView;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -366,8 +368,16 @@ public class MainController {
 		fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_ALL_FILES.localize(), "*.*"));
     	File selected = fileChooser.showOpenDialog(stage);
     	if (selected!=null) {
-    		//convert then add tab
-    		addSourceTab(selected);
+    		// choose template
+    		TemplateView dialog = new TemplateView();
+    		if (dialog.hasTemplates()) {
+    			dialog.initOwner(root.getScene().getWindow());
+    			dialog.initModality(Modality.APPLICATION_MODAL); 
+    			dialog.showAndWait();
+    		}
+
+    		// convert then add tab
+    		addSourceTab(selected, dialog.getSelectedConfiguration());
     	}
     }
     
@@ -451,14 +461,14 @@ public class MainController {
 
     }
     
-    private void addSourceTab(File source) {
+    private void addSourceTab(File source, Map<String, Object> options) {
         Tab tab = new Tab();
         tab.setText(source.getName());
         PreviewController prv = new PreviewController();
         tab.setOnClosed(ev ->  {
         	prv.closing();
         });
-        prv.convertAndOpen(source);
+        prv.convertAndOpen(source, options);
         tab.setContent(prv);
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().select(tab);

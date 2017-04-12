@@ -68,6 +68,7 @@ dependencies {
 	compile 'com.googlecode.ajui:ajui:1.0.0-SNAPSHOT'
 	
 	compile 'org.daisy.dotify:dotify.api:3.1.0'
+	compile 'org.daisy.dotify:dotify.task-api:3.1.0'
 	compile 'org.daisy.dotify:dotify.common:3.0.0'
 	compile ('org.daisy.dotify:dotify.task-runner:2.0.0') {
 		exclude module: 'dotify.task-api'
