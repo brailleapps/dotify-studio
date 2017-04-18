@@ -55,6 +55,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.SplitPane.Divider;
@@ -83,6 +84,11 @@ public class MainController {
 	@FXML private SplitPane splitPane;
 	@FXML private WebView console;
 	@FXML private ScrollPane consoleScroll;
+	@FXML private MenuItem closeMenuItem;
+	@FXML private MenuItem exportMenuItem;
+	@FXML private MenuItem saveAsMenuItem;
+	@FXML private MenuItem refreshMenuItem;
+	@FXML private MenuItem openInBrowserMenuItem;
 	private final double dividerPosition = 0.2;
 	private Tab searchTab;
 	private ExecutorService exeService;
@@ -121,6 +127,12 @@ public class MainController {
 		} catch (SecurityException | IOException e) {
 			e.printStackTrace();
 		}
+		//add menu bindings
+		closeMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
+		exportMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
+		saveAsMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
+		refreshMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
+		openInBrowserMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
 	}
 
 	private class ConsoleStream extends OutputStream {

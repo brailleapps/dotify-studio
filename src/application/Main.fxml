@@ -35,15 +35,15 @@
                      </accelerator>
                   </MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" onAction="#saveAs" text="%menu-item-save-as" />
+                  <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" onAction="#saveAs" text="%menu-item-save-as" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <Menu mnemonicParsing="false" text="%menu-item-import">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#showImportDialog" text="%menu-item-import-document" />
                     </items>
                   </Menu>
-                  <MenuItem mnemonicParsing="false" onAction="#exportFile" text="%menu-item-export" />
-                  <MenuItem mnemonicParsing="false" onAction="#closeTab" text="%menu-item-close">
+                  <MenuItem fx:id="exportMenuItem" mnemonicParsing="false" onAction="#exportFile" text="%menu-item-export" />
+                  <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#closeTab" text="%menu-item-close">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="W" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                      </accelerator>
@@ -56,11 +56,11 @@
           </Menu>
           <Menu mnemonicParsing="false" text="%menu-item-edit">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#refresh" text="%menu-item-refresh">
+              <MenuItem fx:id="refreshMenuItem" mnemonicParsing="false" onAction="#refresh" text="%menu-item-refresh">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="F5" control="UP" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#openInBrowser" text="%menu-item-open-browser" />
+                  <MenuItem fx:id="openInBrowserMenuItem" mnemonicParsing="false" onAction="#openInBrowser" text="%menu-item-open-browser" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="%menu-item-window">
