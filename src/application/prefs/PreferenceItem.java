@@ -8,6 +8,8 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
@@ -36,6 +38,20 @@ class PreferenceItem extends BorderPane {
 		}
 	}
 	
+	PreferenceItem(String label, Collection<? extends NiceName> values, String textValue, String boxValues, ComboPreferenceChanged changeListener) {
+		setKey(label);
+		HBox p = new HBox();
+		p.setSpacing(10);
+		setOptions(textValue, p, changeListener);
+		if (values!=null) {
+			NiceName selected = setOptions(values, boxValues, changeListener, p);
+			if (selected!=null) {
+				setDescription(selected.getDescription());
+			}
+		}
+		setRight(p);
+	}
+	
 	void setDescription(String desc) {
 		if (desc!=null && !"".equals(desc)) {
 			description = newDescriptionLabel(desc);
@@ -59,6 +75,19 @@ class PreferenceItem extends BorderPane {
 			stringValue = new TextField();
 			stringValue.setPromptText(def);
 			setRight(stringValue);
+		}
+	}
+	
+	void setOptions(String cval, Pane pane, ComboPreferenceChanged changeListener) {
+		if (cval!=null) {
+			stringValue = new TextField(cval);
+			stringValue.setPrefWidth(50);
+			if (changeListener!=null) {
+				stringValue.setOnAction(ev -> {
+					changeListener.action(stringValue.getText(), choiceValue.getSelectionModel().getSelectedItem().getKey());
+				});
+			}
+			pane.getChildren().add(stringValue);
 		}
 	}
 
@@ -86,6 +115,32 @@ class PreferenceItem extends BorderPane {
 		setRight(choiceValue);
 		return selected;
 	}
+	
+	NiceName setOptions(Collection<? extends NiceName> nn, String def, ComboPreferenceChanged changeListener, Pane pane) {
+		choiceValue = new ChoiceBox<>();
+		choiceValue.getItems().add(empty);
+		NiceName selected = null;
+		if ("".equals(def)) {
+			selected = empty;
+		}
+		for (NiceName v : nn) {
+			choiceValue.getItems().add(v);
+			if (v.getKey().equals(def)) {
+				selected = v;
+			}
+		}
+		if (selected!=null) {
+			choiceValue.getSelectionModel().select(selected);
+		}
+		if (changeListener!=null) {
+			choiceValue.valueProperty().addListener((o, t0, t1) -> {
+				changeListener.action(stringValue.getText(), choiceValue.getSelectionModel().getSelectedItem().getKey());
+			});
+		}
+		pane.getChildren().add(choiceValue);
+		return selected;
+	}
+
 	
 	void setKey(String text) {
 		if (text!=null) {

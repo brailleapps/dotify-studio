@@ -26,6 +26,7 @@ public enum Messages {
 	LABEL_PRINT_MODE("label-print-mode"),
 	LABEL_TABLE("label-table"),
 	LABEL_PAPER("label-paper"),
+	LABEL_CUT_LENGTH("label-cut-length"),
 	LABEL_ORIENTATION("label-orientation"),
 	LABEL_Z_FOLDING("label-z-folding"),
 	LABEL_ALIGNMENT("label-alignment"),

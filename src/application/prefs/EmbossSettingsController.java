@@ -21,6 +21,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
 public class EmbossSettingsController {
@@ -86,7 +87,6 @@ public class EmbossSettingsController {
 		th.start();
 	}
 
-	//FIXME: roll paper
 	private void updateComponentsInner(Configuration conf) {
 		Config config = new Config();
 		config.update();
@@ -133,7 +133,11 @@ public class EmbossSettingsController {
 				parent.getChildren().add(paperItem);
 	
 				if (conf.isRollPaper()) {
-					//					
+					parent.getChildren().add(new PreferenceItem(Messages.LABEL_CUT_LENGTH.localize(), nn.getLengthNN(), config.lengthValue, config.lengthUnit, (f1, f2)->{
+						Settings.getSettings().put(Keys.cutLengthValue, f1);
+						Settings.getSettings().put(Keys.cutLengthUnit, f2);
+						updateComponents();
+					}));
 				}
 				
 				if (conf.supportsOrientation()) {
