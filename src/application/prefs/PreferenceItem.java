@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 
 class PreferenceItem extends BorderPane {
@@ -54,13 +55,17 @@ class PreferenceItem extends BorderPane {
 	}
 	
 	void setOptions(String def) {
-		stringValue = new TextField();
-		stringValue.setPromptText(def);
-		setRight(stringValue);
+		if (def!=null) {
+			stringValue = new TextField();
+			stringValue.setPromptText(def);
+			setRight(stringValue);
+		}
 	}
 
 	NiceName setOptions(Collection<? extends NiceName> nn, String def, ChangeListener<? super NiceName> listener) {
 		choiceValue = new ChoiceBox<>();
+		choiceValue.setPrefWidth(210);
+		choiceValue.setMaxWidth(USE_PREF_SIZE);
 		choiceValue.getItems().add(empty);
 		NiceName selected = null;
 		if ("".equals(def)) {
@@ -83,8 +88,11 @@ class PreferenceItem extends BorderPane {
 	}
 	
 	void setKey(String text) {
-		key = new Label(text);
-		setLeft(key);
+		if (text!=null) {
+			key = new Label(text);
+			key.setFont(Font.font("System", FontWeight.BOLD, 12));
+			setLeft(key);
+		}
 	}
 
 	public String getKey() {

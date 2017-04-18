@@ -86,7 +86,7 @@ public class EmbossSettingsController {
 		th.start();
 	}
 
-	//FIXME: roll paper, description (portrait), description alignment
+	//FIXME: roll paper
 	private void updateComponentsInner(Configuration conf) {
 		Config config = new Config();
 		config.update();
@@ -133,7 +133,7 @@ public class EmbossSettingsController {
 				parent.getChildren().add(paperItem);
 	
 				if (conf.isRollPaper()) {
-					
+					//					
 				}
 				
 				if (conf.supportsOrientation()) {
@@ -145,14 +145,15 @@ public class EmbossSettingsController {
 				} else {
 					orientationItem = null;
 				}
-				
-				//
+
     			if (conf.settingOK()) {
+    				// this is a way to add a second description which isn't dependent on any of the above
     				parent.getChildren().add(
-    						PreferenceItem.newDescriptionLabel(
-    						Messages.LABEL_PAPER_DIMENSIONS.localize(//conf.getShape()==null?"":nn.getShapeNN()), 
-    						conf.getPaperWidth(), conf.getPaperHeight(), conf.getMaxWidth(), conf.getMaxHeight()
-    				)));
+    						new PreferenceItem(null, Messages.LABEL_PAPER_DIMENSIONS.localize( 
+    								conf.getShape()==null?"":nn.getShapeNN().get(conf.getShape().name()),
+    										conf.getPaperWidth(), conf.getPaperHeight(), conf.getMaxWidth(), conf.getMaxHeight()), null, null, null)
+    						
+    				);
     			}
 				
 				if (conf.supportsZFolding()) {
