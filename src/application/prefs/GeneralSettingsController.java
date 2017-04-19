@@ -20,7 +20,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 
-public class PreviewSettingsController {
+public class GeneralSettingsController {
 	@FXML private Label previewTranslation;
 	@FXML private Label brailleFont;
 	@FXML private Label textFont;
