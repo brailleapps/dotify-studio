@@ -1,15 +1,22 @@
 package application.prefs;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 
 import org.daisy.braille.api.factory.FactoryProperties;
+import org.daisy.braille.pef.PEFGenerator;
 
 import com.googlecode.e2u.Configuration;
 import com.googlecode.e2u.Settings;
@@ -19,12 +26,16 @@ import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
-public class EmbossSettingsController {
+public class EmbossSettingsController extends BorderPane {
+	private static final Logger logger = Logger.getLogger(EmbossSettingsController.class.getCanonicalName());
 	@FXML private Label deviceLabel;
 	@FXML private Label embosserLabel;
 	@FXML private Label embosserDetailsLabel;
@@ -36,7 +47,7 @@ public class EmbossSettingsController {
 	@FXML private Label orentationLabel;
 	@FXML private Label zFoldingLabel;
 	@FXML private Label alignLabel;
-	@FXML private Label status;
+	@FXML private Button testButton;
 	@FXML private ComboBox<PrintServiceAdapter> deviceSelect;
 	@FXML private ComboBox<FactoryPropertiesAdapter> embosserSelect;
 	@FXML private ComboBox<NiceName> printModeSelect;
@@ -57,7 +68,18 @@ public class EmbossSettingsController {
 	private ExecutorService exeService;
 	private final OptionNiceNames nn = new OptionNiceNames();
 	private DeviceScanner deviceScanner;
-	
+	private File generatedFile;
+
+	public EmbossSettingsController() {
+		try {
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("EmbossSettings.fxml"), Messages.getBundle());
+			fxmlLoader.setRoot(this);
+			fxmlLoader.setController(this);
+			fxmlLoader.load();
+		} catch (IOException e) {
+			logger.log(Level.WARNING, "Failed to load view", e);
+		}
+	}
 
 	@FXML
 	public void initialize() {
@@ -182,10 +204,35 @@ public class EmbossSettingsController {
 		}
 		
 		if (conf.settingOK()) {
-			status.setText("");
+			testButton.setDisable(false);
+			testButton.setText(Messages.LABEL_CREATE_TEST_DOCUMENT.localize());
+			testButton.setOnAction(ev->{
+				if (conf.settingOK() && generatedFile==null) {
+					Map<String,String> keys = new HashMap<>();
+			        keys.put(PEFGenerator.KEY_COLS, String.valueOf(conf.getMaxWidth()));
+			        keys.put(PEFGenerator.KEY_ROWS, String.valueOf(conf.getMaxHeight()));
+			        keys.put(PEFGenerator.KEY_DUPLEX, String.valueOf(true));
+			        keys.put(PEFGenerator.KEY_EIGHT_DOT, String.valueOf(false));
+			        PEFGenerator generator = new PEFGenerator(keys);
+			        try {
+						File file = File.createTempFile("generated-", ".pef");
+						file.deleteOnExit();
+			            generator.generateTestPages(file);
+			            generatedFile = file;
+			            ((Stage)testButton.getScene().getWindow()).close();
+			        } catch (Exception e) {
+			        	logger.log(Level.WARNING, "Failed to generate document.", e);
+			        }
+				}
+			});
 		} else {
-			status.setText(Messages.LABEL_SETUP_INVALID.localize());
+			testButton.setDisable(true);
+			testButton.setText(Messages.LABEL_SETUP_INVALID.localize());
 		}
+	}
+
+	File generatedTestFile() {
+		return generatedFile;
 	}
 	
 	private static List<FactoryPropertiesAdapter> wrap(Collection<? extends FactoryProperties> props) {

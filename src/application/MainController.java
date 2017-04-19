@@ -300,6 +300,10 @@ public class MainController {
 		dialog.initOwner(root.getScene().getWindow());
 		dialog.initModality(Modality.APPLICATION_MODAL);
 		dialog.showAndWait();
+		File generated = dialog.generatedTestFile();
+		if (generated!=null) {
+			addTab(generated.getName(), toArgs(generated));
+		}
     }
     
     @FXML

@@ -3,6 +3,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import application.prefs.EmbossSettingsController?>
 
 <BorderPane prefHeight="425.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"  fx:controller="application.prefs.PreferencesController">
    <center>
@@ -12,7 +13,9 @@
 		         <fx:include source="PreviewSettings.fxml" />
 		      </Tab>
 		      <Tab fx:id="embossTab" closable="false" text="%tab-emboss">
-		         <fx:include source="EmbossSettings.fxml" />
+				<!-- This doesn't work in SceneBuilder. There are ways to make it work, but they require customizing SceneBuilder, which isn't ideal. -->
+				<!-- We need to do it in this case, but this method should probably be avoided otherwise. -->
+		         <EmbossSettingsController fx:id="embossSettings" />
 		      </Tab>
 		   </tabs>
 		</TabPane>

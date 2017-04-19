@@ -33,6 +33,7 @@ public enum Messages {
 	LABEL_EDIT_ABOVE("label-edit-above"),
 	LABEL_SETUP_VALID("label-setup-valid"),
 	LABEL_SETUP_INVALID("label-setup-invalid"),
+	LABEL_CREATE_TEST_DOCUMENT("label-create-test-document"),
 	LABEL_PAPER_DIMENSIONS("label-paper-dimensions"),
 	LABEL_NONE("label-none"),
 	MESSAGE_SIX_DOT_ONLY("message-six-dot-only"),
