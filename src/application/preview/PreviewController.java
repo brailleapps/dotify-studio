@@ -22,7 +22,9 @@ import org.daisy.dotify.consumer.tasks.TaskSystemFactoryMaker;
 import org.daisy.dotify.tasks.runner.RunnerResult;
 import org.daisy.dotify.tasks.runner.TaskRunner;
 
+import com.googlecode.e2u.Settings;
 import com.googlecode.e2u.Start;
+import com.googlecode.e2u.Settings.Keys;
 
 import application.l10n.Messages;
 import javafx.application.Platform;
@@ -75,8 +77,8 @@ public class PreviewController extends BorderPane {
 	public void convertAndOpen(File selected, Map<String, Object> options) {
 		try {
 			File out = File.createTempFile("dotify-studio", ".pef");
-			// FIXME: Locale MUST be a setting
-			DotifyTask dt = new DotifyTask(selected, out, Locale.getDefault().toString().replace('_', '-'), options);
+			String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
+			DotifyTask dt = new DotifyTask(selected, out, tag, options);
 			dt.setOnSucceeded(ev -> {
 				open(new String[]{"-open", out.getAbsolutePath()});
 				updateOptions(dt.getValue(), options);

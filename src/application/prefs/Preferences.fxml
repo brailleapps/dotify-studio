@@ -10,7 +10,7 @@
    <center>
 		<TabPane prefHeight="425.0" prefWidth="357.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
 		   <tabs>
-		      <Tab fx:id="previewTab" closable="false" text="%tab-preview">
+		      <Tab fx:id="previewTab" closable="false" text="%tab-general">
 		         <fx:include source="PreviewSettings.fxml" />
 		      </Tab>
 		      <Tab fx:id="embossTab" closable="false" text="%tab-emboss">

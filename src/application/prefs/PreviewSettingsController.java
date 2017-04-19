@@ -3,11 +3,10 @@ package application.prefs;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
-import org.daisy.braille.api.factory.FactoryProperties;
 import org.daisy.braille.api.table.BrailleConstants;
 import org.daisy.braille.consumer.table.TableCatalog;
 
@@ -29,7 +28,7 @@ public class PreviewSettingsController {
 	@FXML private ComboBox<FactoryPropertiesAdapter> selectTable;
 	@FXML private ComboBox<FontEntry> selectBrailleFont;
 	@FXML private ComboBox<FontEntry> selectTextFont;
-
+	@FXML private ComboBox<String> selectLocale;
 
 	@FXML
 	public void initialize() {
@@ -63,7 +62,21 @@ public class PreviewSettingsController {
 		});
 		Thread th = new Thread(fontScanner);
 		th.setDaemon(true);
-		th.start();		
+		th.start();	
+		
+		selectLocale.getItems().addAll(toString(Locale.getAvailableLocales()));
+		String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
+		selectLocale.getSelectionModel().select(tag);
+		selectLocale.valueProperty().addListener((ov, t0, t1)->Settings.getSettings().put(Keys.locale, t1));
+	}
+	
+	private List<String> toString(Locale[] locales) {
+		List<String> ret = new ArrayList<>();
+		for (Locale l : locales) {
+			ret.add(l.toLanguageTag());
+		}
+		Collections.sort(ret);
+		return ret;
 	}
 	
 	private void newThread(Runnable r) {

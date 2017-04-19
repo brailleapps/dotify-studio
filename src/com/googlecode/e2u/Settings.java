@@ -6,8 +6,8 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public class Settings {
-	public enum Keys {version, device, embosser, printMode, table, paper, cutLengthValue, cutLengthUnit, orientation, zFolding, charset, align, brailleFont, textFont, libraryPath}; 
-	public final static String VERSION = "2011-09-01";
+	public enum Keys {version, device, embosser, printMode, table, paper, cutLengthValue, cutLengthUnit, orientation, zFolding, charset, align, brailleFont, textFont, libraryPath, locale}; 
+	public final static String VERSION = "2017-04-19";
     private Preferences p;
     private static Settings settings;
     //private PaperCatalog paperFactory;
@@ -33,7 +33,7 @@ public class Settings {
     	if (settings==null) {
     		HashMap<String, String> def = new HashMap<>();
     		def.put(Settings.Keys.align.toString(), "center_inner");
-    		settings = new Settings("/EasyEmbossingUtility"+BuildInfo.VERSION, def);
+    		settings = new Settings("/DotifyStudio"+BuildInfo.VERSION, def);
     	}
     	return settings;
     }
