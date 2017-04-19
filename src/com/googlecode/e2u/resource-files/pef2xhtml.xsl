@@ -311,7 +311,7 @@ exclude-result-prefixes="dc tpb pef ext">
 				<span><a href="view.html"><xsl:value-of select="$preview-view-label"/></a></span>
 				<span><a href="index.html?method=meta"><xsl:value-of select="$about-label"/></a></span>
 				<!-- <span><a href="index.html?method=find"><xsl:value-of select="$find-view-label"/></a></span> -->
-				<span><a href="index.html?method=setup"><xsl:value-of select="$setup-view-label"/></a></span>
+				<!-- <span><a href="index.html?method=setup"><xsl:value-of select="$setup-view-label"/></a></span> -->
 				<!-- <span><a href="index.html?method=about"><xsl:value-of select="$about-software-label"/></a></span> -->
 				<input id="connected" type="submit" value="" title="Avsluta"></input>
 				<input id="notConnected" type="submit" value="" title="Avsluta" disabled="disabled"></input>

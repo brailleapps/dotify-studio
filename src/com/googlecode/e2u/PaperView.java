@@ -171,7 +171,7 @@ public class PaperView extends AContainer {
 	}
 	
 
-	private Length getLength(String valStr, String unitStr) {
+	public static Length getLength(String valStr, String unitStr) {
 		Length.UnitsOfLength unit = Length.UnitsOfLength.valueOf(unitStr);
 		double val = Double.parseDouble(valStr);
 		switch (unit) {

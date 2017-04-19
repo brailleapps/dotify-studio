@@ -602,7 +602,7 @@ public class MainPage extends BasePage implements AListener {
     	
     	ret.end();
     	//PageFormat pf = settingsView.getPageFormat();
-    	Configuration conf = settingsView.getConfiguration();
+    	Configuration conf = Configuration.getConfiguration(Settings.getSettings());
     	if (bookController.getBook().containsEightDot()) {
     		ret.start("p").text(Messages.getString(L10nKeys.EIGHT_DOT_NOT_SUPPORTED)).end();
     	} else if (!conf.settingOK()) {

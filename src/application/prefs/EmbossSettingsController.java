@@ -92,7 +92,7 @@ public class EmbossSettingsController extends BorderPane {
 		exeService.shutdown();
 	}
 	
-	private void updateComponents() {
+	void updateComponents() {
 		Task<Configuration> readConfig = new Task<Configuration>() {
 			@Override
 			protected Configuration call() throws Exception {

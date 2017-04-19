@@ -59,9 +59,10 @@ public abstract class BasePage implements Content {
 				.start("span")
 					.start("a").attr("href", "index.html?method=find").text(Messages.getString(L10nKeys.MENU_OPEN)).end()
 				.end()*/
+				/*
 				.start("span")
 					.start("a").attr("href", "index.html?method=setup").text(Messages.getString(L10nKeys.MENU_SETUP)).end()
-				.end()
+				.end()*/
 				/*
 				.start("span")
 					.start("a").attr("href", "index.html?method=about").text(Messages.getString(L10nKeys.MENU_ABOUT_SOFTWARE)).end()
