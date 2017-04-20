@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
@@ -236,11 +237,7 @@ public class EmbossSettingsController extends BorderPane {
 	}
 	
 	private static List<FactoryPropertiesAdapter> wrap(Collection<? extends FactoryProperties> props) {
-		List<FactoryPropertiesAdapter> ad = new ArrayList<>();
-		for (FactoryProperties p : props) {
-			ad.add(new FactoryPropertiesAdapter(p));
-		}
-		return ad;
+		return props.stream().sorted((o1, o2)->o1.getDisplayName().compareTo(o2.getDisplayName())).map(p->new FactoryPropertiesAdapter(p)).collect(Collectors.toList());
 	}
 
 	private static class DeviceScanner extends Task<List<PrintServiceAdapter>> {
