@@ -19,6 +19,7 @@ public class Settings {
         	try {
 				p.clear();
 				for (String key : defaults.keySet()) {
+					// Is this a way of validating the key?
 					Keys.valueOf(key);
 					p.put(key, defaults.get(key));
 				}
@@ -33,7 +34,7 @@ public class Settings {
     	if (settings==null) {
     		HashMap<String, String> def = new HashMap<>();
     		def.put(Settings.Keys.align.toString(), "center_inner");
-    		settings = new Settings("/DotifyStudio"+BuildInfo.VERSION, def);
+    		settings = new Settings("/DotifyStudio"+VERSION, def);
     	}
     	return settings;
     }
