@@ -6,8 +6,11 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public class Settings {
-	public enum Keys {version, device, embosser, printMode, table, paper, cutLengthValue, cutLengthUnit, orientation, zFolding, charset, align, brailleFont, textFont, libraryPath, locale}; 
-	public final static String VERSION = "2017-04-19";
+	public enum Keys {version, device, embosser, printMode, table, paper, cutLengthValue, cutLengthUnit, orientation, zFolding, charset, align, brailleFont, textFont, libraryPath, locale};
+	/**
+	 *  Modify this value when making incompatible changes to the settings structure
+	 */
+	private final static String PREFS_VERSION = "1";
     private Preferences p;
     private static Settings settings;
     //private PaperCatalog paperFactory;
@@ -15,16 +18,20 @@ public class Settings {
 	
     public Settings(String node, HashMap<String, String> defaults) {
         p = Preferences.userRoot().node(node); //$NON-NLS-1$
-        if (!VERSION.equals(p.get(Keys.version.toString(), ""))) {
-        	try {
-				p.clear();
-				for (String key : defaults.keySet()) {
-					// Is this a way of validating the key?
-					Keys.valueOf(key);
-					p.put(key, defaults.get(key));
-				}
-			} catch (BackingStoreException e) { 	}
-        	p.put(Keys.version.toString(), VERSION);
+        if (!BuildInfo.VERSION.equals(p.get(Keys.version.toString(), ""))) {
+        	// if no version information is found, clear and add defaults
+        	if ("".equals(p.get(Keys.version.toString(), ""))) {
+	        	try {
+					p.clear();
+					for (String key : defaults.keySet()) {
+						// Is this a way of validating the key?
+						Keys.valueOf(key);
+						p.put(key, defaults.get(key));
+					}
+				} catch (BackingStoreException e) { 	}
+        	}
+        	// Update the version of the application used to write this
+        	p.put(Keys.version.toString(), BuildInfo.VERSION);
         }
         //paperFactory = PaperCatalog.newInstance();
         //embosserFactory = EmbosserCatalog.newInstance();
@@ -34,7 +41,7 @@ public class Settings {
     	if (settings==null) {
     		HashMap<String, String> def = new HashMap<>();
     		def.put(Settings.Keys.align.toString(), "center_inner");
-    		settings = new Settings("/DotifyStudio"+VERSION, def);
+    		settings = new Settings("/DotifyStudio/prefs_v"+PREFS_VERSION, def);
     	}
     	return settings;
     }
