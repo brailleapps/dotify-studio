@@ -17,8 +17,6 @@ import org.daisy.braille.pef.PEFLibrary;
 import org.daisy.braille.pef.PEFSearchIndex;
 import org.xml.sax.SAXException;
 
-import com.googlecode.e2u.Settings;
-
 import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -37,6 +35,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
+import shared.Settings;
 
 public class SearchController extends VBox {
 	private static final Logger logger = Logger.getLogger(SearchController.class.getCanonicalName());

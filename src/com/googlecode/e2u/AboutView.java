@@ -11,6 +11,8 @@ import com.googlecode.ajui.AUnorderedList;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
 
+import shared.BuildInfo;
+
 public class AboutView extends AContainer {
 
 	/**

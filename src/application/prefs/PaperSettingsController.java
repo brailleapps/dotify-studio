@@ -12,8 +12,6 @@ import org.daisy.braille.api.paper.CustomPaperCollection;
 import org.daisy.braille.api.paper.Length;
 import org.daisy.braille.api.paper.Paper;
 
-import com.googlecode.e2u.PaperView;
-
 import application.l10n.Messages;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,6 +23,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
+import shared.Tools;
 
 public class PaperSettingsController extends BorderPane {
 	private static final Logger logger = Logger.getLogger(PaperSettingsController.class.getCanonicalName());
@@ -134,8 +133,8 @@ public class PaperSettingsController extends BorderPane {
 		@Override
 		public void addPaper() {
 			if (validate()) {
-				Length l1 = PaperView.getLength(field1.getText(), units1.getSelectionModel().getSelectedItem().getKey());
-				Length l2 = PaperView.getLength(field2.getText(), units2.getSelectionModel().getSelectedItem().getKey());
+				Length l1 = Tools.parseLength(field1.getText(), units1.getSelectionModel().getSelectedItem().getKey());
+				Length l2 = Tools.parseLength(field2.getText(), units2.getSelectionModel().getSelectedItem().getKey());
 				try {
 					coll.addNewSheetPaper(nameField.getText(), descriptionField.getText(), l1, l2);
 				} catch (IOException e) {
@@ -155,8 +154,8 @@ public class PaperSettingsController extends BorderPane {
 		@Override
 		public void addPaper() {
 			if (validate()) {
-				Length l1 = PaperView.getLength(field1.getText(), units1.getSelectionModel().getSelectedItem().getKey());
-				Length l2 = PaperView.getLength(field2.getText(), units2.getSelectionModel().getSelectedItem().getKey());
+				Length l1 = Tools.parseLength(field1.getText(), units1.getSelectionModel().getSelectedItem().getKey());
+				Length l2 = Tools.parseLength(field2.getText(), units2.getSelectionModel().getSelectedItem().getKey());
 				try {
 					coll.addNewTractorPaper(nameField.getText(), descriptionField.getText(), l1, l2);
 				} catch (IOException e) {
@@ -178,7 +177,7 @@ public class PaperSettingsController extends BorderPane {
 		@Override
 		public void addPaper() {
 			if (validate()) {
-				Length l1 = PaperView.getLength(field1.getText(), units1.getSelectionModel().getSelectedItem().getKey());
+				Length l1 = Tools.parseLength(field1.getText(), units1.getSelectionModel().getSelectedItem().getKey());
 				try {
 					coll.addNewRollPaper(nameField.getText(), descriptionField.getText(), l1);
 				} catch (IOException e) {

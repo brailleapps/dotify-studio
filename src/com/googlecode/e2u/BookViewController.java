@@ -6,6 +6,8 @@ import java.net.URISyntaxException;
 
 import org.daisy.braille.pef.PEFBook;
 
+import shared.Settings;
+
 public class BookViewController {
 	private BookReader bookReader;
 	private AboutBookView aboutBookView;

@@ -19,10 +19,6 @@ import javax.print.PrintServiceLookup;
 import org.daisy.braille.api.factory.FactoryProperties;
 import org.daisy.braille.pef.PEFGenerator;
 
-import com.googlecode.e2u.Configuration;
-import com.googlecode.e2u.Settings;
-import com.googlecode.e2u.Settings.Keys;
-
 import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -34,6 +30,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import shared.Configuration;
+import shared.Settings;
+import shared.Settings.Keys;
 
 public class EmbossSettingsController extends BorderPane {
 	private static final Logger logger = Logger.getLogger(EmbossSettingsController.class.getCanonicalName());

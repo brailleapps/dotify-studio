@@ -1,4 +1,4 @@
-package com.googlecode.e2u;
+package shared;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,12 +21,12 @@ import org.daisy.braille.consumer.embosser.EmbosserCatalog;
 import org.daisy.braille.consumer.paper.PaperCatalog;
 import org.daisy.braille.consumer.table.TableCatalog;
 
-import com.googlecode.e2u.Settings.Keys;
+import shared.Settings.Keys;
 
 
 public class Configuration {
 	private static final Logger logger = Logger.getLogger(Configuration.class.getCanonicalName());
-	enum ErrorCode {
+	public enum ErrorCode {
 		NOT_SET,
 		INCOMPLETE,
 		INVALID

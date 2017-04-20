@@ -20,10 +20,13 @@ import com.googlecode.ajui.ALink;
 import com.googlecode.ajui.AParagraph;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
-import com.googlecode.e2u.Configuration.ErrorCode;
-import com.googlecode.e2u.Settings.Keys;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
+
+import shared.Configuration;
+import shared.Settings;
+import shared.Configuration.ErrorCode;
+import shared.Settings.Keys;
 
 public class SettingsView extends AbstractSettingsView implements AListener {
     /**

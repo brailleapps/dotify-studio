@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 
 import org.daisy.braille.api.paper.CustomPaperCollection;
-import org.daisy.braille.api.paper.Length;
 import org.daisy.braille.api.paper.Paper;
 
 import com.googlecode.ajui.AContainer;
@@ -16,6 +15,8 @@ import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
+
+import shared.Tools;
 
 public class PaperView extends AContainer {
 	private final CustomPaperCollection coll;
@@ -110,20 +111,20 @@ public class PaperView extends AContainer {
 				if (name!=null && !"".equals(name)) {
 					switch (t) {
 						case ROLL:
-							coll.addNewRollPaper(name, desc, getLength(context.getArgs().get("width"), context.getArgs().get("width-units")));
+							coll.addNewRollPaper(name, desc, Tools.parseLength(context.getArgs().get("width"), context.getArgs().get("width-units")));
 							updateOK = true;
 							break;
 						case TRACTOR:
 							coll.addNewTractorPaper(name, desc,
-									getLength(context.getArgs().get("width"), context.getArgs().get("width-units")), 
-									getLength(context.getArgs().get("height"), context.getArgs().get("height-units"))
+									Tools.parseLength(context.getArgs().get("width"), context.getArgs().get("width-units")), 
+									Tools.parseLength(context.getArgs().get("height"), context.getArgs().get("height-units"))
 									);
 							updateOK = true;
 							break;
 						case SHEET:
 							coll.addNewSheetPaper(name, desc,
-									getLength(context.getArgs().get("width"), context.getArgs().get("width-units")), 
-									getLength(context.getArgs().get("height"), context.getArgs().get("height-units"))
+									Tools.parseLength(context.getArgs().get("width"), context.getArgs().get("width-units")), 
+									Tools.parseLength(context.getArgs().get("height"), context.getArgs().get("height-units"))
 									);
 							updateOK = true;
 							break;
@@ -169,20 +170,5 @@ public class PaperView extends AContainer {
 		}
 		return super.getHTML(context);
 	}
-	
 
-	public static Length getLength(String valStr, String unitStr) {
-		Length.UnitsOfLength unit = Length.UnitsOfLength.valueOf(unitStr);
-		double val = Double.parseDouble(valStr);
-		switch (unit) {
-			case CENTIMETER:
-				return Length.newCentimeterValue(val);
-			case MILLIMETER:
-				return Length.newMillimeterValue(val);
-			case INCH:
-				return Length.newInchValue(val);
-			default:
-				throw new RuntimeException();
-		}
-	}
 }

@@ -40,9 +40,13 @@ import com.googlecode.ajui.APre;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
 import com.googlecode.ajui.XMLTagger;
-import com.googlecode.e2u.Settings.Keys;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
+
+import shared.BuildInfo;
+import shared.Configuration;
+import shared.Settings;
+import shared.Settings.Keys;
 
 public class MainPage extends BasePage implements AListener {
 	private static final Logger logger = Logger.getLogger(MainPage.class.getCanonicalName());

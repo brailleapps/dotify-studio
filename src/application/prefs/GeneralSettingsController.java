@@ -10,15 +10,14 @@ import java.util.Locale;
 import org.daisy.braille.api.table.BrailleConstants;
 import org.daisy.braille.consumer.table.TableCatalog;
 
-import com.googlecode.e2u.Settings;
-import com.googlecode.e2u.Settings.Keys;
-
 import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import shared.Settings;
+import shared.Settings.Keys;
 
 public class GeneralSettingsController {
 	@FXML private Label previewTranslation;

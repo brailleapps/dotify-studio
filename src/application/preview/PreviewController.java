@@ -22,9 +22,7 @@ import org.daisy.dotify.consumer.tasks.TaskSystemFactoryMaker;
 import org.daisy.dotify.tasks.runner.RunnerResult;
 import org.daisy.dotify.tasks.runner.TaskRunner;
 
-import com.googlecode.e2u.Settings;
 import com.googlecode.e2u.Start;
-import com.googlecode.e2u.Settings.Keys;
 
 import application.l10n.Messages;
 import javafx.application.Platform;
@@ -40,6 +38,8 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import shared.Settings;
+import shared.Settings.Keys;
 
 public class PreviewController extends BorderPane {
 	private static final Logger logger = Logger.getLogger(PreviewController.class.getCanonicalName());

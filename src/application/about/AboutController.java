@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import com.googlecode.e2u.BuildInfo;
-
 import application.l10n.Messages;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -15,6 +13,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import shared.BuildInfo;
 
 public class AboutController {
 	private static final String PEF_URL = "http://pef-format.org";

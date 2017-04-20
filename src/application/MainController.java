@@ -36,9 +36,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.googlecode.e2u.Settings;
-import com.googlecode.e2u.Settings.Keys;
-
 import application.about.AboutView;
 import application.l10n.Messages;
 import application.prefs.PreferencesView;
@@ -70,6 +67,8 @@ import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import shared.Settings;
+import shared.Settings.Keys;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;

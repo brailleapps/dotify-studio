@@ -20,9 +20,11 @@ import org.daisy.braille.impl.table.DefaultTableProvider;
 
 import com.googlecode.ajui.Context;
 import com.googlecode.e2u.BookReader.BookReaderResult;
-import com.googlecode.e2u.Settings.Keys;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
+
+import shared.Settings;
+import shared.Settings.Keys;
 
 public class PreviewController {
 	private static final Logger logger = Logger.getLogger(PreviewController.class.getCanonicalName());
