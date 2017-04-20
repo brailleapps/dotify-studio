@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+/**
+ * Provides a store for settings.
+ * @author Joel Håkansson
+ */
 public class Settings {
 	public enum Keys {version, device, embosser, printMode, table, paper, cutLengthValue, cutLengthUnit, orientation, zFolding, charset, align, brailleFont, textFont, libraryPath, locale};
 	/**
@@ -13,11 +17,16 @@ public class Settings {
 	private final static String PREFS_VERSION = "1";
     private Preferences p;
     private static Settings settings;
-    //private PaperCatalog paperFactory;
-  //  private EmbosserCatalog embosserFactory;
 	
-    public Settings(String node, HashMap<String, String> defaults) {
-        p = Preferences.userRoot().node(node); //$NON-NLS-1$
+    /**
+     * Creates a new settings node at the specified path and with the specified defaults.
+     * Note that the defaults must only use keys from the {@link Keys} enum.
+     * @param path the path
+     * @param defaults the defaults
+     * @throws IllegalArgumentException if a key in the defaults map is not found in the {@link Keys} enum
+     */
+    private Settings(String path, HashMap<String, String> defaults) {
+        p = Preferences.userRoot().node(path); //$NON-NLS-1$
         if (!BuildInfo.VERSION.equals(p.get(Keys.version.toString(), ""))) {
         	// if no version information is found, clear and add defaults
         	if ("".equals(p.get(Keys.version.toString(), ""))) {
@@ -33,10 +42,12 @@ public class Settings {
         	// Update the version of the application used to write this
         	p.put(Keys.version.toString(), BuildInfo.VERSION);
         }
-        //paperFactory = PaperCatalog.newInstance();
-        //embosserFactory = EmbosserCatalog.newInstance();
     }
     
+    /**
+     * Gets the default settings instance.
+     * @return returns the settings
+     */
     public synchronized static Settings getSettings() {
     	if (settings==null) {
     		HashMap<String, String> def = new HashMap<>();
@@ -86,6 +97,11 @@ public class Settings {
     	return cval;		
 	}
 	
+	/**
+	 * Sets the value for the specified key.
+	 * @param key the key
+	 * @param value the value
+	 */
 	public void put(Keys key, String value) {
 		p.put(getRegKey(key), value); //$NON-NLS-1$
 	}
@@ -106,18 +122,6 @@ public class Settings {
 	public void resetKey(Keys key) {
 		p.remove(getRegKey(key));
 	}
-	
-	/**
-	 * Gets currently selected paper
-	 * @return returns currently selected paper, or null if not found
-	 *//*
-	public Paper getPaper() {
-		return paperFactory.get(getString(Keys.paper));
-	}
-	
-	public Embosser getEmbosser() {
-		return embosserFactory.get(getString(Keys.embosser));
-	}*/
 	
 	public File getLibraryPath() {
 		String path = getString(Keys.libraryPath);
