@@ -10,6 +10,7 @@ import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.daisy.braille.api.table.BrailleConstants;
 import org.daisy.braille.api.table.BrailleConverter;
@@ -19,11 +20,14 @@ import org.daisy.braille.impl.table.DefaultTableProvider;
 
 import com.googlecode.ajui.Context;
 import com.googlecode.e2u.BookReader.BookReaderResult;
-import com.googlecode.e2u.Settings.Keys;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
 
+import shared.Settings;
+import shared.Settings.Keys;
+
 public class PreviewController {
+	private static final Logger logger = Logger.getLogger(PreviewController.class.getCanonicalName());
 	private final BookReader r;
 	private Map<Integer, PreviewRenderer> done;
 	private final Settings settings;
@@ -40,15 +44,15 @@ public class PreviewController {
 		this.settings = settings;
 		this.r = r;
 		done = Collections.synchronizedMap(new HashMap<Integer, PreviewRenderer>());
-		update();
+		update(false);
 		brailleFont = settings.getString(Keys.brailleFont);
 		textFont = settings.getString(Keys.textFont);
 		charset = settings.getString(Keys.charset);
 	}
 	
-	private void update() {
+	private void update(boolean force) {
 		saxonNotAvailable = false;
-		if (lastUpdated+10000>System.currentTimeMillis()) {
+		if (!force && lastUpdated+10000>System.currentTimeMillis()) {
 			return;
 		}
 		lastUpdated = System.currentTimeMillis();
@@ -60,7 +64,7 @@ public class PreviewController {
 				if (pr!=null) {
 					pr.abort();
 					if (pr.getFile()!=null) {
-						System.out.println("Removing old renderer");
+						logger.fine("Removing old renderer");
 						pr.getFile().delete();
 					}
 				}
@@ -107,8 +111,9 @@ public class PreviewController {
 			return new StringReader("Failed to read");
 		}
 		try {
-			if (settingsChanged() || fileChanged()) {
-				update();
+			boolean fileChanged = fileChanged();
+			if (settingsChanged() || fileChanged) {
+				update(fileChanged);
 			}
 			return new InputStreamReader(new FileInputStream(done.get(vol).getFile()), "UTF-8");
 		} catch (FileNotFoundException | UnsupportedEncodingException e) {

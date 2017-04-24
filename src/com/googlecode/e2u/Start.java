@@ -1,24 +1,35 @@
 package com.googlecode.e2u;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
-
-import org.daisy.braille.pef.FileTools;
 
 import com.googlecode.ajui.BrowserUI;
 
 public class Start {
+	private MainPage content;
 
 	/**
 	 * @param args
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
+		run(args, true);
+	}
+	
+	public static String run(String[] args, boolean display) throws Exception {
+		return run(args, display, true);
+	}
+
+	public static String run(String[] args, boolean display, boolean log) throws Exception {
+		return new Start().start(args, display, log);
+	}
+	
+	public String start(String[] args, boolean display, boolean log) throws Exception  {
 		BrowserUI.Builder buildUi = new BrowserUI.Builder("com/googlecode/e2u/resource-files");
 		buildUi.timeout(5000);
+		if (!log) { 
+			buildUi.logStream(null);
+		}
 		String page = "";
-		MainPage content;
 		if (args.length==0) {
 			page = "";
 			content = new MainPage(null);
@@ -44,21 +55,18 @@ public class Start {
 			content = new MainPage(null);
 			System.exit(-1);
 		}
-		//TODO: check error conditions, such as null
-		File parent = new File((Start.class.getProtectionDomain().getCodeSource().getLocation()).toURI()).getParentFile();
-		System.out.println(parent);
-		// list jars and convert to URL's
-		URL[] jars = FileTools.toURL(FileTools.listFiles(new File(parent, "plugins"), ".jar"));
-		for (URL u : jars) {
-			System.out.println("Found jar " + u);
-		}
-		// set context class loader
-		if (jars.length>0) {
-			Thread.currentThread().setContextClassLoader(new URLClassLoader(jars));
-		}
 		BrowserUI ui = buildUi.build();
 		ui.registerContents(content);
-		ui.display(page);
+		if (display) {
+			ui.display(page);
+			return null;
+		} else {
+			return ui.start(page);
+		}
+	}
+	
+	public MainPage getMainPage() {
+		return content;
 	}
 
 }

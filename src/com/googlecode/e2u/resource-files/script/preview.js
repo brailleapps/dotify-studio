@@ -44,10 +44,10 @@
 					}
 				}
 			});
-			shortcut.add("v", function() {
+			shortcut.add("alt+v", function() {
 				toggleViews();
 			});
-			shortcut.add("o", function() {
+			shortcut.add("ctrl+i", function() {
 				toggleById('about');
 			});
 			shortcut.add("ctrl+p", function() {

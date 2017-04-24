@@ -10,14 +10,16 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.SwingWorker;
 
 import org.daisy.braille.pef.PEFBook;
 
 public class BookScanner {
+	private static final Logger logger = Logger.getLogger(BookScanner.class.getCanonicalName());
     private final static String REGEX = "[\\s\\.,:/-]";
-    private final static boolean debug = false;
 
     private final ArrayList<PEFBook> books;
     private final Hashtable<String, Hashtable<File, PEFBook>> index;
@@ -45,7 +47,7 @@ public class BookScanner {
 				long diff = 0;
 				for (File f : lib.getFileList()) {
 					if (isCancelled()) {
-						System.out.println("Cancelled!");
+						logger.fine("Cancelled!");
 						return false;
 					}
 					try {
@@ -69,7 +71,9 @@ public class BookScanner {
 					f = pbf.getFile();
 					//String identifier = p.getMetadata("identifier").iterator().next();
 					books.add(p);
-					if (debug) System.err.println("Adding book: " + p.getTitle());
+					if (logger.isLoggable(Level.FINE)) {
+						logger.fine("Adding book: " + p.getTitle());
+					}
 					for (String key : p.getMetadataKeys()) {
 						if ("application".equals(key)||"xml".equals(key)) {
 							continue;
@@ -97,7 +101,9 @@ public class BookScanner {
 			}
 			
 			private void add(String indx, File f, PEFBook p) {
-				if (debug)  System.err.println("Adding index: " + indx);
+				if (logger.isLoggable(Level.FINE)) {
+					logger.fine("Adding index: " + indx);
+				}
 				Hashtable<File, PEFBook> c = index.get(indx);
 				if (c==null) {
 					c = new Hashtable<>();
@@ -109,7 +115,7 @@ public class BookScanner {
                 @Override
 			protected void done() {
 				try {
-					System.out.println("Book Scanner " + (get()?"completed":"interrupted")+ ": " + (new Date().getTime() - d.getTime()));
+					logger.info("Book Scanner " + (get()?"completed":"interrupted")+ ": " + (new Date().getTime() - d.getTime()));
 					notifyChange();
 				} catch (Exception e) {}
 			}
@@ -128,9 +134,9 @@ public class BookScanner {
     
     public static BookScanner startScan(File dir) {
     	if (instance!=null) {
-    		System.out.println("Canel...");
+    		logger.fine("Canel...");
     		instance.bookScanner.cancel(true);
-    		System.out.println(instance.bookScanner.getState());
+    		logger.fine(""+instance.bookScanner.getState());
     	}
     	instance = new BookScanner(dir);
     	return instance;
@@ -154,7 +160,9 @@ public class BookScanner {
     
     public Hashtable<File, PEFBook> getBooks(String str) {
     	str = str.toLowerCase().replaceAll(REGEX, "");
-    	if (debug)  System.err.println("Search for: " + str);
+    	if (logger.isLoggable(Level.FINE)) {
+			logger.fine("Search for: " + str);
+    	}
     	Hashtable<File, PEFBook> books = index.get(str);
     	
     	if (books==null) {
@@ -206,11 +214,11 @@ public class BookScanner {
     public static void main(String[] args) throws InterruptedException, IOException {
     	//private final File dir = new File("D:\\books2");
     	BookScanner bs = BookScanner.startScan(new File("D:\\books2")); // start search
-    	System.out.println("Scanning books. Wait a while...");
+    	logger.info("Scanning books. Wait a while...");
     	while (!bs.isDone()) {
     		Thread.sleep(300);
     	}
-    	System.out.println("Get books...");
+    	logger.info("Get books...");
     	{
 	    	ArrayList<String> st = new ArrayList<>();
 	    	st.add("rum");
@@ -232,25 +240,25 @@ public class BookScanner {
 	    	st.add("P10367");
     		bs.printSearch(st);
     	}
-    	System.out.println("Input search:");
+    	logger.info("Input search:");
 
     	LineNumberReader lnr = new LineNumberReader(new InputStreamReader(System.in));
     	String line;
     	while (!"exit".equals((line = lnr.readLine().toLowerCase()))) {
     		bs.printSearch(line.split("\\s"));
     	}
-    	System.out.println("End");
+    	logger.info("End");
     }
     
     public void printSearch(Iterable<String> str) {
     	Hashtable<File, PEFBook> books = containsAll(str);
-    	System.out.println("Search for " + str);
+    	logger.fine("Search for " + str);
     	for (File key : books.keySet()) {
-    		System.out.println("Book " + key);
+    		logger.fine("Book " + key);
     		Iterable<String> titles = books.get(key).getTitle();
     		if (titles != null) {
         		for (String val : titles) {
-        			System.out.println(val);
+        			logger.fine(val);
         		}
     		}
     	}    	

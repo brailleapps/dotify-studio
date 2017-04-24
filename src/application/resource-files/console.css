@@ -1,0 +1,13 @@
+body {
+	font-family: monospace;
+	font-weight: 600;
+}
+
+p {
+	padding: 0;
+	margin: 0;
+}
+
+.err {
+	color: red;
+}

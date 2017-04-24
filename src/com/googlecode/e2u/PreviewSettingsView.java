@@ -14,9 +14,11 @@ import com.googlecode.ajui.ALabel;
 import com.googlecode.ajui.AParagraph;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
-import com.googlecode.e2u.Settings.Keys;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
+
+import shared.Settings;
+import shared.Settings.Keys;
 
 public class PreviewSettingsView extends AbstractSettingsView {
 	/**

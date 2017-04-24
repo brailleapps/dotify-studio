@@ -6,6 +6,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 import javax.swing.SwingWorker;
 
@@ -13,7 +14,7 @@ import org.daisy.braille.consumer.validator.ValidatorFactory;
 import org.daisy.braille.pef.PEFBook;
 
 public class BookReader {
-	
+	private static final Logger logger = Logger.getLogger(BookReader.class.getCanonicalName());
     private SwingWorker<BookReaderResult, Void> bookReader;
     private BookReaderResult book = null;
     
@@ -66,7 +67,7 @@ public class BookReader {
 			
                 @Override
 	       protected void done() {
-	    	   System.out.println("Book Reader (resource): " + (new Date().getTime() - d.getTime()));
+	    	   logger.info("Book Reader (resource): " + (new Date().getTime() - d.getTime()));
 	       }
        	
         };
@@ -98,7 +99,7 @@ public class BookReader {
 			
                 @Override
 	       protected void done() {
-	    	   System.out.println("Book Reader (file): " + (new Date().getTime() - d.getTime()));
+	    	   logger.info("Book Reader (file): " + (new Date().getTime() - d.getTime()));
 	       }
        	
         };

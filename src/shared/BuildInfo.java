@@ -1,10 +1,12 @@
-package com.googlecode.e2u;
+package shared;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+
+import com.googlecode.e2u.MainPage;
 
 public class BuildInfo {
 	public final static String VERSION;

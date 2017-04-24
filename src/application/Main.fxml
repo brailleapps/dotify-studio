@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.web.WebView?>
+
+<BorderPane fx:id="root" prefHeight="600.0" prefWidth="800.0" stylesheets="@main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
+   <center>
+      <SplitPane fx:id="splitPane" dividerPositions="0.0" BorderPane.alignment="CENTER">
+         <items>
+            <TabPane fx:id="toolsPane" SplitPane.resizableWithParent="false" />
+            <SplitPane dividerPositions="0.8" orientation="VERTICAL" SplitPane.resizableWithParent="false">
+               <items>
+                  <TabPane fx:id="tabPane" tabClosingPolicy="ALL_TABS" />
+                  <WebView fx:id="console" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" SplitPane.resizableWithParent="false" />
+               </items>
+            </SplitPane>
+         </items>
+      </SplitPane>
+   </center>
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="%menu-item-file">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#showOpenDialog" text="%menu-item-open">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                     </accelerator>
+                  </MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" onAction="#saveAs" text="%menu-item-save-as" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <Menu mnemonicParsing="false" text="%menu-item-import">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#showImportDialog" text="%menu-item-import-document" />
+                    </items>
+                  </Menu>
+                  <MenuItem fx:id="exportMenuItem" mnemonicParsing="false" onAction="#exportFile" text="%menu-item-export" />
+                  <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#closeTab" text="%menu-item-close">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="W" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                     </accelerator>
+                  </MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#openPreferences" text="%menu-item-preferences" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#closeApplication" text="%menu-item-quit" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="%menu-item-edit">
+            <items>
+              <MenuItem fx:id="refreshMenuItem" mnemonicParsing="false" onAction="#refresh" text="%menu-item-refresh">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="F5" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem fx:id="openInBrowserMenuItem" mnemonicParsing="false" onAction="#openInBrowser" text="%menu-item-open-browser" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="%menu-item-window">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#showSearch" text="%menu-item-show-search">
+                     <accelerator>
+                        <KeyCodeCombination alt="DOWN" code="F" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator></MenuItem>
+              </items>
+            </Menu>
+          <Menu mnemonicParsing="false" text="%menu-item-help">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#openAbout" text="%menu-item-about" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+</BorderPane>

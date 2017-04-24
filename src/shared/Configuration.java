@@ -1,7 +1,9 @@
-package com.googlecode.e2u;
+package shared;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.daisy.braille.api.embosser.Embosser;
 import org.daisy.braille.api.embosser.EmbosserFeatures;
@@ -19,17 +21,19 @@ import org.daisy.braille.consumer.embosser.EmbosserCatalog;
 import org.daisy.braille.consumer.paper.PaperCatalog;
 import org.daisy.braille.consumer.table.TableCatalog;
 
-import com.googlecode.e2u.Settings.Keys;
+import shared.Settings.Keys;
 
 
 public class Configuration {
-	enum ErrorCode {
+	private static final Logger logger = Logger.getLogger(Configuration.class.getCanonicalName());
+	public enum ErrorCode {
 		NOT_SET,
 		INCOMPLETE,
 		INVALID
 	}
 	private final Settings settings;
 	private final PaperCatalog paperCatalog;
+	private final Collection<FactoryProperties> embossers;
 	private EmbosserCatalog embosserCatalog;
 	private TableCatalog tableCatalog;
 	private Embosser em;
@@ -57,6 +61,7 @@ public class Configuration {
 		this.paperCatalog = PaperCatalog.newInstance();
 		this.embosserCatalog = EmbosserCatalog.newInstance();
 		this.tableCatalog = TableCatalog.newInstance();
+		this.embossers = embosserCatalog.list();
 		
     	//String device = settings.getString(Keys.device);
     	String embosser = settings.getString(Keys.embosser);
@@ -172,14 +177,17 @@ public class Configuration {
 		try {
 			return SheetPaperFormat.Orientation.valueOf(orientation);
 		} catch (Exception e) {
-			System.err.println(orientation);
-			e.printStackTrace();
+			logger.log(Level.WARNING, "Error getting orientation: " + orientation, e);
 			return SheetPaperFormat.Orientation.DEFAULT;
 		}
 	}
 	
 	public EmbosserCatalog getEmbosserCatalog() {
 		return embosserCatalog;
+	}
+	
+	public Collection<FactoryProperties> getEmbossers() {
+		return embossers;
 	}
 
 	public Settings getSettings() {

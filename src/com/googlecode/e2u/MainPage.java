@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
@@ -17,6 +18,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.daisy.braille.api.embosser.Embosser;
 import org.daisy.braille.api.embosser.EmbosserWriter;
@@ -36,11 +40,16 @@ import com.googlecode.ajui.APre;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
 import com.googlecode.ajui.XMLTagger;
-import com.googlecode.e2u.Settings.Keys;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
 
+import shared.BuildInfo;
+import shared.Configuration;
+import shared.Settings;
+import shared.Settings.Keys;
+
 public class MainPage extends BasePage implements AListener {
+	private static final Logger logger = Logger.getLogger(MainPage.class.getCanonicalName());
 	//201x.m.d
 
 	final static int MAX_COPIES = 99;
@@ -70,9 +79,7 @@ public class MainPage extends BasePage implements AListener {
 	private static boolean closing = false;
     
     static {
-        HashMap<String, String> def = new HashMap<>();
-        def.put(Settings.Keys.align.toString(), "center_inner");
-        settings = new Settings("/EasyEmbossingUtility"+BuildInfo.VERSION, def);
+        settings = Settings.getSettings();
     }
     /*
     public static InputStream getInputStreamForBook() {
@@ -167,6 +174,14 @@ public class MainPage extends BasePage implements AListener {
 			.addMenuItem("paper", Messages.getString(L10nKeys.PAPER_VIEW));
     }
     
+    public Optional<URI> getBookURI() {
+    	if (bookController!=null) {
+    		return Optional.of(bookController.getBookURI());
+    	} else {
+    		return Optional.<URI>empty();
+    	}
+    }
+    
     private List<AComponent> getUpdateComponent(AComponent a, Date since) {
     	ArrayList<AComponent> ret = new ArrayList<>();
     	if (a.hasIdentifer() && a.hasUpdates(since)) {
@@ -257,7 +272,9 @@ public class MainPage extends BasePage implements AListener {
 				break;
 			}
 		}
-		System.err.println(xtag.getResult());
+		if (logger.isLoggable(Level.FINER)) {
+			logger.finer(xtag.getResult());
+		}
 		return new StringReader(xtag.getResult());
 	}
 	
@@ -298,7 +315,9 @@ public class MainPage extends BasePage implements AListener {
 			open = URLDecoder.decode(open, ENCODING);
 			File f = new File(open);
 			if (f.exists()) {
-				System.err.println("open book" + f);
+				if (logger.isLoggable(Level.FINE)) {
+					logger.fine("open book" + f);
+				}
 				bookController.close();
 				bookController = new BookViewController(f, settings, embossMenu);
 			}
@@ -587,7 +606,7 @@ public class MainPage extends BasePage implements AListener {
     	
     	ret.end();
     	//PageFormat pf = settingsView.getPageFormat();
-    	Configuration conf = settingsView.getConfiguration();
+    	Configuration conf = Configuration.getConfiguration(Settings.getSettings());
     	if (bookController.getBook().containsEightDot()) {
     		ret.start("p").text(Messages.getString(L10nKeys.EIGHT_DOT_NOT_SUPPORTED)).end();
     	} else if (!conf.settingOK()) {

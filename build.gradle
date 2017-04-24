@@ -3,7 +3,7 @@ apply plugin: 'application'
 apply plugin: 'maven'
 apply plugin: "signing"
 
-mainClassName = "com.googlecode.e2u.Start"
+mainClassName = "application.MainFx"
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 javadoc {
@@ -45,7 +45,7 @@ jar {
 			'Implementation-Title': "$releaseName",
 			'Implementation-Version': version,
 			'Implementation-URL': "$repositoryURL",
-			'Main-Class': 'com.googlecode.e2u.Start',
+			'Main-Class': 'application.MainFx',
 			'Class-Path': configurations.compile.collect { it.getName() }.join(' ')
 			)
 		}
@@ -62,10 +62,29 @@ repositories {
 dependencies {
 	compile 'org.daisy.braille:braille-utils.api:3.0.1'
 	compile 'org.daisy.braille:braille-utils.impl:3.0.0-beta'
-	compile ('org.daisy.braille:braille-utils.pef-tools:2.0.0-alpha'){
+	compile ('org.daisy.braille:braille-utils.pef-tools:2.0.0') {
 		exclude module: 'Saxon-HE'
 	}
 	compile 'com.googlecode.ajui:ajui:1.0.0-SNAPSHOT'
+	
+	compile 'org.daisy.dotify:dotify.api:3.1.0'
+	compile 'org.daisy.dotify:dotify.task-api:3.1.0'
+	compile 'org.daisy.dotify:dotify.common:3.0.0'
+	compile ('org.daisy.dotify:dotify.task-runner:2.0.0') {
+		exclude module: 'dotify.task-api'
+	}
+	compile 'org.daisy.dotify:dotify.task-api:3.0.0'
+	
+	runtime ('org.daisy.dotify:dotify.formatter.impl:3.1.0') {
+		exclude module: 'Saxon-HE'
+	}
+	runtime 'org.daisy.dotify:dotify.hyphenator.impl:3.0.0'
+	runtime 'org.daisy.dotify:dotify.text.impl:3.0.0'
+	runtime 'org.daisy.dotify:dotify.translator.impl:3.0.0'
+	runtime ('org.daisy.dotify:dotify.task.impl:3.2.0') {
+		exclude module: 'Saxon-HE'
+	}
+
 }
 
 applicationDistribution.from(file('installer/docs')) {

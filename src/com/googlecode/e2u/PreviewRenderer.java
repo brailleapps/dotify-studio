@@ -2,10 +2,12 @@ package com.googlecode.e2u;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 import javax.swing.SwingWorker;
 import javax.xml.transform.Source;
@@ -17,6 +19,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 public class PreviewRenderer {
+	private static final Logger logger = Logger.getLogger(PreviewRenderer.class.getCanonicalName());
 	private boolean now = false;
 	private final SwingWorker<File, Void> x;
 	private boolean abort = false;
@@ -29,7 +32,7 @@ public class PreviewRenderer {
 				long d = 200+(long)(Math.random()*100);
 				while (!abort) {
 					if (t.myTurn(vol) || now) {
-						System.err.println("RUNNING VOL " + vol);
+						logger.info("Creating preview for volume " + vol);
 				        File t1 = null;
 						try {
 							t1 = File.createTempFile("Preview", ".tmp");
@@ -37,8 +40,8 @@ public class PreviewRenderer {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						try {
-							StreamSource xml1 = new StreamSource(uri.toURL().openStream());
+						try (InputStream is = uri.toURL().openStream()){
+							StreamSource xml1 = new StreamSource(is);
 
 					        t1.deleteOnExit();
 					        Source xslt = new StreamSource(this.getClass().getResourceAsStream("resource-files/pef2xhtml.xsl"));

@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PEFLibrary {
-	private final static boolean debug = false;
+	private static final Logger logger = Logger.getLogger(PEFLibrary.class.getCanonicalName());
     private final ArrayList<File> files;
     private static FileFilter ff = new FileFilter() {
 		@Override
@@ -31,10 +33,14 @@ public class PEFLibrary {
     	}
 		for (File f : listFiles) {
 			if (f.isDirectory()) {
-				if (debug) System.err.println("Scanning dir " + f);
+				if (logger.isLoggable(Level.FINE)) {
+					logger.fine("Scanning dir " + f);
+				}
 				listFiles(f);
 			} else if (f.exists()) {
-				if (debug) System.err.println("Adding file: " + f);
+				if (logger.isLoggable(Level.FINE)) {
+					logger.fine("Adding file: " + f);
+				}
 				files.add(f);
 			} else {
 				// ignore

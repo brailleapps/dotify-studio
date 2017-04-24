@@ -17,7 +17,9 @@ import com.googlecode.ajui.AParagraph;
 import com.googlecode.ajui.AUnorderedList;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
-import com.googlecode.e2u.Settings.Keys;
+
+import shared.Settings;
+import shared.Settings.Keys;
 
 public class FindView extends AContainer implements AListener {
 	/**

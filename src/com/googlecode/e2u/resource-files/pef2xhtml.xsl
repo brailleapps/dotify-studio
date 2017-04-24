@@ -248,6 +248,7 @@ exclude-result-prefixes="dc tpb pef ext">
 		<link rel="stylesheet" type="text/css" href="styles/default/layout.css"/>
 		<link rel="stylesheet" type="text/css" href="styles/default/theme.css"/>
 		<link rel="stylesheet" type="text/css" href="styles/default/state.css"/>
+		<link rel="stylesheet" type="text/css" href="chosen/chosen.css"/>
 		<xsl:if test="$textFont!='' or $brailleFont!=''">
 			<!-- Only output this tag if either text or braille font has a value -->
 			<style type="text/css">
@@ -309,9 +310,9 @@ exclude-result-prefixes="dc tpb pef ext">
 				<span id="item-emboss"><a href="/"><xsl:value-of select="$emboss-view-label"/></a></span>
 				<span><a href="view.html"><xsl:value-of select="$preview-view-label"/></a></span>
 				<span><a href="index.html?method=meta"><xsl:value-of select="$about-label"/></a></span>
-				<span><a href="index.html?method=find"><xsl:value-of select="$find-view-label"/></a></span>
-				<span><a href="index.html?method=setup"><xsl:value-of select="$setup-view-label"/></a></span>
-				<span><a href="index.html?method=about"><xsl:value-of select="$about-software-label"/></a></span>
+				<!-- <span><a href="index.html?method=find"><xsl:value-of select="$find-view-label"/></a></span> -->
+				<!-- <span><a href="index.html?method=setup"><xsl:value-of select="$setup-view-label"/></a></span> -->
+				<!-- <span><a href="index.html?method=about"><xsl:value-of select="$about-software-label"/></a></span> -->
 				<input id="connected" type="submit" value="" title="Avsluta"></input>
 				<input id="notConnected" type="submit" value="" title="Avsluta" disabled="disabled"></input>
 			</p>
@@ -326,7 +327,7 @@ exclude-result-prefixes="dc tpb pef ext">
 			</span>
 			 -->
 			<span>
-			 	<select onchange="location = this.options[this.selectedIndex].value;" id="volume-select">
+			 	<select onchange="location = this.options[this.selectedIndex].value;" id="volume-select" class="chosen-select">
 					<xsl:for-each select="//pef:volume">
 						<xsl:variable name="pos" select="position()"/>
 	
@@ -455,6 +456,20 @@ exclude-result-prefixes="dc tpb pef ext">
 			</div>
 		</div>
 		<xsl:apply-templates/>
+		<script src="chosen/jquery-1.6.4.min.js" type="text/javascript"></script>
+  		<script src="chosen/chosen.jquery.js" type="text/javascript"></script>
+  		<script type="text/javascript">
+		    var config = {
+		      '.chosen-select'           : {},
+		      '.chosen-select-deselect'  : {allow_single_deselect:true},
+		      '.chosen-select-no-single' : {disable_search_threshold:10},
+		      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+		      '.chosen-select-width'     : {width:"95%"}
+		    }
+		    for (var selector in config) {
+		      $(selector).chosen(config[selector]);
+		    }
+	  </script>
 	</body>
 </xsl:template>
 
