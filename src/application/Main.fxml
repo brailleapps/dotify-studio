@@ -44,6 +44,11 @@
                     </items>
                   </Menu>
                   <MenuItem fx:id="exportMenuItem" mnemonicParsing="false" onAction="#exportFile" text="%menu-item-export" />
+                  <MenuItem fx:id="embossMenuItem" mnemonicParsing="false" onAction="#emboss" text="%menu-item-emboss">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="P" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                     </accelerator>
+                  </MenuItem>
                   <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#closeTab" text="%menu-item-close">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="W" control="UP" meta="UP" shift="UP" shortcut="DOWN" />

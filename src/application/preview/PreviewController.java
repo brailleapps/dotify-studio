@@ -22,6 +22,7 @@ import org.daisy.dotify.consumer.tasks.TaskSystemFactoryMaker;
 import org.daisy.dotify.tasks.runner.RunnerResult;
 import org.daisy.dotify.tasks.runner.TaskRunner;
 
+import com.googlecode.e2u.BookReader;
 import com.googlecode.e2u.Start;
 
 import application.l10n.Messages;
@@ -290,6 +291,14 @@ public class PreviewController extends BorderPane {
 			return start.getMainPage().getBookURI();
 		} else {
 			return Optional.<URI>empty();
+		}
+	}
+
+	public Optional<BookReader.BookReaderResult> getBookReaderResult() {
+		if (start!=null) {
+			return start.getMainPage().getBookReaderResult();
+		} else {
+			return Optional.<BookReader.BookReaderResult>empty();
 		}
 	}
 

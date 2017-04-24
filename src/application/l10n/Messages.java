@@ -13,6 +13,57 @@ public enum Messages {
 	APPLICATION_ABOUT_PEF("application-about-pef"),
 	BUTTON_OK("button-ok"),
 	BUTTON_SELECT("button-select"),
+	EMBOSS_WINDOW_TITLE("emboss-window-title"),
+	/**
+	 * The file is invalid and cannot be embossed.
+	 */
+	ERROR_CANNOT_EMBOSS_INVALID_FILE("error-cannot-emboss-invalid-file"),
+	/**
+	 * The page range could not be parsed.
+	 * <ul>
+	 * <li>{0} = the input</li>
+	 * </ul>
+	 */
+	ERROR_FAILED_TO_PARSE_PAGE_RANGE("error-failed-to-parse-page-range"),
+	/**
+	 * The volume number could not be parsed.
+	 * <ul>
+	 * <li>{0} = the input</li>
+	 * </ul>
+	 */
+	ERROR_FAILED_TO_PARSE_VOLUME_NUMBER("error-failed-to-parse-volume-number"),
+	/**
+	 * The page range field is empty.
+	 */
+	ERROR_EMPTY_PAGE_RANGE("error-empty-page-range"),
+	/**
+	 * The volume number field is empty.
+	 */
+	ERROR_EMPTY_VOLUME_NUMBER("error-empty-volume-number"),
+	/**
+	 * The volume number field is less than one.
+	 */
+	ERROR_VOLUME_NUMBER_LESS_THAN_ONE("error-volume-number-less-than-one"),
+	/**
+	 * The volume number is greater than the number of volumes. 
+	 * <ul>
+	 * <li>{0} = the input</li>
+	 * <li>{1} = the number of volumes</li>
+	 * </ul>
+	 */
+	ERROR_VOLUME_NUMBER_OUT_OF_RANGE("error-volume-number-out-of-range"),
+	/**
+	 * No device specified in preferences.
+	 */
+	ERROR_NO_DEVICE_SPECIFIED("error-no-device-specified"),
+	/**
+	 * The embosser settings are invalid.
+	 */
+	ERROR_INVALID_EMBOSSER_SETTINGS("error-invalid-embosser-settings"),
+	/**
+	 * No alignment specified in preferences.
+	 */
+	ERROR_NO_ALIGNMENT_SPECIFIED("error-no-alignment-specified"),
 	TITLE_SET_SEARCH_FOLDER("title-set-search-folder"),
 	TITLE_IMPORT_SOURCE_DOCUMENT_DIALOG("title-import-source-document-dialog"),
 	TITLE_IMPORT_BRAILLE_OPTIONS_DIALOG("title-import-braille-options-dialog"),
@@ -49,6 +100,11 @@ public enum Messages {
 	MESSAGE_UNKNOWN_AUTHOR("message-unknown-author"),
 	MESSAGE_UNKNOWN_TITLE("message-unknown-title"),
 	MESSAGE_PAPER_DETAILS("message-paper-details"),
+	MESSAGE_BOOK_DIMENSIONS("message-book-dimensions"),
+	/**
+	 * The file has been sent to the embosser
+	 */
+	MESSAGE_FILE_SENT_TO_EMBOSSER("message-file-sent-to-embosser"),
 	PREFERENCES_MENU_ITEM("menu-item-preferences"),
 	PREFERENCES_WINDOW_TITLE("preferences-window-title"),
 	TAB_EMBOSS("tab-emboss"),

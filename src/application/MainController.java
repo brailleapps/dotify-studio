@@ -32,6 +32,7 @@ import org.daisy.braille.api.embosser.EmbosserFeatures;
 import org.daisy.braille.api.embosser.EmbosserWriter;
 import org.daisy.braille.consumer.embosser.EmbosserCatalog;
 import org.daisy.braille.consumer.table.TableCatalog;
+import org.daisy.braille.pef.PEFBook;
 import org.daisy.braille.pef.PEFHandler;
 import org.daisy.braille.pef.TextConverterFacade;
 import org.daisy.dotify.consumer.tasks.TaskGroupFactoryMaker;
@@ -39,7 +40,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.googlecode.e2u.BookReader;
+
 import application.about.AboutView;
+import application.emboss.EmbossView;
 import application.imports.ImportBrailleView;
 import application.l10n.Messages;
 import application.prefs.PreferencesView;
@@ -92,6 +96,7 @@ public class MainController {
 	@FXML private MenuItem saveAsMenuItem;
 	@FXML private MenuItem refreshMenuItem;
 	@FXML private MenuItem openInBrowserMenuItem;
+	@FXML private MenuItem embossMenuItem;
 	private final double dividerPosition = 0.2;
 	private Tab searchTab;
 	private ExecutorService exeService;
@@ -136,6 +141,7 @@ public class MainController {
 		saveAsMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
 		refreshMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
 		openInBrowserMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
+		embossMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
 	}
 
 	private class ConsoleStream extends OutputStream {
@@ -201,6 +207,24 @@ public class MainController {
 			}
 		}
 	}
+    
+    @FXML void emboss() {
+    	Tab t = tabPane.getSelectionModel().getSelectedItem();
+		if (t!=null) {
+			Platform.runLater(()->{
+				PreviewController controller = ((PreviewController)t.getContent());
+				Optional<BookReader.BookReaderResult> reader = controller.getBookReaderResult();
+				if (reader.isPresent() && reader.get().isValid()) {
+					PEFBook book = reader.get().getBook();
+					EmbossView ev = new EmbossView(book);
+					ev.showAndWait();
+				} else {
+					Alert alert = new Alert(AlertType.ERROR, Messages.ERROR_CANNOT_EMBOSS_INVALID_FILE.localize(), ButtonType.OK);
+		    		alert.showAndWait();
+				}
+			});
+		}
+    }
     
     @FXML
     public void closeTab() {

@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 
 import org.daisy.braille.pef.PEFBook;
 
+import com.googlecode.e2u.BookReader.BookReaderResult;
 import com.googlecode.e2u.preview.stax.StaxPreviewController;
 
 import shared.Settings;
@@ -39,6 +40,10 @@ public class BookViewController {
     
     public PEFBook getBook() {
     	return bookReader.getResult().getBook();
+    }
+    
+    public BookReaderResult getBookReaderResult() {
+    	return bookReader.getResult();
     }
     
     public boolean bookIsValid() {
