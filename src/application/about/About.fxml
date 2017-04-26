@@ -10,7 +10,6 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-
 <BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.about.AboutController">
    <center>
       <VBox prefHeight="250.0" prefWidth="400.0" spacing="10.0">
@@ -21,7 +20,7 @@
                </font>
             </Label>
             <Label fx:id="description" alignment="TOP_LEFT" text="%application-description" wrapText="true" />
-            <Label fx:id="version" prefHeight="17.0" prefWidth="258.0" text="%application-version" />
+            <Label fx:id="version" text="%application-version" wrapText="true" />
             <TextFlow>
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%application-about-pef" />
