@@ -1,26 +1,6 @@
-Release Notes for Easy Embossing Utility, release 2010-09-27 Beta
+0.1.0 (unreleased)
 
-Release 2011-XX-XX
-- Fixed a bug when not selecting either text or braille font in Internet Explorer
-- Added odt2braille fonts as default
-- Added option to select file
-
-Release 2010-09-27
-- Added possibility to emboss multiple copies at once
-- Created separate pages for emboss and preview settings
-- Added information about paper dimensions in cells (depending on selected embosser)
-- Added paper format "Letter"
-- Improved validation and error messages returned by the validator
-- Improved error message when paper is too small
-
-Release 2010-07-14
-- Added embosser identification help for Index embossers
-- Added support for attribute "text" on rows in the namespace "http://www.daisy.org/ns/2008/pef/extended"
-- Added possibility to change fonts in preview
-
-Release 2010-07-08
-- Added option to emboss a specific volume
-
-Release 2010-06-24 Beta
-- First release targeting more than two or three people 
-- Code has been rewritten for flexibility and interactivity
+New in this version
+  - First version to use JavaFx as the framework
+  - Supports converting source documents to PEF (with Dotify)
+  - Several of the features from Easy Embossing Utility have been re-implemented using JavaFx

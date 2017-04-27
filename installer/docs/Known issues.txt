@@ -1,13 +1,5 @@
-Known issues for Easy Embossing Utility, release 2.0 beta
+Issues
 
-- No support for files containing 8 dot patterns
-While the software is built to support 8 dot in principal, some components do not support 8 dot even if they could.
-
-- Installation software and shell integration limited to Windows
-The installation software and shell integration are Windows specific.
-
-- Limited locale support
-Supported languages are English and Swedish.
-
-- Accessibility has not been sufficiently tested
-Additional accessibility tests must be performed before the software is released to a wider audience.
+For a list of current issues, see
+ - https://github.com/brailleapps/dotify-studio/issues
+ - https://github.com/brailleapps/dotify-studio-installer/issues

@@ -1,9 +1,10 @@
-Getting started with Easy Embossing Utility
+Getting started
 
-== On Windows ==
-The software starts automatically when clicking on a PEF-file. Before you can emboss a file for the first time, the embosser has to be configured. Use one of the embosser test files supplied with the software and follow the setup instructions.
+On Windows: Start the software by selecting Dotify Studio from the start menu.
 
-To uninstall, locate "Uninstall" in the Windows start menu. Note that this will not uninstall plugins or fonts.
+On Linux/Mac: Run the software by double clicking the bin/dotify-studio file.
 
-== Linux/Mac ==
-Run the software by double clicking the e2u.jar file. Open a file through the "Open" tab.
+Before you can emboss a file for the first time, the embosser has to be configured. Go to the Preferences
+menu item to configure the embosser. Once the embosser has been fully configured, an option to generate a
+test document will be available. This document can be used to verify that the configuration works as
+intended.
