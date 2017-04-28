@@ -3,7 +3,7 @@ package application.preview;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -38,6 +38,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import shared.BuildInfo;
 import shared.Settings;
 import shared.Settings.Keys;
 
@@ -181,6 +182,10 @@ public class PreviewController extends BorderPane {
     		this.outputFile = outputFile;
     		this.locale = locale;
     		this.params = new HashMap<>(params);
+    		this.params.put("systemName", BuildInfo.NAME);
+    		this.params.put("systemBuild", BuildInfo.BUILD);
+    		this.params.put("systemRelease", BuildInfo.VERSION);
+    		this.params.put("conversionDate", new Date().toString());
     	}
     	
     	@Override

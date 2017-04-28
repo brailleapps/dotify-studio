@@ -8,7 +8,9 @@ import java.util.jar.Manifest;
 
 import com.googlecode.e2u.MainPage;
 
+//TODO: move ManifestRetriever from dotify-cli to common and use that
 public class BuildInfo {
+	public final static String NAME;
 	public final static String VERSION;
 	public final static String BUILD;
 	static {
@@ -34,9 +36,11 @@ public class BuildInfo {
 			}
 		}
 		if (failed || attr == null) {
+			NAME = "Dotify Studio";
 			BUILD = "N/A";
 			VERSION = "N/A";
 		} else {
+			NAME = attr.getValue("Implementation-Title");
 			VERSION = attr.getValue("Implementation-Version");
 			BUILD = attr.getValue("Repository-Revision");
 		}
