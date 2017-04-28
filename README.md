@@ -8,10 +8,13 @@ The `Import/Document...` menu item is unfortunately restricted to Swedish. If yo
 is configured for another locale go to `Preferences/General/Target locale` and set it to `sv-SE`.
 
 # Using #
-Download the latest release and unpack it. For more information, see the user guide in the docs folder.
+Download the latest release and install (or unpack) it. For more information, see the user guide in the docs folder.
 
 # Building #
 Build with `gradlew build` (Windows) or `./gradlew build` (Mac/Linux)
+
+## Installers ##
+To build installers, see [dotify-studio-installer](https://github.com/brailleapps/dotify-studio-installer).
 
 ## Requirements & Compatibility ##
  - Requires Oracle Java 8u40
