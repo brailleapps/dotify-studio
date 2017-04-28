@@ -342,6 +342,7 @@ public class MainController {
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle(Messages.TITLE_IMPORT_DIALOG.localize());
 		List<String> exts = TaskGroupFactoryMaker.newInstance().listAll().stream()
+			.filter(spec -> !"pef".equals(spec.getInputFormat()))
 			.map(spec -> "*."+spec.getInputFormat())
 			.distinct().collect(Collectors.toList());
 		// TODO: not all formats in this list are actually extensions, but it will have to do for now, since the TaskGroupFactory doesn't provide this information
