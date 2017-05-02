@@ -23,6 +23,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
+import shared.NiceName;
 import shared.Tools;
 
 public class PaperSettingsController extends BorderPane {

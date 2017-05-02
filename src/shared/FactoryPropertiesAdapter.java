@@ -1,15 +1,15 @@
-package application.prefs;
+package shared;
 
 import org.daisy.braille.api.factory.FactoryProperties;
 
-class FactoryPropertiesAdapter extends NiceName implements Comparable<FactoryPropertiesAdapter> {
+public class FactoryPropertiesAdapter extends NiceName implements Comparable<FactoryPropertiesAdapter> {
 	private final FactoryProperties p;
-	FactoryPropertiesAdapter(FactoryProperties p) {
+	public FactoryPropertiesAdapter(FactoryProperties p) {
 		super(p.getIdentifier(), p.getDisplayName(), p.getDescription());
 		this.p = p;
 	}
 	
-	FactoryProperties getProperties() {
+	public FactoryProperties getProperties() {
 		return p;
 	}
 	

@@ -1,29 +1,29 @@
-package application.prefs;
+package shared;
 
-class NiceName {
+public class NiceName {
 	private final String key;
 	private final String displayName;
 	private final String description;
 
-	NiceName(String key, String displayName) {
+	public NiceName(String key, String displayName) {
 		this(key, displayName, null);
 	}
 
-	NiceName(String key, String displayName, String description) {
+	public NiceName(String key, String displayName, String description) {
 		this.key = key;
 		this.displayName = displayName;
 		this.description = description;
 	}
 
-	String getKey() {
+	public String getKey() {
 		return key;
 	}
 
-	String getDisplayName() {
+	public String getDisplayName() {
 		return displayName;
 	}
 	
-	String getDescription() {
+	public String getDescription() {
 		return description;
 	}
 

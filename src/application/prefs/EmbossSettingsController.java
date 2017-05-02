@@ -31,6 +31,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import shared.Configuration;
+import shared.FactoryPropertiesAdapter;
+import shared.NiceName;
 import shared.Settings;
 import shared.Settings.Keys;
 

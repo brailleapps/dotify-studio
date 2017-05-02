@@ -11,6 +11,7 @@ import org.daisy.braille.api.paper.Length;
 import org.daisy.braille.api.paper.SheetPaperFormat;
 
 import application.l10n.Messages;
+import shared.NiceName;
 
 class OptionNiceNames {
 	private final Set<NiceName> printModeNN;

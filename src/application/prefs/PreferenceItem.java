@@ -13,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import shared.NiceName;
 
 class PreferenceItem extends BorderPane {
 	private static final NiceName empty = new NiceName("", "");

@@ -7,6 +7,7 @@ import java.util.List;
 import org.daisy.braille.api.factory.FactoryProperties;
 
 import javafx.concurrent.Task;
+import shared.FactoryPropertiesAdapter;
 import shared.Settings;
 import shared.Settings.Keys;
 
