@@ -87,12 +87,55 @@ dependencies {
 
 }
 
-applicationDistribution.from(file('installer/docs')) {
-    into 'docs'
+buildscript {
+    repositories {
+    	mavenCentral()
+    }
+    dependencies { classpath ('org.pegdown:pegdown:1.6.0') }
 }
 
-applicationDistribution.from(file('installer/examples')) {
-	into 'examples'
+task copyDocResources(type: Copy) {
+	from ('docs') {
+		include('**/*.png')
+		include('**/*.css')
+	}
+	into ('build/docs/man')
+}
+
+task convertDocs(dependsOn: ['copyDocResources']) {
+	def outputDir = file('build/docs/man')
+	outputs.dir outputDir
+	doLast() {
+		def processor = new org.pegdown.PegDownProcessor()
+		def outputEncoding = 'UTF-8'
+		def language = 'en'
+		outputDir.mkdirs()
+		fileTree(dir: 'docs', include: '*.md')
+			.filter{it.isFile()}
+			.each {
+				file("${outputDir}/${it.name[0..-4]}.html").write(
+					"<?xml version=\"1.0\" encoding=\""
+					+ outputEncoding+"\"?>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""
+					+ language+"\">\n<head>\n<meta charset=\""
+					+ outputEncoding+"\"/>\n<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/style.css\">\n</head>\n<body>"
+					+ processor.markdownToHtml(it.getText('UTF-8'))
+					+ "</body>\n</html>", outputEncoding
+				)
+			}
+	}
+}
+
+distributions {
+    main {
+        contents {
+            from(convertDocs) {
+                into "docs"
+            }
+            from(file('installer/examples')) {
+            	into 'examples'
+            }
+        }
+    }
 }
 
 task javadocJar(type: Jar) {
