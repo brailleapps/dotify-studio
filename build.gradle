@@ -112,8 +112,12 @@ task convertDocs(dependsOn: ['copyDocResources']) {
 		    			com.vladsch.flexmark.parser.Parser.EXTENSIONS,
 		    			Arrays.asList(
 		    				com.vladsch.flexmark.ext.autolink.AutolinkExtension.create(),
-		    				com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension.create()
+		    				com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension.create(),
+		    				com.vladsch.flexmark.ext.wikilink.WikiLinkExtension.create()
 		    			)
+	    			).set(
+	    				com.vladsch.flexmark.ext.wikilink.WikiLinkExtension.LINK_FILE_EXTENSION,
+	    				".html"
 	    			)
 
 	    def parser = com.vladsch.flexmark.parser.Parser.builder(options).build()
