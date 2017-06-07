@@ -91,7 +91,7 @@ buildscript {
     repositories {
     	mavenCentral()
     }
-    dependencies { classpath ('org.pegdown:pegdown:1.6.0') }
+	dependencies { classpath ('com.vladsch.flexmark:flexmark-all:0.19.3') }
 }
 
 task copyDocResources(type: Copy) {
@@ -106,7 +106,17 @@ task convertDocs(dependsOn: ['copyDocResources']) {
 	def outputDir = file('build/docs/man')
 	outputs.dir outputDir
 	doLast() {
-		def processor = new org.pegdown.PegDownProcessor()
+	    def options = new com.vladsch.flexmark.util.options.MutableDataSet().set(
+		    			com.vladsch.flexmark.parser.Parser.EXTENSIONS,
+		    			Arrays.asList(
+		    				com.vladsch.flexmark.ext.autolink.AutolinkExtension.create(),
+		    				com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension.create()
+		    			)
+	    			)
+
+	    def parser = com.vladsch.flexmark.parser.Parser.builder(options).build()
+	    def renderer = com.vladsch.flexmark.html.HtmlRenderer.builder(options).build()
+		def inputEncoding = 'UTF-8'
 		def outputEncoding = 'UTF-8'
 		def language = 'en'
 		outputDir.mkdirs()
@@ -118,7 +128,7 @@ task convertDocs(dependsOn: ['copyDocResources']) {
 					+ outputEncoding+"\"?>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""
 					+ language+"\">\n<head>\n<meta charset=\""
 					+ outputEncoding+"\"/>\n<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/style.css\">\n</head>\n<body>"
-					+ processor.markdownToHtml(it.getText('UTF-8'))
+					+ renderer.render(parser.parse(it.getText(inputEncoding)))
 					+ "</body>\n</html>", outputEncoding
 				)
 			}
