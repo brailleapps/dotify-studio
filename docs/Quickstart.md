@@ -1,3 +1,5 @@
+[[Table of Contents|Toc]]
+
 # Getting started #
 
 __On Windows__: Start the software by selecting `Dotify Studio` from the start menu.

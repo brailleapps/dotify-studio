@@ -1,3 +1,5 @@
+[[Table of Contents|Toc]]
+
 # Dotify Studio #
  - Contributors: Joel Håkansson
  - Code license: GNU Lesser GPL

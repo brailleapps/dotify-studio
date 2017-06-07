@@ -1,3 +1,5 @@
+[[Table of Contents|Toc]]
+
 # Issues #
 
 For a list of current issues, see

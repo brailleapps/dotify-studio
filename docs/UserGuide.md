@@ -1,3 +1,5 @@
+[[Table of Contents|Toc]]
+
 # Dotify Studio User Guide #
 Dotify Studio provides an accessible graphical user interface for creating, managing and embossing PEF-files.
 

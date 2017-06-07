@@ -1,3 +1,5 @@
+[[Table of Contents|Toc]]
+
 # 0.2.0 (unreleased) #
 
 ## New in this version ##
