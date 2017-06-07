@@ -3,22 +3,6 @@
 # Dotify Studio User Guide #
 Dotify Studio provides an accessible graphical user interface for creating, managing and embossing PEF-files.
 
-## Installing and running ##
-### Prerequisites ###
-If you do not have Oracle Java version 8u40 or later installed on your machine, you have install that as well. 
-
-### On Windows ###
-Download the Windows installer from the [latest releases](https://github.com/brailleapps/dotify-studio/releases) and follow the instructions. When the installer has completed, you can start the software via the start menu or by double clicking on a PEF-file.
-
-Note: If you install other software that opens files ending with .pef (such as Adobe Photoshop or Adobe Creative Suite) after Dotify Studio, 
-you may have to reinstall Dotify Studio to restore the .pef file association to Dotify Studio.
-
-### On macOS ###
-Download the macOS package from the [latest releases](https://github.com/brailleapps/dotify-studio/releases) and open it. Drag and drop the application to the applications folder. Start the software by launching the application.
-
-### Linux ###
-Download the zip-file from the [latest releases](https://github.com/brailleapps/dotify-studio/releases) and unzip the application. Run the software with the script `bin/dotify-studio`.
-
 ## Preferences ##
 Before you can emboss PEF-files, you must complete the setup. The menu item `Preferences` opens a dialog with tabs.
 

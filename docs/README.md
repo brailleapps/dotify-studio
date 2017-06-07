@@ -8,19 +8,13 @@
  - Code URL: https://github.com/brailleapps/dotify-studio
 
 
-## Contents ##
-1.	Description
-2.	Installation
-3.	Help Resources
-
-
-## 1 Description ##
+## Description ##
 Dotify Studio is a cross platform GUI for creating, managing and embossing
 PEF-files, including upgrading from and downgrading to commonly 
 used "braille" text formats.
 
 ### Main Features ###
-  * Translates and formats braille
+  * Translate and format braille
   * Emboss a PEF-file
   * Validate a PEF-file
   * Search meta data in collection of PEF-files
@@ -38,15 +32,37 @@ For details, see the complete list of supported embossers by accessing the embos
 Unfortunately, only Swedish _braille_ is supported when using the following menu item `Import/Document...`. This is primarily due to
 missing braille translations.
 
-## 2 Installation ##
+## Installation ##
+
+### Prerequisites ###
+If you do not have Oracle Java version 8u40 or later installed on your machine, you have install that first.
+
+### Installing and Running ###
 You can download a ready-to-run binary variant of this library from
-  https://github.com/brailleapps/dotify-studio
+  [latest releases](https://github.com/brailleapps/dotify-studio/releases). See below for OS specific details.
+  
+If you prefer you can build the application yourself by running the following command in the source directory: `gradlew build` (Windows) or `./gradlew build` (Mac/Linux). The built application can be found under build/distributions/.
 
-### Building ###
-Build with `gradlew build` (Windows) or `./gradlew build` (Mac/Linux)
-in the source directory. The built library can be found under build/distributions/.
+#### Windows ####
+Download the Windows installer from the [latest releases](https://github.com/brailleapps/dotify-studio/releases) and follow the instructions. When the installer has completed, you can start the software via the start menu or by double clicking on a PEF-file.
 
+Note: If you install other software that opens files ending with .pef (such as Adobe Photoshop or Adobe Creative Suite) after Dotify Studio, 
+you may have to reinstall Dotify Studio to restore the .pef file association to Dotify Studio.
 
-## 3 Help Resources ##
-See the latest version of the written documentation on
-  https://github.com/brailleapps/dotify-studio
+#### macOS ####
+Download the macOS package from the [latest releases](https://github.com/brailleapps/dotify-studio/releases) and open it. Drag and drop the application to the applications folder. Start the software by launching the application.
+
+#### Linux ####
+Download the zip-file from the [latest releases](https://github.com/brailleapps/dotify-studio/releases) and unzip the application. Run the software with the script `bin/dotify-studio`.
+
+Run the software by double clicking the `bin/dotify-studio` file.
+
+### Configuration ###
+Before you can emboss a file for the first time, the embosser has to be configured. Go to the `Preferences`
+menu item to configure the embosser. Once the embosser has been fully configured, an option to generate a
+test document will be available. This document can be used to verify that the configuration works as
+intended. For details, see the [[User guide|UserGuide]].
+
+## Help Resources ##
+See the latest version of this documentation on
+  https://github.com/brailleapps/dotify-studio/tree/master/docs
