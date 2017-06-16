@@ -20,8 +20,8 @@ public class ValidationView extends AContainer {
 	 */
 	private static final long serialVersionUID = 7532480151718185817L;
 
-	public ValidationView(Validator v) {
-		if (v!=null) {
+	public ValidationView(String messages) {
+		if (messages!=null) {
 			{
 				AParagraph p = new AParagraph();
 				p.add(new ALabel(Messages.getString(L10nKeys.VALIDATION_MESSAGE)));
@@ -36,16 +36,7 @@ public class ValidationView extends AContainer {
 				AContainer div = new AContainer();
 				//div.setClass("overflow");
 				APre pre = new APre();
-				int c;
-				try (InputStreamReader isr = new InputStreamReader(v.getReportStream())) {
-					StringBuilder sb = new StringBuilder();
-					while ((c = isr.read())>-1) {
-						sb.append(((char)c));
-					}
-					pre.add(new ALabel(sb.toString()));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				pre.add(new ALabel(messages));
 				div.add(pre);
 				add(div);
 		    	AParagraph p = new AParagraph();

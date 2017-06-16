@@ -6,12 +6,14 @@ import java.net.URISyntaxException;
 
 import org.daisy.braille.pef.PEFBook;
 
+import com.googlecode.e2u.preview.stax.StaxPreviewController;
+
 import shared.Settings;
 
 public class BookViewController {
 	private BookReader bookReader;
 	private AboutBookView aboutBookView;
-	private PreviewController controller;
+	private StaxPreviewController controller;
 	private Settings settings;
 	private final MenuSystem menu;
 	
@@ -44,19 +46,16 @@ public class BookViewController {
     }
     
     public ValidationView getValidationView() {
-    	return new ValidationView(bookReader.getResult().getValidator());
+    	return new ValidationView(bookReader.getResult().getValidationMessages());
     }
     
     public AboutBookView getAboutBookView() {
-    	if (aboutBookView==null) {
-    		aboutBookView = new AboutBookView(bookReader.getResult().getBook(), menu);
-    	}
-    	return aboutBookView;
+    	return new AboutBookView(bookReader.getResult().getBook(), menu);
     }
     
-    public PreviewController getPreviewView() {
+    public StaxPreviewController getPreviewView() {
     	if (controller==null) {
-    		controller = new PreviewController(bookReader, settings);
+    		controller = new StaxPreviewController(bookReader, settings);
     	}
     	return controller;
     }

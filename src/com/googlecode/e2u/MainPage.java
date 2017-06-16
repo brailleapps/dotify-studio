@@ -53,7 +53,7 @@ public class MainPage extends BasePage implements AListener {
 	//201x.m.d
 
 	final static int MAX_COPIES = 99;
-	final static String ENCODING = "utf-8";
+	public final static String ENCODING = "utf-8";
 	
 	final static String KEY_TOP_BAR = "top-bar";
 	final static String KEY_SUB_MENU = "sub-menu";

@@ -1,6 +1,8 @@
 package com.googlecode.e2u;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -15,22 +17,24 @@ import org.daisy.braille.pef.PEFBook;
 
 public class BookReader {
 	private static final Logger logger = Logger.getLogger(BookReader.class.getCanonicalName());
+	private final File source;
     private SwingWorker<BookReaderResult, Void> bookReader;
     private BookReaderResult book = null;
+    private org.daisy.braille.api.validator.Validator pv = null;
     
     public static class BookReaderResult {
     	private final PEFBook book;
     	private final File bookFile;
     	private final URI uri;
     	private final boolean validateOK;
-    	private final org.daisy.braille.api.validator.Validator pv;
+    	private final String messages;
     	
-    	private BookReaderResult(PEFBook book, File bookFile, URI uri, boolean validateOK, org.daisy.braille.api.validator.Validator pv) {
+    	private BookReaderResult(PEFBook book, File bookFile, URI uri, boolean validateOK, String messages) {
     		this.book = book;
     		this.bookFile = bookFile;
     		this.uri = uri;
     		this.validateOK = validateOK;
-    		this.pv = pv;
+    		this.messages = messages;
     	}
     	
     	public PEFBook getBook() {
@@ -49,12 +53,17 @@ public class BookReader {
     		return validateOK;
     	}
     	
-    	public org.daisy.braille.api.validator.Validator getValidator() {
-    		return pv;
+    	public String getValidationMessages() {
+    		return messages;
     	}
     }
     
     public BookReader(final String resource) throws URISyntaxException {
+    	this.source = null;
+    	readBook(resource);
+    }
+
+    private void readBook(String resource) {
         bookReader = new SwingWorker<BookReaderResult, Void>() {
         	Date d;
 			@Override
@@ -71,30 +80,48 @@ public class BookReader {
 	       }
        	
         };
-        new NewThreadExecutor().execute(bookReader);
+        new NewThreadExecutor().execute(bookReader);    	
     }
     
     public BookReader(final File f) {
+    	this.source = f;
+		ValidatorFactory factory = ValidatorFactory.newInstance();
+		pv = factory.newValidator("org.daisy.braille.pef.PEFValidator");
+    	readBook(f);
+    }
+
+    private void readBook(File f) {
         bookReader = new SwingWorker<BookReaderResult, Void>() {
         	Date d;
 			@Override
 			protected BookReaderResult doInBackground() throws Exception {
 				d = new Date();
-				ValidatorFactory factory = ValidatorFactory.newInstance();
-				org.daisy.braille.api.validator.Validator pv = factory.newValidator("org.daisy.braille.pef.PEFValidator");
 				boolean validateOK = false;
+				String mess = null;
 				if (pv != null) {
-					try {
-						validateOK = pv.validate(f.toURI().toURL());
-					} catch (MalformedURLException e) {
-						validateOK = false;
+					synchronized(pv) {
+						try {
+							validateOK = pv.validate(f.toURI().toURL());
+						} catch (MalformedURLException e) {
+							validateOK = false;
+						}
+						int c;
+						try (InputStreamReader isr = new InputStreamReader(pv.getReportStream())) {
+							StringBuilder sb = new StringBuilder();
+							while ((c = isr.read())>-1) {
+								sb.append(((char)c));
+							}
+							mess = sb.toString();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
 				} else {
 					validateOK = false;
 				}
 				URI uri = f.toURI();
 				PEFBook p = PEFBook.load(uri);
-		    	return new BookReaderResult(p, f, uri, validateOK, pv);
+		    	return new BookReaderResult(p, f, uri, validateOK, mess);
 			}
 			
                 @Override
@@ -108,6 +135,18 @@ public class BookReader {
 
     public boolean cancel() {
     	return bookReader.cancel(true);
+    }
+    
+    public synchronized void reload() {
+    	if (source==null) {
+    		logger.warning("Reload on internal resource not supported.");
+    		return;
+    	}
+    	book = null;
+    	if (!bookReader.isDone()) {
+    		cancel();
+    	}
+    	readBook(source);
     }
     
     public synchronized BookReaderResult getResult() {
