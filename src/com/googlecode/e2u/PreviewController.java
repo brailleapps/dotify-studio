@@ -120,27 +120,8 @@ public class PreviewController {
 			return new StringReader("Failed to read");
 		}
 	}
-	
-	public static Map<String, String> buildParamsFromContext(Context context, Settings settings) {
-		Map<String, String> args = context.getArgs();
-		String file = args.get("file");
 
-		String charset = args.get("charset");
-		String volume = args.get("volume");
-		if (file==null || "".equals(file)) {
-			file = "book.xml";
-		}
-
-		if (charset==null || "".equals(charset)) {
-			charset = settings.getString(Keys.charset,
-					DefaultTableProvider.class.getCanonicalName()+".TableType.EN_US");
-		}
-		
-		Map<String, String> params = buildParams(settings, context.getTarget(), charset, file, volume);
-		return params;
-	}
-	
-	public static Map<String, String> buildParams(Settings settings, String target, String charset, String file, String volume) {
+	private static Map<String, String> buildParams(Settings settings, String target, String charset, String file, String volume) {
 		HashMap<String, String> params = new HashMap<>();
 		if (file!=null) {
 			Table table = null;

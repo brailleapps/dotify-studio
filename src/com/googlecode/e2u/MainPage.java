@@ -215,7 +215,7 @@ public class MainPage extends BasePage implements AListener {
 			if (v<1) {v=1;}
 	    	return bookController.getPreviewView().getReader(v);
 		} else if ("preview".equals(key)) {
-			return getPreviewContent(context);
+			throw new RuntimeException("Deprecated");
 		} else if (KEY_TOP_BAR.equals(key)) {
 			return new StringReader(
 					new XHTMLTagger()
@@ -276,30 +276,6 @@ public class MainPage extends BasePage implements AListener {
 			logger.finer(xtag.getResult());
 		}
 		return new StringReader(xtag.getResult());
-	}
-	
-	private Reader getPreviewContent(Context context) {
-		Map<String, String> params = PreviewController.buildParamsFromContext(context, settings);
-		String style = context.getArgs().get("style");
-		if (style==null || "".equals(style)) {
-			style = "pef2xhtml.xsl";
-		}
-		if (params.containsKey("uri")) {
-			StringBuilder sb = new StringBuilder();
-			sb.append("<?xml-stylesheet type=\"text/xsl\" href=\"");
-			sb.append(style);
-			sb.append("\"?>");
-			XMLTagger xt = new XMLTagger();
-			xt.start("settings");
-			for (String k : params.keySet()) {
-				xt.start("param").attr("name", k).attr("value", params.get(k)).end();
-			}
-			xt.end();
-			sb.append(xt.getResult());
-			return new StringReader(sb.toString());
-		} else {
-			return new StringReader("Missing required argument(s)");
-		}
 	}
 
         @Override
