@@ -81,9 +81,9 @@ public class PreviewController extends BorderPane {
 			String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
 			DotifyTask dt = new DotifyTask(selected, out, tag, options);
 			dt.setOnSucceeded(ev -> {
-				open(new String[]{"-open", out.getAbsolutePath()});
+				Thread pefWatcher = open(new String[]{"-open", out.getAbsolutePath()});
 				updateOptions(dt.getValue(), options);
-	    		Thread th = new Thread(new SourceDocumentWatcher(selected, out));
+	    		Thread th = new Thread(new SourceDocumentWatcher(selected, out, tag, pefWatcher));
 	    		th.setDaemon(true);
 	    		th.start();
 			});
@@ -107,49 +107,68 @@ public class PreviewController extends BorderPane {
 
 	}
 	
-    class SourceDocumentWatcher implements Runnable {
-    	private final File input;
+    class SourceDocumentWatcher extends DocumentWatcher {
     	private final File output;
-    	private long modified;
-    	SourceDocumentWatcher(File input, File output) {
-    		this.input = input;
+    	private final String locale;
+    	private final Thread pefWatcher;
+
+    	SourceDocumentWatcher(File input, File output, String locale, Thread pefWatcher) {
+    		super(input);
     		this.output = output;
-    		this.modified = input.lastModified();
+    		this.locale = locale;
+    		this.pefWatcher = pefWatcher;
     	}
 
 		@Override
-		public void run() { 
-			while (input.exists() && !closing) {
-				if ((modified<input.lastModified() && options.isWatching()) || options.refreshRequested()) {
-					modified = input.lastModified();
-					try {
-						Map<String, Object> opts = options.getParams();
-						// FIXME: Locale MUST be a setting
-			    		DotifyTask dt = new DotifyTask(input, output, Locale.getDefault().toString().replace('_', '-'), opts);
-			    		dt.setOnFailed(ev->{
-			    			logger.log(Level.WARNING, "Update failed.", dt.getException());
-				    		Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
-				    		alert.showAndWait();
-			    		});
-			    		dt.setOnSucceeded(ev -> {
-			    			Platform.runLater(() -> {
-			    				updateOptions(dt.getValue(), opts);
-			    				reload();
-			    			});
-			    		});
-			    		exeService.submit(dt);
-					} catch (Exception e) { 
-						logger.log(Level.SEVERE, "A severe error occurred.", e);
-					}
-					logger.info("Waiting for changes in " + input);
-				}
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-				}
-			}
-			logger.info("Removing watcher...");
+		boolean shouldMonitor() {
+			return super.shouldMonitor() && !closing;
 		}
+
+		@Override
+		boolean shouldPerformAction() {
+			return (super.shouldPerformAction() && options.isWatching()) || options.refreshRequested();
+		}
+
+		@Override
+		void performAction() {
+			try {
+				Map<String, Object> opts = options.getParams();
+	    		DotifyTask dt = new DotifyTask(file, output, locale, opts);
+	    		dt.setOnFailed(ev->{
+	    			logger.log(Level.WARNING, "Update failed.", dt.getException());
+		    		Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
+		    		alert.showAndWait();
+	    		});
+	    		dt.setOnSucceeded(ev -> {
+	    			Platform.runLater(() -> {
+	    				if (pefWatcher!=null) {
+	    					pefWatcher.interrupt();
+	    				}
+	    				updateOptions(dt.getValue(), opts);
+	    			});
+	    		});
+	    		exeService.submit(dt);
+			} catch (Exception e) { 
+				logger.log(Level.SEVERE, "A severe error occurred.", e);
+			}
+		}
+    }
+    
+    class PefDocumentWatcher extends DocumentWatcher {
+    	PefDocumentWatcher(File pef) {
+    		super(pef);
+    	}
+
+		@Override
+		boolean shouldMonitor() {
+			return super.shouldMonitor() && !closing;
+		}
+
+		@Override
+		void performAction() {
+			Platform.runLater(()->reload());
+		}
+
     }
     
     private static class DotifyResult {
@@ -216,8 +235,16 @@ public class PreviewController extends BorderPane {
     	}
 
     }
-	
-	public void open(String[] args) {
+
+	public Thread open(String[] args) {
+		Thread pefWatcherThread = null;
+		if (args.length==2) {
+			File file = new File(args[1]);
+			PefDocumentWatcher pefWatcher = new PefDocumentWatcher(file);
+    		pefWatcherThread = new Thread(pefWatcher);
+    		pefWatcherThread.setDaemon(true);
+    		pefWatcherThread.start();
+		}
 		Task<String> startServer = new Task<String>() {
 
 			@Override
@@ -243,6 +270,7 @@ public class PreviewController extends BorderPane {
 		Thread th = new Thread(startServer);
 		th.setDaemon(true);
 		th.start();
+		return pefWatcherThread;
 	}
 	
 	public void reload() {

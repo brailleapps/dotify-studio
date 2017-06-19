@@ -21,6 +21,7 @@ public class BookReader {
     private SwingWorker<BookReaderResult, Void> bookReader;
     private BookReaderResult book = null;
     private org.daisy.braille.api.validator.Validator pv = null;
+	private long lastUpdated;
     
     public static class BookReaderResult {
     	private final PEFBook book;
@@ -64,6 +65,7 @@ public class BookReader {
     }
 
     private void readBook(String resource) {
+		lastUpdated = System.currentTimeMillis();
         bookReader = new SwingWorker<BookReaderResult, Void>() {
         	Date d;
 			@Override
@@ -91,6 +93,7 @@ public class BookReader {
     }
 
     private void readBook(File f) {
+		lastUpdated = System.currentTimeMillis();
         bookReader = new SwingWorker<BookReaderResult, Void>() {
         	Date d;
 			@Override
@@ -137,7 +140,7 @@ public class BookReader {
     	return bookReader.cancel(true);
     }
     
-    public synchronized void reload() {
+    private synchronized void reload() {
     	if (source==null) {
     		logger.warning("Reload on internal resource not supported.");
     		return;
@@ -149,7 +152,17 @@ public class BookReader {
     	readBook(source);
     }
     
+	public boolean fileChanged() {
+		if (source!=null && lastUpdated<source.lastModified()) {
+			reload();
+			return true;
+		} else {
+			return false;
+		}
+	}
+    
     public synchronized BookReaderResult getResult() {
+    	fileChanged();
     	if (book==null) {
     		try {
 				book = bookReader.get();

@@ -62,22 +62,11 @@ public class StaxPreviewController {
 		this.charset = charset;
 		return changed;
 	}
-	
-	private boolean fileChanged() {
-		if (r.getResult().getBookFile()==null) {
-			return false;
-		} else {
-			return lastUpdated<r.getResult().getBookFile().lastModified();
-		}
-	}
 
 	public Reader getReader(int vol) {
 		try {
-			boolean fileChanged = fileChanged();
+			boolean fileChanged = r.fileChanged();
 			if (settingsChanged() || fileChanged) {
-				if (fileChanged) {
-					r.reload();
-				}
 				update(fileChanged);
 			}
 			return new InputStreamReader(new FileInputStream(renderer.getFile(vol)), "UTF-8");
