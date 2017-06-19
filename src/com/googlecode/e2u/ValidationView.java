@@ -1,15 +1,17 @@
 package com.googlecode.e2u;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.text.MessageFormat;
+import java.util.List;
 
-import org.daisy.braille.api.validator.Validator;
+import org.daisy.dotify.api.validity.ValidatorMessage;
 
 import com.googlecode.ajui.AContainer;
+import com.googlecode.ajui.ADefinitionDescription;
+import com.googlecode.ajui.ADefinitionList;
+import com.googlecode.ajui.ADefinitionTerm;
 import com.googlecode.ajui.ALabel;
 import com.googlecode.ajui.ALink;
 import com.googlecode.ajui.AParagraph;
-import com.googlecode.ajui.APre;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
 
@@ -20,7 +22,7 @@ public class ValidationView extends AContainer {
 	 */
 	private static final long serialVersionUID = 7532480151718185817L;
 
-	public ValidationView(String messages) {
+	public ValidationView(List<ValidatorMessage> messages) {
 		if (messages!=null) {
 			{
 				AParagraph p = new AParagraph();
@@ -34,10 +36,25 @@ public class ValidationView extends AContainer {
 			}
 			{
 				AContainer div = new AContainer();
-				//div.setClass("overflow");
-				APre pre = new APre();
-				pre.add(new ALabel(messages));
-				div.add(pre);
+				if (!messages.isEmpty()) {
+					ADefinitionList dl = new ADefinitionList();
+					for (ValidatorMessage vm : messages) {
+						ADefinitionTerm dt = new ADefinitionTerm();
+						if (vm.getLineNumber()>-1 && vm.getColumnNumber()>-1) {
+							dt.add(new ALabel(MessageFormat.format("{0} at line {1}, column {2}", vm.getType(), vm.getLineNumber(), vm.getColumnNumber())));
+						} else {
+							dt.add(new ALabel(vm.getType().toString()));
+						}
+						dl.add(dt);
+						ADefinitionDescription dd = new ADefinitionDescription();
+						dd.add(new ALabel(
+								vm.getMessage()
+								.orElse(vm.getException().map(e->e.getMessage()).orElse("[No message]"))
+							));
+						dl.add(dd);
+					}
+					div.add(dl);
+				}
 				add(div);
 		    	AParagraph p = new AParagraph();
 		    	ALink a = new ALink("#");

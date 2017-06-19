@@ -1,26 +1,29 @@
 package com.googlecode.e2u;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 import javax.swing.SwingWorker;
 
-import org.daisy.braille.consumer.validator.ValidatorFactory;
 import org.daisy.braille.pef.PEFBook;
+import org.daisy.dotify.api.validity.ValidationReport;
+import org.daisy.dotify.api.validity.ValidatorFactoryMakerService;
+import org.daisy.dotify.api.validity.ValidatorMessage;
+import org.daisy.dotify.consumer.validity.ValidatorFactoryMaker;
 
 public class BookReader {
 	private static final Logger logger = Logger.getLogger(BookReader.class.getCanonicalName());
 	private final File source;
     private SwingWorker<BookReaderResult, Void> bookReader;
     private BookReaderResult book = null;
-    private org.daisy.braille.api.validator.Validator pv = null;
+    private org.daisy.dotify.api.validity.Validator pv = null;
 	private long lastUpdated;
     
     public static class BookReaderResult {
@@ -28,14 +31,19 @@ public class BookReader {
     	private final File bookFile;
     	private final URI uri;
     	private final boolean validateOK;
-    	private final String messages;
+    	private final List<ValidatorMessage> messages;
     	
-    	private BookReaderResult(PEFBook book, File bookFile, URI uri, boolean validateOK, String messages) {
+    	private BookReaderResult(PEFBook book, File bookFile, URI uri, ValidationReport report) {
     		this.book = book;
     		this.bookFile = bookFile;
     		this.uri = uri;
-    		this.validateOK = validateOK;
-    		this.messages = messages;
+    		if (report!=null) {
+    			this.validateOK = report.isValid();
+    			this.messages = report.getMessages();
+    		} else {
+    			this.validateOK = false;
+    			this.messages = Collections.emptyList();
+    		}
     	}
     	
     	public PEFBook getBook() {
@@ -54,7 +62,7 @@ public class BookReader {
     		return validateOK;
     	}
     	
-    	public String getValidationMessages() {
+    	public List<ValidatorMessage> getValidationMessages() {
     		return messages;
     	}
     }
@@ -71,9 +79,10 @@ public class BookReader {
 			@Override
 			protected BookReaderResult doInBackground() throws Exception {
 				d = new Date();
-		    	URI uri = this.getClass().getResource(resource).toURI();
+				URL url = this.getClass().getResource(resource);
+		    	URI uri = url.toURI();
 		    	PEFBook p = PEFBook.load(uri);
-				return new BookReaderResult(p, null, uri, true, null);
+				return new BookReaderResult(p, null, uri, new ValidationReport.Builder(url).build());
 			}
 			
                 @Override
@@ -87,8 +96,8 @@ public class BookReader {
     
     public BookReader(final File f) {
     	this.source = f;
-		ValidatorFactory factory = ValidatorFactory.newInstance();
-		pv = factory.newValidator("org.daisy.braille.pef.PEFValidator");
+        ValidatorFactoryMakerService factory = ValidatorFactoryMaker.newInstance();
+        pv = factory.newValidator("application/x-pef+xml");
     	readBook(f);
     }
 
@@ -99,35 +108,16 @@ public class BookReader {
 			@Override
 			protected BookReaderResult doInBackground() throws Exception {
 				d = new Date();
-				boolean validateOK = false;
-				String mess = null;
+				ValidationReport report = null;
 				if (pv != null) {
-					synchronized(pv) {
-						try {
-							validateOK = pv.validate(f.toURI().toURL());
-						} catch (MalformedURLException e) {
-							validateOK = false;
-						}
-						int c;
-						try (InputStreamReader isr = new InputStreamReader(pv.getReportStream())) {
-							StringBuilder sb = new StringBuilder();
-							while ((c = isr.read())>-1) {
-								sb.append(((char)c));
-							}
-							mess = sb.toString();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				} else {
-					validateOK = false;
+					report = pv.validate(f.toURI().toURL());
 				}
 				URI uri = f.toURI();
 				PEFBook p = PEFBook.load(uri);
-		    	return new BookReaderResult(p, f, uri, validateOK, mess);
+		    	return new BookReaderResult(p, f, uri, report);
 			}
 			
-                @Override
+           @Override
 	       protected void done() {
 	    	   logger.info("Book Reader (file): " + (new Date().getTime() - d.getTime()));
 	       }
