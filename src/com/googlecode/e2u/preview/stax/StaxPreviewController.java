@@ -46,7 +46,7 @@ public class StaxPreviewController {
 			renderer.abort();
 		}
 		// set up new renderer
-		renderer = new StaxPreviewRenderer(brr.getBook());
+		renderer = new StaxPreviewRenderer(brr.getBook(), brr.getValidationMessages());
 	}
 	
 	private boolean settingsChanged() {

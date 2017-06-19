@@ -25,6 +25,12 @@
 .warning {
 	color: red;
 }
+.issue {
+	border-bottom-width: 1px;
+	border-bottom-style: dotted;
+	border-bottom-color: red;
+	background-color: #ffeeee;
+}
 #software-title {
 	color: #808080;
 }

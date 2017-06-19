@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.Location;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -28,6 +29,7 @@ import org.daisy.braille.api.table.Table;
 import org.daisy.braille.consumer.table.TableCatalog;
 import org.daisy.braille.impl.table.DefaultTableProvider;
 import org.daisy.braille.pef.PEFBook;
+import org.daisy.dotify.api.validity.ValidatorMessage;
 import org.daisy.dotify.common.text.ConditionalMapper;
 import org.daisy.dotify.common.text.SimpleUCharReplacer;
 
@@ -65,14 +67,16 @@ class StaxPreviewParser {
 	private final PEFBook book;
 	private final XMLOutputFactory outFactory;
 	private final SimpleUCharReplacer cr;
+	private final MessageExctractor extractor;
 	private int pageNumber;
 	private boolean abort;
 	private XMLStreamWriter out;
 	private boolean isProcessing;
 	private boolean used;
 
-	StaxPreviewParser(PEFBook book) {
+	StaxPreviewParser(PEFBook book, List<ValidatorMessage> messages) {
 		this.book = book;
+		this.extractor = new MessageExctractor(messages);
 		this.volumes = new ArrayList<>();
 		this.outFactory = XMLOutputFactory.newInstance();
 		this.pageNumber = 0;
@@ -234,7 +238,7 @@ class StaxPreviewParser {
 		int totalRowgap = 0;
 		for (Row r : rows) {
 			totalRowgap += r.rowgap+4;
-			writeRowPreamble(braille?"braille":"text", r.rowgap);
+			writeRowPreamble((braille?"braille":"text")+(r.messages.isEmpty()?"":" issue"), r.rowgap);
 			String s;
 			if (braille) {
 				s = r.chars;
@@ -285,13 +289,20 @@ class StaxPreviewParser {
 	private Row parseRow(XMLEvent event, XMLEventReader input, Context inherit) throws XMLStreamException, ParsingCancelledException {
 		Context props = parseProps(event, inherit);
 		StringBuilder chars = new StringBuilder();
+		Location start = event.getLocation();
 		while (input.hasNext()) {
 			event = input.nextEvent();
 			if (abort) { throw new ParsingCancelledException(); }
 			if (event.isCharacters()) {
 				chars.append(event.asCharacters().getData());
 			} else if (event.isEndElement() && ROW.equals(event.asEndElement().getName())) {
-				return new Row(chars.toString(), props.rowgap);
+				XMLEvent next = input.peek();
+				// "next" should not be the last event (as it is a row element), but if it is, use "event".
+				// This will be incorrect, but if this happens, the file is corrupt anyway.
+				if (next==null) {
+					next = event;
+				}
+				return new Row(chars.toString(), props.rowgap, extractor.extractMessages(start, next.getLocation()));
 			}
 		}
 		return null;
@@ -309,10 +320,12 @@ class StaxPreviewParser {
 	private static class Row {
 		private final String chars;
 		private final int rowgap;
+		private final List<ValidatorMessage> messages;
 		
-		private Row(String chars, int rowgap) {
+		private Row(String chars, int rowgap, List<ValidatorMessage> messages) {
 			this.chars = chars;
 			this.rowgap = rowgap;
+			this.messages = messages;
 		}
 	}
 	
@@ -588,7 +601,7 @@ class StaxPreviewParser {
 		// TODO: This isn't very nicely done. When PEFBook returns a list instead, this can be improved
 		boolean hasAuthor = false;
 		boolean first = true;
-		for (String s : orEmpty(book.getAuthors())) { //TODO: unknown author
+		for (String s : orEmpty(book.getAuthors())) {
 			out.writeCharacters(s);
 			hasAuthor = true;
 			if (first) {
