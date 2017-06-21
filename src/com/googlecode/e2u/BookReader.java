@@ -30,6 +30,7 @@ public class BookReader {
     	private final PEFBook book;
     	private final File bookFile;
     	private final URI uri;
+    	private final ValidationReport report;
     	private final boolean validateOK;
     	private final List<ValidatorMessage> messages;
     	
@@ -37,6 +38,7 @@ public class BookReader {
     		this.book = book;
     		this.bookFile = bookFile;
     		this.uri = uri;
+    		this.report = report;
     		if (report!=null) {
     			this.validateOK = report.isValid();
     			this.messages = report.getMessages();
@@ -60,6 +62,10 @@ public class BookReader {
 
     	public boolean isValid() {
     		return validateOK;
+    	}
+    	
+    	public ValidationReport getValidationReport() {
+    		return report;
     	}
     	
     	public List<ValidatorMessage> getValidationMessages() {

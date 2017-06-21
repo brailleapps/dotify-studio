@@ -50,7 +50,7 @@ public class BookViewController {
     }
     
     public AboutBookView getAboutBookView() {
-    	return new AboutBookView(bookReader.getResult().getBook(), menu);
+    	return new AboutBookView(bookReader.getResult().getBook(), bookReader.getResult().getValidationMessages(), menu);
     }
     
     public StaxPreviewController getPreviewView() {

@@ -1,8 +1,10 @@
 package com.googlecode.e2u;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 import org.daisy.braille.pef.PEFBook;
+import org.daisy.dotify.api.validity.ValidatorMessage;
 
 import com.googlecode.ajui.AContainer;
 import com.googlecode.ajui.ADefinitionDescription;
@@ -22,10 +24,15 @@ public class AboutBookView extends AContainer {
 	 */
 	private static final long serialVersionUID = -4158397890850715579L;
 
-	public AboutBookView(PEFBook book, MenuSystem menu) {
+	public AboutBookView(PEFBook book, List<ValidatorMessage> messages, MenuSystem menu) {
 		if (menu!=null) {
 			add(menu);
 		}
+		
+		if (!messages.isEmpty()) {
+			add(ValidationView.buildMessagesList(messages));
+		}
+
 		Iterable<String> data = book.getTitle();
 		if (data==null || !data.iterator().hasNext()) {
 			

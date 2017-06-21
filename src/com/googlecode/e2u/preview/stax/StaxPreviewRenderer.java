@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import org.daisy.braille.pef.PEFBook;
+import org.daisy.dotify.api.validity.ValidationReport;
 import org.daisy.dotify.api.validity.ValidatorMessage;
 
 import javafx.concurrent.Task;
@@ -11,8 +12,8 @@ import javafx.concurrent.Task;
 class StaxPreviewRenderer {
 	private final StaxPreviewParser parser;
 
-	StaxPreviewRenderer(PEFBook book, List<ValidatorMessage> messages) {
-		this.parser = new StaxPreviewParser(book, messages);
+	StaxPreviewRenderer(PEFBook book, ValidationReport report) {
+		this.parser = new StaxPreviewParser(book, report);
 		Task<Void> t = new Task<Void>() {
 
 			@Override

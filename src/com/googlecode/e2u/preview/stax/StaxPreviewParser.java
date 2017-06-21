@@ -29,6 +29,7 @@ import org.daisy.braille.api.table.Table;
 import org.daisy.braille.consumer.table.TableCatalog;
 import org.daisy.braille.impl.table.DefaultTableProvider;
 import org.daisy.braille.pef.PEFBook;
+import org.daisy.dotify.api.validity.ValidationReport;
 import org.daisy.dotify.api.validity.ValidatorMessage;
 import org.daisy.dotify.common.text.ConditionalMapper;
 import org.daisy.dotify.common.text.SimpleUCharReplacer;
@@ -68,15 +69,17 @@ class StaxPreviewParser {
 	private final XMLOutputFactory outFactory;
 	private final SimpleUCharReplacer cr;
 	private final MessageExctractor extractor;
+	private final ValidationReport report;
 	private int pageNumber;
 	private boolean abort;
 	private XMLStreamWriter out;
 	private boolean isProcessing;
 	private boolean used;
 
-	StaxPreviewParser(PEFBook book, List<ValidatorMessage> messages) {
+	StaxPreviewParser(PEFBook book, ValidationReport report) {
 		this.book = book;
-		this.extractor = new MessageExctractor(messages);
+		this.extractor = new MessageExctractor(report.getMessages());
+		this.report = report;
 		this.volumes = new ArrayList<>();
 		this.outFactory = XMLOutputFactory.newInstance();
 		this.pageNumber = 0;
@@ -536,8 +539,20 @@ class StaxPreviewParser {
 		out.writeEndElement();
 		out.writeEndElement();
 		
-		out.writeEndElement();
+		if (report==null || !report.isValid()) {
+			out.writeStartElement(HTML_NS, "span");
+			out.writeAttribute("id", "validation-warning");
+			out.writeStartElement(HTML_NS, "img");
+			out.writeAttribute("id", "warning-image");
+			out.writeAttribute("src", "images/warning.png");
+			out.writeEndElement();
+			out.writeCharacters(Messages.getString(L10nKeys.VALIDATION_ISSUES));
+			out.writeEndElement();
+		}
 		
+		
+		out.writeEndElement();
+
 		out.writeEndElement();
 		out.writeCharacters("\n");
 	}

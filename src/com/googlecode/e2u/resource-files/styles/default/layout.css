@@ -36,7 +36,12 @@ div#about {
 	min-width: 30em;
 	padding: 0em 0em 3em 0em;
 }
-
+#warning-image {
+	vertical-align: bottom;
+}
+#validation-warning {
+	color: rgb(226, 0, 26);
+}
 div#about-content {
 	padding: 0em 2em 0em 2em;
 }

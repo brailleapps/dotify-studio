@@ -106,6 +106,7 @@ public interface L10nKeys {
 	public final static String XSLT_SHEETS_LABEL = "xslt.sheets-label";
 	public final static String XSLT_VIEWING_LABEL = "xslt.viewing-label";
 	public final static String XSLT_GO_TO_PAGE_LABEL = "xslt.go-to-page-label";
+	public static final String VALIDATION_ISSUES = "validation-issues";
 	public final static String FIND_IN_LIBRARY = "Worker.find-in-library";
 	public final static String BROWSE_FILE_SYSTEM = "Worker.browse-file-system";
 	

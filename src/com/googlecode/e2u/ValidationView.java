@@ -37,23 +37,7 @@ public class ValidationView extends AContainer {
 			{
 				AContainer div = new AContainer();
 				if (!messages.isEmpty()) {
-					ADefinitionList dl = new ADefinitionList();
-					for (ValidatorMessage vm : messages) {
-						ADefinitionTerm dt = new ADefinitionTerm();
-						if (vm.getLineNumber()>-1 && vm.getColumnNumber()>-1) {
-							dt.add(new ALabel(MessageFormat.format("{0} at line {1}, column {2}", vm.getType(), vm.getLineNumber(), vm.getColumnNumber())));
-						} else {
-							dt.add(new ALabel(vm.getType().toString()));
-						}
-						dl.add(dt);
-						ADefinitionDescription dd = new ADefinitionDescription();
-						dd.add(new ALabel(
-								vm.getMessage()
-								.orElse(vm.getException().map(e->e.getMessage()).orElse("[No message]"))
-							));
-						dl.add(dd);
-					}
-					div.add(dl);
+					div.add(buildMessagesList(messages));
 				}
 				add(div);
 		    	AParagraph p = new AParagraph();
@@ -68,5 +52,25 @@ public class ValidationView extends AContainer {
 			p.add(new ALabel(Messages.getString(L10nKeys.VALIDATION_FAILED)));
 			add(p);
 		}
+	}
+	
+	static ADefinitionList buildMessagesList(List<ValidatorMessage> messages) {
+		ADefinitionList dl = new ADefinitionList();
+		for (ValidatorMessage vm : messages) {
+			ADefinitionTerm dt = new ADefinitionTerm();
+			if (vm.getLineNumber()>-1 && vm.getColumnNumber()>-1) {
+				dt.add(new ALabel(MessageFormat.format("{0} at line {1}, column {2}", vm.getType(), vm.getLineNumber(), vm.getColumnNumber())));
+			} else {
+				dt.add(new ALabel(vm.getType().toString()));
+			}
+			dl.add(dt);
+			ADefinitionDescription dd = new ADefinitionDescription();
+			dd.add(new ALabel(
+					vm.getMessage()
+					.orElse(vm.getException().map(e->e.getMessage()).orElse("[No message]"))
+				));
+			dl.add(dd);
+		}
+		return dl;
 	}
 }

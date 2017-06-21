@@ -332,10 +332,10 @@ public class MainPage extends BasePage implements AListener {
             p.add(a);
 		    div.add(p);
             return buildHTML(div.getHTML(context), Messages.getString(L10nKeys.TEST_SETUP), true);
-        } else if (!bookController.bookIsValid()) {
-			return buildHTML(renderView(context, bookController.getValidationView()), Messages.getString(L10nKeys.VALIDATION), false);
-		} else if ("meta".equals(args.get("method"))) {  //$NON-NLS-1$ //$NON-NLS-2$
+        } else if ("meta".equals(args.get("method"))) {  //$NON-NLS-1$ //$NON-NLS-2$
 			return buildHTML(renderView(context, bookController.getAboutBookView()), Messages.getString(L10nKeys.ABOUT_THE_BOOK), true);
+		} else if (!bookController.bookIsValid()) {
+			return buildHTML(renderView(context, bookController.getValidationView()), Messages.getString(L10nKeys.VALIDATION), false);
 		} else if (device!=null && settingsView.getConfiguration().settingOK() && align!=null) {
 			if ("do".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				context.log("Settings ok! " + device + " : " + align); //$NON-NLS-1$
