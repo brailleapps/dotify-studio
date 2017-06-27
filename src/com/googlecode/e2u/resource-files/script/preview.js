@@ -50,10 +50,6 @@
 			shortcut.add("ctrl+i", function() {
 				toggleById('about');
 			});
-			shortcut.add("ctrl+p", function() {
-				location.href="/";
-			});
-
 		}
 		  visible = true;
 		  function toggleVisibility() {

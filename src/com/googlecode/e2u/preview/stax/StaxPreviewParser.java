@@ -432,13 +432,6 @@ class StaxPreviewParser {
 		out.writeCharacters("\n");
 		
 		out.writeStartElement(HTML_NS, "p");
-		out.writeStartElement(HTML_NS, "span");
-		out.writeAttribute("id", "item-emboss");
-		out.writeStartElement(HTML_NS, "a");
-		out.writeAttribute("href", "/");
-		out.writeCharacters(Messages.getString(L10nKeys.EMBOSS_VIEW));
-		out.writeEndElement();
-		out.writeEndElement();
 		
 		out.writeStartElement(HTML_NS, "span");
 		out.writeStartElement(HTML_NS, "a");

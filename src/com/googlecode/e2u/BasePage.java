@@ -46,9 +46,10 @@ public abstract class BasePage implements Content {
 		if (header) {
 			sb.start("div").attr("id", "view");
 			sb.start("form").attr("action", "close.html").attr("method", "get").start("p")
+				/*
 				.start("span").attr("id", "item-emboss")
 					.start("a").attr("href", "index.html?method=emboss").text(Messages.getString(L10nKeys.EMBOSS_VIEW)).end()
-				.end()
+				.end()*/
 				.start("span").attr("id", "item-preview")
 					.start("a").attr("href", "view.html").text(Messages.getString(L10nKeys.PREVIEW_VIEW)).end()
 				.end()
