@@ -10,19 +10,28 @@ import application.l10n.Messages;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 public class ImportBrailleView extends Stage {
 	private static final Logger logger = Logger.getLogger(ImportBrailleView.class.getCanonicalName());
-	private FXMLLoader loader;
+	private ImportBrailleController controller;
 
 	public ImportBrailleView(File path) {
 		try {
-			loader = new FXMLLoader(this.getClass().getResource("ImportBraille.fxml"), Messages.getBundle());
+			FXMLLoader loader = new FXMLLoader(this.getClass().getResource("ImportBraille.fxml"), Messages.getBundle());
 			Parent root = loader.load();
-	    	setScene(new Scene(root));
+			controller = loader.<ImportBrailleController>getController();
+			Scene scene = new Scene(root);
+	    	setScene(scene);
+			scene.addEventHandler(KeyEvent.KEY_PRESSED, ev->{
+				if (ev.getCode()==KeyCode.ESCAPE) {
+					controller.closeWindow();
+				}
+			});
 	    	setResizable(false);
-	    	loader.<ImportBrailleController>getController().setFile(path);
+	    	controller.setFile(path);
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Failed to load view", e);
 		}
@@ -30,7 +39,7 @@ public class ImportBrailleView extends Stage {
 	}
 	
 	public Map<String, String> getOptions() {
-		return loader.<ImportBrailleController>getController().getOptions();
+		return controller.getOptions();
 	}
 
 }

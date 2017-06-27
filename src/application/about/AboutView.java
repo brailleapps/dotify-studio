@@ -8,6 +8,8 @@ import application.l10n.Messages;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 public class AboutView extends Stage {
@@ -15,8 +17,16 @@ public class AboutView extends Stage {
 
 	public AboutView() {
 		try {
-			Parent root = FXMLLoader.load(this.getClass().getResource("About.fxml"), Messages.getBundle());
-	    	setScene(new Scene(root));
+			FXMLLoader loader = new FXMLLoader(this.getClass().getResource("About.fxml"), Messages.getBundle());
+			Parent root = loader.load();
+			AboutController controller = loader.<AboutController>getController();
+			Scene scene = new Scene(root);
+	    	setScene(scene);
+			scene.addEventHandler(KeyEvent.KEY_PRESSED, ev->{
+				if (ev.getCode()==KeyCode.ESCAPE) {
+					controller.closeWindow();
+				}
+			});
 	    	setResizable(false);
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Failed to load view", e);

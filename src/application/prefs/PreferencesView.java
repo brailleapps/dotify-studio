@@ -10,17 +10,26 @@ import application.template.TemplateController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 public class PreferencesView extends Stage {
 	private static final Logger logger = Logger.getLogger(PreferencesView.class.getCanonicalName());
-	private FXMLLoader loader;
+	private PreferencesController controller;
 
 	public PreferencesView() {
 		try {
-			loader = new FXMLLoader(this.getClass().getResource("Preferences.fxml"), Messages.getBundle());
+			FXMLLoader loader = new FXMLLoader(this.getClass().getResource("Preferences.fxml"), Messages.getBundle());
 			Parent root = loader.load();
-	    	setScene(new Scene(root));
+			controller = loader.<PreferencesController>getController();
+			Scene scene = new Scene(root);
+	    	setScene(scene);
+			scene.addEventHandler(KeyEvent.KEY_PRESSED, ev->{
+				if (ev.getCode()==KeyCode.ESCAPE) {
+					((Stage)scene.getWindow()).close();
+				}
+			});
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Failed to load view", e);
 		}
@@ -28,6 +37,6 @@ public class PreferencesView extends Stage {
 	}
 	
 	public File generatedTestFile() {
-		return loader.<PreferencesController>getController().generatedTestFile();
+		return controller.generatedTestFile();
 	}
 }
