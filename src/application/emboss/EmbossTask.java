@@ -36,29 +36,37 @@ class EmbossTask extends Task<Void> {
 	@Override
 	protected Void call() throws Exception {
 		//TODO: include range (requires release of pef-tools v2.3.0)
-		logger.info("Embossing " + (copies>1?copies + " copies ":"") + "on " + deviceName + " with alignment " + align);
-		for (int i=0; i<copies; i++) {
-			try (InputStream iss = url.openStream()) {
-				//TODO: don't recreate objects for each copy unless necessary
-				Embosser emb = conf.getConfiguredEmbosser();
-				PrinterDevice bd = new PrinterDevice(deviceName, false);
-				EmbosserWriter writer = emb.newEmbosserWriter(bd);
-				
-				PEFHandler.Builder phb = new PEFHandler.Builder(writer).
-											range(range).
-											offset(0);
-				if (conf.supportsAligning()) {
-			        Alignment alignment = Alignment.CENTER_INNER;
-			        try {
-			        	alignment = Alignment.valueOf(align.toUpperCase());
-			        } catch (IllegalArgumentException e) {
-			        	e.printStackTrace();
-			        }
-					phb.align(alignment);
-				}
-				new PEFConverterFacade(conf.getEmbosserCatalog()).parsePefFile(iss, phb.build());
+		logger.info("About to emboss " + (copies>1?copies + " copies ":"") + "on " + deviceName + " with alignment " + align);
+		if (isEmbossing()) {
+			for (int i=0; i<copies; i++) {
+				try (InputStream iss = url.openStream()) {
+					//TODO: don't recreate objects for each copy unless necessary
+					Embosser emb = conf.getConfiguredEmbosser();
+					PrinterDevice bd = new PrinterDevice(deviceName, false);
+					EmbosserWriter writer = emb.newEmbosserWriter(bd);
+					
+					PEFHandler.Builder phb = new PEFHandler.Builder(writer).
+												range(range).
+												offset(0);
+					if (conf.supportsAligning()) {
+				        Alignment alignment = Alignment.CENTER_INNER;
+				        try {
+				        	alignment = Alignment.valueOf(align.toUpperCase());
+				        } catch (IllegalArgumentException e) {
+				        	e.printStackTrace();
+				        }
+						phb.align(alignment);
+					}
+					new PEFConverterFacade(conf.getEmbosserCatalog()).parsePefFile(iss, phb.build());
+				}	
 			}
+		} else {
+			logger.info("Embossing is deactivated.");
 		}
 		return null;
+	}
+	
+	static boolean isEmbossing() {
+		return "on".equalsIgnoreCase(System.getProperty("application.feature.embossing", "on"));
 	}
 }

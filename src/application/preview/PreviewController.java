@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.daisy.braille.pef.PEFBook;
 import org.daisy.dotify.api.tasks.AnnotatedFile;
 import org.daisy.dotify.api.tasks.CompiledTaskSystem;
 import org.daisy.dotify.api.tasks.TaskSystem;
@@ -25,6 +26,7 @@ import org.daisy.dotify.tasks.runner.TaskRunner;
 import com.googlecode.e2u.BookReader;
 import com.googlecode.e2u.Start;
 
+import application.emboss.EmbossView;
 import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -52,6 +54,7 @@ public class PreviewController extends BorderPane {
 	private Start start;
 	private ExecutorService exeService;
 	private boolean closing;
+	private EmbossView embossView;
 
 	public PreviewController() {
 		try {
@@ -293,12 +296,22 @@ public class PreviewController extends BorderPane {
 			return Optional.<URI>empty();
 		}
 	}
-
-	public Optional<BookReader.BookReaderResult> getBookReaderResult() {
+	
+	public void showEmbossDialog() {
 		if (start!=null) {
-			return start.getMainPage().getBookReaderResult();
-		} else {
-			return Optional.<BookReader.BookReaderResult>empty();
+			Optional<BookReader.BookReaderResult> reader = start.getMainPage().getBookReaderResult();
+			if (reader.isPresent() && reader.get().isValid()) {
+				PEFBook book = reader.get().getBook();
+				if (embossView==null) {
+					embossView = new EmbossView(book);
+				} else {
+					embossView.setBook(book);
+				}
+				embossView.showAndWait();
+			} else {
+				Alert alert = new Alert(AlertType.ERROR, Messages.ERROR_CANNOT_EMBOSS_INVALID_FILE.localize(), ButtonType.OK);
+	    		alert.showAndWait();
+			}
 		}
 	}
 

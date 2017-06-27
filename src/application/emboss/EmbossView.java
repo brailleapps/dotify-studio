@@ -14,17 +14,25 @@ import javafx.stage.Stage;
 
 public class EmbossView extends Stage {
 	private static final Logger logger = Logger.getLogger(EmbossView.class.getCanonicalName());
+	private EmbossController controller;
 
 	public EmbossView(PEFBook book) {
 		try {
 			FXMLLoader loader = new FXMLLoader(this.getClass().getResource("Emboss.fxml"), Messages.getBundle());
 			Parent root = loader.load();
-			EmbossController controller = loader.<EmbossController>getController();
+			controller = loader.<EmbossController>getController();
 	    	setScene(new Scene(root));
 	    	controller.setBook(book);
+	    	if (!EmbossTask.isEmbossing()) {
+	    		logger.info("Embossing is deactivated.");
+	    	}
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Failed to load view", e);
 		}
 		setTitle(Messages.EMBOSS_WINDOW_TITLE.localize());
+	}
+	
+	public void setBook(PEFBook book) {
+		controller.setBook(book);
 	}
 }
