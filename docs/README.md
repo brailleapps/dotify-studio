@@ -18,7 +18,7 @@ used "braille" text formats.
   * Emboss a PEF-file
   * Validate a PEF-file
   * Search meta data in collection of PEF-files
-  * ~~Convert from text to a PEF-file~~ [not implemented]
+  * Convert from text to a PEF-file
   * Convert from a PEF-file to text
   * ~~Split a PEF-file into one file per volume~~ [not implemented]
   * ~~Merge several PEF-files into one~~ [not implemented]
@@ -29,7 +29,7 @@ Dotify Studio supports a range of embossers, including popular [Index](http://ww
 For details, see the complete list of supported embossers by accessing the embosser drop down in `Preferences/Emboss`.
   
 ### Translator Limitations ###
-Unfortunately, only Swedish _braille_ is supported when using the following menu item `Import/Document...`. This is primarily due to
+Unfortunately, only Swedish _braille_ is supported when using the following menu item `Import/Source document...`. This is primarily due to
 missing braille translations.
 
 ## Installation ##
