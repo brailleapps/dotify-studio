@@ -26,7 +26,6 @@ import org.daisy.dotify.tasks.runner.TaskRunner;
 import com.googlecode.e2u.BookReader;
 import com.googlecode.e2u.Start;
 
-import application.emboss.EmbossView;
 import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.concurrent.Task;

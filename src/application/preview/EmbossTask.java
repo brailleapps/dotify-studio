@@ -1,4 +1,4 @@
-package application.emboss;
+package application.preview;
 
 import java.io.InputStream;
 import java.net.URL;

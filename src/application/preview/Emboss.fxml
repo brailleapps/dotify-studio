@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="334.0" prefWidth="439.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.emboss.EmbossController">
+<BorderPane prefHeight="334.0" prefWidth="439.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.preview.EmbossController">
    <bottom>
       <HBox alignment="TOP_CENTER" spacing="50.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>

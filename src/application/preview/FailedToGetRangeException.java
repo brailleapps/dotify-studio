@@ -1,4 +1,4 @@
-package application.emboss;
+package application.preview;
 
 class FailedToGetRangeException extends Exception {
 	/**
