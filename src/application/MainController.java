@@ -62,6 +62,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -93,6 +94,7 @@ public class MainController {
 	@FXML private MenuItem refreshMenuItem;
 	@FXML private MenuItem openInBrowserMenuItem;
 	@FXML private MenuItem embossMenuItem;
+	@FXML private ToggleButton scrollLockButton;
 	private final double dividerPosition = 0.2;
 	private Tab searchTab;
 	private ExecutorService exeService;
@@ -119,8 +121,7 @@ public class MainController {
 				ev.consume();
 			}
 		});
-		console.getEngine().loadContent("<html><body></body></html>");
-		console.getEngine().setUserStyleSheetLocation(this.getClass().getResource("resource-files/console.css").toString());
+		clearConsole();
 		
 		exeService = Executors.newWorkStealingPool();
 		System.setOut(new PrintStream(new ConsoleStream("out")));
@@ -139,6 +140,13 @@ public class MainController {
 		openInBrowserMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
 		embossMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
 	}
+	
+	@FXML public void clearConsole() {
+		synchronized (console) {
+			console.getEngine().loadContent("<html><body></body></html>");
+			console.getEngine().setUserStyleSheetLocation(this.getClass().getResource("resource-files/console.css").toString());
+		}
+	}
 
 	private class ConsoleStream extends OutputStream {
 		ByteArrayOutputStream bytes;
@@ -152,16 +160,20 @@ public class MainController {
 		
 		void write(String s) {
 			Platform.runLater(()->{
-			     Document doc = console.getEngine().getDocument();
-			     Node body = doc.getElementsByTagName("body").item(0);
-			     Element p = doc.createElement("p");
-			     p.setAttribute("class", name);
-			     p.appendChild(doc.createTextNode(s));
-			     body.appendChild(p);
-			     while (body.getChildNodes().getLength()>CONSOLE_MESSAGE_LIMIT) {
-			    	 body.removeChild(body.getChildNodes().item(0));
-			     }
-			     console.getEngine().executeScript("window.scrollTo(0, document.body.scrollHeight);");
+				synchronized (console) {
+					Document doc = console.getEngine().getDocument();
+					Node body = doc.getElementsByTagName("body").item(0);
+					Element p = doc.createElement("p");
+					p.setAttribute("class", name);
+					p.appendChild(doc.createTextNode(s));
+					body.appendChild(p);
+					while (body.getChildNodes().getLength()>CONSOLE_MESSAGE_LIMIT) {
+						body.removeChild(body.getChildNodes().item(0));
+					}
+					if (!scrollLockButton.isSelected()) {
+						console.getEngine().executeScript("window.scrollTo(0, document.body.scrollHeight);");
+					}
+				}
 			});
 		}
 		

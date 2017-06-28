@@ -1,3 +1,15 @@
 .split-pane *.split-pane-divider {
     -fx-padding: 0 1 0 1;
 }
+
+#scrollLockButton {
+	-fx-graphic: url('resource-files/unlock.png');
+}
+
+#scrollLockButton:selected {
+	-fx-graphic: url('resource-files/lock.png');
+}
+
+#clearButton {
+	-fx-graphic: url('resource-files/clear.png');
+}
