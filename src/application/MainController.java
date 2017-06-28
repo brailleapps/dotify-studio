@@ -371,6 +371,8 @@ public class MainController {
     	File selected = fileChooser.showOpenDialog(stage);
     	if (selected!=null) {
     		ImportBrailleView brailleView = new ImportBrailleView(selected);
+    		brailleView.initOwner(root.getScene().getWindow());
+    		brailleView.initModality(Modality.APPLICATION_MODAL);
     		brailleView.showAndWait();
     		Map<String, String> settings = brailleView.getOptions();
     		if (settings!=null) {

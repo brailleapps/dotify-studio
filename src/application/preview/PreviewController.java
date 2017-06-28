@@ -38,6 +38,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import shared.BuildInfo;
@@ -303,6 +304,8 @@ public class PreviewController extends BorderPane {
 				PEFBook book = reader.get().getBook();
 				if (embossView==null) {
 					embossView = new EmbossView(book);
+					embossView.initOwner(this.getScene().getWindow());
+					embossView.initModality(Modality.APPLICATION_MODAL); 
 				} else {
 					embossView.setBook(book);
 				}
