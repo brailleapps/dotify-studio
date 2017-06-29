@@ -56,6 +56,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
@@ -86,6 +87,8 @@ public class MainController {
 	@FXML private TabPane tabPane;
 	@FXML private TabPane toolsPane;
 	@FXML private SplitPane splitPane;
+	@FXML private SplitPane verticalSplitPane;
+	@FXML private BorderPane consoleRoot;
 	@FXML private WebView console;
 	@FXML private ScrollPane consoleScroll;
 	@FXML private MenuItem closeMenuItem;
@@ -94,10 +97,13 @@ public class MainController {
 	@FXML private MenuItem refreshMenuItem;
 	@FXML private MenuItem openInBrowserMenuItem;
 	@FXML private MenuItem embossMenuItem;
+	@FXML private CheckMenuItem showSearchMenuItem;
+	@FXML private CheckMenuItem showConsoleMenuItem;
 	@FXML private ToggleButton scrollLockButton;
 	private final double dividerPosition = 0.2;
 	private Tab searchTab;
 	private ExecutorService exeService;
+	private double[] verticalDividerPositions;
 	static final KeyCombination CTRL_F4 = new KeyCodeCombination(KeyCode.F4, KeyCombination.CONTROL_DOWN);
 
 	@FXML
@@ -145,6 +151,16 @@ public class MainController {
 		synchronized (console) {
 			console.getEngine().loadContent("<html><body></body></html>");
 			console.getEngine().setUserStyleSheetLocation(this.getClass().getResource("resource-files/console.css").toString());
+		}
+	}
+	
+	@FXML public void showHideConsole() {
+		if (showConsoleMenuItem.isSelected()) {
+			verticalSplitPane.getItems().add(consoleRoot);
+			verticalSplitPane.setDividerPositions(verticalDividerPositions);
+		} else {
+			verticalDividerPositions = verticalSplitPane.getDividerPositions();
+			verticalSplitPane.getItems().remove(consoleRoot);
 		}
 	}
 
@@ -308,26 +324,30 @@ public class MainController {
 		dialog.showAndWait();
     }
     
-    @FXML
-    public void showSearch() {
-    	if (searchTab==null || !toolsPane.getTabs().contains(searchTab)) {
-    		SearchController controller = new SearchController();
-    		controller.addEventHandler(ActionEvent.ACTION, ev -> {
-    			PefBookAdapter book = controller.getSelectedItem();
-    			if (book!=null) {
-    				addTab(new File(book.getBook().getURI()));
-    			}
-    		});
-    		searchTab = addTabToTools(controller, Messages.TAB_SEARCH.localize());
-    	} else {
-    		//focus
-    		toolsPane.getSelectionModel().select(searchTab);
-    		if (splitPane.getDividerPositions()[0]<dividerPosition/3) {
-    			splitPane.setDividerPosition(0, dividerPosition);
-    		}
-    	}
-    }
-    
+    @FXML public void showHideSearch() {
+		if (showSearchMenuItem.isSelected()) {
+			if (searchTab==null || !toolsPane.getTabs().contains(searchTab)) {
+				SearchController controller = new SearchController();
+				controller.addEventHandler(ActionEvent.ACTION, ev -> {
+					PefBookAdapter book = controller.getSelectedItem();
+					if (book!=null) {
+						addTab(new File(book.getBook().getURI()));
+					}
+				});
+				searchTab = addTabToTools(controller, Messages.TAB_SEARCH.localize());
+			} else {
+				//focus
+				toolsPane.getSelectionModel().select(searchTab);
+				if (splitPane.getDividerPositions()[0]<dividerPosition/3) {
+					splitPane.setDividerPosition(0, dividerPosition);
+				}
+			}
+		} else {
+			toolsPane.getTabs().remove(searchTab);
+			adjustToolsArea();
+		}
+	}
+
     private Tab addTabToTools(Parent component, String title) {
         Tab tab = new Tab();
         if (title!=null) {
@@ -349,6 +369,7 @@ public class MainController {
     	if (toolsPane.getTabs().size()==0) {
     		splitPane.setDividerPosition(0, 0);
     	}
+    	showSearchMenuItem.setSelected(toolsPane.getTabs().contains(searchTab));
     }
     
     @FXML
