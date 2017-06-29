@@ -115,6 +115,11 @@
             </Menu>
           <Menu mnemonicParsing="false" text="%menu-item-help">
             <items>
+                  <MenuItem mnemonicParsing="false" onAction="#openHelpTab" text="%menu-item-help-contents" >
+                  	<accelerator>
+                        <KeyCodeCombination alt="UP" code="F1" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
               <MenuItem mnemonicParsing="false" onAction="#openAbout" text="%menu-item-about" />
             </items>
           </Menu>

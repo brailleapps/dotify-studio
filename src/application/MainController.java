@@ -70,6 +70,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
+import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -102,6 +103,7 @@ public class MainController {
 	@FXML private ToggleButton scrollLockButton;
 	private final double dividerPosition = 0.2;
 	private Tab searchTab;
+	private Tab helpTab;
 	private ExecutorService exeService;
 	private double[] verticalDividerPositions;
 	static final KeyCombination CTRL_F4 = new KeyCodeCombination(KeyCode.F4, KeyCombination.CONTROL_DOWN);
@@ -502,6 +504,44 @@ public class MainController {
     public void closeApplication() {
     	((Stage)root.getScene().getWindow()).close();
     }
+    
+	@FXML public void openHelpTab() {
+		if (helpTab==null) {
+			WebView wv = new WebView();
+			helpTab = new Tab(Messages.TAB_HELP_CONTENTS.localize(), wv);
+			String helpURL = getHelpURL();
+			if (helpURL!=null) {
+				WebEngine engine = wv.getEngine();
+				engine.load(helpURL);
+			} else {
+				wv.getEngine().loadContent("<html><body><p>"+Messages.ERROR_FAILED_TO_LOAD_HELP.localize()+"</p></body></html>");
+			}
+		}
+		if (!tabPane.getTabs().contains(helpTab)) {
+			tabPane.getTabs().add(helpTab);
+		}
+		tabPane.getSelectionModel().select(helpTab);
+	}
+	
+	private String getHelpURL() {
+		try {
+			File codeLocation = new File((MainFx.class.getProtectionDomain().getCodeSource().getLocation()).toURI()).getParentFile();
+			File root = null;
+			if (codeLocation.getName().equalsIgnoreCase("lib")) {
+				root = codeLocation.getParentFile();
+			} else {
+				root = codeLocation;
+			}
+			File docs = new File(new File(root, "docs"), "Toc.html");
+			if (docs.exists()) {
+				return docs.toURI().toURL().toString();
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			return null;
+		}
+	}
     
     private void addTab(File f) { 
     	addTab(f.getName(), toArgs(f));

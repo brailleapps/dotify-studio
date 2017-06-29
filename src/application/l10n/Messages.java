@@ -64,6 +64,7 @@ public enum Messages {
 	 * No alignment specified in preferences.
 	 */
 	ERROR_NO_ALIGNMENT_SPECIFIED("error-no-alignment-specified"),
+	ERROR_FAILED_TO_LOAD_HELP("error-failed-to-load-help"),
 	TITLE_SET_SEARCH_FOLDER("title-set-search-folder"),
 	TITLE_IMPORT_SOURCE_DOCUMENT_DIALOG("title-import-source-document-dialog"),
 	TITLE_IMPORT_BRAILLE_OPTIONS_DIALOG("title-import-braille-options-dialog"),
@@ -110,6 +111,7 @@ public enum Messages {
 	TAB_EMBOSS("tab-emboss"),
 	TAB_PREVIEW("tab-preview"),
 	TAB_SEARCH("tab-search"),
+	TAB_HELP_CONTENTS("tab-help-contents"),
 	VALUE_USE_DEFAULT("value-use-default"),
 	EXTENSION_FILTER_SUPPORTED_FILES("extension-filter-supported-files"),
 	EXTENSION_FILTER_ALL_FILES("extension-filter-all-files"),
