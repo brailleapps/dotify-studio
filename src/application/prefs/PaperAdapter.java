@@ -22,11 +22,11 @@ class PaperAdapter extends NiceName implements Comparable<PaperAdapter> {
 			break; }
 		case SHEET: {
 			SheetPaper sp = p.asSheetPaper();
-			this.str = Messages.MESSAGE_PAPER_DETAILS.localize(p.getDisplayName(), p.getDescription(), Messages.LABEL_TRACTOR_PAPER.localize(), toDim(sp.getPageWidth(), sp.getPageHeight()));
+			this.str = Messages.MESSAGE_PAPER_DETAILS.localize(p.getDisplayName(), p.getDescription(), Messages.LABEL_SHEET_PAPER.localize(), toDim(sp.getPageWidth(), sp.getPageHeight()));
 			break; }
 		case TRACTOR: { 
 			TractorPaper tp = p.asTractorPaper();
-			this.str = Messages.MESSAGE_PAPER_DETAILS.localize(p.getDisplayName(), p.getDescription(), Messages.LABEL_SHEET_PAPER.localize(), toDim(tp.getLengthAcrossFeed(), tp.getLengthAlongFeed()));
+			this.str = Messages.MESSAGE_PAPER_DETAILS.localize(p.getDisplayName(), p.getDescription(), Messages.LABEL_TRACTOR_PAPER.localize(), toDim(tp.getLengthAcrossFeed(), tp.getLengthAlongFeed()));
 			break; }
 		default:
 			this.str = "";
