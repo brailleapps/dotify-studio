@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -64,6 +65,8 @@ import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -506,9 +509,11 @@ public class MainController {
     }
     
 	@FXML public void openHelpTab() {
-		if (helpTab==null) {
+		// if the tab is not visible, recreate it (this is a workaround for https://github.com/brailleapps/dotify-studio/issues/20)
+		if (helpTab==null || !tabPane.getTabs().contains(helpTab)) {
 			WebView wv = new WebView();
 			helpTab = new Tab(Messages.TAB_HELP_CONTENTS.localize(), wv);
+			helpTab.setGraphic(buildImage(this.getClass().getResource("resource-files/help.png")));
 			String helpURL = getHelpURL();
 			if (helpURL!=null) {
 				WebEngine engine = wv.getEngine();
@@ -521,6 +526,13 @@ public class MainController {
 			tabPane.getTabs().add(helpTab);
 		}
 		tabPane.getSelectionModel().select(helpTab);
+	}
+	
+	private static ImageView buildImage(URL url) {
+		Image i = new Image(url.toString());
+		ImageView imageView = new ImageView();
+		imageView.setImage(i);
+		return imageView;
 	}
 	
 	private String getHelpURL() {
