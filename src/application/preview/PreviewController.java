@@ -45,17 +45,24 @@ import shared.BuildInfo;
 import shared.Settings;
 import shared.Settings.Keys;
 
+/**
+ * Provides a preview controller.
+ * @author Joel Håkansson
+ *
+ */
 public class PreviewController extends BorderPane {
 	private static final Logger logger = Logger.getLogger(PreviewController.class.getCanonicalName());
-	@FXML
-	public WebView browser;
-	public OptionsController options;
+	@FXML WebView browser;
+	private OptionsController options;
 	private String url;
 	private Start start;
 	private ExecutorService exeService;
 	private boolean closing;
 	private EmbossView embossView;
 
+	/**
+	 * Creates a new preview controller.
+	 */
 	public PreviewController() {
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Preview.fxml"), Messages.getBundle());
@@ -79,6 +86,11 @@ public class PreviewController extends BorderPane {
 		closing = false;
 	}
 	
+	/**
+	 * Converts and opens a file.
+	 * @param selected the file
+	 * @param options the options
+	 */
 	public void convertAndOpen(File selected, Map<String, Object> options) {
 		try {
 			File out = File.createTempFile("dotify-studio", ".pef");
@@ -240,6 +252,11 @@ public class PreviewController extends BorderPane {
 
     }
 
+	/**
+	 * Starts a new preview server.
+	 * @param args the arguments
+	 * @return returns a thread that watches for changes in the pef file
+	 */
 	public Thread open(String[] args) {
 		Thread pefWatcherThread = null;
 		if (args.length==2) {
@@ -277,18 +294,32 @@ public class PreviewController extends BorderPane {
 		return pefWatcherThread;
 	}
 	
+	/**
+	 * Reloads the web view.
+	 */
 	public void reload() {
 		browser.getEngine().reload();
 	}
 	
+	/**
+	 * Gets the url for the book in the view.
+	 * @return returns the url
+	 */
 	public String getURL() {
 		return url;
 	}
 	
+	/**
+	 * Informs the controller that it should close.
+	 */
 	public void closing() {
 		closing = true;
 	}
 	
+	/**
+	 * Gets the uri for the book
+	 * @return returns the uri
+	 */
 	public Optional<URI> getBookURI() {
 		if (start!=null) {
 			return start.getMainPage().getBookURI();
@@ -297,6 +328,9 @@ public class PreviewController extends BorderPane {
 		}
 	}
 	
+	/**
+	 * Shows the emboss dialog.
+	 */
 	public void showEmbossDialog() {
 		if (start!=null) {
 			Optional<BookReader.BookReaderResult> reader = start.getMainPage().getBookReaderResult();

@@ -22,6 +22,11 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import shared.FactoryPropertiesAdapter;
 
+/**
+ * Provides a controller for the dialog that imports formatted braille.
+ * @author Joel Håkansson
+ *
+ */
 public class ImportBrailleController {
 	@FXML private Label filePath;
 	@FXML private Button ok;
@@ -35,6 +40,9 @@ public class ImportBrailleController {
 	@FXML private CheckBox duplex;
 	private boolean cancelled = true;
 
+	/**
+	 * Initializes the controller.
+	 */
 	@FXML
 	public void initialize() {
 		Task<Collection<FactoryPropertiesAdapter>> readConfig = new Task<Collection<FactoryPropertiesAdapter>>() {
@@ -58,11 +66,17 @@ public class ImportBrailleController {
 		th.start();
 	}
 	
+	/**
+	 * Closes the dialog.
+	 */
 	@FXML
 	public void closeWindow() {
 		((Stage)cancel.getScene().getWindow()).close();
 	}
 	
+	/**
+	 * Sets the state of the dialog to perform import.
+	 */
 	@FXML
 	public void doImport() {
 		cancelled = false;

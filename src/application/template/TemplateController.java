@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import org.daisy.dotify.api.config.ConfigurationDetails;
 import org.daisy.dotify.api.config.ConfigurationsProviderException;
-import org.daisy.dotify.api.tasks.TaskOption;
 import org.daisy.dotify.consumer.config.ConfigurationsCatalog;
 
 import application.l10n.Messages;
@@ -21,6 +20,11 @@ import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Provides a controller for a template view.
+ * @author Joel Håkansson
+ *
+ */
 public class TemplateController {
 	private static final Logger logger = Logger.getLogger(TemplateController.class.getCanonicalName());
 	@FXML private VBox templates;
@@ -29,13 +33,15 @@ public class TemplateController {
 	private final boolean hasTemplates;
 	private String selected = null;
 	
+	/**
+	 * Creates a new template controller.
+	 */
 	public TemplateController() {
 		details = getConfigurationsCatalog().getConfigurationDetails();
 		hasTemplates = !details.isEmpty();
 	}
 
-	@FXML
-	public void initialize() {
+	@FXML void initialize() {
 		if (hasTemplates) {
 			List<ConfigurationDetails> sortedDetails = details.stream()
 					.sorted((o1, o2) -> {

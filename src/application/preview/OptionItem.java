@@ -13,6 +13,11 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
+/**
+ * Provides an option item.
+ * @author Joel Håkansson
+ *
+ */
 public class OptionItem extends BorderPane {
 	private final boolean disabled;
 	private Label key;
@@ -20,21 +25,26 @@ public class OptionItem extends BorderPane {
 	private TextField stringValue;
 	private Label description;
 
-	public OptionItem(TaskOption o, boolean disabled) {
+	/**
+	 * Creates a new option item with the supplied parameters.
+	 * @param option the task option
+	 * @param disabled true if the option should be disabled, false otherwise
+	 */
+	public OptionItem(TaskOption option, boolean disabled) {
 		this.disabled = disabled;
-		key = new Label(o.getKey());
+		key = new Label(option.getKey());
 		setLeft(key);
 		if (disabled) {
 			Label above = new Label(Messages.LABEL_EDIT_ABOVE.localize());
 			above.setTextFill(Paint.valueOf("#808080"));
 			setRight(above);
-		} else if (o.hasValues()) {
+		} else if (option.hasValues()) {
 			choiceValue = new ChoiceBox<>();
 			TaskOptionValueAdapter selected = null;
-			for (TaskOptionValue v : o.getValues()) {
+			for (TaskOptionValue v : option.getValues()) {
 				TaskOptionValueAdapter current = new TaskOptionValueAdapter(v);
 				choiceValue.getItems().add(current);
-				if (v.getName().equals(o.getDefaultValue())) {
+				if (v.getName().equals(option.getDefaultValue())) {
 					selected = current;
 				}
 			}
@@ -44,10 +54,10 @@ public class OptionItem extends BorderPane {
 			setRight(choiceValue);
 		} else {
 			stringValue = new TextField();
-			stringValue.setPromptText(o.getDefaultValue());
+			stringValue.setPromptText(option.getDefaultValue());
 			setRight(stringValue);
 		}
-		description = new Label(o.getDescription());
+		description = new Label(option.getDescription());
 		description.setTextAlignment(TextAlignment.RIGHT);
 		description.setWrapText(true);
 		description.setFont(new Font("System Italic", 12));
@@ -55,10 +65,18 @@ public class OptionItem extends BorderPane {
 		setAlignment(description, Pos.CENTER_RIGHT);
 	}
 
+	/**
+	 * Gets the option key.
+	 * @return returns the key
+	 */
 	public String getKey() {
 		return key.getText();
 	}
 	
+	/**
+	 * Sets the option value.
+	 * @param value the value
+	 */
 	public void setValue(String value) {
 		if (choiceValue!=null) {
 			for (TaskOptionValueAdapter tva : choiceValue.getItems()) {
@@ -74,6 +92,10 @@ public class OptionItem extends BorderPane {
 		}
 	}
 	
+	/**
+	 * Gets the option value.
+	 * @return returns the option value
+	 */
 	public String getValue() {
 		if (choiceValue!=null) {
 			return choiceValue.getSelectionModel().getSelectedItem().getValue().getName();

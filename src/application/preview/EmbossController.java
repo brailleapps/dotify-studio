@@ -32,6 +32,11 @@ import shared.Configuration;
 import shared.Settings;
 import shared.Settings.Keys;
 
+/**
+ * Provides a controller for the embosser view.
+ * @author Joel Håkansson
+ *
+ */
 public class EmbossController {
 	@FXML private VBox titles;
 	@FXML private Label title;
@@ -57,12 +62,14 @@ public class EmbossController {
 	}
 	private Scope scope;
 	
+	/**
+	 * Creates a new embosser view controller.
+	 */
 	public EmbossController() {
 		exeService = Executors.newWorkStealingPool();
 	}
 
-	@FXML
-	public void initialize() {
+	@FXML void initialize() {
 		scope = Scope.DOCUMENT;
 		{
 			RangeToggle dt = () -> {
@@ -151,7 +158,7 @@ public class EmbossController {
 		dimensions.setText(Messages.MESSAGE_BOOK_DIMENSIONS.localize(book.getMaxWidth(), book.getMaxHeight()));
 	}
 	
-	@FXML public void emboss() {
+	@FXML void emboss() {
 		Range rangeValue;
 		try {
 			rangeValue = getRange();
@@ -241,7 +248,7 @@ public class EmbossController {
 		}
 	}
 	
-	@FXML public void closeWindow() {
+	@FXML void closeWindow() {
 		((Stage)ok.getScene().getWindow()).close();
 	}
 	

@@ -37,6 +37,11 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
 import shared.Settings;
 
+/**
+ * Provides a controller for the search view.
+ * @author Joel Håkansson
+ *
+ */
 public class SearchController extends VBox {
 	private static final Logger logger = Logger.getLogger(SearchController.class.getCanonicalName());
 	@FXML private Button expandButton;
@@ -48,6 +53,9 @@ public class SearchController extends VBox {
 	BookScanner bookScanner;
 	ExecutorService exeService;
 
+	/**
+	 * Creates a new search view controller.
+	 */
 	public SearchController() {
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Search.fxml"), Messages.getBundle());
@@ -76,8 +84,10 @@ public class SearchController extends VBox {
 		exeService.submit(bookScanner);
 	}
 	
-    @FXML
-    public void searchChanged() {
+    /**
+     * Updates the list of results.
+     */
+    @FXML void searchChanged() {
     	Platform.runLater(()-> {
     		PEFSearchIndex index = bookScanner.getValue();
     		if (index!=null) {
@@ -90,8 +100,11 @@ public class SearchController extends VBox {
     	});
     }
     
-    @FXML
-    public void showOpenFolder() {
+    /**
+     * Opens a directory chooser dialog. If a directory is selected,
+     * the results are updated.
+     */
+    @FXML void showOpenFolder() {
     	Window stage = folderButton.getScene().getWindow();
     	DirectoryChooser chooser = new DirectoryChooser();
     	chooser.setTitle(Messages.TITLE_SET_SEARCH_FOLDER.localize());
@@ -116,6 +129,10 @@ public class SearchController extends VBox {
     	}
     }
     
+    /**
+     * Gets the selected result, or null if no result is selected.
+     * @return returns the selected result, or null
+     */
     public PefBookAdapter getSelectedItem() {
     	return listView.getSelectionModel().getSelectedItem();
     }

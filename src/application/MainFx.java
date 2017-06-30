@@ -20,9 +20,18 @@ import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
  
+/**
+ * Provides the main entry point for the application.
+ * @author Joel Håkansson
+ *
+ */
 public class MainFx extends Application {
 	private static final Logger logger = Logger.getLogger(MainFx.class.getCanonicalName());
 
+    /**
+     * Starts the application.
+     * @param args the arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }

@@ -14,10 +14,19 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
+/**
+ * Provides an embosser view.
+ * @author Joel Håkansson
+ *
+ */
 public class EmbossView extends Stage {
 	private static final Logger logger = Logger.getLogger(EmbossView.class.getCanonicalName());
 	private EmbossController controller;
 
+	/**
+	 * Creates a new embosser view with the specified book.
+	 * @param book the book
+	 */
 	public EmbossView(PEFBook book) {
 		try {
 			FXMLLoader loader = new FXMLLoader(this.getClass().getResource("Emboss.fxml"), Messages.getBundle());
@@ -40,6 +49,10 @@ public class EmbossView extends Stage {
 		setTitle(Messages.EMBOSS_WINDOW_TITLE.localize());
 	}
 	
+	/**
+	 * Sets the book for this view.
+	 * @param book the book
+	 */
 	public void setBook(PEFBook book) {
 		controller.setBook(book);
 	}

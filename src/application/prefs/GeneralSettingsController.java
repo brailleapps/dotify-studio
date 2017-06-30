@@ -20,6 +20,11 @@ import shared.FactoryPropertiesAdapter;
 import shared.Settings;
 import shared.Settings.Keys;
 
+/**
+ * Provides a controller for the general settings view.
+ * @author Joel Håkansson
+ *
+ */
 public class GeneralSettingsController {
 	@FXML private Label previewTranslation;
 	@FXML private Label brailleFont;
@@ -30,8 +35,7 @@ public class GeneralSettingsController {
 	@FXML private ComboBox<FontEntry> selectTextFont;
 	@FXML private ComboBox<String> selectLocale;
 
-	@FXML
-	public void initialize() {
+	@FXML void initialize() {
 		previewDescription.setText("");
 		FactoryPropertiesScanner tableScanner = new FactoryPropertiesScanner(()->TableCatalog.newInstance().list(), Keys.charset);
 		tableScanner.setOnSucceeded(ev -> {
@@ -79,12 +83,6 @@ public class GeneralSettingsController {
 		return ret;
 	}
 	
-	private void newThread(Runnable r) {
-		Thread th = new Thread(r);
-		th.setDaemon(true);
-		th.start();
-	}
-
 	private class FontScanner extends Task<Void> {
 		private final String currentBrailleFont = Settings.getSettings().getString(Keys.brailleFont, "");
 		private final String currentTextFont = Settings.getSettings().getString(Keys.textFont, "");

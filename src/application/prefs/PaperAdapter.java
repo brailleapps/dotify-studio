@@ -1,6 +1,5 @@
 package application.prefs;
 
-import org.daisy.braille.api.factory.FactoryProperties;
 import org.daisy.braille.api.paper.Length;
 import org.daisy.braille.api.paper.Paper;
 import org.daisy.braille.api.paper.RollPaper;

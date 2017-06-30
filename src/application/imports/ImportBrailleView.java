@@ -14,10 +14,18 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
+/**
+ * Provides a dialog that imports formatted braille.
+ * @author Joel Håkansson
+ */
 public class ImportBrailleView extends Stage {
 	private static final Logger logger = Logger.getLogger(ImportBrailleView.class.getCanonicalName());
 	private ImportBrailleController controller;
 
+	/**
+	 * Creates a new import dialog with the specified file.
+	 * @param path the file path
+	 */
 	public ImportBrailleView(File path) {
 		try {
 			FXMLLoader loader = new FXMLLoader(this.getClass().getResource("ImportBraille.fxml"), Messages.getBundle());
@@ -38,6 +46,10 @@ public class ImportBrailleView extends Stage {
 		setTitle(Messages.TITLE_IMPORT_BRAILLE_OPTIONS_DIALOG.localize());
 	}
 	
+	/**
+	 * Gets the options set by the user when operating the dialog.
+	 * @return returns the options set or null if the dialog was cancelled
+	 */
 	public Map<String, String> getOptions() {
 		return controller.getOptions();
 	}

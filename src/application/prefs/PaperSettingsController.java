@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,9 +25,13 @@ import javafx.scene.layout.BorderPane;
 import shared.NiceName;
 import shared.Tools;
 
+/**
+ * Provides a controller for a paper settings view.
+ * @author Joel Håkansson
+ *
+ */
 public class PaperSettingsController extends BorderPane {
 	private static final Logger logger = Logger.getLogger(PaperSettingsController.class.getCanonicalName());
-	private ExecutorService exeService;
 	private CustomPaperCollection coll;
 	private final OptionNiceNames nn = new OptionNiceNames();
 	@FXML private ListView<PaperAdapter> list;
@@ -45,6 +48,9 @@ public class PaperSettingsController extends BorderPane {
 	@FXML private RadioButton rollPaper;
 	@FXML private ToggleGroup addPaper;
 
+	/**
+	 * Creates a new paper settings controller.
+	 */
 	public PaperSettingsController() {
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("PaperSettings.fxml"), Messages.getBundle());
@@ -56,8 +62,7 @@ public class PaperSettingsController extends BorderPane {
 		}
 	}
 
-	@FXML
-	public void initialize() {
+	@FXML void initialize() {
 		coll = CustomPaperCollection.getInstance();
 		addLengths(units1);
 		addLengths(units2);
@@ -205,7 +210,7 @@ public class PaperSettingsController extends BorderPane {
 		}
 	}
 	
-	@FXML public void addPaper() {
+	@FXML void addPaper() {
 		Toggle t = addPaper.getSelectedToggle();
 		if (t!=null) {
 			((PaperToggle)t.getUserData()).addPaper();

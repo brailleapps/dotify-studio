@@ -27,14 +27,22 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 
+/**
+ * Provides a controller for options.
+ * @author Joel Håkansson
+ *
+ */
 public class OptionsController extends ScrollPane {
 	private static final Logger logger = Logger.getLogger(OptionsController.class.getCanonicalName());
-	@FXML public VBox vbox;
+	@FXML private VBox vbox;
 	@FXML private Button applyButton;
 	@FXML private CheckBox monitorCheckbox;
 	private boolean refreshRequested;
 	private Set<TaskOption> values;
 
+	/**
+	 * Creates a new options controller.
+	 */
 	public OptionsController() {
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Options.fxml"), Messages.getBundle());
@@ -47,6 +55,12 @@ public class OptionsController extends ScrollPane {
 		refreshRequested = false;
 	}
 	
+	/**
+	 * Sets options.
+	 * @param ts the task system
+	 * @param opts the runner results
+	 * @param prvOpts the previous options
+	 */
 	public void setOptions(CompiledTaskSystem ts, List<RunnerResult> opts, Map<String, Object> prvOpts) {
 		clear();
 		values = new HashSet<>();
@@ -94,6 +108,10 @@ public class OptionsController extends ScrollPane {
 		vbox.getChildren().clear();
 	}
 	
+	/**
+	 * Gets the parameters.
+	 * @return returns the parameters
+	 */
 	public Map<String, Object> getParams() {
 		Map<String, Object> opts = new HashMap<>();
 		for (Node n : vbox.getChildren()) {
@@ -109,8 +127,7 @@ public class OptionsController extends ScrollPane {
 		return opts;
 	}
 	
-	@FXML
-	public void requestRefresh() {
+	@FXML void requestRefresh() {
 		refreshRequested = true;
 	}
 	

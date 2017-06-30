@@ -72,7 +72,6 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.text.Font;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
@@ -83,9 +82,13 @@ import javafx.stage.Window;
 import shared.Settings;
 import shared.Settings.Keys;
 
+/**
+ * Provides the controller for the main view.
+ * @author Joel Håkansson
+ *
+ */
 public class MainController {
 	private static final Logger logger = Logger.getLogger(MainController.class.getCanonicalName());
-	private static final Font CONSOLE_FONT = new Font("monospace", 12);
 	private static final int CONSOLE_MESSAGE_LIMIT = 500;
 	@FXML private BorderPane root;
 	@FXML private TabPane tabPane;
@@ -111,8 +114,7 @@ public class MainController {
 	private double[] verticalDividerPositions;
 	static final KeyCombination CTRL_F4 = new KeyCodeCombination(KeyCode.F4, KeyCombination.CONTROL_DOWN);
 
-	@FXML
-	public void initialize() {
+	@FXML void initialize() {
 		toolsPane.addEventHandler(KeyEvent.KEY_RELEASED, ev-> {
 			if (CTRL_F4.match(ev)) {
 				Tab t = toolsPane.getSelectionModel().getSelectedItem();
@@ -152,14 +154,14 @@ public class MainController {
 		embossMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
 	}
 	
-	@FXML public void clearConsole() {
+	@FXML void clearConsole() {
 		synchronized (console) {
 			console.getEngine().loadContent("<html><body></body></html>");
 			console.getEngine().setUserStyleSheetLocation(this.getClass().getResource("resource-files/console.css").toString());
 		}
 	}
 	
-	@FXML public void showHideConsole() {
+	@FXML void showHideConsole() {
 		if (showConsoleMenuItem.isSelected()) {
 			verticalSplitPane.getItems().add(consoleRoot);
 			verticalSplitPane.setDividerPositions(verticalDividerPositions);
@@ -216,16 +218,14 @@ public class MainController {
         }
 	}
 
-    @FXML
-    public void refresh() {
+    @FXML void refresh() {
 		Tab t = tabPane.getSelectionModel().getSelectedItem();
 		if (t!=null) {
 			((PreviewController)t.getContent()).reload();
 		}
     }
     
-    @FXML
-	public void openInBrowser() {
+    @FXML void openInBrowser() {
 		if (Desktop.isDesktopSupported()) {
 			try {
 				Tab t = tabPane.getSelectionModel().getSelectedItem();
@@ -247,16 +247,14 @@ public class MainController {
 		}
     }
     
-    @FXML
-    public void closeTab() {
+    @FXML void closeTab() {
     	Tab t = tabPane.getSelectionModel().getSelectedItem();
 		if (t!=null) {
 			tabPane.getTabs().remove(t);
 		}
     }
     
-    @FXML
-    public void saveAs() {
+    @FXML void saveAs() {
     	Tab t = tabPane.getSelectionModel().getSelectedItem();
 		if (t!=null) {
 			PreviewController controller = ((PreviewController)t.getContent());
@@ -290,8 +288,7 @@ public class MainController {
 		}
     }
     
-    @FXML
-    public void toggleSearchArea() {
+    @FXML void toggleSearchArea() {
     	ObservableList<Divider> dividers = splitPane.getDividers();
     	//TODO: observe changes and restore to that value
     	if (dividers.get(0).getPosition()>dividerPosition/2) {
@@ -309,8 +306,7 @@ public class MainController {
     	}
     }
     
-    @FXML
-    public void openPreferences() {
+    @FXML void openPreferences() {
 		PreferencesView dialog = new PreferencesView();
 		dialog.initOwner(root.getScene().getWindow());
 		dialog.initModality(Modality.APPLICATION_MODAL);
@@ -321,15 +317,14 @@ public class MainController {
 		}
     }
     
-    @FXML
-    public void openAbout() {
+    @FXML void openAbout() {
 		AboutView dialog = new AboutView();
 		dialog.initOwner(root.getScene().getWindow());
 		dialog.initModality(Modality.APPLICATION_MODAL); 
 		dialog.showAndWait();
     }
     
-    @FXML public void showHideSearch() {
+    @FXML void showHideSearch() {
 		if (showSearchMenuItem.isSelected()) {
 			if (searchTab==null || !toolsPane.getTabs().contains(searchTab)) {
 				SearchController controller = new SearchController();
@@ -377,8 +372,7 @@ public class MainController {
     	showSearchMenuItem.setSelected(toolsPane.getTabs().contains(searchTab));
     }
     
-    @FXML
-    public void showOpenDialog() {
+    @FXML void showOpenDialog() {
     	Window stage = root.getScene().getWindow();
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle("Open Resource File");
@@ -389,8 +383,7 @@ public class MainController {
     	}
     }
 
-    @FXML
-    public void showImportBrailleDialog() {
+    @FXML void showImportBrailleDialog() {
     	Window stage = root.getScene().getWindow();
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle(Messages.TITLE_IMPORT_BRAILLE_TEXT_DIALOG.localize());
@@ -431,8 +424,7 @@ public class MainController {
     	}
     }
 
-    @FXML
-    public void showImportDialog() {
+    @FXML void showImportDialog() {
     	Window stage = root.getScene().getWindow();
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle(Messages.TITLE_IMPORT_SOURCE_DOCUMENT_DIALOG.localize());
@@ -459,8 +451,7 @@ public class MainController {
     	}
     }
     
-    @FXML
-    public void exportFile() {
+    @FXML void exportFile() {
     	Tab t = tabPane.getSelectionModel().getSelectedItem();
 		if (t!=null) {
 			Optional<URI> bookUri = ((PreviewController)t.getContent()).getBookURI();
@@ -503,12 +494,11 @@ public class MainController {
 		}
     }
  
-    @FXML
-    public void closeApplication() {
+    @FXML void closeApplication() {
     	((Stage)root.getScene().getWindow()).close();
     }
     
-	@FXML public void openHelpTab() {
+	@FXML void openHelpTab() {
 		// if the tab is not visible, recreate it (this is a workaround for https://github.com/brailleapps/dotify-studio/issues/20)
 		if (helpTab==null || !tabPane.getTabs().contains(helpTab)) {
 			WebView wv = new WebView();

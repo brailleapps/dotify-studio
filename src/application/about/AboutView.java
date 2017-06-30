@@ -12,9 +12,16 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
+/**
+ * Provides a dialog that displays information about the software.
+ * @author Joel Håkansson
+ */
 public class AboutView extends Stage {
 	private static final Logger logger = Logger.getLogger(AboutView.class.getCanonicalName());
 
+	/**
+	 * Creates a new dialog for information about the software.
+	 */
 	public AboutView() {
 		try {
 			FXMLLoader loader = new FXMLLoader(this.getClass().getResource("About.fxml"), Messages.getBundle());

@@ -36,6 +36,11 @@ import shared.NiceName;
 import shared.Settings;
 import shared.Settings.Keys;
 
+/**
+ * Provides a controller for the embosser settings view.
+ * @author Joel Håkansson
+ *
+ */
 public class EmbossSettingsController extends BorderPane {
 	private static final Logger logger = Logger.getLogger(EmbossSettingsController.class.getCanonicalName());
 	@FXML private Label deviceLabel;
@@ -72,6 +77,9 @@ public class EmbossSettingsController extends BorderPane {
 	private DeviceScanner deviceScanner;
 	private File generatedFile;
 
+	/**
+	 * Creates a new embosser settings controller.
+	 */
 	public EmbossSettingsController() {
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("EmbossSettings.fxml"), Messages.getBundle());
@@ -83,8 +91,7 @@ public class EmbossSettingsController extends BorderPane {
 		}
 	}
 
-	@FXML
-	public void initialize() {
+	@FXML void initialize() {
 		exeService = Executors.newSingleThreadExecutor();
 		deviceScanner = new DeviceScanner();
 		deviceScanner.setOnSucceeded(ev -> {
@@ -242,18 +249,12 @@ public class EmbossSettingsController extends BorderPane {
 	}
 
 	private static class DeviceScanner extends Task<List<PrintServiceAdapter>> {
-		private final String currentDevice = Settings.getSettings().getString(Keys.device, "");
-		private PrintServiceAdapter currentValue; 
 		@Override
 		protected List<PrintServiceAdapter> call() throws Exception {
 			PrintService[] printers = PrintServiceLookup.lookupPrintServices(null, null);
 			List<PrintServiceAdapter> ret = new ArrayList<>();
 			for (PrintService p : printers) {
-				PrintServiceAdapter ap = new PrintServiceAdapter(p);
-				ret.add(ap);
-				if (p.getName().equals(currentDevice)) {
-					currentValue = ap;
-				}
+				ret.add(new PrintServiceAdapter(p));
 			}
 			return ret;
 		}
@@ -286,12 +287,9 @@ public class EmbossSettingsController extends BorderPane {
 	}
 	
 	private static class PrintServiceAdapter extends NiceName {
-		private final PrintService p;
 		private PrintServiceAdapter(PrintService p) {
 			super(p.getName(), p.getName());
-			this.p = p;
 		}
-
 	}	
 
 }

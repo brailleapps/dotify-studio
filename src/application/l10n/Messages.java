@@ -5,6 +5,11 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+/**
+ * Provides messages available for localization.
+ * @author Joel Håkansson
+ */
+@SuppressWarnings("javadoc")
 public enum Messages {
 	ABOUT_WINDOW_TITLE("about-window-title"),
 	APPLICATION_TITLE("application-title"),
@@ -137,10 +142,18 @@ public enum Messages {
 		this.key = key;
 	}
 	
+	/**
+	 * Gets the resource bundle for this class.
+	 * @return returns the resource bundle
+	 */
 	public static ResourceBundle getBundle() {
 		return RESOURCE_BUNDLE;
 	}
 
+	/**
+	 * Localizes the message without any variables.
+	 * @return returns the localized message
+	 */
 	public String localize() {
 		try {
 			return RESOURCE_BUNDLE.getString(key);
@@ -149,8 +162,13 @@ public enum Messages {
 		}		
 	}
 	
-	public String localize(Object ... arguments) {
-		return MessageFormat.format(localize(), arguments);
+	/**
+	 * Localizes the message with the specified variables.
+	 * @param variables the variables to insert into the localized message
+	 * @return returns the localized message
+	 */
+	public String localize(Object ... variables) {
+		return MessageFormat.format(localize(), variables);
 	}
 
 }
