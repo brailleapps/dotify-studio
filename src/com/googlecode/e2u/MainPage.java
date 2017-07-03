@@ -71,11 +71,9 @@ public class MainPage extends BasePage implements AListener {
 	private final SettingsView settingsView;
 	private AContainer previewSettingsView;
 	//private final AContainer paperView;
-	private FindView findView;
+
 	private final AContainer fileChooser;
 	
-	private final ComponentRegistry registry;
-
 	private static boolean closing = false;
     
     static {
@@ -110,8 +108,6 @@ public class MainPage extends BasePage implements AListener {
     	buildMenu();
     	bookController = new BookViewController(f, settings, embossMenu);
     	//changeHappened = false;
-    	registry = new ComponentRegistry();
-
     	settingsView = new SettingsView(settings, setupMenu);
     	//previewSettingsView = new PreviewSettingsView(settings, setupMenu);
     	
@@ -129,15 +125,6 @@ public class MainPage extends BasePage implements AListener {
     	
     	fileChooser = new AFileChooser(libPath, openMenu);
 
-    }
-    
-    private FindView getFindView() {
-    	if (findView==null) {
-    		findView = new FindView(settings, openMenu, registry);
-    		findView.setIdentifier("fileChooser");
-    		registry.register(findView);
-    	}
-    	return findView;
     }
     
     private AContainer getPreviewSettingsView() {
@@ -164,7 +151,6 @@ public class MainPage extends BasePage implements AListener {
     		.addMenuItem("meta", Messages.getString(L10nKeys.MENU_ABOUT_BOOK));*/
 		openMenu = new MenuSystem("method")
 			.setDivider(" | ")
-			.addMenuItem("find", Messages.getString(L10nKeys.FIND_IN_LIBRARY))
 			.addMenuItem("choose", Messages.getString(L10nKeys.BROWSE_FILE_SYSTEM));
 		setupMenu = new MenuSystem("method")
 			.setDivider(" | ")
@@ -207,9 +193,7 @@ public class MainPage extends BasePage implements AListener {
     
 	@Override
 	public Reader getContent(String key, Context context) throws IOException {
-		if ("status".equals(key)) {
-			return getStatusContent(context);
-		} else if ("book".equals(key)) {
+		if ("book".equals(key)) {
 	    	return new InputStreamReader(bookController.getBookURI().toURL().openStream(), bookController.getBook().getInputEncoding());
 		} else if ("preview-new".equals(key)) {
 			String volume = context.getArgs().get("volume");
@@ -244,46 +228,6 @@ public class MainPage extends BasePage implements AListener {
 			return super.getContent(key, context);
 		}
 	}
-	
-	private Reader getStatusContent(Context context) {
-		XMLTagger xtag = new XMLTagger();
-		String component = context.getArgs().get("component");
-		boolean updates = context.getArgs().get("updates")!=null;
-		AComponent a = null;
-		if (component!=null && !"".equals(component)) {
-			a = registry.getComponent(component);
-		}
-		Date d = new Date(); //FIXME: use correct date
-		for (int i=0; i<20; i++) {
-			if (closing==true || !updates) {
-				break;
-			}
-			try {
-				Thread.sleep(250);
-			} catch (InterruptedException e) {
-				break;
-			}
-			if (a!=null) {
-				List<AComponent> list = getUpdateComponent(a, d);
-				if (list.size()==0) {
-					continue;
-				}
-				for (AComponent a2 : list) {
-					xtag.start("update")
-					.attr("id", a2.getIdentifier());
-					for (AComponent c : a2.getChildren()) {
-						xtag.insert(c.getHTML(context));
-					}
-					xtag.end();
-				}
-				break;
-			}
-		}
-		if (logger.isLoggable(Level.FINER)) {
-			logger.finer(xtag.getResult());
-		}
-		return new StringReader(xtag.getResult());
-	}
 
         @Override
 	public String getContentString(String key, Context context) throws IOException {
@@ -307,8 +251,6 @@ public class MainPage extends BasePage implements AListener {
 		}
 		if ("choose".equals(args.get("method"))) {
 			return buildHTML(renderView(context, fileChooser), Messages.getString(L10nKeys.OPEN), true);
-		} else if ("find".equals(args.get("method"))) {
-			return buildHTML(renderView(context, getFindView()), Messages.getString(L10nKeys.OPEN), true);
 		} else if ("setup".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
 			return buildHTML(renderView(context, settingsView), Messages.getString(L10nKeys.SETTINGS), true); //$NON-NLS-1$
 		} else if ("setup-preview".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -631,9 +573,6 @@ public class MainPage extends BasePage implements AListener {
 	@Override
 	public void close() {
 		closing = true;
-		if (findView!=null) {
-			getFindView().close();
-		}
 		bookController.close();
 	}
 	@Override
