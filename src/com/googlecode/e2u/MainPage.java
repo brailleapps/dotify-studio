@@ -39,7 +39,6 @@ import com.googlecode.ajui.AParagraph;
 import com.googlecode.ajui.APre;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
-import com.googlecode.ajui.XMLTagger;
 import com.googlecode.e2u.BookReader.BookReaderResult;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
@@ -55,22 +54,18 @@ public class MainPage extends BasePage implements AListener {
 
 	final static int MAX_COPIES = 99;
 	public final static String ENCODING = "utf-8";
-	
-	final static String KEY_TOP_BAR = "top-bar";
-	final static String KEY_SUB_MENU = "sub-menu";
+
 	private final static Settings settings;
 	public final static String TARGET = "/index.html";
 
 	private BookViewController bookController;
 
-	//private MenuSystem topMenu;
 	private MenuSystem embossMenu;
 	private MenuSystem openMenu;
 	private MenuSystem setupMenu;
 
 	private final SettingsView settingsView;
 	private AContainer previewSettingsView;
-	//private final AContainer paperView;
 
 	private final AContainer fileChooser;
 	
@@ -79,40 +74,12 @@ public class MainPage extends BasePage implements AListener {
     static {
         settings = Settings.getSettings();
     }
-    /*
-    public static InputStream getInputStreamForBook() {
-    	if (bookFile!=null) {
-    		try {
-				return new FileInputStream(bookFile);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-    	}
-    	return WebUI.getResourceStream(target)Stream("/book.pef");
-    }*/
-    /*
-    private URI getURIForBook() {
-    	if (bookReader.getResult().getBookFile()!=null) {
-			return bookReader.getResult().getBookFile().toURI();
-    	}
-    	try {
-    		return ClassLoader.getSystemResource("www/book.pef").toURI();
-    	} catch (URISyntaxException e) {
-    		e.printStackTrace();
-    		return null;
-    	}
-    }*/
-    
 
     public MainPage(File f) {
     	buildMenu();
     	bookController = new BookViewController(f, settings, embossMenu);
-    	//changeHappened = false;
     	settingsView = new SettingsView(settings, setupMenu);
-    	//previewSettingsView = new PreviewSettingsView(settings, setupMenu);
-    	
-    	
-    	//paperView = new PaperView(setupMenu, settingsView);
+
     	File libPath = null;
     	try {
 	    	libPath = new File(settings.getString(Settings.Keys.libraryPath));
@@ -135,20 +102,8 @@ public class MainPage extends BasePage implements AListener {
     }
 
     public void buildMenu() {
-    	/*
-    	topMenu = new MenuSystem("method")
-			.setDivider("")
-			.addMenuItem(new MenuItem("emboss", Messages.getString(L10nKeys.MENU_MAIN)))
-    		.addMenuItem("meta", Messages.getString(L10nKeys.MENU_ABOUT_BOOK))
-    		.addMenuItem("find", Messages.getString(L10nKeys.FIND_IN_LIBRARY))
-    		.addMenuItem("setup", Messages.getString(L10nKeys.EMBOSS_VIEW))
-    		;
-    	*/
+
     	embossMenu = null;
-    	/*new MenuSystem("method", topMenu)
-    		.setDivider(" | ")
-    		.addMenuItem("emboss", Messages.getString(L10nKeys.MENU_MAIN))
-    		.addMenuItem("meta", Messages.getString(L10nKeys.MENU_ABOUT_BOOK));*/
 		openMenu = new MenuSystem("method")
 			.setDivider(" | ")
 			.addMenuItem("choose", Messages.getString(L10nKeys.BROWSE_FILE_SYSTEM));
@@ -205,25 +160,6 @@ public class MainPage extends BasePage implements AListener {
 			}
 			if (v<1) {v=1;}
 	    	return bookController.getPreviewView().getReader(v);
-		} else if ("preview".equals(key)) {
-			throw new RuntimeException("Deprecated");
-		} else if (KEY_TOP_BAR.equals(key)) {
-			return new StringReader(
-					new XHTMLTagger()
-						.start("div").attr("id", "top-bar")
-							.start("p")
-								.start("a").attr("href", "index.html?method=about").attr("title", Messages.getString(L10nKeys.TOOLTIP_HELP)).text("?").end()
-								.start("span").attr("id", "software-title").text("Easy Embossing Utility").end()
-								/*
-								.start("span").attr("id", "status")
-									.start("a").attr("id", "connected").attr("href", "close.html").attr("title", Messages.getString(L10nKeys.TOOLTIP_CLOSE))
-										.start("img").attr("src", "images/green.gif").attr("alt", "connected").end()
-									.end()
-									.start("img").attr("id", "notConnected").attr("src", "images/red.gif").attr("alt", "not connected").end()
-								.end()*/
-							.end()
-						.end()
-				.getResult());
 		} else {
 			return super.getContent(key, context);
 		}
@@ -407,13 +343,7 @@ public class MainPage extends BasePage implements AListener {
 			sb.append(bookController.getBook().toString());
 		} catch (Exception e) {
 			sb.append(e.toString());
-		}/*
-		sb.append("\nEmbosser: ");
-		try {
-			sb.append(settingsView.getConfiguration().getConfiguredEmbosser().toString());
-		} catch (Exception e) {
-			sb.append(e.toString());
-		}*/
+		}
 		sb.append("\nSettings: ");
 		try {
 			sb.append(settings.toString());
@@ -439,14 +369,7 @@ public class MainPage extends BasePage implements AListener {
         	return def;
         }
 	}
-	/*
-	private String findHTML(Context context) throws IOException {
-		XHTMLTagger tagger = new XHTMLTagger();
-		tagger.insert(openMenu.getHTML(context));
 
-		return tagger.getResult();
-	}
-*/
     private XHTMLTagger renderView(Context context, AContainer subview) {
     	return subview.getHTML(context);
     }
@@ -455,7 +378,6 @@ public class MainPage extends BasePage implements AListener {
 
     private XHTMLTagger embossHTML(Context context) {
     	XHTMLTagger ret = new XHTMLTagger();
-    	//sb.append(embossMenu.getHTML(context).getResult());
     	Iterable<String> data;
     	data = bookController.getBook().getTitle();
     	if (data==null || !data.iterator().hasNext()) {
@@ -463,7 +385,6 @@ public class MainPage extends BasePage implements AListener {
     	} else {
     		for (String s: data) {
     			ret.insert(new XHTMLTagger().tag("h2", s));
-    			//insertElement(sb, "h2", s); //$NON-NLS-1$
     		}
     	}
     	data = bookController.getBook().getAuthors();
@@ -481,9 +402,7 @@ public class MainPage extends BasePage implements AListener {
     	ret.insert(
     			new XHTMLTagger().tag("p", MessageFormat.format(Messages.getString(L10nKeys.FILE_DIMENSIONS), bookController.getBook().getMaxWidth(), bookController.getBook().getMaxHeight()))
     		);
-    	
-    	//Paper paper = settings.getPaper();
-    	//Embosser emb = settings.getEmbosser();
+
     	ret.start("form");
     	ret.attr("action", MainPage.TARGET);
     	ret.attr("method", "get");
@@ -492,7 +411,6 @@ public class MainPage extends BasePage implements AListener {
 
     	ret.insert(
     			new XHTMLTagger().tag("p", showOptions(context))
-    			//tag("p", showOptions(context))
     		); //$NON-NLS-1$
     	if ("options".equals(context.getArgs().get("show"))) { //$NON-NLS-1$ //$NON-NLS-2$
     		
@@ -528,13 +446,11 @@ public class MainPage extends BasePage implements AListener {
     	}
     	
     	ret.end();
-    	//PageFormat pf = settingsView.getPageFormat();
     	Configuration conf = Configuration.getConfiguration(Settings.getSettings());
     	if (bookController.getBook().containsEightDot()) {
     		ret.start("p").text(Messages.getString(L10nKeys.EIGHT_DOT_NOT_SUPPORTED)).end();
     	} else if (!conf.settingOK()) {
     		ret.start("p").attr("class", "warning").text("Unknown paper").end();
-    				//tag("p", " class=\"warning\"", "Unknown paper")
     		settings.resetKey(Keys.paper);
     	} else if (conf.getMaxWidth()<bookController.getBook().getMaxWidth()) {
     		String papername = conf.getPaperName();
@@ -576,12 +492,7 @@ public class MainPage extends BasePage implements AListener {
 		bookController.close();
 	}
 	@Override
-	public synchronized void changeHappened(Object o) {/*
-		if (bs.equals(o)) {
-			//changeHappened = true;
-			scanningInProgressLabel.setText("");
-			componentsToUpdate.put(scanningInProgress.getIdentifier(), scanningInProgress);
-		}*/
+	public synchronized void changeHappened(Object o) {
 	}
 
 	/* (non-Javadoc)
@@ -594,7 +505,6 @@ public class MainPage extends BasePage implements AListener {
 
 	@Override
 	protected Map<String, String> getBodyAttributes() {
-		// onload="get('ping.xml?updates=true'+getUpdateString())" class="ui"
 		HashMap<String, String> bodyAtts = new HashMap<>();
 		bodyAtts.put("onload", "get('ping.xml?updates=true'+getUpdateString())");
 		bodyAtts.put("class", "ui");
