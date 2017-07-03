@@ -44,10 +44,6 @@ public interface L10nKeys {
 	public final static String PREVIEW_CHARSET = "Worker.preview-charset";
 	public final static String PREIVEW_BRAILLE_FONT = "Worker.preview-braille-font";
 	public final static String PREVIEW_TEXT_FONT = "Worker.preview-text-font";
-	public final static String DESC_SOFTWARE = "Worker.description-software";
-	public final static String DESC_BASED_ON = "Worker.description-based-on";
-	public final static String DESC_MORE_INFO = "Worker.description-more-information";
-	public final static String DESC_VERSION = "Worker.description-version";
 	public final static String EMBOSSING_FAILED = "Worker.error-transformer";
 	public final static String FILE_EMBOSSED_OK = "Worker.file-embossed-ok";
 	

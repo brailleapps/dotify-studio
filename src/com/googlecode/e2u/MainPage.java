@@ -67,8 +67,7 @@ public class MainPage extends BasePage implements AListener {
 	private MenuSystem embossMenu;
 	private MenuSystem openMenu;
 	private MenuSystem setupMenu;
-	
-	private final AContainer aboutView;
+
 	private final SettingsView settingsView;
 	private AContainer previewSettingsView;
 	//private final AContainer paperView;
@@ -113,7 +112,6 @@ public class MainPage extends BasePage implements AListener {
     	//changeHappened = false;
     	registry = new ComponentRegistry();
 
-    	aboutView = new AboutView();
     	settingsView = new SettingsView(settings, setupMenu);
     	//previewSettingsView = new PreviewSettingsView(settings, setupMenu);
     	
@@ -317,8 +315,6 @@ public class MainPage extends BasePage implements AListener {
 			return buildHTML(renderView(context, getPreviewSettingsView()), Messages.getString(L10nKeys.SETTINGS), true); //$NON-NLS-1$
 		} else if ("paper".equals(args.get("method"))) {
 			return buildHTML(renderView(context, new PaperView(setupMenu, settingsView)), Messages.getString(L10nKeys.SETTINGS), true);
-		} else if ("about".equals(args.get("method"))) {
-			return buildHTML(aboutView.getHTML(context), Messages.getString(L10nKeys.ABOUT_THE_SOFTWARE), true);
 		} else if ("test".equals(args.get("method")) && settingsView.getConfiguration().settingOK()) {
 	        File temp = File.createTempFile("generated-", ".pef");
 			temp.deleteOnExit();
