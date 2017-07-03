@@ -214,7 +214,11 @@ public class MainController {
 	
 	void openArgs(String[] args) {
         if (args.length>0) {
-        	addTab(null, args);
+        	String title = null;
+        	if (args.length>=2 && "-open".equals(args[0])) {
+        		title = new File(args[1]).getName();
+        	}
+        	addTab(title, args);
         }
 	}
 
