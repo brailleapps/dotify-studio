@@ -527,7 +527,7 @@ public class MainController {
 	
 	private String getHelpURL() {
 		try {
-			File codeLocation = new File((MainFx.class.getProtectionDomain().getCodeSource().getLocation()).toURI()).getParentFile();
+			File codeLocation = new File((this.getClass().getProtectionDomain().getCodeSource().getLocation()).toURI()).getParentFile();
 			File root = null;
 			if (codeLocation.getName().equalsIgnoreCase("lib")) {
 				root = codeLocation.getParentFile();
