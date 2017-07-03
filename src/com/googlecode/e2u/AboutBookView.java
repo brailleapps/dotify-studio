@@ -24,10 +24,7 @@ public class AboutBookView extends AContainer {
 	 */
 	private static final long serialVersionUID = -4158397890850715579L;
 
-	public AboutBookView(PEFBook book, List<ValidatorMessage> messages, MenuSystem menu) {
-		if (menu!=null) {
-			add(menu);
-		}
+	public AboutBookView(PEFBook book, List<ValidatorMessage> messages) {
 		
 		if (!messages.isEmpty()) {
 			add(ValidationView.buildMessagesList(messages));

@@ -57,7 +57,6 @@ public class MainPage extends BasePage implements AListener {
 
 	private BookViewController bookController;
 
-	private MenuSystem embossMenu;
 	
 	private static boolean closing = false;
     
@@ -67,13 +66,11 @@ public class MainPage extends BasePage implements AListener {
 
     public MainPage(File f) {
     	buildMenu();
-    	bookController = new BookViewController(f, settings, embossMenu);
+    	bookController = new BookViewController(f, settings);
     	
     }
 
     public void buildMenu() {
-
-    	embossMenu = null;
     }
     
     public Optional<URI> getBookURI() {
@@ -126,7 +123,7 @@ public class MainPage extends BasePage implements AListener {
 						logger.fine("open book" + f);
 					}
 					bookController.close();
-					bookController = new BookViewController(f, settings, embossMenu);
+					bookController = new BookViewController(f, settings);
 				}
 			}
 	        Configuration conf = Configuration.getConfiguration(settings);

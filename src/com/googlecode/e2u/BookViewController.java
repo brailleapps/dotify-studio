@@ -16,9 +16,8 @@ public class BookViewController {
 	private AboutBookView aboutBookView;
 	private StaxPreviewController controller;
 	private Settings settings;
-	private final MenuSystem menu;
 	
-	public BookViewController(File f, Settings settings, MenuSystem menu) {
+	public BookViewController(File f, Settings settings) {
 		if (f==null) {
 	    	try {
 	    		bookReader = new BookReader("resource-files/book.pef");
@@ -31,7 +30,6 @@ public class BookViewController {
     	aboutBookView = null;
     	controller = null;
     	this.settings = settings;
-    	this.menu = menu;
 	}
 	
 	public URI getBookURI() {
@@ -55,7 +53,7 @@ public class BookViewController {
     }
     
     public AboutBookView getAboutBookView() {
-    	return new AboutBookView(bookReader.getResult().getBook(), bookReader.getResult().getValidationMessages(), menu);
+    	return new AboutBookView(bookReader.getResult().getBook(), bookReader.getResult().getValidationMessages());
     }
     
     public StaxPreviewController getPreviewView() {
