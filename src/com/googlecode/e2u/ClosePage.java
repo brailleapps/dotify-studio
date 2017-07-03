@@ -3,6 +3,9 @@ package com.googlecode.e2u;
 
 
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,9 +17,8 @@ import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
 
 public class ClosePage extends BasePage {
-	
-        @Override
-	public String getContentString(String key, Context context) {
+
+	private String getContentString(String key, Context context) {
 		String ret = buildHTML(closeHTML(), Messages.getString(L10nKeys.CLOSED), true, false);
 		context.close();
 		return ret; 
@@ -54,6 +56,11 @@ public class ClosePage extends BasePage {
 		List<String> scripts = new ArrayList<>();
 		scripts.add("script/close.js");
 		return scripts;
+	}
+
+	@Override
+	public Reader getContent(String key, Context context) throws IOException {
+		return new StringReader(getContentString(key, context));
 	}
 
 }

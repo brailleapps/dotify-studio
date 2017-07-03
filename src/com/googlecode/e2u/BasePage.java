@@ -92,11 +92,4 @@ public abstract class BasePage implements Content {
     	sb.end();
     	return sb.getResult();
     }
-	
-	public abstract String getContentString(String key, Context context) throws IOException;
-
-	@Override
-	public Reader getContent(String key, Context context) throws IOException {
-		return new StringReader(getContentString(key, context));
-	}
 }

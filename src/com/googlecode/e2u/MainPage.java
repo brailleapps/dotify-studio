@@ -12,9 +12,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +29,6 @@ import org.daisy.braille.pef.PEFHandler.Alignment;
 import org.daisy.braille.pef.PrinterDevice;
 import org.daisy.braille.pef.Range;
 
-import com.googlecode.ajui.AComponent;
 import com.googlecode.ajui.AContainer;
 import com.googlecode.ajui.ALabel;
 import com.googlecode.ajui.ALink;
@@ -61,10 +58,6 @@ public class MainPage extends BasePage implements AListener {
 	private BookViewController bookController;
 
 	private MenuSystem embossMenu;
-	private MenuSystem setupMenu;
-
-	private final SettingsView settingsView;
-	private AContainer previewSettingsView;
 	
 	private static boolean closing = false;
     
@@ -75,25 +68,12 @@ public class MainPage extends BasePage implements AListener {
     public MainPage(File f) {
     	buildMenu();
     	bookController = new BookViewController(f, settings, embossMenu);
-    	settingsView = new SettingsView(settings, setupMenu);
     	
-    }
-    
-    private AContainer getPreviewSettingsView() {
-    	if (previewSettingsView==null) {
-    		previewSettingsView = new PreviewSettingsView(settings, setupMenu);
-    	}
-    	return previewSettingsView;
     }
 
     public void buildMenu() {
 
     	embossMenu = null;
-		setupMenu = new MenuSystem("method")
-			.setDivider(" | ")
-			.addMenuItem("setup", Messages.getString(L10nKeys.EMBOSS_VIEW))
-			.addMenuItem("setup-preview", Messages.getString(L10nKeys.PREVIEW_VIEW))
-			.addMenuItem("paper", Messages.getString(L10nKeys.PAPER_VIEW));
     }
     
     public Optional<URI> getBookURI() {
@@ -112,20 +92,16 @@ public class MainPage extends BasePage implements AListener {
     	}
     }
     
-    private List<AComponent> getUpdateComponent(AComponent a, Date since) {
-    	ArrayList<AComponent> ret = new ArrayList<>();
-    	if (a.hasIdentifer() && a.hasUpdates(since)) {
-    		ret.add(a);
-    		return ret;
-    	} else {
-    		if (a.getChildren()==null) {
-    			return ret;
-    		}
-			for (AComponent c : a.getChildren()) {
-				ret.addAll(getUpdateComponent(c, since));
-			}
-    	}
-		return ret;
+    private Reader previewReader(String key, Context context) {
+    	String volume = context.getArgs().get("volume");
+		int v = 1;
+		try {
+			v = Integer.parseInt(volume);
+		} catch (NumberFormatException e) {
+			
+		}
+		if (v<1) {v=1;}
+    	return bookController.getPreviewView().getReader(v);
     }
     
 	@Override
@@ -133,74 +109,54 @@ public class MainPage extends BasePage implements AListener {
 		if ("book".equals(key)) {
 	    	return new InputStreamReader(bookController.getBookURI().toURL().openStream(), bookController.getBook().getInputEncoding());
 		} else if ("preview-new".equals(key)) {
-			String volume = context.getArgs().get("volume");
-			int v = 1;
-			try {
-				v = Integer.parseInt(volume);
-			} catch (NumberFormatException e) {
-				
-			}
-			if (v<1) {v=1;}
-	    	return bookController.getPreviewView().getReader(v);
+			return previewReader(key, context);
 		} else {
-			return super.getContent(key, context);
-		}
-	}
+			// settings ok?
+			Map<String, String> args = context.getArgs();
+			String device = settings.getString(Keys.device); //$NON-NLS-1$
+			String align = settings.getString(Keys.align);
 
-        @Override
-	public String getContentString(String key, Context context) throws IOException {
-		// settings ok?
-		Map<String, String> args = context.getArgs();
-		String device = settings.getString(Keys.device); //$NON-NLS-1$
-		String align = settings.getString(Keys.align);
-
-		// open new book
-		String open = args.get("open");
-		if (open !=null) {
-			open = URLDecoder.decode(open, ENCODING);
-			File f = new File(open);
-			if (f.exists()) {
-				if (logger.isLoggable(Level.FINE)) {
-					logger.fine("open book" + f);
+			// open new book
+			String open = args.get("open");
+			if (open !=null) {
+				open = URLDecoder.decode(open, ENCODING);
+				File f = new File(open);
+				if (f.exists()) {
+					if (logger.isLoggable(Level.FINE)) {
+						logger.fine("open book" + f);
+					}
+					bookController.close();
+					bookController = new BookViewController(f, settings, embossMenu);
 				}
-				bookController.close();
-				bookController = new BookViewController(f, settings, embossMenu);
 			}
-		}
-		if ("setup".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
-			return buildHTML(renderView(context, settingsView), Messages.getString(L10nKeys.SETTINGS), true); //$NON-NLS-1$
-		} else if ("setup-preview".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
-			return buildHTML(renderView(context, getPreviewSettingsView()), Messages.getString(L10nKeys.SETTINGS), true); //$NON-NLS-1$
-		} else if ("paper".equals(args.get("method"))) {
-			return buildHTML(renderView(context, new PaperView(setupMenu, settingsView)), Messages.getString(L10nKeys.SETTINGS), true);
-		} else if ("test".equals(args.get("method")) && settingsView.getConfiguration().settingOK()) {
-	        File temp = File.createTempFile("generated-", ".pef");
-			temp.deleteOnExit();
-	        Map<String,String> keys = new HashMap<>();
-	        keys.put(PEFGenerator.KEY_COLS, String.valueOf(settingsView.getConfiguration().getMaxWidth()));
-	        keys.put(PEFGenerator.KEY_ROWS, String.valueOf(settingsView.getConfiguration().getMaxHeight()));
-	        keys.put(PEFGenerator.KEY_DUPLEX, String.valueOf(true));
-	        keys.put(PEFGenerator.KEY_EIGHT_DOT, String.valueOf(false));
-	        PEFGenerator generator = new PEFGenerator(keys);
-	        try {
-	            generator.generateTestPages(temp);
-	        } catch (Exception e) {
-	        }
-	        String encURL = URLEncoder.encode(temp.getAbsolutePath(), MainPage.ENCODING);
-	        AContainer div = new AContainer();
-		    AParagraph p = new AParagraph();
-            ALink a = new ALink("index.html?open="+encURL);                    
-            ALabel label = new ALabel(Messages.getString(L10nKeys.OPEN_TEST_DOCUMENT));
-            a.add(label);
-            p.add(a);
-		    div.add(p);
-            return buildHTML(div.getHTML(context), Messages.getString(L10nKeys.TEST_SETUP), true);
-        } else if ("meta".equals(args.get("method"))) {  //$NON-NLS-1$ //$NON-NLS-2$
-			return buildHTML(renderView(context, bookController.getAboutBookView()), Messages.getString(L10nKeys.ABOUT_THE_BOOK), true);
-		} else if (!bookController.bookIsValid()) {
-			return buildHTML(renderView(context, bookController.getValidationView()), Messages.getString(L10nKeys.VALIDATION), false);
-		} else if (device!=null && settingsView.getConfiguration().settingOK() && align!=null) {
-			if ("do".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
+	        Configuration conf = Configuration.getConfiguration(settings);
+			if ("test".equals(args.get("method")) && conf.settingOK()) {
+		        File temp = File.createTempFile("generated-", ".pef");
+				temp.deleteOnExit();
+		        Map<String,String> keys = new HashMap<>();
+		        keys.put(PEFGenerator.KEY_COLS, String.valueOf(conf.getMaxWidth()));
+		        keys.put(PEFGenerator.KEY_ROWS, String.valueOf(conf.getMaxHeight()));
+		        keys.put(PEFGenerator.KEY_DUPLEX, String.valueOf(true));
+		        keys.put(PEFGenerator.KEY_EIGHT_DOT, String.valueOf(false));
+		        PEFGenerator generator = new PEFGenerator(keys);
+		        try {
+		            generator.generateTestPages(temp);
+		        } catch (Exception e) {
+		        }
+		        String encURL = URLEncoder.encode(temp.getAbsolutePath(), MainPage.ENCODING);
+		        AContainer div = new AContainer();
+			    AParagraph p = new AParagraph();
+	            ALink a = new ALink("index.html?open="+encURL);                    
+	            ALabel label = new ALabel(Messages.getString(L10nKeys.OPEN_TEST_DOCUMENT));
+	            a.add(label);
+	            p.add(a);
+			    div.add(p);
+	            return new StringReader(buildHTML(div.getHTML(context), Messages.getString(L10nKeys.TEST_SETUP), true));
+	        } else if ("meta".equals(args.get("method"))) {  //$NON-NLS-1$ //$NON-NLS-2$
+				return new StringReader(buildHTML(renderView(context, bookController.getAboutBookView()), Messages.getString(L10nKeys.ABOUT_THE_BOOK), true));
+			} else if (!bookController.bookIsValid()) {
+				return new StringReader(buildHTML(renderView(context, bookController.getValidationView()), Messages.getString(L10nKeys.VALIDATION), false));
+			} else if (device!=null && conf.settingOK() && align!=null && "do".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				context.log("Settings ok! " + device + " : " + align); //$NON-NLS-1$
 
 		        int pMin;
@@ -228,14 +184,14 @@ public class MainPage extends BasePage implements AListener {
 					for (int i=0; i<copies; i++) {
 						try (InputStream iss = bookController.getBookURI().toURL().openStream()){
 							; //$NON-NLS-1$
-							Embosser emb = settingsView.getConfiguration().getConfiguredEmbosser();
+							Embosser emb = conf.getConfiguredEmbosser();
 							PrinterDevice bd = new PrinterDevice(URLDecoder.decode(device, ENCODING), false);
 							EmbosserWriter writer = emb.newEmbosserWriter(bd);
 							
 							PEFHandler.Builder phb = new PEFHandler.Builder(writer).
 														range(Range.parseRange(pMin+"-"+pMax)).
 														offset(0);
-							if (settingsView.getConfiguration().supportsAligning()) {
+							if (conf.supportsAligning()) {
 						        Alignment alignment = Alignment.CENTER_INNER;
 						        try {
 						        	alignment = Alignment.valueOf(align.toUpperCase());
@@ -244,7 +200,7 @@ public class MainPage extends BasePage implements AListener {
 						        }
 								phb.align(alignment);
 							}
-							new PEFConverterFacade(settingsView.getConfiguration().getEmbosserCatalog()).parsePefFile(iss, phb.build());
+							new PEFConverterFacade(conf.getEmbosserCatalog()).parsePefFile(iss, phb.build());
 						}
 					}
 			    	AContainer okDiv = new AContainer();
@@ -258,7 +214,7 @@ public class MainPage extends BasePage implements AListener {
 			    		p.add(mailtoDebug());
 			    		okDiv.add(p);
 			    	}
-					return buildHTML(okDiv.getHTML(context), Messages.getString(L10nKeys.FILE_EMBOSSED), false); //$NON-NLS-1$
+					return new StringReader(buildHTML(okDiv.getHTML(context), Messages.getString(L10nKeys.FILE_EMBOSSED), false)); //$NON-NLS-1$
 				} catch (Exception e) {
 					context.log("Exception in parser"  + e.getMessage()); //$NON-NLS-1$
 					e.printStackTrace();
@@ -282,16 +238,14 @@ public class MainPage extends BasePage implements AListener {
 					pre.add(new ALabel(sw.toString()));
 					preDiv.add(pre);
 					errorDiv.add(preDiv);
-					return buildHTML(errorDiv.getHTML(context), Messages.getString(L10nKeys.ERROR), false); //$NON-NLS-1$
+					return new StringReader(buildHTML(errorDiv.getHTML(context), Messages.getString(L10nKeys.ERROR), false)); //$NON-NLS-1$
 				}
 			} else {
-				return buildHTML(embossHTML(context), Messages.getString(L10nKeys.EMBOSS_PEF), true); //$NON-NLS-1$
+				return previewReader(key, context);
 			}
-		} else {
-			return buildHTML(renderView(context, settingsView), Messages.getString(L10nKeys.SETTINGS), true);
 		}
 	}
-	
+
 	private String mailtoEncode(String s) {
 		String noencode = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.!~*'()";
 		String hexits = "0123456789ABCDEF";
@@ -352,118 +306,6 @@ public class MainPage extends BasePage implements AListener {
 
     private XHTMLTagger renderView(Context context, AContainer subview) {
     	return subview.getHTML(context);
-    }
-
-
-
-    private XHTMLTagger embossHTML(Context context) {
-    	XHTMLTagger ret = new XHTMLTagger();
-    	Iterable<String> data;
-    	data = bookController.getBook().getTitle();
-    	if (data==null || !data.iterator().hasNext()) {
-    		ret.insert(new XHTMLTagger().tag("p",  Messages.getString(L10nKeys.UNKNOWN_TITLE)));
-    	} else {
-    		for (String s: data) {
-    			ret.insert(new XHTMLTagger().tag("h2", s));
-    		}
-    	}
-    	data = bookController.getBook().getAuthors();
-    	if (data==null || !data.iterator().hasNext()) {
-    		ret.insert(new XHTMLTagger().tag("p", Messages.getString(L10nKeys.UNKNOWN_AUTHOR)));
-    	} else {
-    		ret.start("p");
-    		String delimiter = "";
-    		for (String s: data) {
-    			ret.text(delimiter + s);
-    			delimiter = ", "; //$NON-NLS-1$
-    		}
-    		ret.end();
-    	}
-    	ret.insert(
-    			new XHTMLTagger().tag("p", MessageFormat.format(Messages.getString(L10nKeys.FILE_DIMENSIONS), bookController.getBook().getMaxWidth(), bookController.getBook().getMaxHeight()))
-    		);
-
-    	ret.start("form");
-    	ret.attr("action", MainPage.TARGET);
-    	ret.attr("method", "get");
-    	ret.start("div");
-    	ret.attr("class", "group");
-
-    	ret.insert(
-    			new XHTMLTagger().tag("p", showOptions(context))
-    		); //$NON-NLS-1$
-    	if ("options".equals(context.getArgs().get("show"))) { //$NON-NLS-1$ //$NON-NLS-2$
-    		
-    		if (bookController.getBook().getVolumes()>1) {
-    			ret.start("p");
-    			ret.text(Messages.getString(L10nKeys.EMBOSS_VOLUME));
-		    	for (int i=1; i<=bookController.getBook().getVolumes(); i++) {
-		    		ret.start("label")
-		    			.start("input").attr("type", "radio").attr("name", "embossSelection").attr("value", ""+i)
-		    			.attr("onclick", "var from = document.getElementById('pagesFrom');var to = document.getElementById('pagesTo');from.value="+
-		    				bookController.getBook().getFirstPage(i)+
-		    				";to.value="+
-		    				bookController.getBook().getLastPage(i)+";").end().text(""+i)
-		    			.end();
-		    	}
-		    	ret.end();
-    		}
-    		ret.start("p");
-    		ret.text(Messages.getString(L10nKeys.EMBOSS_PAGES_FROM)+" ");
-    		ret.start("input").attr("type", "radio").attr("name", "embossSelection").attr("value", "pages").attr("id", "embossPagesRadio").attr("checked", "checked").end();
-    		ret.text(" ");
-    		ret.start("input").attr("type", "text").attr("name", "pagesFrom").attr("id", "pagesFrom").attr("maxlength", "5")
-    			.attr("size", "3").attr("value", "1").attr("onfocus", "document.getElementById('embossPagesRadio').checked='checked'").end();
-    		ret.text(" " + Messages.getString(L10nKeys.EMBOSS_PAGES_TO) + " ");
-    		ret.start("input").attr("type", "text").attr("name", "pagesTo").attr("id", "pagesTo")
-    			.attr("size", "3").attr("value", bookController.getBook().getPages()+"").attr("onfocus", "document.getElementById('embossPagesRadio').checked='checked'").end();
-			ret.end();
-			ret.start("p").text(Messages.getString(L10nKeys.EMBOSS_COPIES));
-			ret.start("input").attr("type", "text").attr("name", "copies").attr("id", "copies").attr("maxlength", "2")
-			.attr("size", "3").attr("value", "1").end()
-			.text(MessageFormat.format(Messages.getString(L10nKeys.EMBOSS_COPIES_MAX), MAX_COPIES));
-			ret.end();
-    	}
-    	
-    	ret.end();
-    	Configuration conf = Configuration.getConfiguration(Settings.getSettings());
-    	if (bookController.getBook().containsEightDot()) {
-    		ret.start("p").text(Messages.getString(L10nKeys.EIGHT_DOT_NOT_SUPPORTED)).end();
-    	} else if (!conf.settingOK()) {
-    		ret.start("p").attr("class", "warning").text("Unknown paper").end();
-    		settings.resetKey(Keys.paper);
-    	} else if (conf.getMaxWidth()<bookController.getBook().getMaxWidth()) {
-    		String papername = conf.getPaperName();
-			ret.insert(
-					new XHTMLTagger().start("p").attr("class", "warning")
-							.text(MessageFormat.format(Messages.getString(L10nKeys.CURRENT_PAPER_TOO_NARROW), papername))
-						.end()
-			);
-		} else if (conf.getMaxHeight()<bookController.getBook().getMaxHeight()) {
-    		String papername = conf.getPaperName();
-			ret.insert(
-					new XHTMLTagger().start("p").attr("class", "warning").text(MessageFormat.format(Messages.getString(L10nKeys.CURRENT_PAPER_TOO_SHORT), papername)).end()
-			);
-		} else {
-			ret.start("p")
-				.start("input").attr("type", "hidden").attr("name", "method").attr("value", "do").end()
-				.start("input").attr("type", "submit").attr("value", Messages.getString(L10nKeys.BUTTON_EMBOSS)).end()
-				.end();
-    	}
-    	ret.end();
-    	return ret;
-    }
-   
-
-	
-    private XHTMLTagger showOptions(Context context) {
-    	if ("options".equals(context.getArgs().get("show"))) { //$NON-NLS-1$ //$NON-NLS-2$
-    		return new XHTMLTagger().start("a").attr("href", TARGET + "?method=emboss")
-    		.text(Messages.getString(L10nKeys.EMBOSS_RESET_OPTIONS)).end();
-    	} else {
-    		return new XHTMLTagger().start("a").attr("href", TARGET + "?method=emboss&show=options")
-    		.text(Messages.getString(L10nKeys.SHOW_OPTIONS)).end();
-    	}
     }
 
 	@Override
