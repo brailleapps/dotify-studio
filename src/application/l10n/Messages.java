@@ -111,6 +111,10 @@ public enum Messages {
 	 * The file has been sent to the embosser
 	 */
 	MESSAGE_FILE_SENT_TO_EMBOSSER("message-file-sent-to-embosser"),
+	/**
+	 * Confirm delete a custom paper
+	 */
+	MESSAGE_CONFIRM_DELETE_PAPER("message-confirm-delete-paper"),
 	PREFERENCES_MENU_ITEM("menu-item-preferences"),
 	PREFERENCES_WINDOW_TITLE("preferences-window-title"),
 	TAB_EMBOSS("tab-emboss"),

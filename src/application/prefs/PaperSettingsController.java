@@ -14,6 +14,8 @@ import org.daisy.braille.api.paper.Paper;
 import application.l10n.Messages;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -21,6 +23,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import shared.NiceName;
 import shared.Tools;
@@ -76,13 +79,18 @@ public class PaperSettingsController extends BorderPane {
 		list.setOnKeyTyped(ev -> {
 			if ("\u007F".equals(ev.getCharacter())) { //DEL
 				PaperAdapter pa = list.getSelectionModel().getSelectedItem();
-				try {
-					hasUpdates = true;
-					coll.remove(pa.getPaper());
-					list.getItems().remove(pa);
-				} catch (IOException e) {
-					logger.log(Level.WARNING, "Failed to delete paper.", e);
-				}
+				Alert alert = new Alert(AlertType.CONFIRMATION, Messages.MESSAGE_CONFIRM_DELETE_PAPER.localize(pa.getDisplayName()));
+	    		alert.showAndWait()
+	    			.filter(response -> response == ButtonType.OK)
+	    			.ifPresent(response -> {
+						try {
+							hasUpdates = true;
+							coll.remove(pa.getPaper());
+							list.getItems().remove(pa);
+						} catch (IOException e) {
+							logger.log(Level.WARNING, "Failed to delete paper.", e);
+						}
+	    			});
 			} else {
 				System.out.println(ev.getCharacter());
 			}
