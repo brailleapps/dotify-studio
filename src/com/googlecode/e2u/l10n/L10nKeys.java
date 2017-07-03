@@ -8,7 +8,6 @@ public interface L10nKeys {
 	public final static String ERROR = "Worker.heading-error";
 	public final static String EMBOSS_PEF = "Worker.heading-emboss-pef";
 	public final static String CLOSED = "Worker.heading-close";
-	public final static String OPEN = "Worker.heading-open";
 	public final static String MANAGE_PAPER = "Worker.heading-paper";
 	public final static String TEST_SETUP = "Worker.heading-test-setup";
 	public final static String UNKNOWN_TITLE = "Worker.unknown-title";
@@ -90,7 +89,6 @@ public interface L10nKeys {
 	public final static String PREVIEW_VIEW = "Worker.preview-view";
 	public final static String PAPER_VIEW = "Worker.paper-view";
 	public final static String USE_DEFAULT = "Worker.use-default";
-	public final static String SET_LIBRARY_PATH = "Worker.set-library-path";
 	public final static String XSLT_TOGGLE_VIEW = "xslt.toggle-view-label";
 	public final static String XSLT_RETURN_LABEL = "xslt.return-label";
 	public final static String XSLT_SHOWING_PAGES = "xslt.showing-pages";
@@ -103,7 +101,6 @@ public interface L10nKeys {
 	public final static String XSLT_VIEWING_LABEL = "xslt.viewing-label";
 	public final static String XSLT_GO_TO_PAGE_LABEL = "xslt.go-to-page-label";
 	public static final String VALIDATION_ISSUES = "validation-issues";
-	public final static String BROWSE_FILE_SYSTEM = "Worker.browse-file-system";
 	
 	public final static String PRINT_MODE = "Worker.print-mode";
 	public final static String ORIENTATION = "Worker.orientation";
@@ -119,8 +116,6 @@ public interface L10nKeys {
 	public final static String CONFIRM_REMOVE = "Worker.confirm-remove";
 	
 	public final static String CUT_LENGTH = "Worker.cut-length";
-	
-	public final static String COULD_NOT_SET_DIRECTORY ="Worker.could-not-set-directory";
 	
 	public final static String PAPER_NAME = "Worker.paper-name";
 	public final static String PAPER_DESCRIPTION = "Worker.paper-description";

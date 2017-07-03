@@ -61,13 +61,10 @@ public class MainPage extends BasePage implements AListener {
 	private BookViewController bookController;
 
 	private MenuSystem embossMenu;
-	private MenuSystem openMenu;
 	private MenuSystem setupMenu;
 
 	private final SettingsView settingsView;
 	private AContainer previewSettingsView;
-
-	private final AContainer fileChooser;
 	
 	private static boolean closing = false;
     
@@ -79,19 +76,7 @@ public class MainPage extends BasePage implements AListener {
     	buildMenu();
     	bookController = new BookViewController(f, settings, embossMenu);
     	settingsView = new SettingsView(settings, setupMenu);
-
-    	File libPath = null;
-    	try {
-	    	libPath = new File(settings.getString(Settings.Keys.libraryPath));
-			if (!libPath.isDirectory()) {
-				libPath = null;
-			}
-    	} catch (NullPointerException e) {
-    		// value was not set
-    	}
     	
-    	fileChooser = new AFileChooser(libPath, openMenu);
-
     }
     
     private AContainer getPreviewSettingsView() {
@@ -104,9 +89,6 @@ public class MainPage extends BasePage implements AListener {
     public void buildMenu() {
 
     	embossMenu = null;
-		openMenu = new MenuSystem("method")
-			.setDivider(" | ")
-			.addMenuItem("choose", Messages.getString(L10nKeys.BROWSE_FILE_SYSTEM));
 		setupMenu = new MenuSystem("method")
 			.setDivider(" | ")
 			.addMenuItem("setup", Messages.getString(L10nKeys.EMBOSS_VIEW))
@@ -185,9 +167,7 @@ public class MainPage extends BasePage implements AListener {
 				bookController = new BookViewController(f, settings, embossMenu);
 			}
 		}
-		if ("choose".equals(args.get("method"))) {
-			return buildHTML(renderView(context, fileChooser), Messages.getString(L10nKeys.OPEN), true);
-		} else if ("setup".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
+		if ("setup".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
 			return buildHTML(renderView(context, settingsView), Messages.getString(L10nKeys.SETTINGS), true); //$NON-NLS-1$
 		} else if ("setup-preview".equals(args.get("method"))) { //$NON-NLS-1$ //$NON-NLS-2$
 			return buildHTML(renderView(context, getPreviewSettingsView()), Messages.getString(L10nKeys.SETTINGS), true); //$NON-NLS-1$
