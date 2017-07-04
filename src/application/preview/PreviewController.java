@@ -74,6 +74,7 @@ public class PreviewController extends BorderPane {
 		}
 
         WebEngine webEngine = browser.getEngine();
+        browser.setOnDragOver(event->event.consume());
         webEngine.setCreatePopupHandler(p-> {
                 Stage stage = new Stage(StageStyle.UTILITY);
                 WebView wv2 = new WebView();

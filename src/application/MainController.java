@@ -67,10 +67,12 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -134,8 +136,32 @@ public class MainController {
 				ev.consume();
 			}
 		});
+		root.setOnDragOver(event->{
+			Dragboard db = event.getDragboard();
+			if (db.hasFiles() && canDropFiles(db.getFiles())) {
+				event.acceptTransferModes(TransferMode.COPY);
+			} else {
+				event.consume();
+			}
+		});
+		root.setOnDragDropped(event -> {
+			Dragboard db = event.getDragboard();
+			boolean success = false;
+			if (db.hasFiles()) {
+				success = true;
+				for (File file : db.getFiles()) {
+					Platform.runLater(() -> {
+						addTab(file);
+					});
+				}
+			}
+			event.setDropCompleted(success);
+			event.consume();
+		});
+
 		clearConsole();
 		
+		console.setOnDragOver(event->event.consume());
 		exeService = Executors.newWorkStealingPool();
 		System.setOut(new PrintStream(new ConsoleStream("out")));
 		System.setErr(new PrintStream(new ConsoleStream("err")));
@@ -152,6 +178,15 @@ public class MainController {
 		refreshMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
 		openInBrowserMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
 		embossMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
+	}
+	
+	private static boolean canDropFiles(List<File> files) {
+		for (File f : files) {
+			if (!f.getName().endsWith(".pef")) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	@FXML void clearConsole() {
@@ -506,6 +541,7 @@ public class MainController {
 		// if the tab is not visible, recreate it (this is a workaround for https://github.com/brailleapps/dotify-studio/issues/20)
 		if (helpTab==null || !tabPane.getTabs().contains(helpTab)) {
 			WebView wv = new WebView();
+			wv.setOnDragOver(event->event.consume());
 			helpTab = new Tab(Messages.TAB_HELP_CONTENTS.localize(), wv);
 			helpTab.setGraphic(buildImage(this.getClass().getResource("resource-files/help.png")));
 			String helpURL = getHelpURL();
