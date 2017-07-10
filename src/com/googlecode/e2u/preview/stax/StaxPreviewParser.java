@@ -3,6 +3,7 @@ package com.googlecode.e2u.preview.stax;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
@@ -134,9 +135,9 @@ class StaxPreviewParser {
 		assertUnused();
 		long t0 = System.currentTimeMillis();
 		isProcessing = true;
-		try {
+		try (InputStream is = book.getURI().toURL().openStream()) {
 			XMLInputFactory inFactory = XMLInputFactory.newInstance();
-			XMLEventReader input = inFactory.createXMLEventReader(book.getURI().toURL().openStream());
+			XMLEventReader input = inFactory.createXMLEventReader(is);
 			XMLEvent event;
 			int volNumber = 0;
 			while (input.hasNext()) {
