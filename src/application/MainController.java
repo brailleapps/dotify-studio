@@ -606,6 +606,7 @@ public class MainController {
         }
         if (title!=null) {
         	tab.setText(title);
+        	setGraphic(title, tab);
         }
         PreviewController prv = new PreviewController();
         tab.setOnClosed(ev ->  {
@@ -616,8 +617,15 @@ public class MainController {
 
     }
     
+	private void setGraphic(String fileName, Tab t) {
+		boolean source = !fileName.endsWith(".pef");
+		t.setGraphic(buildImage(this.getClass()
+				.getResource(source ? "resource-files/source-doc.png" : "resource-files/braille-doc.png")));
+	}
+    
     private void addSourceTab(File source, Map<String, Object> options) {
         Tab tab = new Tab();
+        setGraphic(source.getName(), tab);
         tab.setText(source.getName());
         PreviewController prv = new PreviewController();
         tab.setOnClosed(ev ->  {
