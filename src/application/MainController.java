@@ -468,12 +468,26 @@ public class MainController {
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle(Messages.TITLE_IMPORT_SOURCE_DOCUMENT_DIALOG.localize());
 		List<String> exts = TaskGroupFactoryMaker.newInstance().listAll().stream()
-			.filter(spec -> !"pef".equals(spec.getInputFormat()))
+			.filter(spec ->
+				// Currently, this can be viewed as an identity conversion, which isn't supported by the task system.
+				// TODO: Perhaps support this as a special case in this code instead (just open the file without going through the task system).
+				!"pef".equals(spec.getInputFormat())
+				// Not all formats in this list are actually extensions.
+				// TODO: Filter these out here until the TaskGroupFactory provides extensions separately. 
+				&& !"dtbook".equals(spec.getInputFormat()) // use xml instead
+				&& !"text".equals(spec.getInputFormat()) // use txt instead
+			)
 			.map(spec -> "*."+spec.getInputFormat())
-			.distinct().collect(Collectors.toList());
-		// TODO: not all formats in this list are actually extensions, but it will have to do for now, since the TaskGroupFactory doesn't provide this information
+			.distinct()
+			.collect(Collectors.toList());
 		fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_SUPPORTED_FILES.localize(), exts));
-		// TODO: add all extensions individually as well, requires additional information from the TaskGroupFactory about the formats (i.e. descriptions)
+		// All extensions are individually as well
+		// TODO: additional information from the TaskGroupFactory about the formats (i.e. descriptions) would be useful for this list
+		fileChooser.getExtensionFilters().addAll(
+				exts.stream()
+				.map(ext->new ExtensionFilter(ext, ext))
+				.collect(Collectors.toList())
+				);
 		fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_ALL_FILES.localize(), "*.*"));
     	File selected = fileChooser.showOpenDialog(stage);
     	if (selected!=null) {
