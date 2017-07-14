@@ -45,13 +45,11 @@ import application.imports.ImportBrailleView;
 import application.l10n.Messages;
 import application.prefs.PreferencesView;
 import application.preview.PreviewController;
-import application.search.PefBookAdapter;
 import application.search.SearchController;
 import application.template.TemplateView;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
@@ -367,12 +365,7 @@ public class MainController {
 		if (showSearchMenuItem.isSelected()) {
 			if (searchTab==null || !toolsPane.getTabs().contains(searchTab)) {
 				SearchController controller = new SearchController();
-				controller.addEventHandler(ActionEvent.ACTION, ev -> {
-					PefBookAdapter book = controller.getSelectedItem();
-					if (book!=null) {
-						addTab(new File(book.getBook().getURI()));
-					}
-				});
+				controller.setOnOpen(book -> addTab(new File(book.getBook().getURI())));
 				searchTab = addTabToTools(controller, Messages.TAB_SEARCH.localize());
 			} else {
 				//focus

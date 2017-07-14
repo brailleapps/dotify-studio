@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +21,6 @@ import org.xml.sax.SAXException;
 import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -30,8 +30,6 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
@@ -117,18 +115,6 @@ public class SearchController extends VBox {
     	}
     }
     
-    @FXML void openBook(KeyEvent event) {
-    	if (event.getCode()==KeyCode.ENTER) {
-    		fireEvent(new ActionEvent());
-    	}
-    }
-    
-    @FXML void openBookMouse(MouseEvent event) {
-    	if (event.getClickCount()>1) {
-    		fireEvent(new ActionEvent());
-    	}
-    }
-    
     /**
      * Gets the selected result, or null if no result is selected.
      * @return returns the selected result, or null
@@ -136,6 +122,33 @@ public class SearchController extends VBox {
     public PefBookAdapter getSelectedItem() {
     	return listView.getSelectionModel().getSelectedItem();
     }
+    
+	/**
+	 * Performs an action when a book is selected to be opened.
+	 * 
+	 * @param action
+	 */
+	public void setOnOpen(Consumer<PefBookAdapter> action) {
+		listView.setOnMouseClicked(ev -> {
+			if (ev.getClickCount() == 2) {
+				PefBookAdapter book = getSelectedItem();
+				if (book != null) {
+					action.accept(book);
+					ev.consume();
+				}
+			}
+		});
+		listView.setOnKeyReleased(ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				PefBookAdapter book = getSelectedItem();
+				if (book != null) {
+					action.accept(book);
+					ev.consume();
+				}
+			}
+			;
+		});
+	}
     
     private void configureFolderLabel(String text) {
     	currentFolder.setText(text);
