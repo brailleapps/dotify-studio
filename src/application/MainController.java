@@ -48,6 +48,7 @@ import application.preview.PreviewController;
 import application.search.SearchController;
 import application.template.TemplateView;
 import javafx.application.Platform;
+import javafx.beans.binding.BooleanBinding;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -170,12 +171,20 @@ public class MainController {
 			e.printStackTrace();
 		}
 		//add menu bindings
-		closeMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
-		exportMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
-		saveAsMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
-		refreshMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
-		openInBrowserMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
-		embossMenuItem.disableProperty().bind(tabPane.getSelectionModel().selectedItemProperty().isNull());
+		setMenuBindings();
+	}
+	
+	private void setMenuBindings() {
+		BooleanBinding noTabBinding = tabPane.getSelectionModel().selectedItemProperty().isNull();
+		BooleanBinding noTabExceptHelpBinding = noTabBinding.or(
+				tabPane.getSelectionModel().selectedItemProperty().isEqualTo(helpTab)
+		);
+		closeMenuItem.disableProperty().bind(noTabBinding);
+		exportMenuItem.disableProperty().bind(noTabExceptHelpBinding);
+		saveAsMenuItem.disableProperty().bind(noTabExceptHelpBinding);
+		refreshMenuItem.disableProperty().bind(noTabBinding);
+		openInBrowserMenuItem.disableProperty().bind(noTabBinding);
+		embossMenuItem.disableProperty().bind(noTabExceptHelpBinding);
 	}
 	
 	private static boolean canDropFiles(List<File> files) {
@@ -258,7 +267,12 @@ public class MainController {
     @FXML void refresh() {
 		Tab t = tabPane.getSelectionModel().getSelectedItem();
 		if (t!=null) {
-			((PreviewController)t.getContent()).reload();
+			javafx.scene.Node node = t.getContent();
+			if (node instanceof WebView) {
+				((WebView) node).getEngine().reload();
+			} else if (node instanceof PreviewController) {
+				((PreviewController)node).reload();
+			}
 		}
     }
     
@@ -267,7 +281,12 @@ public class MainController {
 			try {
 				Tab t = tabPane.getSelectionModel().getSelectedItem();
 				if (t!=null) {
-					Desktop.getDesktop().browse(new URI(((PreviewController)t.getContent()).getURL()));
+					javafx.scene.Node node = t.getContent();
+					if (node instanceof WebView) {
+						Desktop.getDesktop().browse(new URI(((WebView) node).getEngine().getLocation()));
+					} else if (node instanceof PreviewController) {
+						Desktop.getDesktop().browse(new URI(((PreviewController)t.getContent()).getURL()));
+					}
 				}				
 			} catch (IOException | URISyntaxException e) {
 			}
@@ -546,6 +565,7 @@ public class MainController {
     
 	@FXML void openHelpTab() {
 		// if the tab is not visible, recreate it (this is a workaround for https://github.com/brailleapps/dotify-studio/issues/20)
+		Tab old = helpTab;
 		if (helpTab==null || !tabPane.getTabs().contains(helpTab)) {
 			WebView wv = new WebView();
 			wv.setOnDragOver(event->event.consume());
@@ -563,6 +583,9 @@ public class MainController {
 			tabPane.getTabs().add(helpTab);
 		}
 		tabPane.getSelectionModel().select(helpTab);
+		if (helpTab!=old) {
+			setMenuBindings();
+		}
 	}
 	
 	private static ImageView buildImage(URL url) {
