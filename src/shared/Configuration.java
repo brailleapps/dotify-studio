@@ -146,7 +146,7 @@ public class Configuration {
 	        			throw new RuntimeException("coding error");
 	        	}
     		}
-	    	if (pageFormat!=null) {
+	    	if (pageFormat!=null && em!=null) {
 	    		PrintPage pp = em.getPrintPage(pageFormat);
 	    		pWidth = Length.newMillimeterValue(Math.round(pp.getWidth()));
 	    		pHeight = Length.newMillimeterValue(Math.round(pp.getHeight()));
