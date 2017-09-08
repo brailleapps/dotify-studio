@@ -22,7 +22,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -32,7 +32,7 @@ import javafx.scene.text.Font;
  * @author Joel Håkansson
  *
  */
-public class OptionsController extends ScrollPane {
+public class OptionsController extends BorderPane {
 	private static final Logger logger = Logger.getLogger(OptionsController.class.getCanonicalName());
 	@FXML private VBox vbox;
 	@FXML private Button applyButton;
