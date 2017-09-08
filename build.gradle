@@ -62,7 +62,7 @@ repositories {
 
 dependencies {
 	compile 'org.daisy.braille:braille-utils.api:3.0.1'
-	compile 'org.daisy.braille:braille-utils.impl:3.0.0-beta'
+	compile 'org.daisy.braille:braille-utils.impl:3.0.0'
 	compile ('org.daisy.braille:braille-utils.pef-tools:2.2.0') {
 		exclude module: 'Saxon-HE'
 	}
