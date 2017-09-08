@@ -21,6 +21,7 @@
             </Label>
             <Label fx:id="description" alignment="TOP_LEFT" text="%application-description" wrapText="true" />
             <Label fx:id="version" text="%application-version" wrapText="true" />
+            <Label fx:id="environment" text="%application-environment" wrapText="true" />
             <TextFlow>
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%application-about-pef" />

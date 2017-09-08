@@ -25,6 +25,7 @@ public class AboutController {
 	@FXML private Label title;
 	@FXML private Label description;
 	@FXML private Label version;
+	@FXML private Label environment;
 	@FXML private Hyperlink pefLink;
 	@FXML private Hyperlink contributeLink;
 	@FXML private Button ok;
@@ -34,6 +35,8 @@ public class AboutController {
 	 */
 	@FXML void initialize() {
 		version.setText(Messages.APPLICATION_VERSION.localize(BuildInfo.VERSION, BuildInfo.BUILD));
+		environment.setText(Messages.APPLICATION_ENVIRONMENT.localize(
+				System.getProperty("java.version")));
 		pefLink.setText(PEF_URL);
 		contributeLink.setText(BRAILLE_APPS_URL);
 	}

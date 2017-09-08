@@ -16,6 +16,7 @@ public enum Messages {
 	APPLICATION_DESCRIPTION("application-description"),
 	APPLICATION_VERSION("application-version"),
 	APPLICATION_ABOUT_PEF("application-about-pef"),
+	APPLICATION_ENVIRONMENT("application-environment"),
 	BUTTON_OK("button-ok"),
 	BUTTON_SELECT("button-select"),
 	EMBOSS_WINDOW_TITLE("emboss-window-title"),
