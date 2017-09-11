@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -150,7 +151,11 @@ public class MainController {
 				success = true;
 				for (File file : db.getFiles()) {
 					Platform.runLater(() -> {
-						addTab(file);
+						if (file.getName().endsWith(".pef")) {
+							addTab(file);
+						} else {
+							selectTemplateAndOpen(file);
+						}
 					});
 				}
 			}
@@ -188,12 +193,24 @@ public class MainController {
 	}
 	
 	private static boolean canDropFiles(List<File> files) {
+		List<String> exts = newImportExtensionStream()
+			.map(val -> "."+val.toLowerCase())
+			.collect(Collectors.toList());
 		for (File f : files) {
-			if (!f.getName().endsWith(".pef")) {
+			if (!(f.getName().endsWith(".pef")||exts.contains(getExtension(f.getName().toLowerCase())))) {
 				return false;
 			}
 		}
 		return true;
+	}
+	
+	private static String getExtension(String filename) {
+		int ix = filename.lastIndexOf('.');
+		if (ix<0) {
+			return "";
+		} else {
+			return filename.substring(ix);
+		}
 	}
 	
 	@FXML void clearConsole() {
@@ -474,12 +491,13 @@ public class MainController {
     		}
     	}
     }
-
-    @FXML void showImportDialog() {
-    	Window stage = root.getScene().getWindow();
-    	FileChooser fileChooser = new FileChooser();
-    	fileChooser.setTitle(Messages.TITLE_IMPORT_SOURCE_DOCUMENT_DIALOG.localize());
-		List<String> exts = TaskGroupFactoryMaker.newInstance().listAll().stream()
+    
+    /**
+     * Returns a new stream with unique input formats.
+     * @return
+     */
+    private static Stream<String> newImportExtensionStream() {
+    	return TaskGroupFactoryMaker.newInstance().listAll().stream()
 			.filter(spec ->
 				// Currently, this can be viewed as an identity conversion, which isn't supported by the task system.
 				// TODO: Perhaps support this as a special case in this code instead (just open the file without going through the task system).
@@ -487,11 +505,18 @@ public class MainController {
 				// Not all formats in this list are actually extensions.
 				// TODO: Filter these out here until the TaskGroupFactory provides extensions separately. 
 				&& !"dtbook".equals(spec.getInputFormat()) // use xml instead
-				&& !"text".equals(spec.getInputFormat()) // use txt instead
-			)
-			.map(spec -> "*."+spec.getInputFormat())
-			.distinct()
-			.collect(Collectors.toList());
+				&& !"text".equals(spec.getInputFormat())) // use txt instead
+			.map(spec -> spec.getInputFormat())
+			.distinct();
+    }
+
+    @FXML void showImportDialog() {
+    	Window stage = root.getScene().getWindow();
+    	FileChooser fileChooser = new FileChooser();
+    	fileChooser.setTitle(Messages.TITLE_IMPORT_SOURCE_DOCUMENT_DIALOG.localize());
+		List<String> exts = newImportExtensionStream()
+				.map(val -> "*."+val)
+				.collect(Collectors.toList()); 
 		fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_SUPPORTED_FILES.localize(), exts));
 		// All extensions are individually as well
 		// TODO: additional information from the TaskGroupFactory about the formats (i.e. descriptions) would be useful for this list
@@ -503,17 +528,21 @@ public class MainController {
 		fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_ALL_FILES.localize(), "*.*"));
     	File selected = fileChooser.showOpenDialog(stage);
     	if (selected!=null) {
-    		// choose template
-    		TemplateView dialog = new TemplateView();
-    		if (dialog.hasTemplates()) {
-    			dialog.initOwner(root.getScene().getWindow());
-    			dialog.initModality(Modality.APPLICATION_MODAL); 
-    			dialog.showAndWait();
-    		}
-
-    		// convert then add tab
-    		addSourceTab(selected, dialog.getSelectedConfiguration());
+    		selectTemplateAndOpen(selected);
     	}
+    }
+    
+    private void selectTemplateAndOpen(File selected) {
+		// choose template
+		TemplateView dialog = new TemplateView(selected);
+		if (dialog.hasTemplates()) {
+			dialog.initOwner(root.getScene().getWindow());
+			dialog.initModality(Modality.APPLICATION_MODAL); 
+			dialog.showAndWait();
+		}
+
+		// convert then add tab
+		addSourceTab(selected, dialog.getSelectedConfiguration());
     }
     
     @FXML void exportFile() {

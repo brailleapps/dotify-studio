@@ -19,7 +19,7 @@
       </ScrollPane>
    </center>
    <top>
-      <Label text="%title-templates-dialog" BorderPane.alignment="CENTER_LEFT">
+      <Label text="%title-templates-dialog" BorderPane.alignment="CENTER_LEFT" fx:id="title">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>

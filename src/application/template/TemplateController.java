@@ -17,6 +17,7 @@ import application.l10n.Messages;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -28,6 +29,7 @@ import javafx.stage.Stage;
 public class TemplateController {
 	private static final Logger logger = Logger.getLogger(TemplateController.class.getCanonicalName());
 	@FXML private VBox templates;
+	@FXML private Label title;
 	private ConfigurationsCatalog cc;
 	private final Set<ConfigurationDetails> details;
 	private final boolean hasTemplates;
@@ -66,6 +68,10 @@ public class TemplateController {
 			cc = ConfigurationsCatalog.newInstance();
 		}
 		return cc;
+	}
+	
+	void setHeading(String value) {
+		title.setText(value);
 	}
 
 	boolean hasTemplates() {

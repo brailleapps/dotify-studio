@@ -1,5 +1,6 @@
 package application.template;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Level;
@@ -21,16 +22,19 @@ public class TemplateView extends Stage {
 
 	/**
 	 * Creates a new template view.
+	 * @param file the file target
 	 */
-	public TemplateView() {
+	public TemplateView(File file) {
+		String title = Messages.TITLE_TEMPLATES_DIALOG.localize(file.getName());
 		try {
 			loader = new FXMLLoader(this.getClass().getResource("Template.fxml"), Messages.getBundle());
 			Parent root = loader.load();
 	    	setScene(new Scene(root));
+	    	loader.<TemplateController>getController().setHeading(title);
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Failed to load view", e);
 		}
-		setTitle(Messages.TITLE_TEMPLATES_DIALOG.localize());
+		setTitle(title);
 	}
 	
 	/**
