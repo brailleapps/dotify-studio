@@ -1,5 +1,16 @@
 [[Table of Contents|Toc]]
 
+# 0.4.0 #
+## New in this version ##
+- Enables drag-and-drop for source file imports
+- Moves the watch source checkbox and the apply button out of the options scroll pane
+- Improves dtbook/epub conversion:
+  - Adds option to remove title page (enabled by default)
+  - Adds an option to disable the cover page
+  - Updates Norwegian localization
+- Adds java version to "about" dialog
+- Corrects menu actions for help tab (fixes #42)
+
 # 0.3.0 #
 ## New in this version ##
 - Adds Norwegian translation
