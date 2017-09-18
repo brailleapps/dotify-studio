@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingWorker;
 
-import org.daisy.braille.pef.PEFBook;
+import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.dotify.api.validity.ValidationReport;
 import org.daisy.dotify.api.validity.ValidatorFactoryMakerService;
 import org.daisy.dotify.api.validity.ValidatorMessage;

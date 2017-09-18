@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.daisy.braille.api.factory.FactoryProperties;
-import org.daisy.braille.consumer.table.TableCatalog;
+import org.daisy.braille.utils.api.factory.FactoryProperties;
+import org.daisy.braille.utils.api.table.TableCatalog;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;

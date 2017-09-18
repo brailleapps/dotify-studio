@@ -24,12 +24,12 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.XMLEvent;
 
-import org.daisy.braille.api.table.BrailleConstants;
-import org.daisy.braille.api.table.BrailleConverter;
-import org.daisy.braille.api.table.Table;
-import org.daisy.braille.consumer.table.TableCatalog;
+import org.daisy.braille.utils.api.table.BrailleConstants;
+import org.daisy.braille.utils.api.table.BrailleConverter;
+import org.daisy.braille.utils.api.table.Table;
+import org.daisy.braille.utils.api.table.TableCatalog;
 import org.daisy.braille.impl.table.DefaultTableProvider;
-import org.daisy.braille.pef.PEFBook;
+import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.dotify.api.validity.ValidationReport;
 import org.daisy.dotify.api.validity.ValidatorMessage;
 import org.daisy.dotify.common.text.ConditionalMapper;

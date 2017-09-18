@@ -20,14 +20,14 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.daisy.braille.api.embosser.Embosser;
-import org.daisy.braille.api.embosser.EmbosserWriter;
-import org.daisy.braille.pef.PEFConverterFacade;
-import org.daisy.braille.pef.PEFGenerator;
-import org.daisy.braille.pef.PEFHandler;
-import org.daisy.braille.pef.PEFHandler.Alignment;
-import org.daisy.braille.pef.PrinterDevice;
-import org.daisy.braille.pef.Range;
+import org.daisy.braille.utils.api.embosser.Embosser;
+import org.daisy.braille.utils.api.embosser.EmbosserWriter;
+import org.daisy.braille.utils.pef.PEFConverterFacade;
+import org.daisy.braille.utils.pef.PEFGenerator;
+import org.daisy.braille.utils.pef.PEFHandler;
+import org.daisy.braille.utils.pef.PEFHandler.Alignment;
+import org.daisy.braille.utils.pef.PrinterDevice;
+import org.daisy.braille.utils.pef.Range;
 
 import com.googlecode.ajui.AContainer;
 import com.googlecode.ajui.ALabel;

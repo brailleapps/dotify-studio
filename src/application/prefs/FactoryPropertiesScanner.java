@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.daisy.braille.api.factory.FactoryProperties;
+import org.daisy.braille.utils.api.factory.FactoryProperties;
 
 import javafx.concurrent.Task;
 import shared.FactoryPropertiesAdapter;

@@ -5,21 +5,21 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.daisy.braille.api.embosser.Embosser;
-import org.daisy.braille.api.embosser.EmbosserFeatures;
-import org.daisy.braille.api.embosser.EmbosserProperties.PrintMode;
-import org.daisy.braille.api.embosser.PrintPage;
-import org.daisy.braille.api.embosser.PrintPage.Shape;
-import org.daisy.braille.api.factory.FactoryProperties;
-import org.daisy.braille.api.paper.Length;
-import org.daisy.braille.api.paper.PageFormat;
-import org.daisy.braille.api.paper.Paper;
-import org.daisy.braille.api.paper.RollPaperFormat;
-import org.daisy.braille.api.paper.SheetPaperFormat;
-import org.daisy.braille.api.paper.TractorPaperFormat;
-import org.daisy.braille.consumer.embosser.EmbosserCatalog;
-import org.daisy.braille.consumer.paper.PaperCatalog;
-import org.daisy.braille.consumer.table.TableCatalog;
+import org.daisy.braille.utils.api.embosser.Embosser;
+import org.daisy.braille.utils.api.embosser.EmbosserFeatures;
+import org.daisy.braille.utils.api.embosser.EmbosserProperties.PrintMode;
+import org.daisy.braille.utils.api.embosser.PrintPage;
+import org.daisy.braille.utils.api.embosser.PrintPage.Shape;
+import org.daisy.braille.utils.api.factory.FactoryProperties;
+import org.daisy.braille.utils.api.paper.Length;
+import org.daisy.braille.utils.api.paper.PageFormat;
+import org.daisy.braille.utils.api.paper.Paper;
+import org.daisy.braille.utils.api.paper.RollPaperFormat;
+import org.daisy.braille.utils.api.paper.SheetPaperFormat;
+import org.daisy.braille.utils.api.paper.TractorPaperFormat;
+import org.daisy.braille.utils.api.embosser.EmbosserCatalog;
+import org.daisy.braille.utils.api.paper.PaperCatalog;
+import org.daisy.braille.utils.api.table.TableCatalog;
 
 import shared.Settings.Keys;
 

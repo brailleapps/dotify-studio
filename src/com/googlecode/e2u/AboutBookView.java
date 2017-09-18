@@ -3,7 +3,7 @@ package com.googlecode.e2u;
 import java.text.MessageFormat;
 import java.util.List;
 
-import org.daisy.braille.pef.PEFBook;
+import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.dotify.api.validity.ValidatorMessage;
 
 import com.googlecode.ajui.AContainer;

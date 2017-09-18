@@ -4,13 +4,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.logging.Logger;
 
-import org.daisy.braille.api.embosser.Embosser;
-import org.daisy.braille.api.embosser.EmbosserWriter;
-import org.daisy.braille.pef.PEFConverterFacade;
-import org.daisy.braille.pef.PEFHandler;
-import org.daisy.braille.pef.PEFHandler.Alignment;
-import org.daisy.braille.pef.PrinterDevice;
-import org.daisy.braille.pef.Range;
+import org.daisy.braille.utils.api.embosser.Embosser;
+import org.daisy.braille.utils.api.embosser.EmbosserWriter;
+import org.daisy.braille.utils.pef.PEFConverterFacade;
+import org.daisy.braille.utils.pef.PEFHandler;
+import org.daisy.braille.utils.pef.PEFHandler.Alignment;
+import org.daisy.braille.utils.pef.PrinterDevice;
+import org.daisy.braille.utils.pef.Range;
 
 import javafx.concurrent.Task;
 import shared.Configuration;

@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.daisy.braille.api.table.BrailleConstants;
-import org.daisy.braille.api.table.BrailleConverter;
-import org.daisy.braille.api.table.Table;
-import org.daisy.braille.consumer.table.TableCatalog;
+import org.daisy.braille.utils.api.table.BrailleConstants;
+import org.daisy.braille.utils.api.table.BrailleConverter;
+import org.daisy.braille.utils.api.table.Table;
+import org.daisy.braille.utils.api.table.TableCatalog;
 import org.daisy.braille.impl.table.DefaultTableProvider;
 
 import com.googlecode.ajui.Context;

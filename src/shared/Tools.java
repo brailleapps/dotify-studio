@@ -1,6 +1,6 @@
 package shared;
 
-import org.daisy.braille.api.paper.Length;
+import org.daisy.braille.utils.api.paper.Length;
 
 /**
  * Provides tools common to both e2u and application packages.

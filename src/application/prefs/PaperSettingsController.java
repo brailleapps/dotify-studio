@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.daisy.braille.api.paper.CustomPaperCollection;
-import org.daisy.braille.api.paper.Length;
-import org.daisy.braille.api.paper.Paper;
+import org.daisy.braille.utils.api.paper.CustomPaperCollection;
+import org.daisy.braille.utils.api.paper.Length;
+import org.daisy.braille.utils.api.paper.Paper;
 
 import application.l10n.Messages;
 import javafx.fxml.FXML;

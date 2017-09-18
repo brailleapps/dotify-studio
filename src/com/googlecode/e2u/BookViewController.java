@@ -4,7 +4,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.daisy.braille.pef.PEFBook;
+import org.daisy.braille.utils.pef.PEFBook;
 
 import com.googlecode.e2u.BookReader.BookReaderResult;
 import com.googlecode.e2u.preview.stax.StaxPreviewController;

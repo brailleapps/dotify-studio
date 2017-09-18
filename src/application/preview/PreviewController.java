@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.daisy.braille.pef.PEFBook;
+import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.dotify.api.tasks.AnnotatedFile;
 import org.daisy.dotify.api.tasks.CompiledTaskSystem;
 import org.daisy.dotify.api.tasks.TaskSystem;

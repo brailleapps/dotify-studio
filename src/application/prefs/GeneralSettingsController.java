@@ -7,8 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import org.daisy.braille.api.table.BrailleConstants;
-import org.daisy.braille.consumer.table.TableCatalog;
+import org.daisy.braille.utils.api.table.BrailleConstants;
+import org.daisy.braille.utils.api.table.TableCatalog;
 
 import application.l10n.Messages;
 import javafx.application.Platform;

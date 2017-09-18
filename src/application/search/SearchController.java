@@ -12,10 +12,10 @@ import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.daisy.braille.pef.PEFBook;
-import org.daisy.braille.pef.PEFBookLoader;
-import org.daisy.braille.pef.PEFLibrary;
-import org.daisy.braille.pef.PEFSearchIndex;
+import org.daisy.braille.utils.pef.PEFBook;
+import org.daisy.braille.utils.pef.PEFBookLoader;
+import org.daisy.braille.utils.pef.PEFLibrary;
+import org.daisy.braille.utils.pef.PEFSearchIndex;
 import org.xml.sax.SAXException;
 
 import application.l10n.Messages;

@@ -1,6 +1,6 @@
 package application.search;
 
-import org.daisy.braille.pef.PEFBook;
+import org.daisy.braille.utils.pef.PEFBook;
 
 import application.l10n.Messages;
 

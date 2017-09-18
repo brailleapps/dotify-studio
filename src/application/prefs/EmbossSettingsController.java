@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 
-import org.daisy.braille.api.factory.FactoryProperties;
-import org.daisy.braille.pef.PEFGenerator;
+import org.daisy.braille.utils.api.factory.FactoryProperties;
+import org.daisy.braille.utils.pef.PEFGenerator;
 
 import application.l10n.Messages;
 import javafx.application.Platform;

@@ -8,7 +8,7 @@ import java.net.URLClassLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.daisy.braille.pef.FileTools;
+import org.daisy.braille.utils.pef.FileTools;
 
 import application.l10n.Messages;
 import javafx.application.Application;

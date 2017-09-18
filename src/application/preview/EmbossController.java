@@ -10,8 +10,8 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.daisy.braille.pef.PEFBook;
-import org.daisy.braille.pef.Range;
+import org.daisy.braille.utils.pef.PEFBook;
+import org.daisy.braille.utils.pef.Range;
 
 import application.l10n.Messages;
 import javafx.application.Platform;
