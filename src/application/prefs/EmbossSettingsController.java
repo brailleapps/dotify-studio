@@ -2,6 +2,7 @@ package application.prefs;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 
+import org.daisy.braille.utils.api.embosser.Embosser;
 import org.daisy.braille.utils.api.factory.FactoryProperties;
 import org.daisy.braille.utils.pef.PEFGenerator;
 
@@ -135,8 +137,10 @@ public class EmbossSettingsController extends BorderPane {
 				updateComponents();
 			});
 			parent.getChildren().add(embosserItem);
-			
 			if (!"".equals(config.embosser)) {
+				Embosser em = conf.getConfiguredEmbosser();
+				//TODO: Don't use fixed line spacing value 
+				parent.getChildren().add(new DriverDetails(em.supports8dot(), em.supportsVolumes(), false));
 				if (conf.supportsBothPrintModes()) {
 					printModeItem = new PreferenceItem(Messages.LABEL_PRINT_MODE.localize(), nn.getPrintModeNN(), config.printMode, (o, t0, t1) -> {
 						Settings.getSettings().put(Keys.printMode, t1.getKey());

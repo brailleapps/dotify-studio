@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.FlowPane?>
+
+<fx:root alignment="TOP_RIGHT" hgap="10.0" type="javafx.scene.layout.FlowPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label fx:id="eightDotLabel" text="%label-8-dot" />
+      <Label fx:id="rowSpacingLabel" text="%label-line-spacing" />
+      <Label fx:id="volumesLabel" text="%label-volumes" />
+   </children>
+</fx:root>
