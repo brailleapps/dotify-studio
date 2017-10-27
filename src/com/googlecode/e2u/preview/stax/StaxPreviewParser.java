@@ -83,7 +83,7 @@ class StaxPreviewParser {
 		this.report = report;
 		this.volumes = new ArrayList<>();
 		this.outFactory = XMLOutputFactory.newInstance();
-		this.pageNumber = 0;
+		this.pageNumber = 1;
 		this.abort = false;
 		this.isProcessing = false;
 		this.used = false;
@@ -185,7 +185,7 @@ class StaxPreviewParser {
 	}
 	
 	private void parseSection(XMLEvent event, XMLEventReader input, int volumeNumber, int sectionNumber, Context inherit) throws XMLStreamException, IOException, ParsingCancelledException {
-		if (pageNumber % 2 == 1) {
+		if (pageNumber % 2 == 0) {
 			pageNumber++;
 		}
 		writeSectionPreamble(volumeNumber, sectionNumber);
@@ -214,7 +214,6 @@ class StaxPreviewParser {
 	
 	private void parsePage(XMLEvent event, XMLEventReader input, int volNumber, int sectionNumber, Context inherit, boolean firstPage) throws XMLStreamException, IOException, ParsingCancelledException {
 		Context props = parseProps(event, inherit);
-		pageNumber += props.duplex?1:2;
 		writePagePreamble(pageNumber, sectionNumber, volNumber, firstPage);
 		ArrayList<Row> rows = new ArrayList<>();
 		while (input.hasNext()) {
@@ -229,6 +228,7 @@ class StaxPreviewParser {
 		writeRows(rows, true, props.cols, props.rows);
 		writeRows(rows, false, props.cols, props.rows);
 		writePagePostamble();
+		pageNumber += props.duplex?1:2;
 	}
 	
 	private void writeRows(List<Row> rows, boolean braille, int width, int height) throws XMLStreamException {
