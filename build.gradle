@@ -70,22 +70,22 @@ dependencies {
 	}
 	compile 'com.googlecode.ajui:ajui:1.0.0-SNAPSHOT'
 	
-	compile 'org.daisy.dotify:dotify.api:3.1.0'
-	compile 'org.daisy.dotify:dotify.task-api:3.2.0'
-	compile 'org.daisy.dotify:dotify.common:3.5.1'
-	compile ('org.daisy.dotify:dotify.task-runner:2.0.0') {
-		exclude module: 'dotify.task-api'
+	compile 'org.daisy.dotify:dotify.api:3.2.0'
+	compile 'org.daisy.streamline:streamline-api:0.2.0'
+	compile 'org.daisy.dotify:dotify.common:3.6.0'
+	compile ('org.daisy.streamline:streamline-engine:0.2.0') {
+		exclude module: 'streamline-api'
 	}
 	
 	testCompile group: 'junit', name: 'junit', version: "4.7"
 	
-	runtime ('org.daisy.dotify:dotify.formatter.impl:3.1.0') {
+	runtime ('org.daisy.dotify:dotify.formatter.impl:3.2.0') {
 		exclude module: 'Saxon-HE'
 	}
 	runtime 'org.daisy.dotify:dotify.hyphenator.impl:3.0.0'
 	runtime 'org.daisy.dotify:dotify.text.impl:3.0.0'
 	runtime 'org.daisy.dotify:dotify.translator.impl:3.0.0'
-	runtime ('org.daisy.dotify:dotify.task.impl:3.5.0') {
+	runtime ('org.daisy.dotify:dotify.task.impl:3.6.0') {
 		exclude module: 'Saxon-HE'
 	}
 
