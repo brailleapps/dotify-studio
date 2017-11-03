@@ -50,7 +50,7 @@ import shared.Settings.Keys;
  * @author Joel Håkansson
  *
  */
-public class PreviewController extends BorderPane {
+public class PreviewController extends BorderPane implements Preview {
 	private static final Logger logger = Logger.getLogger(PreviewController.class.getCanonicalName());
 	@FXML WebView browser;
 	private OptionsController options;
@@ -350,6 +350,16 @@ public class PreviewController extends BorderPane {
 	    		alert.showAndWait();
 			}
 		}
+	}
+
+	@Override
+	public boolean canSave() {
+		return false;
+	}
+
+	@Override
+	public void save() {
+		throw new UnsupportedOperationException();
 	}
 
 }

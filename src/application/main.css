@@ -13,3 +13,37 @@
 #clearButton {
 	-fx-graphic: url('resource-files/clear.png');
 }
+
+.tagmark {
+    -fx-fill: gray;
+}
+.anytag {
+    -fx-fill: crimson;
+}
+.paren {
+    -fx-fill: firebrick;
+    -fx-font-weight: bold;
+}
+.attribute {
+    -fx-fill: darkviolet;
+}
+.avalue {
+    -fx-fill: black;
+}
+
+.comment {
+	-fx-fill: teal;
+}
+
+.pi {
+	-fx-fill: green;
+}
+
+.entity {
+	-fx-fill: lime;
+}
+
+.lineno {
+	-fx-font-style: normal;
+	-fx-background-color: #eee;
+}

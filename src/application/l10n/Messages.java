@@ -102,6 +102,8 @@ public enum Messages {
 	LABEL_SHEET_PAPER("label-sheet-paper"),
 	LABEL_TRACTOR_PAPER("label-tractor-paper"),
 	LABEL_ROLL_PAPER("label-roll-paper"),
+	LABEL_SOURCE("label-source"),
+	LABEL_RESULT("label-result"),
 	MESSAGE_SIX_DOT_ONLY("message-six-dot-only"),
 	MESSAGE_SEARCH_RESULT("message-search-result"),
 	MESSAGE_UNKNOWN_AUTHOR("message-unknown-author"),
