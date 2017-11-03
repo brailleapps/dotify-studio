@@ -335,7 +335,7 @@ public class MainController {
 			Window stage = root.getScene().getWindow();
 	    	FileChooser fileChooser = new FileChooser();
 	    	fileChooser.setTitle(Messages.TITLE_SAVE_AS_DIALOG.localize());
-	    	fileChooser.getExtensionFilters().add(new ExtensionFilter("PEF-file", ".pef"));
+	    	fileChooser.getExtensionFilters().add(new ExtensionFilter("PEF-file", "*.pef"));
 	    	File selected = fileChooser.showSaveDialog(stage);
 	    	if (selected!=null) {
 				// get the url of the current tab
