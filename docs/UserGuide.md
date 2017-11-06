@@ -20,6 +20,14 @@ Additional options will be presented when embosser has been selected. Once all r
 
 _Screenshot of Setup view._
 
+#### Embosser limitations ####
+All embosser implementations have limitations. In other words, none of the implementations support
+all features of the PEF 1.0 specification. Some support physical volumes and some support
+8-dot to some extent. None support accurate row spacing. Note that this may be caused by limitations
+in the hardware, in the embosser's protocol or in the "driver" implementation.
+
+Under the **Model** drop-down, support for these key features are presented when a model is selected.   
+
 ### Manage paper ###
 The `Manage paper` tab is used to define and manage custom paper formats.
 
@@ -61,4 +69,3 @@ To emboss, click **Emboss**.
 _Screenshot of Emboss view._
 
 To see more information about the book, select **About the book** in the preview window.
-
