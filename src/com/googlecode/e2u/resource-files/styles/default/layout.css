@@ -24,7 +24,6 @@ div#content {
 	margin-bottom: 1em;
 }
 
-
 div#about {
 	position: fixed;
 	top: 8em;
@@ -125,11 +124,6 @@ span.length input {
 	font-weight: bold;
 }
 
-.first {
-	display: table;
-}
-
-
 
 .highlight {
 	border-style: solid;
@@ -137,22 +131,6 @@ span.length input {
 	padding: 5px;
 	border-bottom-style: none;
 	border-bottom-width: 0px;
-}
-
-.odd {
-	display: inline-block;
-}
-
-.even {
-	display: inline-block;
-}
-
-.odd div, .first div {
-	border-left-width: 10px;
-}
-
-.even div {
-	border-right-width: 10px;
 }
 
 #connected, #notConnected {
@@ -361,6 +339,26 @@ div.cont {
 div.posrel {
 	position: relative;
 	padding-left: 20px;
+}
+
+.first {
+	display: table;
+}
+
+.odd {
+	display: inline-block;
+}
+
+.even {
+	display: inline-block;
+}
+
+.odd div, .first div {
+	border-left-width: 10px;
+}
+
+.even div {
+	border-right-width: 10px;
 }
 
 
