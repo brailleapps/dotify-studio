@@ -18,7 +18,6 @@ import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.dotify.api.tasks.AnnotatedFile;
 import org.daisy.dotify.api.tasks.CompiledTaskSystem;
 import org.daisy.dotify.api.tasks.TaskSystem;
-import org.daisy.dotify.consumer.identity.IdentityProvider;
 import org.daisy.dotify.consumer.tasks.TaskSystemFactoryMaker;
 import org.daisy.dotify.tasks.runner.RunnerResult;
 import org.daisy.dotify.tasks.runner.TaskRunner;
@@ -92,7 +91,7 @@ public class PreviewController extends BorderPane implements Preview {
 	 * @param selected the file
 	 * @param options the options
 	 */
-	public void convertAndOpen(File selected, Map<String, Object> options) {
+	public void convertAndOpen(AnnotatedFile selected, Map<String, Object> options) {
 		try {
 			File out = File.createTempFile("dotify-studio", ".pef");
 			String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
@@ -125,12 +124,14 @@ public class PreviewController extends BorderPane implements Preview {
 	}
 	
     class SourceDocumentWatcher extends DocumentWatcher {
+    	private final AnnotatedFile annotatedInput;
     	private final File output;
     	private final String locale;
     	private final Thread pefWatcher;
 
-    	SourceDocumentWatcher(File input, File output, String locale, Thread pefWatcher) {
-    		super(input);
+    	SourceDocumentWatcher(AnnotatedFile input, File output, String locale, Thread pefWatcher) {
+    		super(input.getFile());
+    		this.annotatedInput = input;
     		this.output = output;
     		this.locale = locale;
     		this.pefWatcher = pefWatcher;
@@ -150,7 +151,7 @@ public class PreviewController extends BorderPane implements Preview {
 		void performAction() {
 			try {
 				Map<String, Object> opts = options.getParams();
-	    		DotifyTask dt = new DotifyTask(file, output, locale, opts);
+	    		DotifyTask dt = new DotifyTask(annotatedInput, output, locale, opts);
 	    		dt.setOnFailed(ev->{
 	    			logger.log(Level.WARNING, "Update failed.", dt.getException());
 		    		Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
@@ -208,12 +209,12 @@ public class PreviewController extends BorderPane implements Preview {
     }
 	
     class DotifyTask extends Task<DotifyResult> {
-    	private final File inputFile;
+    	private final AnnotatedFile inputFile;
     	private final File outputFile;
     	private final String locale;
     	private final Map<String, Object> params;
     	
-    	DotifyTask(File inputFile, File outputFile, String locale, Map<String, Object> params) {
+    	DotifyTask(AnnotatedFile inputFile, File outputFile, String locale, Map<String, Object> params) {
     		this.inputFile = inputFile;
     		this.outputFile = outputFile;
     		this.locale = locale;
@@ -226,8 +227,7 @@ public class PreviewController extends BorderPane implements Preview {
     	
     	@Override
     	protected DotifyResult call() throws Exception {
-    		AnnotatedFile ai = IdentityProvider.newInstance().identify(inputFile);
-    		String inputFormat = getFormatString(ai);
+    		String inputFormat = getFormatString(inputFile);
     		TaskSystem ts;
 			ts = TaskSystemFactoryMaker.newInstance().newTaskSystem(inputFormat, "pef", locale);
 			logger.info("About to run with parameters " + params);
@@ -235,7 +235,7 @@ public class PreviewController extends BorderPane implements Preview {
 			logger.info("Thread: " + Thread.currentThread().getThreadGroup());
 			CompiledTaskSystem tl = ts.compile(params);
 			TaskRunner.Builder builder = TaskRunner.withName(ts.getName());
-			return new DotifyResult(tl, builder.build().runTasks(ai, outputFile, tl));
+			return new DotifyResult(tl, builder.build().runTasks(inputFile, outputFile, tl));
     	}
 
     	//FIXME: Duplicated from Dotify CLI. If this function is needed to run Dotify, find a home for it

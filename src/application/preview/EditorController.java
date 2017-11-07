@@ -26,7 +26,6 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.BorderPane;
 
@@ -67,20 +66,6 @@ public class EditorController extends BorderPane {
 		codeArea.textProperty().addListener((obs, oldText, newText)-> {
 			codeArea.setStyleSpans(0, XMLStyleHelper.computeHighlighting(newText));
 		});*/
-		codeArea.richChanges()
-			.filter(ch -> !ch.getInserted().equals(ch.getRemoved()))
-            .successionEnds(Duration.ofMillis(500))
-            .supplyTask(this::computeHighlightingAsync)
-            .awaitLatest(codeArea.richChanges())
-            .filterMap(t -> {
-                if(t.isSuccess()) {
-                    return Optional.of(t.get());
-                } else {
-                    t.getFailure().printStackTrace();
-                    return Optional.empty();
-                }
-            })
-            .subscribe(this::applyHighlighting);
 		codeArea.setWrapText(true);
 		scrollPane = new VirtualizedScrollPane<>(codeArea);
 		scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
@@ -107,9 +92,27 @@ public class EditorController extends BorderPane {
 	 * Converts and opens a file.
 	 * @param f the file
 	 */
-	public void load(File f) {
+	public void load(File f, boolean xmlMarkup) {
 		this.file = f;
 		codeArea.clear();
+		if (xmlMarkup) {
+			codeArea.richChanges()
+			.filter(ch -> !ch.getInserted().equals(ch.getRemoved()))
+	        .successionEnds(Duration.ofMillis(500))
+	        .supplyTask(this::computeHighlightingAsync)
+	        .awaitLatest(codeArea.richChanges())
+	        .filterMap(t -> {
+	            if(t.isSuccess()) {
+	                return Optional.of(t.get());
+	            } else {
+	                t.getFailure().printStackTrace();
+	                return Optional.empty();
+	            }
+	        })
+	        .subscribe(this::applyHighlighting);
+		} else {
+			// TODO: clear colors?
+		}
 		try {
 			codeArea.replaceText(0, 0, new String(Files.readAllBytes(f.toPath()), StandardCharsets.UTF_8));
 		} catch (IOException e) {

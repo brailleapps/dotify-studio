@@ -36,6 +36,8 @@ import org.daisy.braille.utils.api.embosser.EmbosserWriter;
 import org.daisy.braille.utils.api.table.TableCatalog;
 import org.daisy.braille.utils.pef.PEFHandler;
 import org.daisy.braille.utils.pef.TextConverterFacade;
+import org.daisy.dotify.api.tasks.AnnotatedFile;
+import org.daisy.dotify.consumer.identity.IdentityProvider;
 import org.daisy.dotify.consumer.tasks.TaskGroupFactoryMaker;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -699,19 +701,20 @@ public class MainController {
         Tab tab = new Tab();
         setGraphic(source.getName(), tab);
         tab.setText(source.getName());
-        if ("on".equalsIgnoreCase(System.getProperty("application.feature.editor", "off"))) {
+		AnnotatedFile ai = IdentityProvider.newInstance().identify(source);
+        if (SourcePreviewController.supportsFormat(ai) && "on".equalsIgnoreCase(System.getProperty("application.feature.editor", "off"))) {
 	        SourcePreviewController prv = new SourcePreviewController();
 	        tab.setOnClosed(ev ->  {
 	        	prv.closing();
 	        });
-	        prv.convertAndOpen(source, options);
+	        prv.convertAndOpen(ai, options);
 	        tab.setContent(prv);
         } else {
 	        PreviewController prv = new PreviewController();
 	        tab.setOnClosed(ev ->  {
 	        	prv.closing();
 	        });
-	        prv.convertAndOpen(source, options);
+	        prv.convertAndOpen(ai, options);
 	        tab.setContent(prv);	
         }
         tabPane.getTabs().add(tab);

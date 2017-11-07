@@ -1,12 +1,14 @@
 package application.preview;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
+
+import org.daisy.dotify.api.tasks.AnnotatedFile;
 
 import application.l10n.Messages;
 import javafx.fxml.FXML;
@@ -23,6 +25,8 @@ import javafx.scene.layout.BorderPane;
  */
 public class SourcePreviewController extends BorderPane implements Preview {
 	private static final Logger logger = Logger.getLogger(SourcePreviewController.class.getCanonicalName());
+	static final Pattern XML_PATTERN = Pattern.compile("\\Qapplication/\\E([\\w-]+\\+)?\\Qxml\\E");
+	static final Pattern TEXT_PATTERN = Pattern.compile("\\Qtext/\\E.+");
 	@FXML TabPane tabs;
 	@FXML Tab preview;
 	@FXML Tab source;
@@ -41,18 +45,35 @@ public class SourcePreviewController extends BorderPane implements Preview {
 		}
 	}
 	
+	public static boolean supportsFormat(AnnotatedFile af) {
+		// TODO: also support application/epub+zip
+		return isText(af) || isHTML(af) || isXML(af);
+	}
+	
+	public static boolean isXML(AnnotatedFile af) {
+		return af.getMediaType()!=null && XML_PATTERN.matcher(af.getMediaType()).matches();
+	}
+	
+	public static boolean isHTML(AnnotatedFile af) { 
+		return af.getMediaType()!=null && "text/html".equals(af.getMediaType());
+	}
+	
+	public static boolean isText(AnnotatedFile af) {
+		return af.getMediaType()!=null && TEXT_PATTERN.matcher(af.getMediaType()).matches();
+	}
+	
 	/**
 	 * Converts and opens a file.
 	 * @param selected the file
 	 * @param options the options
 	 */
-	public void convertAndOpen(File selected, Map<String, Object> options) {
+	public void convertAndOpen(AnnotatedFile selected, Map<String, Object> options) {
         PreviewController prv = new PreviewController();
         prv.convertAndOpen(selected, options);
 		preview.setContent(prv);
-		source.setText(Messages.LABEL_SOURCE.localize(selected.getName()));
+		source.setText(Messages.LABEL_SOURCE.localize(selected.getFile().getName()));
 		EditorController editor = new EditorController();
-		editor.load(selected);
+		editor.load(selected.getFile(), isXML(selected));
 		source.setContent(editor);
 	}
 
