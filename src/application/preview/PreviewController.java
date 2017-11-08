@@ -129,7 +129,7 @@ public class PreviewController extends BorderPane implements Preview {
 			String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
 			DotifyTask dt = new DotifyTask(selected, out, tag, options);
 			dt.setOnSucceeded(ev -> {
-				Thread pefWatcher = open(StartupDetails.open(out));
+				Thread pefWatcher = open(out);
 				updateOptions(dt.getValue(), options);
 	    		Thread th = new Thread(new SourceDocumentWatcher(selected, out, tag, pefWatcher));
 	    		th.setDaemon(true);
@@ -290,10 +290,9 @@ public class PreviewController extends BorderPane implements Preview {
 	 * @param file the file
 	 * @return returns a thread that watches for changes in the pef file
 	 */
-	public Thread open(StartupDetails args) {
+	public Thread open(File file) {
 		Thread pefWatcherThread = null;
-		if (args.getFile()!=null) {
-			File file = args.getFile();
+		if (file!=null) {
 			PefDocumentWatcher pefWatcher = new PefDocumentWatcher(file);
     		pefWatcherThread = new Thread(pefWatcher);
     		pefWatcherThread.setDaemon(true);
@@ -305,7 +304,7 @@ public class PreviewController extends BorderPane implements Preview {
 			protected String call() throws Exception {
 		        try {
 		        	start = new Start();
-		        	return start.start(StartupDetails.with(args).log(false).display(false).build());
+		        	return start.start(new StartupDetails.Builder().mode(Mode.OPEN).file(file).log(false).display(false).build());
 				} catch (Exception e1) {
 					Logger.getLogger(this.getClass().getCanonicalName()).log(Level.SEVERE, "Failed to load server.", e1);;
 				}  

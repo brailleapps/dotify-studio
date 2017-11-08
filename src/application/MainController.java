@@ -672,12 +672,22 @@ public class MainController {
         	tab.setText(title);
         	setGraphic(title, tab);
         }
-        PreviewController prv = new PreviewController();
-        tab.setOnClosed(ev ->  {
-        	prv.closing();
-        });
-        prv.open(args);
-        tab.setContent(prv);
+		AnnotatedFile ai = IdentityProvider.newInstance().identify(args.getFile());
+        if (SourcePreviewController.supportsFormat(ai) && FeatureSwitch.EDITOR.isOn()) {
+	        SourcePreviewController prv = new SourcePreviewController();
+	        tab.setOnClosed(ev ->  {
+	        	prv.closing();
+	        });
+	        prv.open(ai);
+	        tab.setContent(prv);
+        } else {
+	        PreviewController prv = new PreviewController();
+	        tab.setOnClosed(ev ->  {
+	        	prv.closing();
+	        });
+	        prv.open(args.getFile());
+	        tab.setContent(prv);
+        }
 
     }
     

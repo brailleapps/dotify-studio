@@ -102,6 +102,17 @@ public class SourcePreviewController extends BorderPane implements Preview {
 	public void convertAndOpen(AnnotatedFile selected, Map<String, Object> options) {
         PreviewController prv = new PreviewController();
         prv.convertAndOpen(selected, options);
+        setupOpen(prv, selected);
+	}
+	
+	public Thread open(AnnotatedFile selected) {
+        PreviewController prv = new PreviewController();
+        Thread th = prv.open(selected.getFile());
+        setupOpen(prv, selected);
+		return th;
+	}
+	
+	private void setupOpen(PreviewController prv, AnnotatedFile selected) {
 		preview.setContent(prv);
 		source.setText(Messages.LABEL_SOURCE.localize(selected.getFile().getName()));
 		EditorController editor = new EditorController();
