@@ -41,6 +41,8 @@ import org.xml.sax.SAXException;
 
 import com.googlecode.e2u.BookReader;
 import com.googlecode.e2u.Start;
+import com.googlecode.e2u.StartupDetails;
+import com.googlecode.e2u.StartupDetails.Mode;
 
 import application.l10n.Messages;
 import javafx.application.Platform;
@@ -127,7 +129,7 @@ public class PreviewController extends BorderPane implements Preview {
 			String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
 			DotifyTask dt = new DotifyTask(selected, out, tag, options);
 			dt.setOnSucceeded(ev -> {
-				Thread pefWatcher = open(new String[]{"-open", out.getAbsolutePath()});
+				Thread pefWatcher = open(StartupDetails.open(out));
 				updateOptions(dt.getValue(), options);
 	    		Thread th = new Thread(new SourceDocumentWatcher(selected, out, tag, pefWatcher));
 	    		th.setDaemon(true);
@@ -288,10 +290,10 @@ public class PreviewController extends BorderPane implements Preview {
 	 * @param file the file
 	 * @return returns a thread that watches for changes in the pef file
 	 */
-	public Thread open(String[] args) {
+	public Thread open(StartupDetails args) {
 		Thread pefWatcherThread = null;
-		if (args.length==2) {
-			File file = new File(args[1]);
+		if (args.getFile()!=null) {
+			File file = args.getFile();
 			PefDocumentWatcher pefWatcher = new PefDocumentWatcher(file);
     		pefWatcherThread = new Thread(pefWatcher);
     		pefWatcherThread.setDaemon(true);
@@ -303,7 +305,7 @@ public class PreviewController extends BorderPane implements Preview {
 			protected String call() throws Exception {
 		        try {
 		        	start = new Start();
-		        	return start.start(args, false, false);
+		        	return start.start(StartupDetails.with(args).log(false).display(false).build());
 				} catch (Exception e1) {
 					Logger.getLogger(this.getClass().getCanonicalName()).log(Level.SEVERE, "Failed to load server.", e1);;
 				}  

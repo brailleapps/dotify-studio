@@ -10,6 +10,8 @@ import java.util.logging.Logger;
 
 import org.daisy.braille.utils.pef.FileTools;
 
+import com.googlecode.e2u.StartupDetails;
+
 import application.l10n.Messages;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -74,7 +76,7 @@ public class MainFx extends Application {
         Scene scene = new Scene(root);
         
         MainController controller = fxmlLoader.<MainController>getController();
-        controller.openArgs(getParameters().getRaw().toArray(new String[]{}));
+        controller.openArgs(StartupDetails.parse(getParameters().getRaw().toArray(new String[]{})));
 
         primaryStage.setScene(scene);
         primaryStage.show();

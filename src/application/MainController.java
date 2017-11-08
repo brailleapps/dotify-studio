@@ -28,6 +28,9 @@ import org.daisy.dotify.consumer.tasks.TaskGroupFactoryMaker;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.googlecode.e2u.StartupDetails;
+import com.googlecode.e2u.StartupDetails.Mode;
+
 import application.about.AboutView;
 import application.imports.ImportBrailleView;
 import application.l10n.Messages;
@@ -281,11 +284,11 @@ public class MainController {
 		}
 	}
 	
-	void openArgs(String[] args) {
-        if (args.length>0) {
+	void openArgs(StartupDetails args) {
+        if (args.getMode()!=Mode.UNDEFINED) {
         	String title = null;
-        	if (args.length>=2 && "-open".equals(args[0])) {
-        		title = new File(args[1]).getName();
+        	if (args.getMode()==Mode.OPEN) {
+        		title = args.getFile().getName();
         	}
         	addTab(title, args);
         }
@@ -372,7 +375,7 @@ public class MainController {
 					// stop watching
 					controller.closing();
 					// update contents of tab
-					setTab(t, selected.getName(), toArgs(selected));
+					setTab(t, selected.getName(), StartupDetails.open(selected));
 					// TODO: Restore document position
 				} catch (IOException e) {
 					Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
@@ -407,7 +410,7 @@ public class MainController {
 		dialog.showAndWait();
 		File generated = dialog.generatedTestFile();
 		if (generated!=null) {
-			addTab(generated.getName(), toArgs(generated));
+			addTab(generated.getName(), StartupDetails.open(generated));
 		}
     }
     
@@ -651,23 +654,19 @@ public class MainController {
 	}
     
     private void addTab(File f) { 
-    	addTab(f.getName(), toArgs(f));
+    	addTab(f.getName(), StartupDetails.open(f));
     }
-    
-    private String[] toArgs(File f) {
-    	return new String[]{"-open", f.getAbsolutePath()};
-    }
-    
-    private void addTab(String title, String[] args) {
+
+    private void addTab(String title, StartupDetails args) {
         Tab tab = new Tab();
         setTab(tab, title, args);
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().select(tab);
     }
     
-    private void setTab(Tab tab, String title, String[] args) {
-    	if (title==null && args.length>=2) {
-        	title = args[1];
+    private void setTab(Tab tab, String title, StartupDetails args) {
+    	if (title==null && args.getFile()!=null) {
+        	title = args.getFile().getAbsolutePath();
         }
         if (title!=null) {
         	tab.setText(title);
