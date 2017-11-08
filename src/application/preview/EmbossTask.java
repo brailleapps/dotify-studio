@@ -9,6 +9,9 @@ import org.daisy.braille.utils.api.embosser.EmbosserWriter;
 import org.daisy.braille.utils.pef.PEFConverterFacade;
 import org.daisy.braille.utils.pef.PEFHandler;
 import org.daisy.braille.utils.pef.PEFHandler.Alignment;
+
+import application.FeatureSwitch;
+
 import org.daisy.braille.utils.pef.PrinterDevice;
 import org.daisy.braille.utils.pef.Range;
 
@@ -37,7 +40,7 @@ class EmbossTask extends Task<Void> {
 	protected Void call() throws Exception {
 		//TODO: include range (requires release of pef-tools v2.3.0)
 		logger.info("About to emboss " + (copies>1?copies + " copies ":"") + "on " + deviceName + " with alignment " + align);
-		if (isEmbossing()) {
+		if (FeatureSwitch.EMBOSSING.isOn()) {
 			for (int i=0; i<copies; i++) {
 				try (InputStream iss = url.openStream()) {
 					//TODO: don't recreate objects for each copy unless necessary
@@ -65,8 +68,5 @@ class EmbossTask extends Task<Void> {
 		}
 		return null;
 	}
-	
-	static boolean isEmbossing() {
-		return "on".equalsIgnoreCase(System.getProperty("application.feature.embossing", "on"));
-	}
+
 }

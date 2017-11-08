@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import org.daisy.braille.utils.pef.PEFBook;
 
+import application.FeatureSwitch;
 import application.l10n.Messages;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -40,7 +41,7 @@ public class EmbossView extends Stage {
 				}
 			});
 	    	controller.setBook(book);
-	    	if (!EmbossTask.isEmbossing()) {
+	    	if (!FeatureSwitch.EMBOSSING.isOn()) {
 	    		logger.info("Embossing is deactivated.");
 	    	}
 		} catch (IOException e) {
