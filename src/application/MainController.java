@@ -3,20 +3,15 @@ package application;
 import java.awt.Desktop;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -25,16 +20,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.daisy.braille.utils.api.embosser.Embosser;
-import org.daisy.braille.utils.api.embosser.EmbosserCatalog;
-import org.daisy.braille.utils.api.embosser.EmbosserCatalogService;
-import org.daisy.braille.utils.api.embosser.EmbosserFeatures;
-import org.daisy.braille.utils.api.embosser.EmbosserWriter;
 import org.daisy.braille.utils.api.table.TableCatalog;
-import org.daisy.braille.utils.pef.PEFHandler;
 import org.daisy.braille.utils.pef.TextConverterFacade;
 import org.daisy.dotify.api.tasks.AnnotatedFile;
 import org.daisy.dotify.consumer.identity.IdentityProvider;
@@ -53,6 +39,10 @@ import application.search.SearchController;
 import application.template.TemplateView;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -84,8 +74,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import shared.Settings;
-import shared.Settings.Keys;
 
 /**
  * Provides the controller for the main view.
@@ -118,6 +106,9 @@ public class MainController {
 	private Tab helpTab;
 	private ExecutorService exeService;
 	private double[] verticalDividerPositions;
+	private BooleanProperty canEmboss;
+	private BooleanProperty canExport;
+	private StringProperty urlProperty;
 	static final KeyCombination CTRL_F4 = new KeyCodeCombination(KeyCode.F4, KeyCombination.CONTROL_DOWN);
 
 	@FXML void initialize() {
@@ -179,22 +170,36 @@ public class MainController {
 		} catch (SecurityException | IOException e) {
 			e.printStackTrace();
 		}
+		canEmboss = new SimpleBooleanProperty();
+		canExport = new SimpleBooleanProperty();
+		urlProperty = new SimpleStringProperty();
 		//add menu bindings
 		setMenuBindings();
 	}
 	
 	private void setMenuBindings() {
+		tabPane.getSelectionModel().selectedItemProperty().addListener((o, ov, nv)->{
+			canEmboss.unbind();
+			canExport.unbind();
+			urlProperty.unbind();
+			if (nv!=null && nv.getContent() instanceof Preview) {
+				Preview p = ((Preview)nv.getContent());
+				canEmboss.bind(p.canEmbossProperty());
+				canExport.bind(p.canExportProperty());
+				urlProperty.bind(p.urlProperty());
+			}
+		});
 		BooleanBinding noTabBinding = tabPane.getSelectionModel().selectedItemProperty().isNull();
 		BooleanBinding noTabExceptHelpBinding = noTabBinding.or(
 				tabPane.getSelectionModel().selectedItemProperty().isEqualTo(helpTab)
 		);
 		closeMenuItem.disableProperty().bind(noTabBinding);
-		exportMenuItem.disableProperty().bind(noTabExceptHelpBinding);
+		exportMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canExport.not()));
 		saveMenuItem.disableProperty().bind(noTabExceptHelpBinding);
 		saveAsMenuItem.disableProperty().bind(noTabExceptHelpBinding);
 		refreshMenuItem.disableProperty().bind(noTabBinding);
-		openInBrowserMenuItem.disableProperty().bind(noTabBinding);
-		embossMenuItem.disableProperty().bind(noTabExceptHelpBinding);
+		openInBrowserMenuItem.disableProperty().bind(noTabBinding.or(urlProperty.isNull()));
+		embossMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canEmboss.not()));
 	}
 	
 	private static boolean canDropFiles(List<File> files) {
@@ -307,7 +312,13 @@ public class MainController {
 					if (node instanceof WebView) {
 						Desktop.getDesktop().browse(new URI(((WebView) node).getEngine().getLocation()));
 					} else if (node instanceof Preview) {
-						Desktop.getDesktop().browse(new URI(((Preview)t.getContent()).getURL()));
+						((Preview)t.getContent()).getURL().ifPresent(url->{
+							try {
+								Desktop.getDesktop().browse(new URI(url));
+							} catch (IOException | URISyntaxException e) {
+								// fail silently
+							}
+						});
 					}
 				}				
 			} catch (IOException | URISyntaxException e) {
@@ -318,10 +329,12 @@ public class MainController {
     @FXML void emboss() {
     	Tab t = tabPane.getSelectionModel().getSelectedItem();
 		if (t!=null) {
-			Platform.runLater(()->{
-				Preview controller = ((Preview)t.getContent());
-				controller.showEmbossDialog();
-			});
+			Preview controller = ((Preview)t.getContent());
+			if (controller.canEmboss()) {
+				Platform.runLater(()->{
+					controller.showEmbossDialog();
+				});
+			}
 		}
     }
     
@@ -350,27 +363,20 @@ public class MainController {
 			Window stage = root.getScene().getWindow();
 	    	FileChooser fileChooser = new FileChooser();
 	    	fileChooser.setTitle(Messages.TITLE_SAVE_AS_DIALOG.localize());
-	    	fileChooser.getExtensionFilters().add(new ExtensionFilter("PEF-file", "*.pef"));
+	    	fileChooser.getExtensionFilters().addAll(controller.getSaveAsFilters());
 	    	File selected = fileChooser.showSaveDialog(stage);
 	    	if (selected!=null) {
-				// get the url of the current tab
-				Optional<URI> _uri = controller.getBookURI();
-				if (_uri.isPresent()) {
-					URI uri = _uri.get();
-					// store to selected location
-					try {
-						Files.copy(Paths.get(uri), new FileOutputStream(selected));
-					} catch (IOException e) {
-						// Display error
-						e.printStackTrace();
-					}
+				try {
+					controller.saveAs(selected);
+					//FIXME: this won't do in the new world
 					// stop watching
 					controller.closing();
 					// update contents of tab
 					setTab(t, selected.getName(), toArgs(selected));
 					// TODO: Restore document position
-				} else {
-					// TODO: Display error
+				} catch (IOException e) {
+					Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
+		    		alert.showAndWait();
 				}
 	    	}
 		}
@@ -563,32 +569,17 @@ public class MainController {
     @FXML void exportFile() {
     	Tab t = tabPane.getSelectionModel().getSelectedItem();
 		if (t!=null) {
-			Optional<URI> bookUri = ((Preview)t.getContent()).getBookURI();
-			if (bookUri.isPresent()) {
-				File input = new File(bookUri.get());
+			Preview controller = ((Preview)t.getContent());
+			if (controller.canExport()) {
 		    	Window stage = root.getScene().getWindow();
 		    	FileChooser fileChooser = new FileChooser();
 		    	fileChooser.setTitle(Messages.TITLE_EXPORT_DIALOG.localize());
 		    	File selected = fileChooser.showSaveDialog(stage);
 		    	if (selected!=null) {
-			    	Task<Void> exportTask = new Task<Void>(){
+			    	Task<Void> exportTask = new Task<Void>() {
 						@Override
 						protected Void call() throws Exception {
-							//TODO: sync this with the embossing code and its settings
-					    	OutputStream os = new FileOutputStream(selected);
-					    	EmbosserCatalogService ef = EmbosserCatalog.newInstance();
-					    	Embosser emb = ef.newEmbosser("org_daisy.GenericEmbosserProvider.EmbosserType.NONE");
-					    	String table = Settings.getSettings().getString(Keys.charset);
-					    	if (table!=null) {
-					    		emb.setFeature(EmbosserFeatures.TABLE, table);
-					    	}
-							EmbosserWriter embosser = emb.newEmbosserWriter(os);
-							PEFHandler ph = new PEFHandler.Builder(embosser).build();
-							FileInputStream is = new FileInputStream(input);
-							SAXParserFactory spf = SAXParserFactory.newInstance();
-							spf.setNamespaceAware(true);
-							SAXParser sp = spf.newSAXParser();
-							sp.parse(is, ph);
+							controller.export(selected);
 							return null;
 						}
 			    	};

@@ -1,7 +1,9 @@
 package application.preview;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -11,12 +13,20 @@ import java.util.regex.Pattern;
 import org.daisy.dotify.api.tasks.AnnotatedFile;
 
 import application.l10n.Messages;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 /**
  * Provides a preview controller.
@@ -30,6 +40,9 @@ public class SourcePreviewController extends BorderPane implements Preview {
 	@FXML TabPane tabs;
 	@FXML Tab preview;
 	@FXML Tab source;
+	private final BooleanProperty canEmbossProperty;
+	private final BooleanProperty canExportProperty;
+	private final StringProperty urlProperty;
 
 	/**
 	 * Creates a new preview controller.
@@ -43,6 +56,25 @@ public class SourcePreviewController extends BorderPane implements Preview {
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Failed to load view", e);
 		}
+		canEmbossProperty = new SimpleBooleanProperty(false);
+		canExportProperty = new SimpleBooleanProperty(false);
+		urlProperty = new SimpleStringProperty();
+	}
+	
+	@FXML void initialize() {
+		tabs.getSelectionModel().selectedItemProperty().addListener((o, ot, nt)->{
+			Optional<Node> pr = Optional.of(nt.getContent())
+					.filter(v->v instanceof Preview);
+			canEmbossProperty.set(
+				pr.map(v->((Preview)v).canEmboss()).orElse(false)
+			);
+			canExportProperty.set(
+				pr.map(v->((Preview)v).canExport()).orElse(false)
+			);
+			urlProperty.set(
+				pr.map(v->((Preview)v).urlProperty().get()).orElse(null)
+			);
+		});
 	}
 	
 	public static boolean supportsFormat(AnnotatedFile af) {
@@ -75,16 +107,19 @@ public class SourcePreviewController extends BorderPane implements Preview {
 		EditorController editor = new EditorController();
 		editor.load(selected.getFile(), isXML(selected));
 		source.setContent(editor);
+		canEmbossProperty.set(prv.canEmboss());
+		canExportProperty.set(prv.canExport());
+		urlProperty.set(prv.urlProperty().get());
 	}
 
 	@Override
 	public void reload() {
-		((Preview)preview.getContent()).reload();
+		getSelectedView().ifPresent(v->v.reload());
 	}
 
 	@Override
-	public String getURL() {
-		return ((Preview)preview.getContent()).getURL();
+	public Optional<String> getURL() {
+		return getSelectedView().map(v->v.getURL()).orElse(Optional.empty());
 	}
 
 	@Override
@@ -93,13 +128,16 @@ public class SourcePreviewController extends BorderPane implements Preview {
 	}
 
 	@Override
-	public Optional<URI> getBookURI() {
-		return ((Preview)preview.getContent()).getBookURI();
-	}
-
-	@Override
 	public void closing() {
+		((Preview)source.getContent()).closing();
 		((Preview)preview.getContent()).closing();
+	}
+	
+	private Optional<Preview> getSelectedView() {
+		return Optional.ofNullable(tabs.getSelectionModel())
+			.map(v->v.getSelectedItem().getContent())
+			.filter(v->v instanceof Preview)
+			.map(v->(Preview)v);
 	}
 
 	@Override
@@ -117,6 +155,39 @@ public class SourcePreviewController extends BorderPane implements Preview {
 		if (m!=null && m.getSelectedItem() == source) {
 			((EditorController)source.getContent()).save();
 		}
+	}
+
+	@Override
+	public void saveAs(File f) throws IOException {
+		Optional<Preview> view = getSelectedView();
+		if (view.isPresent()) {
+			view.get().saveAs(f);
+		}
+	}
+
+	@Override
+	public void export(File f) throws IOException {
+		((Preview)preview.getContent()).export(f);
+	}
+	
+	@Override
+	public ReadOnlyBooleanProperty canEmbossProperty() {
+		return canEmbossProperty;
+	}
+
+	@Override
+	public ReadOnlyBooleanProperty canExportProperty() {
+		return canExportProperty;
+	}
+
+	@Override
+	public List<ExtensionFilter> getSaveAsFilters() {
+		return getSelectedView().map(v->v.getSaveAsFilters()).orElse(Collections.emptyList());
+	}
+
+	@Override
+	public ReadOnlyStringProperty urlProperty() {
+		return urlProperty;
 	}
 
 }

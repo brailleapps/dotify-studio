@@ -7,7 +7,10 @@ import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,19 +25,25 @@ import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 
 import application.l10n.Messages;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 /**
  * Provides an editor controller.
  * @author Joel Håkansson
  *
  */
-public class EditorController extends BorderPane {
+public class EditorController extends BorderPane implements Preview {
 	private static final Logger logger = Logger.getLogger(EditorController.class.getCanonicalName());
 	@FXML CheckBox wordWrap;
 	@FXML CheckBox lineNumbers;
@@ -42,6 +51,9 @@ public class EditorController extends BorderPane {
 	private VirtualizedScrollPane<CodeArea> scrollPane;
 	private File file;
 	private ExecutorService executor;
+	private final ReadOnlyBooleanProperty canEmbossProperty;
+	private final ReadOnlyBooleanProperty canExportProperty;
+	private final ReadOnlyStringProperty urlProperty;
 	//private String hash;
 
 	/**
@@ -57,6 +69,9 @@ public class EditorController extends BorderPane {
 			logger.log(Level.WARNING, "Failed to load view", e);
 		}
 		executor = Executors.newWorkStealingPool();
+		canEmbossProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
+		canExportProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
+		urlProperty = new SimpleStringProperty();
 	}
 	
 	@FXML void initialize() {
@@ -120,14 +135,6 @@ public class EditorController extends BorderPane {
 		}
 	}
 
-	void save() {
-		try {
-			Files.write(file.toPath(), codeArea.getText().getBytes(StandardCharsets.UTF_8));
-		} catch (IOException e) {
-			logger.warning("Failed to write: " + file);
-		}
-	}
-
 	@FXML void toggleWordWrap() {
 		scrollPane.setHbarPolicy(wordWrap.isSelected()?ScrollBarPolicy.NEVER:ScrollBarPolicy.AS_NEEDED);
 		codeArea.setWrapText(wordWrap.isSelected());
@@ -149,6 +156,73 @@ public class EditorController extends BorderPane {
 			logger.warning("Failed to create checksum");
 		}
 		return null;
+	}
+
+	@Override
+	public boolean canSave() {
+		return file!=null;
+	}
+
+	@Override
+	public void save() {
+		try {
+			Files.write(file.toPath(), codeArea.getText().getBytes(StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			logger.warning("Failed to write: " + file);
+		}
+	}
+
+	@Override
+	public void saveAs(File f) throws IOException {
+		Files.copy(file.toPath(), f.toPath());
+	}
+
+	@Override
+	public void export(File f) throws IOException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void closing() {
+		executor.shutdown();
+	}
+
+	@Override
+	public List<ExtensionFilter> getSaveAsFilters() {
+		if (file!=null) {
+			String name = file.getName();
+			int dot = name.lastIndexOf('.');			
+			if (dot>=0 && dot<name.length()) {
+				String ext = name.substring(dot+1, name.length());
+				return Arrays.asList(new ExtensionFilter(ext + "-files", "*." + ext));
+			}
+		}
+		return Collections.emptyList();
+	}
+
+	@Override
+	public void reload() {
+		//
+	}
+
+	@Override
+	public void showEmbossDialog() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ReadOnlyBooleanProperty canEmbossProperty() {
+		return canEmbossProperty;
+	}
+
+	@Override
+	public ReadOnlyBooleanProperty canExportProperty() {
+		return canExportProperty;
+	}
+
+	@Override
+	public ReadOnlyStringProperty urlProperty() {
+		return urlProperty;
 	}
 
 }

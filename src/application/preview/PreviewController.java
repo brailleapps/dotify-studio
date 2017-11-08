@@ -1,8 +1,14 @@
 package application.preview;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,19 +20,36 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.daisy.braille.utils.api.embosser.Embosser;
+import org.daisy.braille.utils.api.embosser.EmbosserCatalog;
+import org.daisy.braille.utils.api.embosser.EmbosserCatalogService;
+import org.daisy.braille.utils.api.embosser.EmbosserFeatures;
+import org.daisy.braille.utils.api.embosser.EmbosserWriter;
 import org.daisy.braille.utils.pef.PEFBook;
+import org.daisy.braille.utils.pef.PEFHandler;
 import org.daisy.dotify.api.tasks.AnnotatedFile;
 import org.daisy.dotify.api.tasks.CompiledTaskSystem;
 import org.daisy.dotify.api.tasks.TaskSystem;
 import org.daisy.dotify.consumer.tasks.TaskSystemFactoryMaker;
 import org.daisy.dotify.tasks.runner.RunnerResult;
 import org.daisy.dotify.tasks.runner.TaskRunner;
+import org.xml.sax.SAXException;
 
 import com.googlecode.e2u.BookReader;
 import com.googlecode.e2u.Start;
 
 import application.l10n.Messages;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -37,6 +60,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -53,11 +77,14 @@ public class PreviewController extends BorderPane implements Preview {
 	private static final Logger logger = Logger.getLogger(PreviewController.class.getCanonicalName());
 	@FXML WebView browser;
 	private OptionsController options;
-	private String url;
 	private Start start;
 	private ExecutorService exeService;
 	private boolean closing;
 	private EmbossView embossView;
+	private final ReadOnlyBooleanProperty canEmbossProperty;
+	private final ReadOnlyBooleanProperty canExportProperty;
+	private StringProperty urlProperty;
+	
 
 	/**
 	 * Creates a new preview controller.
@@ -84,6 +111,9 @@ public class PreviewController extends BorderPane implements Preview {
         );
 		exeService = Executors.newWorkStealingPool();
 		closing = false;
+		canEmbossProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(true));
+		canExportProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(true));
+		urlProperty = new SimpleStringProperty();
 	}
 	
 	/**
@@ -255,7 +285,7 @@ public class PreviewController extends BorderPane implements Preview {
 
 	/**
 	 * Starts a new preview server.
-	 * @param args the arguments
+	 * @param file the file
 	 * @return returns a thread that watches for changes in the pef file
 	 */
 	public Thread open(String[] args) {
@@ -281,7 +311,8 @@ public class PreviewController extends BorderPane implements Preview {
 			}
 		};
 		startServer.setOnSucceeded(ev -> {
-				this.url = startServer.getValue();
+				String url = startServer.getValue();
+				this.urlProperty.set(url);
 				if (url!=null) {
 					browser.getEngine().load(url);
 				} else {
@@ -301,13 +332,9 @@ public class PreviewController extends BorderPane implements Preview {
 	public void reload() {
 		browser.getEngine().reload();
 	}
-	
-	/**
-	 * Gets the url for the book in the view.
-	 * @return returns the url
-	 */
-	public String getURL() {
-		return url;
+
+	public ReadOnlyStringProperty urlProperty() {
+		return urlProperty;
 	}
 	
 	/**
@@ -317,11 +344,7 @@ public class PreviewController extends BorderPane implements Preview {
 		closing = true;
 	}
 	
-	/**
-	 * Gets the uri for the book
-	 * @return returns the uri
-	 */
-	public Optional<URI> getBookURI() {
+	private Optional<URI> getBookURI() {
 		if (start!=null) {
 			return start.getMainPage().getBookURI();
 		} else {
@@ -360,6 +383,57 @@ public class PreviewController extends BorderPane implements Preview {
 	@Override
 	public void save() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void saveAs(File f) throws IOException {
+		URI uri = getBookURI().orElseThrow(()->new IOException("Nothing to save."));		
+		try {
+			Files.copy(Paths.get(uri), new FileOutputStream(f));
+		} catch (IOException e) {
+			throw e;
+		}
+	}
+
+	@Override
+	public void export(File f) throws IOException {
+		URI uri = getBookURI().orElseThrow(()->new IOException("Nothing to export."));
+		File input = new File(uri);
+		//TODO: sync this with the embossing code and its settings
+    	OutputStream os = new FileOutputStream(f);
+    	EmbosserCatalogService ef = EmbosserCatalog.newInstance();
+    	Embosser emb = ef.newEmbosser("org_daisy.GenericEmbosserProvider.EmbosserType.NONE");
+    	String table = Settings.getSettings().getString(Keys.charset);
+    	if (table!=null) {
+    		emb.setFeature(EmbosserFeatures.TABLE, table);
+    	}
+		EmbosserWriter embosser = emb.newEmbosserWriter(os);
+		PEFHandler ph = new PEFHandler.Builder(embosser).build();
+		FileInputStream is = new FileInputStream(input);
+		SAXParserFactory spf = SAXParserFactory.newInstance();
+		spf.setNamespaceAware(true);
+		SAXParser sp;
+		try {
+			sp = spf.newSAXParser();
+			sp.parse(is, ph);
+		} catch (ParserConfigurationException | SAXException e) {
+			throw new IOException("Failed to export", e);
+		}
+	}
+
+	@Override
+	public List<ExtensionFilter> getSaveAsFilters() {
+		return Arrays.asList(new ExtensionFilter("PEF-file", "*.pef"));
+	}
+
+	@Override
+	public ReadOnlyBooleanProperty canEmbossProperty() {
+		return canEmbossProperty;
+	}
+
+	@Override
+	public ReadOnlyBooleanProperty canExportProperty() {
+		return canExportProperty;
 	}
 
 }
