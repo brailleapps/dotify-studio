@@ -702,7 +702,7 @@ public class MainController {
         setGraphic(source.getName(), tab);
         tab.setText(source.getName());
 		AnnotatedFile ai = IdentityProvider.newInstance().identify(source);
-        if (SourcePreviewController.supportsFormat(ai) && "on".equalsIgnoreCase(System.getProperty("application.feature.editor", "off"))) {
+        if (SourcePreviewController.supportsFormat(ai) && FeatureSwitch.EDITOR.isOn()) {
 	        SourcePreviewController prv = new SourcePreviewController();
 	        tab.setOnClosed(ev ->  {
 	        	prv.closing();

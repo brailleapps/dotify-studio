@@ -10,7 +10,11 @@ public enum FeatureSwitch {
 	/**
 	 * Defines if embossing is enabled or not.
 	 */
-	EMBOSSING("on".equalsIgnoreCase(System.getProperty("application.feature.embossing", "on")));
+	EMBOSSING("on".equalsIgnoreCase(System.getProperty("application.feature.embossing", "on"))),
+	/**
+	 * Defines if editors are enabled or not. 
+	 */
+	EDITOR("on".equalsIgnoreCase(System.getProperty("application.feature.editor", "off")));
 
 	private final boolean on;
 	FeatureSwitch(boolean on) {
