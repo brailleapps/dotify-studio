@@ -85,6 +85,7 @@ public class PreviewController extends BorderPane implements Preview {
 	private EmbossView embossView;
 	private final ReadOnlyBooleanProperty canEmbossProperty;
 	private final ReadOnlyBooleanProperty canExportProperty;
+	private final ReadOnlyBooleanProperty canSaveProperty;
 	private StringProperty urlProperty;
 	
 
@@ -115,6 +116,7 @@ public class PreviewController extends BorderPane implements Preview {
 		closing = false;
 		canEmbossProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(true));
 		canExportProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(true));
+		canSaveProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
 		urlProperty = new SimpleStringProperty();
 	}
 	
@@ -377,11 +379,6 @@ public class PreviewController extends BorderPane implements Preview {
 	}
 
 	@Override
-	public boolean canSave() {
-		return false;
-	}
-
-	@Override
 	public void save() {
 		throw new UnsupportedOperationException();
 	}
@@ -435,6 +432,11 @@ public class PreviewController extends BorderPane implements Preview {
 	@Override
 	public ReadOnlyBooleanProperty canExportProperty() {
 		return canExportProperty;
+	}
+
+	@Override
+	public ReadOnlyBooleanProperty canSaveProperty() {
+		return canSaveProperty;
 	}
 
 }

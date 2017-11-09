@@ -15,7 +15,11 @@ public interface Preview {
 	 * Returns true if this preview can be saved at it's current location (it has one that makes sense
 	 * to a user)
 	 */
-	public boolean canSave();
+	public default boolean canSave() {
+		return canSaveProperty().get();
+	}
+	
+	public ReadOnlyBooleanProperty canSaveProperty();
 
 	/**
 	 * Saves the file to the current location.

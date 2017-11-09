@@ -22,6 +22,7 @@ import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -42,6 +43,7 @@ public class SourcePreviewController extends BorderPane implements Preview {
 	@FXML Tab source;
 	private final BooleanProperty canEmbossProperty;
 	private final BooleanProperty canExportProperty;
+	private final BooleanProperty canSaveProperty;
 	private final StringProperty urlProperty;
 
 	/**
@@ -58,6 +60,7 @@ public class SourcePreviewController extends BorderPane implements Preview {
 		}
 		canEmbossProperty = new SimpleBooleanProperty(false);
 		canExportProperty = new SimpleBooleanProperty(false);
+		canSaveProperty = new SimpleBooleanProperty(false);
 		urlProperty = new SimpleStringProperty();
 	}
 	
@@ -71,6 +74,9 @@ public class SourcePreviewController extends BorderPane implements Preview {
 			canExportProperty.set(
 				pr.map(v->((Preview)v).canExport()).orElse(false)
 			);
+			canSaveProperty.set(
+					pr.map(v->((Preview)v).canSave()).orElse(false)
+				);
 			urlProperty.set(
 				pr.map(v->((Preview)v).urlProperty().get()).orElse(null)
 			);
@@ -120,6 +126,7 @@ public class SourcePreviewController extends BorderPane implements Preview {
 		source.setContent(editor);
 		canEmbossProperty.set(prv.canEmboss());
 		canExportProperty.set(prv.canExport());
+		canSaveProperty.set(prv.canSave());
 		urlProperty.set(prv.urlProperty().get());
 	}
 
@@ -149,15 +156,6 @@ public class SourcePreviewController extends BorderPane implements Preview {
 			.map(v->v.getSelectedItem().getContent())
 			.filter(v->v instanceof Preview)
 			.map(v->(Preview)v);
-	}
-
-	@Override
-	public boolean canSave() {
-		SingleSelectionModel<Tab> m = tabs.getSelectionModel(); 
-		if (m!=null) {
-			return m.getSelectedItem() == source;
-		}
-		return false;
 	}
 
 	@Override
@@ -199,6 +197,11 @@ public class SourcePreviewController extends BorderPane implements Preview {
 	@Override
 	public ReadOnlyStringProperty urlProperty() {
 		return urlProperty;
+	}
+
+	@Override
+	public ReadOnlyBooleanProperty canSaveProperty() {
+		return canSaveProperty;
 	}
 
 }

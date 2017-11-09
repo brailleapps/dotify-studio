@@ -67,7 +67,11 @@
                      </accelerator>
                   </MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#save" text="%menu-item-save" />
+                  <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#save" text="%menu-item-save" >
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                     </accelerator>
+                  </MenuItem>
                   <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" onAction="#saveAs" text="%menu-item-save-as" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <Menu mnemonicParsing="false" text="%menu-item-import">

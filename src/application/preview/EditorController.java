@@ -53,6 +53,7 @@ public class EditorController extends BorderPane implements Preview {
 	private ExecutorService executor;
 	private final ReadOnlyBooleanProperty canEmbossProperty;
 	private final ReadOnlyBooleanProperty canExportProperty;
+	private final BooleanProperty canSaveProperty;
 	private final ReadOnlyStringProperty urlProperty;
 	//private String hash;
 
@@ -71,6 +72,7 @@ public class EditorController extends BorderPane implements Preview {
 		executor = Executors.newWorkStealingPool();
 		canEmbossProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
 		canExportProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
+		canSaveProperty = new SimpleBooleanProperty(false);
 		urlProperty = new SimpleStringProperty();
 	}
 	
@@ -109,6 +111,7 @@ public class EditorController extends BorderPane implements Preview {
 	 */
 	public void load(File f, boolean xmlMarkup) {
 		this.file = f;
+		canSaveProperty.set(true);
 		codeArea.clear();
 		if (xmlMarkup) {
 			codeArea.richChanges()
@@ -156,11 +159,6 @@ public class EditorController extends BorderPane implements Preview {
 			logger.warning("Failed to create checksum");
 		}
 		return null;
-	}
-
-	@Override
-	public boolean canSave() {
-		return file!=null;
 	}
 
 	@Override
@@ -223,6 +221,11 @@ public class EditorController extends BorderPane implements Preview {
 	@Override
 	public ReadOnlyStringProperty urlProperty() {
 		return urlProperty;
+	}
+
+	@Override
+	public ReadOnlyBooleanProperty canSaveProperty() {
+		return canSaveProperty;
 	}
 
 }
