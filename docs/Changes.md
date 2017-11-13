@@ -1,5 +1,22 @@
 [[Table of Contents|Toc]]
 
+# 0.5.0 #
+## New in this version ##
+- Embossing
+  - Supports Index V5 embossers
+  - Adds 8-dot embossing for Index V4 and V5 embossers
+  - Adds unprintable margins for Index V4 and V5 (fixes brailleapps/braille-utils.impl#3)
+  - Corrects width calculation on Braillo 300 (fixes brailleapps/braille-utils.impl#1)
+- User interface
+  - Restores the inner margin indicator
+  - Fixes page numbering for single sided sections (fixes #43)
+  - Displays some key properties of the selected embosser implementation in embosser settings (8-dot support, volume support, line spacing support)
+  - Fixes the file filter in the "Save as" dialog
+- Formatter
+  - Supports additional page counters in OBFL
+- Other
+  - Improves documentation
+
 # 0.4.0 #
 ## New in this version ##
 - Enables drag-and-drop for source file imports
