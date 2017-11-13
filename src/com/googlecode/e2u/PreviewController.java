@@ -16,9 +16,8 @@ import org.daisy.braille.utils.api.table.BrailleConstants;
 import org.daisy.braille.utils.api.table.BrailleConverter;
 import org.daisy.braille.utils.api.table.Table;
 import org.daisy.braille.utils.api.table.TableCatalog;
-import org.daisy.braille.impl.table.DefaultTableProvider;
+import org.daisy.braille.utils.impl.tools.table.DefaultTableProvider;
 
-import com.googlecode.ajui.Context;
 import com.googlecode.e2u.BookReader.BookReaderResult;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
@@ -129,7 +128,7 @@ public class PreviewController {
 				table = TableCatalog.newInstance().get(charset);
 			}
 			if (table==null) {
-				table = TableCatalog.newInstance().get(DefaultTableProvider.class.getCanonicalName()+".TableType.EN_US");
+				table = TableCatalog.newInstance().get(DefaultTableProvider.TableType.EN_US.getIdentifier());
 				settings.getSetPref(Keys.charset, table.getIdentifier());
 			}
 			params.put("uri", file);

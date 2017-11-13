@@ -28,7 +28,7 @@ import org.daisy.braille.utils.api.table.BrailleConstants;
 import org.daisy.braille.utils.api.table.BrailleConverter;
 import org.daisy.braille.utils.api.table.Table;
 import org.daisy.braille.utils.api.table.TableCatalog;
-import org.daisy.braille.impl.table.DefaultTableProvider;
+import org.daisy.braille.utils.impl.tools.table.DefaultTableProvider;
 import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.dotify.api.validity.ValidationReport;
 import org.daisy.dotify.api.validity.ValidatorMessage;
@@ -114,7 +114,7 @@ class StaxPreviewParser {
 			table = TableCatalog.newInstance().get(charset);
 		}
 		if (table==null) {
-			table = TableCatalog.newInstance().get(DefaultTableProvider.class.getCanonicalName()+".TableType.EN_US");
+			table = TableCatalog.newInstance().get(DefaultTableProvider.TableType.EN_US.getIdentifier());
 			Settings.getSettings().getSetPref(Keys.charset, table.getIdentifier());
 		}
 		return table;
