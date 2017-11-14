@@ -125,26 +125,30 @@ public class PreviewController extends BorderPane implements Preview {
 	 * @param selected the file
 	 * @param options the options
 	 */
-	public void convertAndOpen(AnnotatedFile selected, Map<String, Object> options) {
-		try {
-			File out = File.createTempFile("dotify-studio", ".pef");
-			String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
-			DotifyTask dt = new DotifyTask(selected, out, tag, options);
-			dt.setOnSucceeded(ev -> {
-				Thread pefWatcher = open(out);
-				updateOptions(dt.getValue(), options);
-	    		Thread th = new Thread(new SourceDocumentWatcher(selected, out, tag, pefWatcher));
-	    		th.setDaemon(true);
-	    		th.start();
-			});
-			dt.setOnFailed(ev->{
-				logger.log(Level.WARNING, "Import failed.", dt.getException());
-	    		Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
-	    		alert.showAndWait();
-			});
-			exeService.submit(dt);
-		} catch (IOException e) {
-			e.printStackTrace();
+	public void open(AnnotatedFile selected, Map<String, Object> options) {
+		if (options==null) {
+			open(selected.getFile());
+		} else {
+			try {
+				File out = File.createTempFile("dotify-studio", ".pef");
+				String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
+				DotifyTask dt = new DotifyTask(selected, out, tag, options);
+				dt.setOnSucceeded(ev -> {
+					Thread pefWatcher = open(out);
+					updateOptions(dt.getValue(), options);
+		    		Thread th = new Thread(new SourceDocumentWatcher(selected, out, tag, pefWatcher));
+		    		th.setDaemon(true);
+		    		th.start();
+				});
+				dt.setOnFailed(ev->{
+					logger.log(Level.WARNING, "Import failed.", dt.getException());
+		    		Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
+		    		alert.showAndWait();
+				});
+				exeService.submit(dt);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -292,7 +296,7 @@ public class PreviewController extends BorderPane implements Preview {
 	 * @param file the file
 	 * @return returns a thread that watches for changes in the pef file
 	 */
-	public Thread open(File file) {
+	private Thread open(File file) {
 		Thread pefWatcherThread = null;
 		if (file!=null) {
 			PefDocumentWatcher pefWatcher = new PefDocumentWatcher(file);
@@ -437,6 +441,11 @@ public class PreviewController extends BorderPane implements Preview {
 	@Override
 	public ReadOnlyBooleanProperty canSaveProperty() {
 		return canSaveProperty;
+	}
+
+	@Override
+	public Map<String, Object> getOptions() {
+		return options!=null?options.getParams():null;
 	}
 
 }

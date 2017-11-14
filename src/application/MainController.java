@@ -195,6 +195,11 @@ public class MainController {
 				canExport.bind(p.canExportProperty());
 				canSave.bind(p.canSaveProperty());
 				urlProperty.bind(p.urlProperty());
+			} else {
+				canEmboss.set(false);
+				canExport.set(false);
+				canSave.set(false);
+				urlProperty.set(null);
 			}
 		});
 		BooleanBinding noTabBinding = tabPane.getSelectionModel().selectedItemProperty().isNull();
@@ -387,11 +392,10 @@ public class MainController {
 	    	if (selected!=null) {
 				try {
 					controller.saveAs(selected);
-					//FIXME: this won't do in the new world
 					// stop watching
 					controller.closing();
 					// update contents of tab
-					setTab(t, selected.getName(), StartupDetails.open(selected));
+					setTab(t, selected.getName(), StartupDetails.open(selected), controller.getOptions());
 					// TODO: Restore document position
 				} catch (IOException e) {
 					Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
@@ -675,12 +679,12 @@ public class MainController {
 
     private void addTab(String title, StartupDetails args) {
         Tab tab = new Tab();
-        setTab(tab, title, args);
+        setTab(tab, title, args, null);
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().select(tab);
     }
     
-    private void setTab(Tab tab, String title, StartupDetails args) {
+    private void setTab(Tab tab, String title, StartupDetails args, Map<String, Object> options) {
     	if (title==null && args.getFile()!=null) {
         	title = args.getFile().getAbsolutePath();
         }
@@ -688,23 +692,7 @@ public class MainController {
         	tab.setText(title);
         	setGraphic(title, tab);
         }
-		AnnotatedFile ai = IdentityProvider.newInstance().identify(args.getFile());
-        if (SourcePreviewController.supportsFormat(ai) && FeatureSwitch.EDITOR.isOn()) {
-	        SourcePreviewController prv = new SourcePreviewController();
-	        tab.setOnClosed(ev ->  {
-	        	prv.closing();
-	        });
-	        prv.open(ai);
-	        tab.setContent(prv);
-        } else {
-	        PreviewController prv = new PreviewController();
-	        tab.setOnClosed(ev ->  {
-	        	prv.closing();
-	        });
-	        prv.open(args.getFile());
-	        tab.setContent(prv);
-        }
-
+        setupEditor(tab, args.getFile(), options);
     }
     
 	private void setGraphic(String fileName, Tab t) {
@@ -717,24 +705,28 @@ public class MainController {
         Tab tab = new Tab();
         setGraphic(source.getName(), tab);
         tab.setText(source.getName());
+        setupEditor(tab, source, options);
+        tabPane.getTabs().add(tab);
+        tabPane.getSelectionModel().select(tab);
+    }
+    
+    private void setupEditor(Tab tab, File source, Map<String, Object> options) {
 		AnnotatedFile ai = IdentityProvider.newInstance().identify(source);
         if (SourcePreviewController.supportsFormat(ai) && FeatureSwitch.EDITOR.isOn()) {
 	        SourcePreviewController prv = new SourcePreviewController();
 	        tab.setOnClosed(ev ->  {
 	        	prv.closing();
 	        });
-	        prv.convertAndOpen(ai, options);
+	        prv.open(ai, options);
 	        tab.setContent(prv);
         } else {
 	        PreviewController prv = new PreviewController();
 	        tab.setOnClosed(ev ->  {
 	        	prv.closing();
 	        });
-	        prv.convertAndOpen(ai, options);
+	        prv.open(ai, options);
 	        tab.setContent(prv);	
         }
-        tabPane.getTabs().add(tab);
-        tabPane.getSelectionModel().select(tab);
     }
 
 }
