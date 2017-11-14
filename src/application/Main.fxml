@@ -67,7 +67,7 @@
                      </accelerator>
                   </MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#save" text="%menu-item-save" >
+                  <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#save" text="%menu-item-save">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                      </accelerator>
@@ -116,11 +116,17 @@
                      <accelerator>
                         <KeyCodeCombination alt="DOWN" code="C" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
                      </accelerator></CheckMenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#toggleEditor" text="%menu-item-toggle-view">
+	                  <accelerator>
+	                        <KeyCodeCombination alt="UP" code="F6" control="UP" meta="UP" shift="UP" shortcut="UP" />
+	                     </accelerator>
+	              </MenuItem>
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="%menu-item-help">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#openHelpTab" text="%menu-item-help-contents" >
+                  <MenuItem mnemonicParsing="false" onAction="#openHelpTab" text="%menu-item-help-contents">
                   	<accelerator>
                         <KeyCodeCombination alt="UP" code="F1" control="UP" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>

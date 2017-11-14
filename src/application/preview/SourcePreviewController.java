@@ -22,7 +22,6 @@ import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -202,6 +201,16 @@ public class SourcePreviewController extends BorderPane implements Preview {
 	@Override
 	public ReadOnlyBooleanProperty canSaveProperty() {
 		return canSaveProperty;
+	}
+
+	@Override
+	public void toggleView() {		
+		SingleSelectionModel<Tab> select = tabs.getSelectionModel();
+		if (select.isSelected(0)) {
+			select.selectLast();
+		} else {
+			select.selectFirst();
+		}
 	}
 
 }

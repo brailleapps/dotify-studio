@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -296,6 +297,17 @@ public class MainController {
         	}
         	addTab(title, args);
         }
+	}
+	
+	private Optional<Preview> getSelectedPreview() {
+		return Optional.ofNullable(tabPane.getSelectionModel().getSelectedItem())
+				.map(t->t.getContent())
+				.filter(n->(n instanceof Preview))
+				.map(n->(Preview)n);
+	}
+	
+	@FXML void toggleEditor() {
+		getSelectedPreview().ifPresent(p->p.toggleView());
 	}
 
     @FXML void refresh() {

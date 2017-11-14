@@ -85,5 +85,9 @@ public interface Preview {
 	 * Shows the emboss dialog.
 	 */
 	public void showEmbossDialog();
+	
+	public default void toggleView() {
+		
+	}
 
 }
