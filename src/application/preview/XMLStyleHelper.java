@@ -21,6 +21,12 @@ class XMLStyleHelper {
 	private static final int GROUP_ATTRIBUTE_NAME = 1;
 	private static final int GROUP_EQUAL_SYMBOL = 2;
 	private static final int GROUP_ATTRIBUTE_VALUE = 3;
+	
+	static StyleSpans<Collection<String>> noStyles(String text) {
+		StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+		spansBuilder.add(Collections.emptyList(), text.length());
+		return spansBuilder.create();
+	}
 
 	static StyleSpans<Collection<String>> computeHighlighting(String text) {
 		Matcher matcher = XML_TAG.matcher(text);

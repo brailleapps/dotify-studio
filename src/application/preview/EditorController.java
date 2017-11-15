@@ -51,6 +51,7 @@ public class EditorController extends BorderPane implements Preview {
 	private CodeArea codeArea;
 	private VirtualizedScrollPane<CodeArea> scrollPane;
 	private File file;
+	private boolean xmlMarkup;
 	private ExecutorService executor;
 	private final ReadOnlyBooleanProperty canEmbossProperty;
 	private final ReadOnlyBooleanProperty canExportProperty;
@@ -95,7 +96,7 @@ public class EditorController extends BorderPane implements Preview {
         Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
             @Override
             protected StyleSpans<Collection<String>> call() throws Exception {
-                return XMLStyleHelper.computeHighlighting(text);
+                return xmlMarkup?XMLStyleHelper.computeHighlighting(text):XMLStyleHelper.noStyles(text);
             }
         };
         executor.execute(task);
@@ -112,26 +113,23 @@ public class EditorController extends BorderPane implements Preview {
 	 */
 	public void load(File f, boolean xmlMarkup) {
 		this.file = f;
+		this.xmlMarkup = xmlMarkup;
 		canSaveProperty.set(true);
 		codeArea.clear();
-		if (xmlMarkup) {
-			codeArea.richChanges()
+		codeArea.richChanges()
 			.filter(ch -> !ch.getInserted().equals(ch.getRemoved()))
-	        .successionEnds(Duration.ofMillis(500))
-	        .supplyTask(this::computeHighlightingAsync)
-	        .awaitLatest(codeArea.richChanges())
-	        .filterMap(t -> {
-	            if(t.isSuccess()) {
-	                return Optional.of(t.get());
-	            } else {
-	                t.getFailure().printStackTrace();
-	                return Optional.empty();
-	            }
-	        })
-	        .subscribe(this::applyHighlighting);
-		} else {
-			// TODO: clear colors?
-		}
+			.successionEnds(Duration.ofMillis(500))
+			.supplyTask(this::computeHighlightingAsync)
+			.awaitLatest(codeArea.richChanges())
+			.filterMap(t -> {
+				if(t.isSuccess()) {
+					return Optional.of(t.get());
+				} else {
+					t.getFailure().printStackTrace();
+					return Optional.empty();
+				}
+			})
+			.subscribe(this::applyHighlighting);
 		try {
 			codeArea.replaceText(0, 0, new String(Files.readAllBytes(f.toPath()), StandardCharsets.UTF_8));
 		} catch (IOException e) {
