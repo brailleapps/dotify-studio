@@ -119,6 +119,7 @@ public enum Messages {
 	 * Confirm delete a custom paper
 	 */
 	MESSAGE_CONFIRM_DELETE_PAPER("message-confirm-delete-paper"),
+	MESSAGE_FILE_MODIFIED_BY_ANOTHER_APPLICATION("message-file-modified-by-another-application"),
 	PREFERENCES_MENU_ITEM("menu-item-preferences"),
 	PREFERENCES_WINDOW_TITLE("preferences-window-title"),
 	TAB_EMBOSS("tab-emboss"),

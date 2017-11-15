@@ -69,6 +69,10 @@ public class EditorController extends BorderPane implements Preview {
 	private final ReadOnlyBooleanProperty canExportProperty;
 	private final BooleanProperty canSaveProperty;
 	private final ReadOnlyStringProperty urlProperty;
+	private ChangeWatcher changeWatcher;
+	private boolean needsUpdate = false;
+	private Long lastSaved = 0l;
+	private boolean closing = false;
 	//private String hash;
 
 	/**
@@ -97,6 +101,11 @@ public class EditorController extends BorderPane implements Preview {
 		codeArea.textProperty().addListener((obs, oldText, newText)-> {
 			codeArea.setStyleSpans(0, XMLStyleHelper.computeHighlighting(newText));
 		});*/
+		codeArea.focusedProperty().addListener((o, ov, nv) -> {
+			if (nv && needsUpdate) {
+				askForUpdate();
+			}
+		});
 		codeArea.setWrapText(true);
 		scrollPane = new VirtualizedScrollPane<>(codeArea);
 		scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
@@ -114,6 +123,27 @@ public class EditorController extends BorderPane implements Preview {
         executor.execute(task);
         return task;
     }
+    
+	private synchronized void askForUpdate() {
+		if (needsUpdate) {
+			needsUpdate = false;
+			Platform.runLater(()->{
+				Alert alert = new Alert(AlertType.CONFIRMATION, Messages.MESSAGE_FILE_MODIFIED_BY_ANOTHER_APPLICATION.localize(), ButtonType.YES, ButtonType.CANCEL);
+				Optional<ButtonType> res = alert.showAndWait();
+				res.filter(v->v.equals(ButtonType.YES))
+					.ifPresent(v->{
+						load(fileInfo.getFile(), fileInfo.isXml());
+					});
+			});
+		}
+	}
+	
+	private synchronized void requestUpdate() {
+		needsUpdate = true;
+		if (codeArea.isFocused()) {
+			askForUpdate();
+		}
+	}
 
     private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
         codeArea.setStyleSpans(0, highlighting);
@@ -150,6 +180,14 @@ public class EditorController extends BorderPane implements Preview {
 		} finally {
 			this.fileInfo = builder.build();
 			updateFileInfo(this.fileInfo);
+			// Watch document
+			if (changeWatcher!=null) {
+				changeWatcher.stop();
+			}
+			changeWatcher = new ChangeWatcher(f);
+			Thread th = new Thread(changeWatcher);
+			th.setDaemon(true);
+			th.start();
 		}
 	}
 	
@@ -199,7 +237,7 @@ public class EditorController extends BorderPane implements Preview {
 	@Override
 	public void save() {
 		try {
-			updateFileInfo(saveToFile(fileInfo.getFile(), fileInfo, codeArea.getText()));
+			updateFileInfo(saveToFileSynchronized(fileInfo.getFile(), fileInfo, codeArea.getText()));
 		} catch (IOException e) {
 			logger.warning("Failed to write: " + fileInfo.getFile());
 		}
@@ -207,7 +245,7 @@ public class EditorController extends BorderPane implements Preview {
 
 	@Override
 	public void saveAs(File f) throws IOException {
-		updateFileInfo(saveToFile(f, fileInfo, codeArea.getText()));
+		updateFileInfo(saveToFileSynchronized(f, fileInfo, codeArea.getText()));
 	}
 	
 	private void updateFileInfo(FileInfo fileInfo) {
@@ -216,6 +254,14 @@ public class EditorController extends BorderPane implements Preview {
 		bomLabel.setText(fileInfo.hasBom()?"BOM":"");
 	}
 	
+	FileInfo saveToFileSynchronized(File f, FileInfo fileInfo, String text) throws IOException {
+		synchronized (lastSaved) {
+			FileInfo ret = saveToFile(f, fileInfo, text);
+			lastSaved = fileInfo.getFile().lastModified();
+			return ret;
+		}
+	}
+
 	static FileInfo saveToFile(File f, FileInfo fileInfo, String text) throws IOException {
 		FileInfo.Builder builder = FileInfo.with(fileInfo);
 		builder.file(f);
@@ -278,6 +324,7 @@ public class EditorController extends BorderPane implements Preview {
 
 	@Override
 	public void closing() {
+		closing = true;
 		executor.shutdown();
 	}
 
@@ -327,6 +374,36 @@ public class EditorController extends BorderPane implements Preview {
 	@Override
 	public Map<String, Object> getOptions() {
 		return null;
+	}
+	
+	private class ChangeWatcher extends DocumentWatcher {
+		private boolean shouldMonitor = true;
+
+		ChangeWatcher(File f) {
+			super(f);
+		}
+
+		@Override
+		boolean shouldMonitor() {
+			return super.shouldMonitor() && !closing && shouldMonitor && file==fileInfo.getFile();
+		}
+
+		@Override
+		boolean shouldPerformAction() {
+			synchronized (lastSaved) {
+				return super.shouldPerformAction() && lastSaved<file.lastModified();
+			}
+		}
+		
+		private void stop() {
+			this.shouldMonitor = false;
+		}
+
+		@Override
+		void performAction() {
+			requestUpdate();
+		}
+		
 	}
 
 }
