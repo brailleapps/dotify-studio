@@ -72,7 +72,7 @@ dependencies {
 	
 	compile 'org.daisy.dotify:dotify.api:3.2.0'
 	compile 'org.daisy.streamline:streamline-api:0.2.0'
-	compile 'org.daisy.dotify:dotify.common:3.6.0'
+	compile 'org.daisy.dotify:dotify.common:3.7.1'
 	compile ('org.daisy.streamline:streamline-engine:0.2.0') {
 		exclude module: 'streamline-api'
 	}
@@ -86,7 +86,7 @@ dependencies {
 	runtime 'org.daisy.dotify:dotify.hyphenator.impl:3.0.0'
 	runtime 'org.daisy.dotify:dotify.text.impl:3.0.0'
 	runtime 'org.daisy.dotify:dotify.translator.impl:3.0.0'
-	runtime ('org.daisy.dotify:dotify.task.impl:3.6.0') {
+	runtime ('org.daisy.dotify:dotify.task.impl:3.7.0') {
 		exclude module: 'Saxon-HE'
 	}
 

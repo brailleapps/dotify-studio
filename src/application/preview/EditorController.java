@@ -1,7 +1,9 @@
 package application.preview;
 
+
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.MessageDigest;
@@ -20,12 +22,15 @@ import java.util.logging.Logger;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.daisy.dotify.common.xml.XMLTools;
+import org.daisy.dotify.common.xml.XmlEncodingDetectionException;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 
 import application.l10n.Messages;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
@@ -34,7 +39,11 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -46,12 +55,15 @@ import javafx.stage.FileChooser.ExtensionFilter;
  */
 public class EditorController extends BorderPane implements Preview {
 	private static final Logger logger = Logger.getLogger(EditorController.class.getCanonicalName());
+	private static final char BYTE_ORDER_MARK = '\uFEFF';
+
 	@FXML CheckBox wordWrap;
 	@FXML CheckBox lineNumbers;
+	@FXML Label encodingLabel;
+	@FXML Label bomLabel;
 	private CodeArea codeArea;
 	private VirtualizedScrollPane<CodeArea> scrollPane;
-	private File file;
-	private boolean xmlMarkup;
+	private FileInfo fileInfo = new FileInfo.Builder((File)null).build();
 	private ExecutorService executor;
 	private final ReadOnlyBooleanProperty canEmbossProperty;
 	private final ReadOnlyBooleanProperty canExportProperty;
@@ -96,7 +108,7 @@ public class EditorController extends BorderPane implements Preview {
         Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
             @Override
             protected StyleSpans<Collection<String>> call() throws Exception {
-                return xmlMarkup?XMLStyleHelper.computeHighlighting(text):XMLStyleHelper.noStyles(text);
+                return fileInfo.isXml()?XMLStyleHelper.computeHighlighting(text):XMLStyleHelper.noStyles(text);
             }
         };
         executor.execute(task);
@@ -112,9 +124,6 @@ public class EditorController extends BorderPane implements Preview {
 	 * @param f the file
 	 */
 	public void load(File f, boolean xmlMarkup) {
-		this.file = f;
-		this.xmlMarkup = xmlMarkup;
-		canSaveProperty.set(true);
 		codeArea.clear();
 		codeArea.richChanges()
 			.filter(ch -> !ch.getInserted().equals(ch.getRemoved()))
@@ -130,11 +139,38 @@ public class EditorController extends BorderPane implements Preview {
 				}
 			})
 			.subscribe(this::applyHighlighting);
+		FileInfo.Builder builder = new FileInfo.Builder(f);
 		try {
-			codeArea.replaceText(0, 0, new String(Files.readAllBytes(f.toPath()), StandardCharsets.UTF_8));
-		} catch (IOException e) {
+			String text = loadData(Files.readAllBytes(f.toPath()), builder, xmlMarkup);
+			codeArea.replaceText(0, 0, text);
+			canSaveProperty.set(true);
+		} catch (IOException | XmlEncodingDetectionException e) {
 			logger.warning("Failed to read: " + f);
+			canSaveProperty.set(false);
+		} finally {
+			this.fileInfo = builder.build();
+			updateFileInfo(this.fileInfo);
 		}
+	}
+	
+	static String loadData(byte[] data, FileInfo.Builder builder, boolean xml) throws IOException, XmlEncodingDetectionException {
+		builder.xml(xml);
+		Charset encoding;
+		if (xml) {
+			//TODO: Ask if there is an encoding mismatch
+			encoding = Charset.forName(XMLTools.detectXmlEncoding(data));
+		} else {
+			encoding = XMLTools.detectBomEncoding(data).orElse(StandardCharsets.UTF_8);
+		}
+		builder.charset(encoding);
+		String text = new String(data, encoding);
+		if (!text.isEmpty() && text.charAt(0)==BYTE_ORDER_MARK) {
+			builder.bom(true);
+			text = text.substring(1);
+		} else {
+			builder.bom(false);
+		}
+		return text;
 	}
 
 	@FXML void toggleWordWrap() {
@@ -163,15 +199,76 @@ public class EditorController extends BorderPane implements Preview {
 	@Override
 	public void save() {
 		try {
-			Files.write(file.toPath(), codeArea.getText().getBytes(StandardCharsets.UTF_8));
+			updateFileInfo(saveToFile(fileInfo.getFile(), fileInfo, codeArea.getText()));
 		} catch (IOException e) {
-			logger.warning("Failed to write: " + file);
+			logger.warning("Failed to write: " + fileInfo.getFile());
 		}
 	}
 
 	@Override
 	public void saveAs(File f) throws IOException {
-		Files.copy(file.toPath(), f.toPath());
+		updateFileInfo(saveToFile(f, fileInfo, codeArea.getText()));
+	}
+	
+	private void updateFileInfo(FileInfo fileInfo) {
+		this.fileInfo = fileInfo;
+		encodingLabel.setText(fileInfo.getCharset().name());
+		bomLabel.setText(fileInfo.hasBom()?"BOM":"");
+	}
+	
+	static FileInfo saveToFile(File f, FileInfo fileInfo, String text) throws IOException {
+		FileInfo.Builder builder = FileInfo.with(fileInfo);
+		builder.file(f);
+		Charset charset = StandardCharsets.UTF_8;
+		Optional<String> _encoding;
+		if (fileInfo.isXml() && (_encoding = XMLTools.getDeclaredEncoding(text)).isPresent()) {
+			String encoding = _encoding.get();
+			try {
+				charset = Charset.forName(encoding);
+			} catch (Exception e) {
+				Platform.runLater(()-> {
+					Alert alert = new Alert(AlertType.ERROR, Messages.ERROR_UNSUPPORTED_XML_ENCODING.localize(encoding), ButtonType.OK);
+					alert.showAndWait();
+				});
+				return null;
+			}
+			if (StandardCharsets.UTF_16.equals(charset)) {
+				// UTF-16 will append a BOM by itself
+				builder.bom(true);
+			} else if (fileInfo.hasBom() && (isStandardUnicodeCharset(charset) || isUtf32Charset(encoding))) {
+				// Add BOM if the original file had it and the new encoding is a unicode charset
+				text = BYTE_ORDER_MARK + text;
+				builder.bom(true);
+			} else {
+				builder.bom(false);
+			}
+		} else {
+			// Text file, or an XML-file without a declaration
+			charset = fileInfo.getCharset();
+			if (StandardCharsets.UTF_16.equals(charset)) {
+				// UTF-16 will append a BOM by itself
+				builder.bom(true);
+			} else if (	(StandardCharsets.UTF_8.equals(charset) && fileInfo.hasBom()) ||
+						(!StandardCharsets.UTF_8.equals(charset) && isStandardUnicodeCharset(charset) || isUtf32Charset(charset.name())) ) {
+				// For text files, all unicode encodings require a BOM (unless it's utf-8)
+				text = BYTE_ORDER_MARK + text;
+				builder.bom(true);
+			} else {
+				builder.bom(false);
+			}
+		}
+		builder.charset(charset);
+		Files.write(f.toPath(), text.getBytes(charset));
+		return builder.build();
+	}
+	
+	private static boolean isStandardUnicodeCharset(Charset charset) {
+		return StandardCharsets.UTF_8.equals(charset) || StandardCharsets.UTF_16.equals(charset) || StandardCharsets.UTF_16LE.equals(charset)
+				|| StandardCharsets.UTF_16BE.equals(charset);
+	}
+	
+	private static boolean isUtf32Charset(String encoding) {
+		return encoding.toLowerCase().startsWith("utf-32");
 	}
 
 	@Override
@@ -186,8 +283,8 @@ public class EditorController extends BorderPane implements Preview {
 
 	@Override
 	public List<ExtensionFilter> getSaveAsFilters() {
-		if (file!=null) {
-			String name = file.getName();
+		if (fileInfo.getFile()!=null) {
+			String name = fileInfo.getFile().getName();
 			int dot = name.lastIndexOf('.');			
 			if (dot>=0 && dot<name.length()) {
 				String ext = name.substring(dot+1, name.length());
