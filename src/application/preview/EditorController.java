@@ -173,6 +173,9 @@ public class EditorController extends BorderPane implements Preview {
 		try {
 			String text = loadData(Files.readAllBytes(f.toPath()), builder, xmlMarkup);
 			codeArea.replaceText(0, 0, text);
+			if (fileInfo==null || !f.equals(fileInfo.getFile())) {
+				codeArea.getUndoManager().forgetHistory();
+			}
 			canSaveProperty.set(true);
 		} catch (IOException | XmlEncodingDetectionException e) {
 			logger.warning("Failed to read: " + f);
