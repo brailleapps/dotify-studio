@@ -98,4 +98,8 @@ public interface Preview {
 		return new SimpleBooleanProperty(false);
 	}
 
+	public default ReadOnlyBooleanProperty canEditProperty() {
+		return new SimpleBooleanProperty(false);
+	}
+
 }

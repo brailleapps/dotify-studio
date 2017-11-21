@@ -117,7 +117,7 @@
                         <KeyCodeCombination alt="DOWN" code="C" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
                      </accelerator></CheckMenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" onAction="#toggleEditor" text="%menu-item-toggle-view">
+                  <MenuItem fx:id="toggleViewMenuItem" mnemonicParsing="false" onAction="#toggleEditor" text="%menu-item-toggle-view">
 	                  <accelerator>
 	                        <KeyCodeCombination alt="UP" code="F6" control="UP" meta="UP" shift="UP" shortcut="UP" />
 	                     </accelerator>

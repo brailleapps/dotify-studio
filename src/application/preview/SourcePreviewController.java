@@ -222,6 +222,11 @@ public class SourcePreviewController extends BorderPane implements Preview {
 	}
 
 	@Override
+	public ReadOnlyBooleanProperty canEditProperty() {
+		return new SimpleBooleanProperty(true);
+	}
+
+	@Override
 	public void toggleView() {		
 		SingleSelectionModel<Tab> select = tabs.getSelectionModel();
 		if (select.isSelected(0)) {
