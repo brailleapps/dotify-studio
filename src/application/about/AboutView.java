@@ -34,7 +34,6 @@ public class AboutView extends Stage {
 					controller.closeWindow();
 				}
 			});
-	    	setResizable(false);
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Failed to load view", e);
 		}
