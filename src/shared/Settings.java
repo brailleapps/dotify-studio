@@ -2,6 +2,8 @@ package shared;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -10,7 +12,8 @@ import java.util.prefs.Preferences;
  * @author Joel Håkansson
  */
 public class Settings {
-	public enum Keys {version, device, embosser, printMode, table, paper, cutLengthValue, cutLengthUnit, orientation, zFolding, charset, align, brailleFont, textFont, libraryPath, locale};
+	public enum Keys {version, device, embosser, printMode, table, paper, cutLengthValue, cutLengthUnit, orientation, zFolding, charset, align, brailleFont, textFont, libraryPath, locale,
+		lastOpenPath, lastSavePath};
 	/**
 	 *  Modify this value when making incompatible changes to the settings structure
 	 */
@@ -133,10 +136,46 @@ public class Settings {
 	}
 	
 	public boolean setLibraryPath(String path) {
-		if (path==null || path.equals("") || !new File(path).exists()) {
+		return setPath(path, Keys.libraryPath);
+	}
+	
+	public Optional<File> getLastOpenPath() {
+		return getPath(Keys.lastOpenPath);
+	}
+	
+	public void setLastOpenPath(File path) {
+		setPath(path, Keys.lastOpenPath);
+	}
+	
+	public Optional<File> getLastSavePath() {
+		return getPath(Keys.lastSavePath);
+	}
+	
+	public void setLastSavePath(File path) {
+		setPath(path, Keys.lastSavePath);
+	}
+	
+	private Optional<File> getPath(Keys pathKey) {
+		Objects.requireNonNull(pathKey);
+		String path = getString(pathKey);
+		if (path != null && (new File(path).exists())) {
+			return Optional.of(new File(path));
+		} else {
+			return Optional.empty();
+		}
+	}
+	
+	private boolean setPath(File path, Keys pathKey) {
+		Objects.requireNonNull(path);
+		Objects.requireNonNull(pathKey);
+		return setPath(path.getAbsolutePath(), pathKey);
+	}
+	
+	private boolean setPath(String path, Keys pathKey) {
+		if (path==null || path.equals("") || !new File(path).isDirectory()) {
 			return false;
 		} else {
-			put(Keys.libraryPath, path);
+			put(pathKey, path);
 			return true;
 		}
 	}

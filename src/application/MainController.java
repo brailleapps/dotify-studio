@@ -78,6 +78,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import shared.Settings;
 
 /**
  * Provides the controller for the main view.
@@ -388,8 +389,10 @@ public class MainController {
 	    	FileChooser fileChooser = new FileChooser();
 	    	fileChooser.setTitle(Messages.TITLE_SAVE_AS_DIALOG.localize());
 	    	fileChooser.getExtensionFilters().addAll(controller.getSaveAsFilters());
+	    	Settings.getSettings().getLastSavePath().ifPresent(v->fileChooser.setInitialDirectory(v));
 	    	File selected = fileChooser.showSaveDialog(stage);
 	    	if (selected!=null) {
+	    		Settings.getSettings().setLastSavePath(selected.getParentFile());
 				try {
 					controller.saveAs(selected);
 					// stop watching
@@ -489,8 +492,10 @@ public class MainController {
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle("Open Resource File");
     	fileChooser.getExtensionFilters().add(new ExtensionFilter("PEF-files", "*.pef"));
+    	Settings.getSettings().getLastOpenPath().ifPresent(v->fileChooser.setInitialDirectory(v));
     	File selected = fileChooser.showOpenDialog(stage);
     	if (selected!=null) {
+    		Settings.getSettings().setLastOpenPath(selected.getParentFile());
     		addTab(selected);
     	}
     }
@@ -570,8 +575,10 @@ public class MainController {
 				.collect(Collectors.toList())
 				);
 		fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_ALL_FILES.localize(), "*.*"));
+		Settings.getSettings().getLastOpenPath().ifPresent(v->fileChooser.setInitialDirectory(v));
     	File selected = fileChooser.showOpenDialog(stage);
     	if (selected!=null) {
+    		Settings.getSettings().setLastOpenPath(selected.getParentFile());
     		selectTemplateAndOpen(selected);
     	}
     }
@@ -597,8 +604,10 @@ public class MainController {
 		    	Window stage = root.getScene().getWindow();
 		    	FileChooser fileChooser = new FileChooser();
 		    	fileChooser.setTitle(Messages.TITLE_EXPORT_DIALOG.localize());
+		    	Settings.getSettings().getLastSavePath().ifPresent(v->fileChooser.setInitialDirectory(v));
 		    	File selected = fileChooser.showSaveDialog(stage);
 		    	if (selected!=null) {
+		    		Settings.getSettings().setLastSavePath(selected.getParentFile());
 			    	Task<Void> exportTask = new Task<Void>() {
 						@Override
 						protected Void call() throws Exception {
