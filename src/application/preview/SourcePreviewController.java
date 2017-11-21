@@ -130,6 +130,19 @@ public class SourcePreviewController extends BorderPane implements Preview {
 		canExportProperty.set(prv.canExport());
 		canSaveProperty.set(prv.canSave());
 		urlProperty.set(prv.urlProperty().get());
+		editor.modifiedProperty().addListener((o, ov, nv)->{
+			String modified = "* ";
+			String t = source.getText();
+			if (nv) {
+				if (!t.startsWith(modified)) {
+					source.setText(modified + source.getText());
+				}
+			} else {
+				if (t.startsWith(modified)) {
+					source.setText(t.substring(2));
+				}
+			}
+		});
 	}
 
 	@Override

@@ -69,6 +69,8 @@ public class EditorController extends BorderPane implements Preview {
 	private final ReadOnlyBooleanProperty canExportProperty;
 	private final BooleanProperty canSaveProperty;
 	private final ReadOnlyStringProperty urlProperty;
+	private final SimpleBooleanProperty modifiedProperty;
+	private final BooleanProperty atMarkProperty;
 	private ChangeWatcher changeWatcher;
 	private boolean needsUpdate = false;
 	private Long lastSaved = 0l;
@@ -79,6 +81,8 @@ public class EditorController extends BorderPane implements Preview {
 	 * Creates a new preview controller.
 	 */
 	public EditorController() {
+		modifiedProperty = new SimpleBooleanProperty();
+		atMarkProperty = new SimpleBooleanProperty();
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Editor.fxml"), Messages.getBundle());
 			fxmlLoader.setRoot(this);
@@ -90,6 +94,7 @@ public class EditorController extends BorderPane implements Preview {
 		executor = Executors.newWorkStealingPool();
 		canEmbossProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
 		canExportProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
+		//TODO: bind to modifiedProperty
 		canSaveProperty = new SimpleBooleanProperty(false);
 		urlProperty = new SimpleStringProperty();
 	}
@@ -106,6 +111,22 @@ public class EditorController extends BorderPane implements Preview {
 				askForUpdate();
 			}
 		});
+		codeArea.richChanges()
+			.filter(ch -> !ch.getInserted().equals(ch.getRemoved()))
+			.successionEnds(Duration.ofMillis(500))
+			.supplyTask(this::computeHighlightingAsync)
+			.awaitLatest(codeArea.richChanges())
+			.filterMap(t -> {
+				if(t.isSuccess()) {
+					return Optional.of(t.get());
+				} else {
+					t.getFailure().printStackTrace();
+					return Optional.empty();
+				}
+			})
+			.subscribe(this::applyHighlighting);
+		atMarkProperty.bind(codeArea.getUndoManager().atMarkedPositionProperty());
+		modifiedProperty.bind(atMarkProperty.not());
 		codeArea.setWrapText(true);
 		scrollPane = new VirtualizedScrollPane<>(codeArea);
 		scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
@@ -154,28 +175,14 @@ public class EditorController extends BorderPane implements Preview {
 	 * @param f the file
 	 */
 	public void load(File f, boolean xmlMarkup) {
-		codeArea.clear();
-		codeArea.richChanges()
-			.filter(ch -> !ch.getInserted().equals(ch.getRemoved()))
-			.successionEnds(Duration.ofMillis(500))
-			.supplyTask(this::computeHighlightingAsync)
-			.awaitLatest(codeArea.richChanges())
-			.filterMap(t -> {
-				if(t.isSuccess()) {
-					return Optional.of(t.get());
-				} else {
-					t.getFailure().printStackTrace();
-					return Optional.empty();
-				}
-			})
-			.subscribe(this::applyHighlighting);
 		FileInfo.Builder builder = new FileInfo.Builder(f);
 		try {
 			String text = loadData(Files.readAllBytes(f.toPath()), builder, xmlMarkup);
-			codeArea.replaceText(0, 0, text);
+			codeArea.replaceText(0, codeArea.getLength(), text);
 			if (fileInfo==null || !f.equals(fileInfo.getFile())) {
 				codeArea.getUndoManager().forgetHistory();
 			}
+			codeArea.getUndoManager().mark();
 			canSaveProperty.set(true);
 		} catch (IOException | XmlEncodingDetectionException e) {
 			logger.warning("Failed to read: " + f);
@@ -241,6 +248,7 @@ public class EditorController extends BorderPane implements Preview {
 	public void save() {
 		try {
 			updateFileInfo(saveToFileSynchronized(fileInfo.getFile(), fileInfo, codeArea.getText()));
+			codeArea.getUndoManager().mark();
 		} catch (IOException e) {
 			logger.warning("Failed to write: " + fileInfo.getFile());
 		}
@@ -407,6 +415,11 @@ public class EditorController extends BorderPane implements Preview {
 			requestUpdate();
 		}
 		
+	}
+
+	@Override
+	public ReadOnlyBooleanProperty modifiedProperty() {
+		return modifiedProperty;
 	}
 
 }

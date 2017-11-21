@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 public interface Preview {
@@ -92,5 +93,9 @@ public interface Preview {
 	}
 	
 	public Map<String, Object> getOptions();
+	
+	public default ReadOnlyBooleanProperty modifiedProperty() {
+		return new SimpleBooleanProperty(false);
+	}
 
 }
