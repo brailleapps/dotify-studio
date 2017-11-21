@@ -43,6 +43,7 @@ public class SourcePreviewController extends BorderPane implements Preview {
 	private final BooleanProperty canEmbossProperty;
 	private final BooleanProperty canExportProperty;
 	private final BooleanProperty canSaveProperty;
+	private final BooleanProperty modifiedProperty;
 	private final StringProperty urlProperty;
 
 	/**
@@ -52,6 +53,7 @@ public class SourcePreviewController extends BorderPane implements Preview {
 		canEmbossProperty = new SimpleBooleanProperty();
 		canExportProperty = new SimpleBooleanProperty();
 		canSaveProperty = new SimpleBooleanProperty();
+		modifiedProperty = new SimpleBooleanProperty();
 		urlProperty = new SimpleStringProperty();
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SourcePreview.fxml"), Messages.getBundle());
@@ -128,6 +130,7 @@ public class SourcePreviewController extends BorderPane implements Preview {
 				tabs.getSelectionModel().selectedItemProperty().isEqualTo(source).and(editor.canSaveProperty())
 			)
 		);
+		modifiedProperty.bind(editor.modifiedProperty());
 		urlProperty.bind(
 				new When(tabs.getSelectionModel().selectedItemProperty().isEqualTo(preview))
 					.then(prv.urlProperty())
@@ -137,19 +140,6 @@ public class SourcePreviewController extends BorderPane implements Preview {
 							.otherwise(new SimpleStringProperty())
 					)
 				);
-		editor.modifiedProperty().addListener((o, ov, nv)->{
-			String modified = "* ";
-			String t = source.getText();
-			if (nv) {
-				if (!t.startsWith(modified)) {
-					source.setText(modified + source.getText());
-				}
-			} else {
-				if (t.startsWith(modified)) {
-					source.setText(t.substring(2));
-				}
-			}
-		});
 	}
 
 	@Override
@@ -224,6 +214,11 @@ public class SourcePreviewController extends BorderPane implements Preview {
 	@Override
 	public ReadOnlyBooleanProperty canSaveProperty() {
 		return canSaveProperty;
+	}
+
+	@Override
+	public ReadOnlyBooleanProperty modifiedProperty() {
+		return modifiedProperty;
 	}
 
 	@Override

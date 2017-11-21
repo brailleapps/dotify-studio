@@ -726,7 +726,21 @@ public class MainController {
 	        });
 	        prv.open(ai, options);
 	        tab.setContent(prv);	
-        }
-    }
+		}
+		Preview prv = ((Preview)tab.getContent());
+		prv.modifiedProperty().addListener((o, ov, nv)->{
+			String modified = "*";
+			String t = tab.getText();
+			if (nv) {
+				if (!t.startsWith(modified)) {
+					tab.setText(modified + tab.getText());
+				}
+			} else {
+				if (t.startsWith(modified)) {
+					tab.setText(t.substring(modified.length()));
+				}
+			}
+		});
+	}
 
 }
