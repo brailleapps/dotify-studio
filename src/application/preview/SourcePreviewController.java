@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import org.daisy.dotify.api.tasks.AnnotatedFile;
 
 import application.l10n.Messages;
+import javafx.beans.binding.When;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
@@ -21,7 +22,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -49,6 +49,10 @@ public class SourcePreviewController extends BorderPane implements Preview {
 	 * Creates a new preview controller.
 	 */
 	public SourcePreviewController() {
+		canEmbossProperty = new SimpleBooleanProperty();
+		canExportProperty = new SimpleBooleanProperty();
+		canSaveProperty = new SimpleBooleanProperty();
+		urlProperty = new SimpleStringProperty();
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SourcePreview.fxml"), Messages.getBundle());
 			fxmlLoader.setRoot(this);
@@ -57,29 +61,9 @@ public class SourcePreviewController extends BorderPane implements Preview {
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Failed to load view", e);
 		}
-		canEmbossProperty = new SimpleBooleanProperty(false);
-		canExportProperty = new SimpleBooleanProperty(false);
-		canSaveProperty = new SimpleBooleanProperty(false);
-		urlProperty = new SimpleStringProperty();
 	}
 
 	@FXML void initialize() {
-		tabs.getSelectionModel().selectedItemProperty().addListener((o, ot, nt)->{
-			Optional<Node> pr = Optional.of(nt.getContent())
-					.filter(v->v instanceof Preview);
-			canEmbossProperty.set(
-					pr.map(v->((Preview)v).canEmboss()).orElse(false)
-					);
-			canExportProperty.set(
-					pr.map(v->((Preview)v).canExport()).orElse(false)
-					);
-			canSaveProperty.set(
-					pr.map(v->((Preview)v).canSave()).orElse(false)
-					);
-			urlProperty.set(
-					pr.map(v->((Preview)v).urlProperty().get()).orElse(null)
-					);
-		});
 	}
 
 	public static boolean supportsFormat(AnnotatedFile af) {
@@ -126,10 +110,33 @@ public class SourcePreviewController extends BorderPane implements Preview {
 		EditorController editor = new EditorController();
 		editor.load(selected.getFile(), isXML(selected));
 		source.setContent(editor);
-		canEmbossProperty.set(prv.canEmboss());
-		canExportProperty.set(prv.canExport());
-		canSaveProperty.set(prv.canSave());
-		urlProperty.set(prv.urlProperty().get());
+		canEmbossProperty.bind(
+				tabs.getSelectionModel().selectedItemProperty().isEqualTo(preview).and(prv.canEmbossProperty())
+			.or(
+				tabs.getSelectionModel().selectedItemProperty().isEqualTo(source).and(editor.canEmbossProperty())
+			)
+		);
+		canExportProperty.bind(
+				tabs.getSelectionModel().selectedItemProperty().isEqualTo(preview).and(prv.canExportProperty())
+			.or(
+				tabs.getSelectionModel().selectedItemProperty().isEqualTo(source).and(editor.canExportProperty())
+			)
+		);
+		canSaveProperty.bind(
+				tabs.getSelectionModel().selectedItemProperty().isEqualTo(preview).and(prv.canSaveProperty())
+			.or(
+				tabs.getSelectionModel().selectedItemProperty().isEqualTo(source).and(editor.canSaveProperty())
+			)
+		);
+		urlProperty.bind(
+				new When(tabs.getSelectionModel().selectedItemProperty().isEqualTo(preview))
+					.then(prv.urlProperty())
+					.otherwise(
+						new When(tabs.getSelectionModel().selectedItemProperty().isEqualTo(source))
+							.then(editor.urlProperty())
+							.otherwise(new SimpleStringProperty())
+					)
+				);
 		editor.modifiedProperty().addListener((o, ov, nv)->{
 			String modified = "* ";
 			String t = source.getText();

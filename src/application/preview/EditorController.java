@@ -67,6 +67,7 @@ public class EditorController extends BorderPane implements Preview {
 	private ExecutorService executor;
 	private final ReadOnlyBooleanProperty canEmbossProperty;
 	private final ReadOnlyBooleanProperty canExportProperty;
+	private final BooleanProperty isLoadedProperty;
 	private final BooleanProperty canSaveProperty;
 	private final ReadOnlyStringProperty urlProperty;
 	private final SimpleBooleanProperty modifiedProperty;
@@ -83,6 +84,11 @@ public class EditorController extends BorderPane implements Preview {
 	public EditorController() {
 		modifiedProperty = new SimpleBooleanProperty();
 		atMarkProperty = new SimpleBooleanProperty();
+		canEmbossProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
+		canExportProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
+		isLoadedProperty = new SimpleBooleanProperty(false);
+		canSaveProperty = new SimpleBooleanProperty();
+		urlProperty = new SimpleStringProperty();
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Editor.fxml"), Messages.getBundle());
 			fxmlLoader.setRoot(this);
@@ -92,11 +98,6 @@ public class EditorController extends BorderPane implements Preview {
 			logger.log(Level.WARNING, "Failed to load view", e);
 		}
 		executor = Executors.newWorkStealingPool();
-		canEmbossProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
-		canExportProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
-		//TODO: bind to modifiedProperty
-		canSaveProperty = new SimpleBooleanProperty(false);
-		urlProperty = new SimpleStringProperty();
 	}
 	
 	@FXML void initialize() {
@@ -127,6 +128,7 @@ public class EditorController extends BorderPane implements Preview {
 			.subscribe(this::applyHighlighting);
 		atMarkProperty.bind(codeArea.getUndoManager().atMarkedPositionProperty());
 		modifiedProperty.bind(atMarkProperty.not());
+		canSaveProperty.bind(isLoadedProperty.and(modifiedProperty));
 		codeArea.setWrapText(true);
 		scrollPane = new VirtualizedScrollPane<>(codeArea);
 		scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
@@ -183,10 +185,10 @@ public class EditorController extends BorderPane implements Preview {
 				codeArea.getUndoManager().forgetHistory();
 			}
 			codeArea.getUndoManager().mark();
-			canSaveProperty.set(true);
+			isLoadedProperty.set(true);
 		} catch (IOException | XmlEncodingDetectionException e) {
 			logger.warning("Failed to read: " + f);
-			canSaveProperty.set(false);
+			isLoadedProperty.set(false);
 		} finally {
 			this.fileInfo = builder.build();
 			updateFileInfo(this.fileInfo);
