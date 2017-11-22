@@ -117,6 +117,17 @@
                         <KeyCodeCombination alt="DOWN" code="C" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
                      </accelerator></CheckMenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="nextEditorViewMenuItem" mnemonicParsing="false" onAction="#nextEditor" text="%menu-item-next-editor">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="F7" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem fx:id="previousEditorViewMenuItem" mnemonicParsing="false" onAction="#previousEditor" text="%menu-item-previous-editor" >
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="F7" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="toggleViewMenuItem" mnemonicParsing="false" onAction="#toggleEditor" text="%menu-item-toggle-view">
 	                  <accelerator>
 	                        <KeyCodeCombination alt="UP" code="F6" control="UP" meta="UP" shift="UP" shortcut="UP" />

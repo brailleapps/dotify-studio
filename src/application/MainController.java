@@ -42,6 +42,7 @@ import application.preview.SourcePreviewController;
 import application.search.SearchController;
 import application.template.TemplateView;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -57,6 +58,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.Tab;
@@ -106,6 +108,8 @@ public class MainController {
 	@FXML private CheckMenuItem showSearchMenuItem;
 	@FXML private CheckMenuItem showConsoleMenuItem;
 	@FXML private ToggleButton scrollLockButton;
+	@FXML private MenuItem nextEditorViewMenuItem;
+	@FXML private MenuItem previousEditorViewMenuItem;
 	@FXML private MenuItem toggleViewMenuItem;
 	private final double dividerPosition = 0.2;
 	private Tab searchTab;
@@ -216,6 +220,12 @@ public class MainController {
 		closeMenuItem.disableProperty().bind(noTabBinding);
 		exportMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canExport.not()));
 		saveMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canSave.not()));
+		nextEditorViewMenuItem.disableProperty().bind(noTabBinding.or(
+					Bindings.size(tabPane.getTabs()).lessThan(2))
+				);
+		previousEditorViewMenuItem.disableProperty().bind(noTabBinding.or(
+					Bindings.size(tabPane.getTabs()).lessThan(2))
+				);
 		toggleViewMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canToggleView.not()));
 		saveAsMenuItem.disableProperty().bind(noTabExceptHelpBinding);
 		refreshMenuItem.disableProperty().bind(noTabBinding);
@@ -321,6 +331,24 @@ public class MainController {
 	
 	@FXML void toggleEditor() {
 		getSelectedPreview().ifPresent(p->p.toggleView());
+	}
+	
+	@FXML void nextEditor() {
+		SingleSelectionModel<Tab> select = tabPane.getSelectionModel();
+		if (select.getSelectedIndex()>=tabPane.getTabs().size()-1) {
+			select.selectFirst();
+		} else {
+			select.selectNext();
+		}
+	}
+	
+	@FXML void previousEditor() {
+		SingleSelectionModel<Tab> select = tabPane.getSelectionModel();
+		if (select.getSelectedIndex()<1) {
+			select.selectLast();
+		} else {
+			tabPane.getSelectionModel().selectPrevious();
+		}
 	}
 
     @FXML void refresh() {
