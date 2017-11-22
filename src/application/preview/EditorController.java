@@ -175,11 +175,12 @@ public class EditorController extends BorderPane implements Preview {
 	/**
 	 * Converts and opens a file.
 	 * @param f the file
+	 * @param xml if the file is xml
 	 */
-	public void load(File f, boolean xmlMarkup) {
+	public void load(File f, boolean xml) {
 		FileInfo.Builder builder = new FileInfo.Builder(f);
 		try {
-			String text = loadData(Files.readAllBytes(f.toPath()), builder, xmlMarkup);
+			String text = loadData(Files.readAllBytes(f.toPath()), builder, xml);
 			codeArea.replaceText(0, codeArea.getLength(), text);
 			if (fileInfo==null || !f.equals(fileInfo.getFile())) {
 				codeArea.getUndoManager().forgetHistory();

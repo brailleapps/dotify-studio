@@ -35,9 +35,10 @@ public class PreviewController {
 	private long lastUpdated;
 
 	/**
+	 * Creates a new preview controller.
 	 * 
-	 * @param r
-	 * 
+	 * @param r the book reader
+	 * @param settings the settings
 	 */
 	public PreviewController(final BookReader r, Settings settings) {
 		this.settings = settings;

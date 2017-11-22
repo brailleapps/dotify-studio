@@ -126,7 +126,7 @@ public class SearchController extends VBox {
 	/**
 	 * Performs an action when a book is selected to be opened.
 	 * 
-	 * @param action
+	 * @param action the action to perform
 	 */
 	public void setOnOpen(Consumer<PefBookAdapter> action) {
 		listView.setOnMouseClicked(ev -> {

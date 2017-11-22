@@ -111,7 +111,7 @@ public class Settings {
 	
 	/**
 	 * Gets the string value for key
-	 * @param key
+	 * @param key the key
 	 * @return returns value for key, or null if not found
 	 */
 	public String getString(Keys key) {

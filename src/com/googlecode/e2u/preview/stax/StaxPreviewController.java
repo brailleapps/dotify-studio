@@ -22,8 +22,9 @@ public class StaxPreviewController {
 	private long lastUpdated;
 
 	/**
-	 * 
-	 * @param r
+	 * Creates a new stax preview controller.
+	 * @param r the book reader
+	 * @param settings the settings
 	 * 
 	 */
 	public StaxPreviewController(final BookReader r, Settings settings) {
