@@ -1,4 +1,4 @@
-package application.preview;
+package org.daisy.dotify.studio.api;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
  * Provides an interface for editors.
  * @author Joel Håkansson
  */
-public interface Preview {
+public interface Editor {
 
 	/**
 	 * Returns true if this editor can be saved at its current location (it has

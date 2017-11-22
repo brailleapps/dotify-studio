@@ -35,6 +35,7 @@ import org.daisy.dotify.api.tasks.AnnotatedFile;
 import org.daisy.dotify.api.tasks.CompiledTaskSystem;
 import org.daisy.dotify.api.tasks.TaskSystem;
 import org.daisy.dotify.consumer.tasks.TaskSystemFactoryMaker;
+import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.tasks.runner.RunnerResult;
 import org.daisy.dotify.tasks.runner.TaskRunner;
 import org.xml.sax.SAXException;
@@ -75,7 +76,7 @@ import shared.Settings.Keys;
  * @author Joel Håkansson
  *
  */
-public class PreviewController extends BorderPane implements Preview {
+public class PreviewController extends BorderPane implements Editor {
 	private static final Logger logger = Logger.getLogger(PreviewController.class.getCanonicalName());
 	@FXML WebView browser;
 	private OptionsController options;

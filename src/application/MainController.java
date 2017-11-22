@@ -26,6 +26,7 @@ import org.daisy.braille.utils.pef.TextConverterFacade;
 import org.daisy.dotify.api.tasks.AnnotatedFile;
 import org.daisy.dotify.consumer.identity.IdentityProvider;
 import org.daisy.dotify.consumer.tasks.TaskGroupFactoryMaker;
+import org.daisy.dotify.studio.api.Editor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -36,7 +37,6 @@ import application.about.AboutView;
 import application.imports.ImportBrailleView;
 import application.l10n.Messages;
 import application.prefs.PreferencesView;
-import application.preview.Preview;
 import application.preview.PreviewController;
 import application.preview.SourcePreviewController;
 import application.search.SearchController;
@@ -194,8 +194,8 @@ public class MainController {
 			canSave.unbind();
 			canEdit.unbind();
 			urlProperty.unbind();
-			if (nv!=null && nv.getContent() instanceof Preview) {
-				Preview p = ((Preview)nv.getContent());
+			if (nv!=null && nv.getContent() instanceof Editor) {
+				Editor p = ((Editor)nv.getContent());
 				canEmboss.bind(p.canEmbossProperty());
 				canExport.bind(p.canExportProperty());
 				canSave.bind(p.canSaveProperty());
@@ -312,11 +312,11 @@ public class MainController {
         }
 	}
 	
-	private Optional<Preview> getSelectedPreview() {
+	private Optional<Editor> getSelectedPreview() {
 		return Optional.ofNullable(tabPane.getSelectionModel().getSelectedItem())
 				.map(t->t.getContent())
-				.filter(n->(n instanceof Preview))
-				.map(n->(Preview)n);
+				.filter(n->(n instanceof Editor))
+				.map(n->(Editor)n);
 	}
 	
 	@FXML void toggleEditor() {
@@ -329,8 +329,8 @@ public class MainController {
 			javafx.scene.Node node = t.getContent();
 			if (node instanceof WebView) {
 				((WebView) node).getEngine().reload();
-			} else if (node instanceof Preview) {
-				((Preview)node).reload();
+			} else if (node instanceof Editor) {
+				((Editor)node).reload();
 			}
 		}
     }
@@ -343,8 +343,8 @@ public class MainController {
 					javafx.scene.Node node = t.getContent();
 					if (node instanceof WebView) {
 						Desktop.getDesktop().browse(new URI(((WebView) node).getEngine().getLocation()));
-					} else if (node instanceof Preview) {
-						((Preview)t.getContent()).getURL().ifPresent(url->{
+					} else if (node instanceof Editor) {
+						((Editor)t.getContent()).getURL().ifPresent(url->{
 							try {
 								Desktop.getDesktop().browse(new URI(url));
 							} catch (IOException | URISyntaxException e) {
@@ -361,7 +361,7 @@ public class MainController {
     @FXML void emboss() {
     	Tab t = tabPane.getSelectionModel().getSelectedItem();
 		if (t!=null) {
-			Preview controller = ((Preview)t.getContent());
+			Editor controller = ((Editor)t.getContent());
 			if (controller.canEmboss()) {
 				Platform.runLater(()->{
 					controller.showEmbossDialog();
@@ -380,7 +380,7 @@ public class MainController {
     @FXML void save() {
     	Tab t = tabPane.getSelectionModel().getSelectedItem();
 		if (t!=null) {
-			Preview controller = ((Preview)t.getContent());
+			Editor controller = ((Editor)t.getContent());
 			if (controller.canSave()) {
 				controller.save();
 			}
@@ -390,7 +390,7 @@ public class MainController {
     @FXML void saveAs() {
     	Tab t = tabPane.getSelectionModel().getSelectedItem();
 		if (t!=null) {
-			Preview controller = ((Preview)t.getContent());
+			Editor controller = ((Editor)t.getContent());
 			// display save dialog
 			Window stage = root.getScene().getWindow();
 	    	FileChooser fileChooser = new FileChooser();
@@ -606,7 +606,7 @@ public class MainController {
     @FXML void exportFile() {
     	Tab t = tabPane.getSelectionModel().getSelectedItem();
 		if (t!=null) {
-			Preview controller = ((Preview)t.getContent());
+			Editor controller = ((Editor)t.getContent());
 			if (controller.canExport()) {
 		    	Window stage = root.getScene().getWindow();
 		    	FileChooser fileChooser = new FileChooser();
@@ -743,7 +743,7 @@ public class MainController {
 	        prv.open(ai, options);
 	        tab.setContent(prv);	
 		}
-		Preview prv = ((Preview)tab.getContent());
+		Editor prv = ((Editor)tab.getContent());
 		prv.modifiedProperty().addListener((o, ov, nv)->{
 			String modified = "*";
 			String t = tab.getText();

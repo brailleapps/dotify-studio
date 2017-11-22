@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.daisy.dotify.api.tasks.AnnotatedFile;
+import org.daisy.dotify.studio.api.Editor;
 
 import application.l10n.Messages;
 import javafx.beans.binding.When;
@@ -33,7 +34,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
  * @author Joel Håkansson
  *
  */
-public class SourcePreviewController extends BorderPane implements Preview {
+public class SourcePreviewController extends BorderPane implements Editor {
 	private static final Logger logger = Logger.getLogger(SourcePreviewController.class.getCanonicalName());
 	static final Pattern XML_PATTERN = Pattern.compile("\\Qapplication/\\E([\\w-]+\\+)?\\Qxml\\E");
 	static final Pattern TEXT_PATTERN = Pattern.compile("\\Qtext/\\E.+");
@@ -154,20 +155,20 @@ public class SourcePreviewController extends BorderPane implements Preview {
 
 	@Override
 	public void showEmbossDialog() {
-		((Preview)preview.getContent()).showEmbossDialog();
+		((Editor)preview.getContent()).showEmbossDialog();
 	}
 
 	@Override
 	public void closing() {
-		((Preview)source.getContent()).closing();
-		((Preview)preview.getContent()).closing();
+		((Editor)source.getContent()).closing();
+		((Editor)preview.getContent()).closing();
 	}
 
-	private Optional<Preview> getSelectedView() {
+	private Optional<Editor> getSelectedView() {
 		return Optional.ofNullable(tabs.getSelectionModel())
 				.map(v->v.getSelectedItem().getContent())
-				.filter(v->v instanceof Preview)
-				.map(v->(Preview)v);
+				.filter(v->v instanceof Editor)
+				.map(v->(Editor)v);
 	}
 
 	@Override
@@ -180,7 +181,7 @@ public class SourcePreviewController extends BorderPane implements Preview {
 
 	@Override
 	public void saveAs(File f) throws IOException {
-		Optional<Preview> view = getSelectedView();
+		Optional<Editor> view = getSelectedView();
 		if (view.isPresent()) {
 			view.get().saveAs(f);
 		}
@@ -188,7 +189,7 @@ public class SourcePreviewController extends BorderPane implements Preview {
 
 	@Override
 	public void export(File f) throws IOException {
-		((Preview)preview.getContent()).export(f);
+		((Editor)preview.getContent()).export(f);
 	}
 
 	@Override
@@ -241,13 +242,13 @@ public class SourcePreviewController extends BorderPane implements Preview {
 		SingleSelectionModel<Tab> m = tabs.getSelectionModel();
 		if (m!=null) {
 			Tab t = m.getSelectedItem();
-			if (t!=null && t.getContent() instanceof Preview) {
-				Preview p = (Preview)t.getContent();
+			if (t!=null && t.getContent() instanceof Editor) {
+				Editor p = (Editor)t.getContent();
 				if (t == source) {
 					if (p.getURL().orElse("").endsWith(".pef")) {
 						return null;
 					} else {
-						return ((Preview)preview.getContent()).getOptions();
+						return ((Editor)preview.getContent()).getOptions();
 					}
 				} else if (t == preview) {
 					return null;

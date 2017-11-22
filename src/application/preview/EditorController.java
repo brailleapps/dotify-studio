@@ -24,6 +24,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.daisy.dotify.common.xml.XMLTools;
 import org.daisy.dotify.common.xml.XmlEncodingDetectionException;
+import org.daisy.dotify.studio.api.Editor;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -53,7 +54,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
  * @author Joel Håkansson
  *
  */
-public class EditorController extends BorderPane implements Preview {
+public class EditorController extends BorderPane implements Editor {
 	private static final Logger logger = Logger.getLogger(EditorController.class.getCanonicalName());
 	private static final char BYTE_ORDER_MARK = '\uFEFF';
 
