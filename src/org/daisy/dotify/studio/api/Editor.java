@@ -140,27 +140,28 @@ public interface Editor {
 	public void showEmbossDialog();
 
 	/**
-	 * Returns true if this editor can be toggled, false otherwise.
+	 * Returns true if this editor has views that can be toggled, 
+	 * false otherwise.
 	 * 
-	 * See {@link #canEditProperty()}, {@link #toggleView()}.
+	 * See {@link #toggleViewProperty()}, {@link #toggleView()}.
 	 * 
 	 * @return returns true if this editor can be toggled, false otherwise
 	 */
-	public default boolean isEditable() {
-		return canEditProperty().get();
+	public default boolean canToggleView() {
+		return toggleViewProperty().get();
 	}
 
 	/**
-	 * Indicates that this editor has both a source and a preview.
+	 * Indicates that this editor has more than one view that can be toggled
+	 * between.
 	 * @return returns a boolean property
 	 */
-	//TODO: this is not what it means actually...
-	public default ReadOnlyBooleanProperty canEditProperty() {
+	public default ReadOnlyBooleanProperty toggleViewProperty() {
 		return new SimpleBooleanProperty(false);
 	}
 
 	/**
-	 * Toggles between the source and result views. If there are no
+	 * Toggles between the editor views. If there are no
 	 * views to toggle, nothing happens.
 	 */
 	public default void toggleView() { }

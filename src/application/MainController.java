@@ -115,7 +115,7 @@ public class MainController {
 	private BooleanProperty canEmboss;
 	private BooleanProperty canExport;
 	private BooleanProperty canSave;
-	private BooleanProperty canEdit;
+	private BooleanProperty canToggleView;
 	private StringProperty urlProperty;
 	static final KeyCombination CTRL_F4 = new KeyCodeCombination(KeyCode.F4, KeyCombination.CONTROL_DOWN);
 
@@ -181,7 +181,7 @@ public class MainController {
 		canEmboss = new SimpleBooleanProperty();
 		canExport = new SimpleBooleanProperty();
 		canSave = new SimpleBooleanProperty();
-		canEdit = new SimpleBooleanProperty();
+		canToggleView = new SimpleBooleanProperty();
 		urlProperty = new SimpleStringProperty();
 		//add menu bindings
 		setMenuBindings();
@@ -192,20 +192,20 @@ public class MainController {
 			canEmboss.unbind();
 			canExport.unbind();
 			canSave.unbind();
-			canEdit.unbind();
+			canToggleView.unbind();
 			urlProperty.unbind();
 			if (nv!=null && nv.getContent() instanceof Editor) {
 				Editor p = ((Editor)nv.getContent());
 				canEmboss.bind(p.canEmbossProperty());
 				canExport.bind(p.canExportProperty());
 				canSave.bind(p.canSaveProperty());
-				canEdit.bind(p.canEditProperty());
+				canToggleView.bind(p.toggleViewProperty());
 				urlProperty.bind(p.urlProperty());
 			} else {
 				canEmboss.set(false);
 				canExport.set(false);
 				canSave.set(false);
-				canEdit.set(false);
+				canToggleView.set(false);
 				urlProperty.set(null);
 			}
 		});
@@ -216,7 +216,7 @@ public class MainController {
 		closeMenuItem.disableProperty().bind(noTabBinding);
 		exportMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canExport.not()));
 		saveMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canSave.not()));
-		toggleViewMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canEdit.not()));
+		toggleViewMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canToggleView.not()));
 		saveAsMenuItem.disableProperty().bind(noTabExceptHelpBinding);
 		refreshMenuItem.disableProperty().bind(noTabBinding);
 		openInBrowserMenuItem.disableProperty().bind(noTabBinding.or(urlProperty.isNull()));

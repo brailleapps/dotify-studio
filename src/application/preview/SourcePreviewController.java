@@ -223,7 +223,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty canEditProperty() {
+	public ReadOnlyBooleanProperty toggleViewProperty() {
 		return new SimpleBooleanProperty(true);
 	}
 
