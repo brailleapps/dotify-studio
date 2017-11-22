@@ -14,7 +14,11 @@ public enum FeatureSwitch {
 	/**
 	 * Defines if editors are enabled or not. 
 	 */
-	EDITOR("on".equalsIgnoreCase(System.getProperty("application.feature.editor", "on")));
+	EDITOR("on".equalsIgnoreCase(System.getProperty("application.feature.editor", "on"))),
+	/**
+	 * Defines if opening of other file types than PEF are enabled.
+	 */
+	OPEN_OTHER_TYPES("on".equalsIgnoreCase(System.getProperty("application.feature.open-other-types", "off")));
 
 	private final boolean on;
 	FeatureSwitch(boolean on) {

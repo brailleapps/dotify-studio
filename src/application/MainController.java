@@ -37,6 +37,7 @@ import application.about.AboutView;
 import application.imports.ImportBrailleView;
 import application.l10n.Messages;
 import application.prefs.PreferencesView;
+import application.preview.EditorController;
 import application.preview.PreviewController;
 import application.preview.SourcePreviewController;
 import application.search.SearchController;
@@ -537,6 +538,10 @@ public class MainController {
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle(Messages.TITLE_OPEN_DIALOG.localize());
     	fileChooser.getExtensionFilters().add(new ExtensionFilter("PEF-files", "*.pef"));
+		if (FeatureSwitch.OPEN_OTHER_TYPES.isOn()) {
+			fileChooser.getExtensionFilters().add(new ExtensionFilter("XML-files", "*.xml"));
+			fileChooser.getExtensionFilters().add(new ExtensionFilter("Text-files", "*.txt"));
+		}
     	Settings.getSettings().getLastOpenPath().ifPresent(v->fileChooser.setInitialDirectory(v));
     	File selected = fileChooser.showOpenDialog(stage);
     	if (selected!=null) {
@@ -785,13 +790,22 @@ public class MainController {
     
     private void setupEditor(Tab tab, File source, Map<String, Object> options) {
 		AnnotatedFile ai = IdentityProvider.newInstance().identify(source);
-        if (SourcePreviewController.supportsFormat(ai) && FeatureSwitch.EDITOR.isOn()) {
-	        SourcePreviewController prv = new SourcePreviewController();
-	        tab.setOnClosed(ev ->  {
-	        	prv.closing();
-	        });
-	        prv.open(ai, options);
-	        tab.setContent(prv);
+		if (SourcePreviewController.supportsFormat(ai) && FeatureSwitch.EDITOR.isOn()) {
+			if (options==null && FeatureSwitch.OPEN_OTHER_TYPES.isOn()) {
+				EditorController prv = new EditorController();
+				tab.setOnClosed(ev ->  {
+					prv.closing();
+				});
+				prv.load(source, SourcePreviewController.isXML(ai));
+				tab.setContent(prv);
+			} else {
+				SourcePreviewController prv = new SourcePreviewController();
+				tab.setOnClosed(ev ->  {
+					prv.closing();
+				});
+				prv.open(ai, options);
+				tab.setContent(prv);
+			}
         } else {
 	        PreviewController prv = new PreviewController();
 	        tab.setOnClosed(ev ->  {
