@@ -6,14 +6,6 @@ import com.googlecode.e2u.StartupDetails.Mode;
 public class Start {
 	private MainPage content;
 
-	/**
-	 * @param args
-	 * @throws Exception 
-	 */
-	public static void main(String[] args) throws Exception {
-		new Start().start(StartupDetails.parse(args));
-	}
-
 	public String start(StartupDetails args) throws Exception  {
 		if (args==null) {
 			System.out.println("Supplied arguments do not match any of the following:");
