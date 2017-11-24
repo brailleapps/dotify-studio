@@ -40,6 +40,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
@@ -187,6 +188,8 @@ public class EditorController extends BorderPane implements Editor {
 				codeArea.getUndoManager().forgetHistory();
 			}
 			codeArea.getUndoManager().mark();
+			codeArea.selectRange(0, 0);
+			codeArea.scrollToPixel(Point2D.ZERO);
 			isLoadedProperty.set(true);
 		} catch (IOException | XmlEncodingDetectionException e) {
 			logger.warning("Failed to read: " + f);
