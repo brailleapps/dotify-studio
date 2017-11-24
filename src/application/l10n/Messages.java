@@ -73,6 +73,7 @@ public enum Messages {
 	ERROR_FAILED_TO_LOAD_HELP("error-failed-to-load-help"),
 	ERROR_UNSUPPORTED_XML_ENCODING("error-unsupported-xml-encoding"),
 	TITLE_SET_SEARCH_FOLDER("title-set-search-folder"),
+	TITLE_OPEN_DIALOG("title-open-dialog"),
 	TITLE_IMPORT_SOURCE_DOCUMENT_DIALOG("title-import-source-document-dialog"),
 	TITLE_IMPORT_BRAILLE_OPTIONS_DIALOG("title-import-braille-options-dialog"),
 	TITLE_IMPORT_BRAILLE_TEXT_DIALOG("title-import-braille-text-dialog"),

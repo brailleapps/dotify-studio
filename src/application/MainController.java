@@ -525,7 +525,7 @@ public class MainController {
     @FXML void showOpenDialog() {
     	Window stage = root.getScene().getWindow();
     	FileChooser fileChooser = new FileChooser();
-    	fileChooser.setTitle("Open Resource File");
+    	fileChooser.setTitle(Messages.TITLE_OPEN_DIALOG.localize());
     	fileChooser.getExtensionFilters().add(new ExtensionFilter("PEF-files", "*.pef"));
     	Settings.getSettings().getLastOpenPath().ifPresent(v->fileChooser.setInitialDirectory(v));
     	File selected = fileChooser.showOpenDialog(stage);
