@@ -121,6 +121,7 @@ public enum Messages {
 	 */
 	MESSAGE_CONFIRM_DELETE_PAPER("message-confirm-delete-paper"),
 	MESSAGE_FILE_MODIFIED_BY_ANOTHER_APPLICATION("message-file-modified-by-another-application"),
+	MESSAGE_CONFIRM_SAVE_MALFORMED_XML("message-confirm-save-malformed-xml"),
 	PREFERENCES_MENU_ITEM("menu-item-preferences"),
 	PREFERENCES_WINDOW_TITLE("preferences-window-title"),
 	TAB_EMBOSS("tab-emboss"),

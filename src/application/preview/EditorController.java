@@ -1,6 +1,7 @@
 package application.preview;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -23,12 +24,14 @@ import java.util.logging.Logger;
 import javax.xml.bind.DatatypeConverter;
 
 import org.daisy.dotify.common.xml.XMLTools;
+import org.daisy.dotify.common.xml.XMLToolsException;
 import org.daisy.dotify.common.xml.XmlEncodingDetectionException;
 import org.daisy.dotify.studio.api.Editor;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
+import org.xml.sax.InputSource;
 
 import application.l10n.Messages;
 import javafx.application.Platform;
@@ -254,8 +257,10 @@ public class EditorController extends BorderPane implements Editor {
 	@Override
 	public void save() {
 		try {
-			updateFileInfo(saveToFileSynchronized(fileInfo.getFile(), fileInfo, codeArea.getText()));
-			codeArea.getUndoManager().mark();
+			if (confirmSave()) {
+				updateFileInfo(saveToFileSynchronized(fileInfo.getFile(), fileInfo, codeArea.getText()));
+				codeArea.getUndoManager().mark();
+			}
 		} catch (IOException e) {
 			logger.warning("Failed to write: " + fileInfo.getFile());
 		}
@@ -263,7 +268,30 @@ public class EditorController extends BorderPane implements Editor {
 
 	@Override
 	public void saveAs(File f) throws IOException {
-		updateFileInfo(saveToFileSynchronized(f, fileInfo, codeArea.getText()));
+		if (confirmSave()) {
+			updateFileInfo(saveToFileSynchronized(f, fileInfo, codeArea.getText()));
+		}
+	}
+
+	/**
+	 * Confirms the save action with the user if needed. Specifically, if the file is XML and the contents is not well-formed.
+	 * @return returns true if save should proceed.
+	 */
+	private boolean confirmSave() {
+		try {
+			if (fileInfo.isXml() && !XMLTools.isWellformedXML(new InputSource(new ByteArrayInputStream(prepareSaveToFile(FileInfo.with(fileInfo), fileInfo, codeArea.getText()))))) {
+				Alert alert = new Alert(AlertType.WARNING, Messages.MESSAGE_CONFIRM_SAVE_MALFORMED_XML.localize(), ButtonType.YES, ButtonType.CANCEL);
+				Optional<ButtonType> res = alert.showAndWait();
+				return res.map(v->v.equals(ButtonType.YES)).orElse(false);
+			} else {
+				return true;
+			}
+		} catch (XMLToolsException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	private void updateFileInfo(FileInfo fileInfo) {
@@ -283,6 +311,13 @@ public class EditorController extends BorderPane implements Editor {
 	static FileInfo saveToFile(File f, FileInfo fileInfo, String text) throws IOException {
 		FileInfo.Builder builder = FileInfo.with(fileInfo);
 		builder.file(f);
+		byte[] bytes = prepareSaveToFile(builder, fileInfo, text);
+		Files.write(f.toPath(), bytes);
+		return builder.build();
+	}
+	
+	// TODO: This method has a side effect: it modifies the builder
+	static byte[] prepareSaveToFile(FileInfo.Builder builder, FileInfo fileInfo, String text) throws IOException {
 		Charset charset = StandardCharsets.UTF_8;
 		Optional<String> _encoding;
 		if (fileInfo.isXml() && (_encoding = XMLTools.getDeclaredEncoding(text)).isPresent()) {
@@ -322,8 +357,7 @@ public class EditorController extends BorderPane implements Editor {
 			}
 		}
 		builder.charset(charset);
-		Files.write(f.toPath(), text.getBytes(charset));
-		return builder.build();
+		return text.getBytes(charset);
 	}
 	
 	private static boolean isStandardUnicodeCharset(Charset charset) {
