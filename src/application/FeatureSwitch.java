@@ -14,7 +14,7 @@ public enum FeatureSwitch {
 	/**
 	 * Defines if editors are enabled or not. 
 	 */
-	EDITOR("on".equalsIgnoreCase(System.getProperty("application.feature.editor", "off")));
+	EDITOR("on".equalsIgnoreCase(System.getProperty("application.feature.editor", "on")));
 
 	private final boolean on;
 	FeatureSwitch(boolean on) {
