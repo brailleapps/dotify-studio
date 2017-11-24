@@ -257,4 +257,9 @@ public class SourcePreviewController extends BorderPane implements Editor {
 		}
 		throw new RuntimeException();
 	}
+
+	@Override
+	public void activate() {
+		getSelectedView().ifPresent(v->v.activate());
+	}
 }

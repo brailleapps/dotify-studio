@@ -429,4 +429,9 @@ public class EditorController extends BorderPane implements Editor {
 		return modifiedProperty;
 	}
 
+	@Override
+	public void activate() {
+		codeArea.requestFocus();
+	}
+
 }

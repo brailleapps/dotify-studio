@@ -449,4 +449,9 @@ public class PreviewController extends BorderPane implements Editor {
 		return options!=null?options.getParams():null;
 	}
 
+	@Override
+	public void activate() {
+		browser.requestFocus();
+	}
+
 }

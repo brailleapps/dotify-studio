@@ -111,6 +111,7 @@ public class MainController {
 	@FXML private MenuItem nextEditorViewMenuItem;
 	@FXML private MenuItem previousEditorViewMenuItem;
 	@FXML private MenuItem toggleViewMenuItem;
+	@FXML private MenuItem activateViewMenuItem;
 	private final double dividerPosition = 0.2;
 	private Tab searchTab;
 	private Tab helpTab;
@@ -227,6 +228,7 @@ public class MainController {
 					Bindings.size(tabPane.getTabs()).lessThan(2))
 				);
 		toggleViewMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canToggleView.not()));
+		activateViewMenuItem.disableProperty().bind(noTabExceptHelpBinding);
 		saveAsMenuItem.disableProperty().bind(noTabExceptHelpBinding);
 		refreshMenuItem.disableProperty().bind(noTabBinding);
 		openInBrowserMenuItem.disableProperty().bind(noTabBinding.or(urlProperty.isNull()));
@@ -349,6 +351,10 @@ public class MainController {
 		} else {
 			tabPane.getSelectionModel().selectPrevious();
 		}
+	}
+	
+	@FXML void activateView() {
+		getSelectedPreview().ifPresent(v->v.activate());
 	}
 
     @FXML void refresh() {

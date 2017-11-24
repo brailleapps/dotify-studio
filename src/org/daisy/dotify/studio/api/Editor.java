@@ -190,5 +190,7 @@ public interface Editor {
 	public default ReadOnlyBooleanProperty modifiedProperty() {
 		return new SimpleBooleanProperty(false);
 	}
+	
+	public void activate();
 
 }

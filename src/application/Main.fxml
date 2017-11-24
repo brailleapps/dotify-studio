@@ -133,6 +133,11 @@
 	                        <KeyCodeCombination alt="UP" code="F6" control="UP" meta="UP" shift="UP" shortcut="UP" />
 	                     </accelerator>
 	              </MenuItem>
+                  <MenuItem fx:id="activateViewMenuItem" mnemonicParsing="false" onAction="#activateView" text="%menu-item-activate-view">
+	                  <accelerator>
+	                        <KeyCodeCombination alt="UP" code="F12" control="UP" meta="UP" shift="UP" shortcut="UP" />
+	                     </accelerator>
+	              </MenuItem>
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="%menu-item-help">
