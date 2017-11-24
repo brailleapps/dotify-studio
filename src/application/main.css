@@ -15,32 +15,32 @@
 }
 
 .tagmark {
-    -fx-fill: gray;
+    -fx-fill: dimgray;
 }
 .anytag {
-    -fx-fill: crimson;
+    -fx-fill: blue;
 }
 .paren {
     -fx-fill: firebrick;
     -fx-font-weight: bold;
 }
 .attribute {
-    -fx-fill: darkviolet;
+    -fx-fill: crimson;
 }
 .avalue {
-    -fx-fill: black;
+    -fx-fill: darkorchid;
 }
 
 .comment {
-	-fx-fill: teal;
-}
-
-.pi {
 	-fx-fill: green;
 }
 
+.pi {
+	-fx-fill: teal;
+}
+
 .entity {
-	-fx-fill: lime;
+	-fx-fill: darkorange;
 }
 
 .lineno {

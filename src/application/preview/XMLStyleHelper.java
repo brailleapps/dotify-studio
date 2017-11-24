@@ -10,9 +10,9 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 
 class XMLStyleHelper {
 	private static final Pattern XML_TAG = Pattern
-			.compile("(?<ELEMENT>(</?\\h*)(\\w+)([^<>]*)(\\h*/?>))" + "|(?<COMMENT><!--[^<>]+-->)" + "|(?<PI><\\?[^<>]+\\?>)" + "|(?<ENTITY>&[^&;]+;)");
+			.compile("(?<ELEMENT>(</?\\h*)(\\w+(?:\\:\\w+)?)([^<>]*)(\\h*/?>))" + "|(?<COMMENT><!--[^<>]+-->)" + "|(?<PI><\\?[^<>]+\\?>)" + "|(?<ENTITY>&[^&;]+;)");
 
-	private static final Pattern ATTRIBUTES = Pattern.compile("(\\w+\\h*)(=)(\\h*\"[^\"]+\")");
+	private static final Pattern ATTRIBUTES = Pattern.compile("(\\w+(?:\\:\\w+)?\\h*)(=)(\\h*\"[^\"]*\")");
 
 	private static final int GROUP_OPEN_BRACKET = 2;
 	private static final int GROUP_ELEMENT_NAME = 3;
