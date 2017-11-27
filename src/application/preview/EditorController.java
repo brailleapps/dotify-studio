@@ -76,6 +76,7 @@ public class EditorController extends BorderPane implements Editor {
 	private final BooleanProperty canSaveProperty;
 	private final ReadOnlyStringProperty urlProperty;
 	private final SimpleBooleanProperty modifiedProperty;
+	private final SimpleBooleanProperty hasCancelledUpdateProperty;
 	private final BooleanProperty atMarkProperty;
 	private ChangeWatcher changeWatcher;
 	private boolean needsUpdate = false;
@@ -88,6 +89,7 @@ public class EditorController extends BorderPane implements Editor {
 	 */
 	public EditorController() {
 		modifiedProperty = new SimpleBooleanProperty();
+		hasCancelledUpdateProperty = new SimpleBooleanProperty(false);
 		atMarkProperty = new SimpleBooleanProperty();
 		canEmbossProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
 		canExportProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
@@ -132,7 +134,7 @@ public class EditorController extends BorderPane implements Editor {
 			})
 			.subscribe(this::applyHighlighting);
 		atMarkProperty.bind(codeArea.getUndoManager().atMarkedPositionProperty());
-		modifiedProperty.bind(atMarkProperty.not());
+		modifiedProperty.bind(atMarkProperty.not().or(hasCancelledUpdateProperty));
 		canSaveProperty.bind(isLoadedProperty.and(modifiedProperty));
 		codeArea.setWrapText(true);
 		scrollPane = new VirtualizedScrollPane<>(codeArea);
@@ -158,10 +160,15 @@ public class EditorController extends BorderPane implements Editor {
 			Platform.runLater(()->{
 				Alert alert = new Alert(AlertType.CONFIRMATION, Messages.MESSAGE_FILE_MODIFIED_BY_ANOTHER_APPLICATION.localize(), ButtonType.YES, ButtonType.CANCEL);
 				Optional<ButtonType> res = alert.showAndWait();
-				res.filter(v->v.equals(ButtonType.YES))
+				Optional<ButtonType> yes = res.filter(v->v.equals(ButtonType.YES));
+				if (yes.isPresent()) {
+					yes
 					.ifPresent(v->{
 						load(fileInfo.getFile(), fileInfo.isXml());
-					});
+					});					
+				} else {
+					hasCancelledUpdateProperty.set(true);
+				}
 			});
 		}
 	}
@@ -298,6 +305,7 @@ public class EditorController extends BorderPane implements Editor {
 		this.fileInfo = fileInfo;
 		encodingLabel.setText(fileInfo.getCharset().name());
 		bomLabel.setText(fileInfo.hasBom()?"BOM":"");
+		hasCancelledUpdateProperty.set(false);
 	}
 	
 	FileInfo saveToFileSynchronized(File f, FileInfo fileInfo, String text) throws IOException {
