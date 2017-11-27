@@ -83,7 +83,8 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	}
 
 	public static boolean isText(AnnotatedFile af) {
-		return af.getMediaType()!=null && TEXT_PATTERN.matcher(af.getMediaType()).matches();
+		return af.getMediaType()!=null && TEXT_PATTERN.matcher(af.getMediaType()).matches()
+				|| af.getMediaType()==null && af.getExtension()!=null && "txt".equals(af.getExtension());
 	}
 
 	/**
