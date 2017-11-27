@@ -1,5 +1,12 @@
 [[Table of Contents|Toc]]
 
+# 0.6.0 #
+## New in this version ##
+- Adds the possibility to edit the source or the PEF-file
+- Remembers the last open/save locations
+- Replaces icon (fixes brailleapps/dotify-studio-installer#6)
+- Improves about dialog
+
 # 0.5.0 #
 ## New in this version ##
 - Embossing
