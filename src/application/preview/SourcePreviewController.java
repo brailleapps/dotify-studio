@@ -97,15 +97,15 @@ public class SourcePreviewController extends BorderPane implements Editor {
 			open(selected);
 		} else {
 			PreviewController prv = new PreviewController();
-			prv.open(selected, options);
 			setupOpen(prv, selected);
+			prv.open(selected, options);
 		}
 	}
 
 	public void open(AnnotatedFile selected) {
 		PreviewController prv = new PreviewController();
-		prv.open(selected, null);
 		setupOpen(prv, selected);
+		prv.open(selected, null);
 	}
 
 	private void setupOpen(PreviewController prv, AnnotatedFile selected) {
