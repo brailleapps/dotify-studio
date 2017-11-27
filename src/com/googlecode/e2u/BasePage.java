@@ -1,14 +1,10 @@
 package com.googlecode.e2u;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.googlecode.ajui.Content;
-import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;

@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.util.logging.Logger;
 
 import com.googlecode.e2u.BookReader;
 import com.googlecode.e2u.BookReader.BookReaderResult;

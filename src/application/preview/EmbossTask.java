@@ -9,12 +9,10 @@ import org.daisy.braille.utils.api.embosser.EmbosserWriter;
 import org.daisy.braille.utils.pef.PEFConverterFacade;
 import org.daisy.braille.utils.pef.PEFHandler;
 import org.daisy.braille.utils.pef.PEFHandler.Alignment;
-
-import application.FeatureSwitch;
-
 import org.daisy.braille.utils.pef.PrinterDevice;
 import org.daisy.braille.utils.pef.Range;
 
+import application.FeatureSwitch;
 import javafx.concurrent.Task;
 import shared.Configuration;
 
