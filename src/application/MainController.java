@@ -80,6 +80,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import shared.Settings;
 
 /**
@@ -139,6 +140,9 @@ public class MainController {
 			if (CTRL_F4.match(ev)) {
 				Tab t = tabPane.getSelectionModel().getSelectedItem();
 				if (t!=null) {
+					// TODO: don't remove the tab directly, ask it to close. 
+					// See https://github.com/brailleapps/dotify-studio/issues/48
+					// Event.fireEvent(t, new Event(Tab.TAB_CLOSE_REQUEST_EVENT));
 					tabPane.getTabs().remove(t);
 				}
 				ev.consume();
@@ -666,11 +670,12 @@ public class MainController {
 	    	}
 		}
     }
- 
-    @FXML void closeApplication() {
-    	((Stage)root.getScene().getWindow()).close();
-    }
-    
+
+	@FXML void closeApplication() {
+		Stage stage = ((Stage)root.getScene().getWindow());
+		stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
+	}
+
 	@FXML void openHelpTab() {
 		// if the tab is not visible, recreate it (this is a workaround for https://github.com/brailleapps/dotify-studio/issues/20)
 		Tab old = helpTab;
@@ -694,6 +699,24 @@ public class MainController {
 		if (helpTab!=old) {
 			setMenuBindings();
 		}
+	}
+
+	boolean confirmShutdown() {
+		if (isAnyModified()) {
+			Alert alert = new Alert(AlertType.CONFIRMATION, Messages.MESSAGE_CONFIRM_QUIT_UNSAVED_CHANGES.localize(), ButtonType.YES, ButtonType.CANCEL);
+			Optional<ButtonType> res = alert.showAndWait();
+			return res.map(v->(Boolean)v.equals(ButtonType.YES)).orElse(false);
+		} else {
+			return true;
+		}
+	}
+
+	private boolean isAnyModified() {
+		return tabPane.getTabs().stream()
+				.map(t->t.getContent())
+				.filter(n->(n instanceof Editor))
+				.map(n->(Editor)n)
+				.anyMatch(e->e.isModified());
 	}
 	
 	private static ImageView buildImage(URL url) {
@@ -777,6 +800,15 @@ public class MainController {
 	        prv.open(ai, options);
 	        tab.setContent(prv);	
 		}
+		tab.setOnCloseRequest(ev->{
+			if (((Editor)tab.getContent()).isModified()) {
+				Alert alert = new Alert(AlertType.CONFIRMATION, Messages.MESSAGE_CONFIRM_CLOSE_UNSAVED_CHANGES.localize(source.getName()), ButtonType.YES, ButtonType.CANCEL);
+				Optional<ButtonType> res = alert.showAndWait();
+				if (res.map(v->(Boolean)!v.equals(ButtonType.YES)).orElse(true)) {
+					ev.consume();
+				}
+			}
+		});
 		Editor prv = ((Editor)tab.getContent());
 		prv.modifiedProperty().addListener((o, ov, nv)->{
 			String modified = "*";

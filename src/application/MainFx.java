@@ -14,6 +14,7 @@ import com.googlecode.e2u.StartupDetails;
 
 import application.l10n.Messages;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
@@ -21,7 +22,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
- 
+import javafx.stage.WindowEvent;
+
 /**
  * Provides the main entry point for the application.
  * @author Joel Håkansson
@@ -30,16 +32,16 @@ import javafx.stage.Stage;
 public class MainFx extends Application {
 	private static final Logger logger = Logger.getLogger(MainFx.class.getCanonicalName());
 
-    /**
-     * Starts the application.
-     * @param args the arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
-    }
-    
-    @Override
-    public void start(Stage primaryStage) throws IOException {
+	/**
+	 * Starts the application.
+	 * @param args the arguments
+	 */
+	public static void main(String[] args) {
+		launch(args);
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws IOException {
 		try {
 			//TODO: check error conditions, such as null
 			File parent = new File((MainFx.class.getProtectionDomain().getCodeSource().getLocation()).toURI()).getParentFile();
@@ -61,25 +63,33 @@ public class MainFx extends Application {
 			}
 		}
 
-        primaryStage.setTitle("Dotify Studio");
-        primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("resource-files/icon.png")));
-        Screen screen = Screen.getPrimary();
-        Rectangle2D bounds = screen.getVisualBounds();
+		primaryStage.setTitle("Dotify Studio");
+		primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("resource-files/icon.png")));
+		Screen screen = Screen.getPrimary();
+		Rectangle2D bounds = screen.getVisualBounds();
 
-        primaryStage.setX(bounds.getMinX());
-        primaryStage.setY(bounds.getMinY());
-        primaryStage.setWidth(bounds.getWidth());
-        primaryStage.setHeight(bounds.getHeight());
-        
-        FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("Main.fxml"), Messages.getBundle());
-        Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root);
-        
-        MainController controller = fxmlLoader.<MainController>getController();
-        controller.openArgs(StartupDetails.parse(getParameters().getRaw().toArray(new String[]{})));
+		primaryStage.setX(bounds.getMinX());
+		primaryStage.setY(bounds.getMinY());
+		primaryStage.setWidth(bounds.getWidth());
+		primaryStage.setHeight(bounds.getHeight());
 
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
+		FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("Main.fxml"), Messages.getBundle());
+		Parent root = fxmlLoader.load();
+		Scene scene = new Scene(root);
+
+		MainController controller = fxmlLoader.<MainController>getController();
+		controller.openArgs(StartupDetails.parse(getParameters().getRaw().toArray(new String[]{})));
+
+		primaryStage.setScene(scene);
+		primaryStage.show();
+		
+		scene.getWindow().setOnCloseRequest(new EventHandler<WindowEvent>() {
+			public void handle(WindowEvent ev) {
+				if (!controller.confirmShutdown()) {
+					ev.consume();
+				}
+			}
+		});
+	}
 
 }
