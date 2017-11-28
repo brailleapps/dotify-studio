@@ -169,7 +169,10 @@ public class SearchController extends VBox {
 					break;
 				}
 				try {
-					search.add(loader.load(f));
+					PEFBook book = loader.load(f);
+					if (book!=null) {
+						search.add(book);
+					}
 				} catch (XPathExpressionException | ParserConfigurationException | SAXException | IOException e) {
 					//e.printStackTrace();
 				}

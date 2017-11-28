@@ -22,7 +22,7 @@ public class PefBookAdapter {
     	String unknown = Messages.MESSAGE_UNKNOWN_AUTHOR.localize();
 		Iterable<String> title = book.getTitle(); 
 		Iterable<String> authors = book.getAuthors();
-		this.display = Messages.MESSAGE_SEARCH_RESULT.localize((title==null?untitled:title.iterator().next()), (authors==null?unknown:authors.iterator().next()));
+		this.display = Messages.MESSAGE_SEARCH_RESULT.localize((title==null||!title.iterator().hasNext()?untitled:title.iterator().next()), (authors==null||!authors.iterator().hasNext()?unknown:authors.iterator().next()));
 	}
 	
 	/**
