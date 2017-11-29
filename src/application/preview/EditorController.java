@@ -109,6 +109,7 @@ public class EditorController extends BorderPane implements Editor {
 	
 	@FXML void initialize() {
 		codeArea = new CodeArea();
+		codeArea.getStylesheets().add(this.getClass().getResource("resource-files/editor.css").toExternalForm());
 		codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
 		/*
 		codeArea.textProperty().addListener((obs, oldText, newText)-> {
