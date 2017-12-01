@@ -350,6 +350,9 @@ public class PreviewController extends BorderPane implements Editor {
 	 */
 	public void closing() {
 		closing = true;
+		if (start!=null) {
+			start.stopServer();
+		}
 	}
 	
 	private Optional<URI> getBookURI() {

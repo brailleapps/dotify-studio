@@ -452,6 +452,7 @@ class StaxPreviewParser {
 		out.writeAttribute("id", "connected");
 		out.writeAttribute("type", "submit");
 		out.writeAttribute("value", "");
+		out.writeAttribute("disabled", "disabled");
 		out.writeAttribute("title", "Avsluta"); //TODO: localize
 		out.writeCharacters("");
 		out.writeEndElement();

@@ -110,7 +110,6 @@ a.folder {
 	border-color: white;
 }
 #connected {
-	cursor: pointer;
 	background-image: url('../../images/green.gif');
 }
 

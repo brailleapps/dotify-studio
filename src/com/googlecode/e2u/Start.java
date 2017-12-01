@@ -5,6 +5,7 @@ import com.googlecode.e2u.StartupDetails.Mode;
 
 public class Start {
 	private MainPage content;
+	private BrowserUI ui;
 
 	public String start(StartupDetails args) throws Exception  {
 		if (args==null) {
@@ -41,7 +42,7 @@ public class Start {
 		} else {
 			throw new RuntimeException("Coding error.");
 		}
-		BrowserUI ui = buildUi.build();
+		ui = buildUi.build();
 		ui.registerContents(content);
 		if (args.shouldDisplay()) {
 			ui.display(page);
@@ -53,6 +54,10 @@ public class Start {
 	
 	public MainPage getMainPage() {
 		return content;
+	}
+	
+	public void stopServer() {
+		ui.stopServer();
 	}
 
 }
