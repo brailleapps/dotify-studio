@@ -167,6 +167,7 @@ public class PreviewController extends BorderPane implements Editor {
     	private final File output;
     	private final String locale;
     	private final Thread pefWatcher;
+    	private boolean isRunning;
 
     	SourceDocumentWatcher(AnnotatedFile input, File output, String locale, Thread pefWatcher) {
     		super(input.getFile());
@@ -174,6 +175,7 @@ public class PreviewController extends BorderPane implements Editor {
     		this.output = output;
     		this.locale = locale;
     		this.pefWatcher = pefWatcher;
+    		this.isRunning = false;
     	}
 
 		@Override
@@ -183,20 +185,23 @@ public class PreviewController extends BorderPane implements Editor {
 
 		@Override
 		boolean shouldPerformAction() {
-			return (super.shouldPerformAction() && options.isWatching()) || options.refreshRequested();
+			return !isRunning && ((super.shouldPerformAction() && options.isWatching()) || options.refreshRequested());
 		}
 
 		@Override
 		void performAction() {
 			try {
+				isRunning = true;
 				Map<String, Object> opts = options.getParams();
 	    		DotifyTask dt = new DotifyTask(annotatedInput, output, locale, opts);
 	    		dt.setOnFailed(ev->{
+	    			isRunning = false;
 	    			logger.log(Level.WARNING, "Update failed.", dt.getException());
 		    		Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
 		    		alert.showAndWait();
 	    		});
 	    		dt.setOnSucceeded(ev -> {
+	    			isRunning = false;
 	    			Platform.runLater(() -> {
 	    				if (pefWatcher!=null) {
 	    					pefWatcher.interrupt();
