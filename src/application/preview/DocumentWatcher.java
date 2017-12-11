@@ -42,7 +42,7 @@ abstract class DocumentWatcher implements Runnable {
 	 * @return true if the watcher should stay alive, false otherwise
 	 */
 	boolean shouldMonitor() {
-		return file.exists();
+		return true;
 	}
 
 	/**
@@ -52,7 +52,7 @@ abstract class DocumentWatcher implements Runnable {
 	 * @return true if the watcher should perform its action, false otherwise
 	 */
 	boolean shouldPerformAction() {
-		return modified<file.lastModified();
+		return file.exists() && modified<file.lastModified();
 	}
 	
 	/**
