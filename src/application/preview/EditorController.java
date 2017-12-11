@@ -321,7 +321,18 @@ public class EditorController extends BorderPane implements Editor {
 		FileInfo.Builder builder = FileInfo.with(fileInfo);
 		builder.file(f);
 		byte[] bytes = prepareSaveToFile(builder, fileInfo, text);
-		Files.write(f.toPath(), bytes);
+		// Creates a temporary file in the same directory as the target file, because renameTo might fail if
+		// the new location is on a different file system.
+		File ft = File.createTempFile("save", ".tmp", f.getParentFile());
+		Files.write(ft.toPath(), bytes);
+		if (!ft.renameTo(f)) {
+			if (!f.delete() || !ft.renameTo(f)) {
+				Platform.runLater(()->{
+					Alert alert = new Alert(AlertType.WARNING, Messages.ERROR_FAILED_TO_WRITE_TO_FILE.localize(f.getName()), ButtonType.OK);
+					alert.showAndWait();
+				});
+			}
+		}
 		return builder.build();
 	}
 	

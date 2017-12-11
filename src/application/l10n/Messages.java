@@ -72,6 +72,7 @@ public enum Messages {
 	ERROR_NO_ALIGNMENT_SPECIFIED("error-no-alignment-specified"),
 	ERROR_FAILED_TO_LOAD_HELP("error-failed-to-load-help"),
 	ERROR_UNSUPPORTED_XML_ENCODING("error-unsupported-xml-encoding"),
+	ERROR_FAILED_TO_WRITE_TO_FILE("error-failed-to-write-to-file"),
 	TITLE_SET_SEARCH_FOLDER("title-set-search-folder"),
 	TITLE_OPEN_DIALOG("title-open-dialog"),
 	TITLE_IMPORT_SOURCE_DOCUMENT_DIALOG("title-import-source-document-dialog"),
