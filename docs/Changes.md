@@ -1,5 +1,14 @@
 [[Table of Contents|Toc]]
 
+
+# 0.6.1 #
+## New in this version ##
+- Prevents overlapping read/write operations
+- Improves file watching stability
+- Improves liveness during conversion
+- Closes some background threads when the tab is closed and removes the possibility of doing so manually
+- Improves fault tolerance when reading PEF-files
+
 # 0.6.0 #
 ## New in this version ##
 - Adds the possibility to edit the source or the PEF-file
