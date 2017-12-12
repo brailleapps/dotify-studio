@@ -133,6 +133,7 @@ public class PreviewController extends BorderPane implements Editor {
 			try {
 				File out = File.createTempFile("dotify-studio", ".pef");
 				String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
+				setRunning(true);
 				DotifyTask dt = new DotifyTask(selected, out, tag, options);
 				dt.setOnSucceeded(ev -> {
 					Thread pefWatcher = open(out);
@@ -142,6 +143,7 @@ public class PreviewController extends BorderPane implements Editor {
 		    		th.start();
 				});
 				dt.setOnFailed(ev->{
+					setRunning(false);
 					logger.log(Level.WARNING, "Import failed.", dt.getException());
 		    		Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
 		    		alert.showAndWait();
@@ -159,7 +161,13 @@ public class PreviewController extends BorderPane implements Editor {
 			setLeft(options);
 		}
 		options.setOptions(dr.getTaskSystem(), dr.getResults(), opts);
-
+		setRunning(false);
+	}
+	
+	private void setRunning(boolean value) {
+		if (options!=null) {
+			options.setRunning(value);
+		}
 	}
 	
     class SourceDocumentWatcher extends DocumentWatcher {
@@ -192,16 +200,19 @@ public class PreviewController extends BorderPane implements Editor {
 		void performAction() {
 			try {
 				isRunning = true;
+				setRunning(true);
 				Map<String, Object> opts = options.getParams();
 	    		DotifyTask dt = new DotifyTask(annotatedInput, output, locale, opts);
 	    		dt.setOnFailed(ev->{
 	    			isRunning = false;
+	    			setRunning(false);
 	    			logger.log(Level.WARNING, "Update failed.", dt.getException());
 		    		Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
 		    		alert.showAndWait();
 	    		});
 	    		dt.setOnSucceeded(ev -> {
 	    			isRunning = false;
+	    			setRunning(false);
 	    			Platform.runLater(() -> {
 	    				if (pefWatcher!=null) {
 	    					pefWatcher.interrupt();

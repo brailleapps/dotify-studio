@@ -15,6 +15,7 @@ import org.daisy.dotify.api.tasks.TaskOption;
 import org.daisy.dotify.tasks.runner.RunnerResult;
 
 import application.l10n.Messages;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -22,6 +23,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
@@ -37,6 +39,7 @@ public class OptionsController extends BorderPane {
 	@FXML private VBox vbox;
 	@FXML private Button applyButton;
 	@FXML private CheckBox monitorCheckbox;
+	@FXML private ProgressIndicator progress;
 	private boolean refreshRequested;
 	private Set<TaskOption> values;
 
@@ -141,6 +144,14 @@ public class OptionsController extends BorderPane {
 			return true;
 		}
 		return false;
+	}
+	
+	void setRunning(boolean running) {
+		Platform.runLater(()->{
+			progress.setProgress(running?ProgressIndicator.INDETERMINATE_PROGRESS:1);
+			progress.setVisible(running);
+			applyButton.setVisible(!running);
+		});
 	}
 
 }

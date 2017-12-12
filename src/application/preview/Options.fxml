@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
@@ -36,6 +37,7 @@
             </Label>
             <HBox alignment="CENTER_RIGHT" spacing="20.0">
                <children>
+                  <ProgressIndicator id="progress" fx:id="progress" />
       						   <CheckBox fx:id="monitorCheckbox" mnemonicParsing="false" selected="true" text="%checkbox-watch-source">
                      <tooltip>
                         <Tooltip text="%tooltip-watch-source" />

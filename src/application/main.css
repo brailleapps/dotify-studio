@@ -13,3 +13,8 @@
 #clearButton {
 	-fx-graphic: url('resource-files/clear.png');
 }
+
+.progress-indicator:indeterminate {
+	-fx-pref-width: 40px;
+	-fx-pref-height: 40px;
+}
