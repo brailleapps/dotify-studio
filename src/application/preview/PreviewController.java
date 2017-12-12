@@ -133,6 +133,7 @@ public class PreviewController extends BorderPane implements Editor {
 			try {
 				File out = File.createTempFile("dotify-studio", ".pef");
 				String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
+				makeOptions();
 				setRunning(true);
 				DotifyTask dt = new DotifyTask(selected, out, tag, options);
 				dt.setOnSucceeded(ev -> {
@@ -156,12 +157,16 @@ public class PreviewController extends BorderPane implements Editor {
 	}
 	
 	private void updateOptions(DotifyResult dr, Map<String, Object> opts) {
+		makeOptions();
+		options.setOptions(dr.getTaskSystem(), dr.getResults(), opts);
+		setRunning(false);
+	}
+	
+	private void makeOptions() {
 		if (options==null) {
 			options = new OptionsController();
 			setLeft(options);
 		}
-		options.setOptions(dr.getTaskSystem(), dr.getResults(), opts);
-		setRunning(false);
 	}
 	
 	private void setRunning(boolean value) {
