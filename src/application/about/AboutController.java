@@ -65,11 +65,15 @@ public class AboutController {
 
 	private void visit(String url) {
 		if (Desktop.isDesktopSupported()) {
-			try {
-				Desktop.getDesktop().browse(new URI(url));
-			} catch (IOException | URISyntaxException e) {
-
-			}
+			new Thread(()->{
+				// Wrapping this in a new thread in order to fix
+				// https://github.com/brailleapps/dotify-studio/issues/44
+				try {
+					Desktop.getDesktop().browse(new URI(url));
+				} catch (IOException | URISyntaxException e) {
+	
+				}
+			}).start();
 		}
 	}
 }

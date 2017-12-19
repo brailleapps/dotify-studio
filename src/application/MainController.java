@@ -376,23 +376,32 @@ public class MainController {
     
     @FXML void openInBrowser() {
 		if (Desktop.isDesktopSupported()) {
-			try {
-				Tab t = tabPane.getSelectionModel().getSelectedItem();
-				if (t!=null) {
-					javafx.scene.Node node = t.getContent();
-					if (node instanceof WebView) {
-						Desktop.getDesktop().browse(new URI(((WebView) node).getEngine().getLocation()));
-					} else if (node instanceof Editor) {
-						((Editor)t.getContent()).getURL().ifPresent(url->{
+			Tab t = tabPane.getSelectionModel().getSelectedItem();
+			if (t!=null) {
+				javafx.scene.Node node = t.getContent();
+				if (node instanceof WebView) {
+					new Thread(()->{
+						// Wrapping this in a new thread in order to fix
+						// https://github.com/brailleapps/dotify-studio/issues/44
+						try {
+							Desktop.getDesktop().browse(new URI(((WebView) node).getEngine().getLocation()));
+						} catch (IOException | URISyntaxException e) {
+							// fail silently
+						}
+					}).start();
+				} else if (node instanceof Editor) {
+					((Editor)t.getContent()).getURL().ifPresent(url->{
+						new Thread(()->{
+							// Wrapping this in a new thread in order to fix
+							// https://github.com/brailleapps/dotify-studio/issues/44
 							try {
 								Desktop.getDesktop().browse(new URI(url));
 							} catch (IOException | URISyntaxException e) {
 								// fail silently
 							}
-						});
-					}
-				}				
-			} catch (IOException | URISyntaxException e) {
+						}).start();
+					});
+				}
 			}
 		}
 	}
