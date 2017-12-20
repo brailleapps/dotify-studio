@@ -14,7 +14,7 @@
 
 <fx:root type="BorderPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
+      <ScrollPane fx:id="options" fitToWidth="true" hbarPolicy="NEVER">
          <content>
             <VBox fx:id="vbox" spacing="5.0">
                <padding>
@@ -25,7 +25,7 @@
       </ScrollPane>
    </center>
    <bottom>
-      <VBox BorderPane.alignment="CENTER">
+      <VBox fx:id="tools" BorderPane.alignment="CENTER">
       	<children>
             <Label text="%label-converter-tools" textFill="#404040">
                <font>
@@ -51,4 +51,13 @@
          </padding>
       </VBox>
    </bottom>
+   <top>
+      <Button fx:id="toggle" mnemonicParsing="false" onAction="#toggleOptions" text="&lt;" BorderPane.alignment="CENTER_RIGHT">
+         <BorderPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </BorderPane.margin>
+         <tooltip>
+            <Tooltip text="%tooltip-hide-options" />
+         </tooltip></Button>
+   </top>
 </fx:root>

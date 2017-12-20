@@ -24,6 +24,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
@@ -36,6 +38,9 @@ import javafx.scene.text.Font;
  */
 public class OptionsController extends BorderPane {
 	private static final Logger logger = Logger.getLogger(OptionsController.class.getCanonicalName());
+	@FXML private ScrollPane options;
+	@FXML private VBox tools;
+	@FXML private Button toggle;
 	@FXML private VBox vbox;
 	@FXML private Button applyButton;
 	@FXML private CheckBox monitorCheckbox;
@@ -132,6 +137,20 @@ public class OptionsController extends BorderPane {
 	
 	@FXML void requestRefresh() {
 		refreshRequested = true;
+	}
+	
+	@FXML void toggleOptions() {
+		if (getBottom()==tools) {
+			setBottom(null);
+			setCenter(null);
+			toggle.setText(">");
+			toggle.getTooltip().setText(Messages.TOOLTIP_SHOW_OPTIONS.localize());
+		} else {
+			setBottom(tools);
+			setCenter(options);
+			toggle.setText("<");
+			toggle.getTooltip().setText(Messages.TOOLTIP_HIDE_OPTIONS.localize());
+		}
 	}
 	
 	boolean isWatching() {

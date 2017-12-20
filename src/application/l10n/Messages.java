@@ -137,6 +137,8 @@ public enum Messages {
 	TOOLTIP_NO_VOLUME_SUPPORT("tooltip-no-volume-support"),
 	TOOLTIP_ACCURATE_LINE_SPACING("tooltip-accurate-line-spacing"),
 	TOOLTIP_SIMPLE_LINE_SPACING("tooltip-simple-line-spacing"),
+	TOOLTIP_SHOW_OPTIONS("tooltip-show-options"),
+	TOOLTIP_HIDE_OPTIONS("tooltip-hide-options"),
 	VALUE_USE_DEFAULT("value-use-default"),
 	EXTENSION_FILTER_SUPPORTED_FILES("extension-filter-supported-files"),
 	EXTENSION_FILTER_ALL_FILES("extension-filter-all-files"),
