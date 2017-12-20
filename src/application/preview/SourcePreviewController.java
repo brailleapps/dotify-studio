@@ -36,6 +36,27 @@ import javafx.stage.FileChooser.ExtensionFilter;
  */
 public class SourcePreviewController extends BorderPane implements Editor {
 	private static final Logger logger = Logger.getLogger(SourcePreviewController.class.getCanonicalName());
+	private static final FileDetails PEF_FORMAT = new FileDetails(){
+		@Override
+		public String getFormatName() {
+			return "pef";
+		}
+
+		@Override
+		public String getExtension() {
+			return "pef";
+		}
+
+		@Override
+		public String getMediaType() {
+			return "application/x-pef+xml";
+		}
+
+		@Override
+		public Map<String, Object> getProperties() {
+			return Collections.emptyMap();
+		}};
+
 	@FXML TabPane tabs;
 	@FXML Tab preview;
 	@FXML Tab source;
@@ -67,8 +88,16 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	@FXML void initialize() {
 	}
 
+	/**
+	 * Returns true if the editor format is supported (the preview format is assumed to be PEF)
+	 * @param editorFormat the editor format
+	 * @return returns true if the editor format is supported
+	 */
 	public static boolean supportsFormat(FileDetails editorFormat) {
-		return EditorController.supportsFormat(editorFormat);
+		return supportsFormat(editorFormat, PEF_FORMAT);
+	}
+	public static boolean supportsFormat(FileDetails editorFormat, FileDetails previewFormat) {
+		return EditorController.supportsFormat(editorFormat) && PreviewController.supportsFormat(previewFormat);
 	}
 
 	/**
@@ -96,7 +125,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 		preview.setContent(prv);
 		source.setText(Messages.LABEL_SOURCE.localize(selected.getFile().getName()));
 		EditorController editor = new EditorController();
-		editor.load(selected.getFile(), EditorController.isXML(selected));
+		editor.load(selected.getFile(), FormatChecker.isXML(selected));
 		source.setContent(editor);
 		canEmbossProperty.bind(
 				tabs.getSelectionModel().selectedItemProperty().isEqualTo(preview).and(prv.canEmbossProperty())

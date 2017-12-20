@@ -33,6 +33,7 @@ import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.braille.utils.pef.PEFHandler;
 import org.daisy.dotify.api.tasks.AnnotatedFile;
 import org.daisy.dotify.api.tasks.CompiledTaskSystem;
+import org.daisy.dotify.api.tasks.FileDetails;
 import org.daisy.dotify.api.tasks.TaskSystem;
 import org.daisy.dotify.consumer.tasks.TaskSystemFactoryMaker;
 import org.daisy.dotify.studio.api.Editor;
@@ -154,6 +155,10 @@ public class PreviewController extends BorderPane implements Editor {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public static boolean supportsFormat(FileDetails format) {
+		return FormatChecker.isPEF(format);
 	}
 	
 	private void updateOptions(DotifyResult dr, Map<String, Object> opts) {

@@ -25,4 +25,7 @@ public final class FormatChecker {
 				|| af.getMediaType()==null && af.getExtension()!=null && "txt".equals(af.getExtension());
 	}
 	
+	public static boolean isPEF(FileDetails af) {
+		return af.getMediaType()!=null && "application/x-pef+xml".equals(af.getMediaType());
+	}
 }
