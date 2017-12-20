@@ -106,19 +106,9 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	 * @param options the options
 	 */
 	public void open(AnnotatedFile selected, Map<String, Object> options) {
-		if (options==null) {
-			open(selected);
-		} else {
-			PreviewController prv = new PreviewController();
-			setupOpen(prv, selected);
-			prv.open(selected, options);
-		}
-	}
-
-	public void open(AnnotatedFile selected) {
 		PreviewController prv = new PreviewController();
 		setupOpen(prv, selected);
-		prv.open(selected, null);
+		prv.open(selected, options);
 	}
 
 	private void setupOpen(PreviewController prv, AnnotatedFile selected) {
