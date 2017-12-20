@@ -38,6 +38,7 @@ import application.imports.ImportBrailleView;
 import application.l10n.Messages;
 import application.prefs.PreferencesView;
 import application.preview.EditorController;
+import application.preview.FormatChecker;
 import application.preview.PreviewController;
 import application.preview.SourcePreviewController;
 import application.search.SearchController;
@@ -805,7 +806,7 @@ public class MainController {
 				tab.setOnClosed(ev ->  {
 					prv.closing();
 				});
-				prv.load(source, SourcePreviewController.isXML(ai));
+				prv.load(source, FormatChecker.isXML(ai));
 				tab.setContent(prv);
 			} else {
 				SourcePreviewController prv = new SourcePreviewController();

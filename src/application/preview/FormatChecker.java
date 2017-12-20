@@ -1,0 +1,28 @@
+package application.preview;
+
+import java.util.regex.Pattern;
+
+import org.daisy.dotify.api.tasks.FileDetails;
+
+public final class FormatChecker {
+	static final Pattern XML_PATTERN = Pattern.compile("\\Qapplication/\\E([\\w-]+\\+)?\\Qxml\\E");
+	static final Pattern TEXT_PATTERN = Pattern.compile("\\Qtext/\\E.+");
+
+	private FormatChecker() {
+		throw new AssertionError("No instances allowed.");
+	}
+	
+	public static boolean isXML(FileDetails af) {
+		return af.getMediaType()!=null && XML_PATTERN.matcher(af.getMediaType()).matches();
+	}
+
+	public static boolean isHTML(FileDetails af) { 
+		return af.getMediaType()!=null && "text/html".equals(af.getMediaType());
+	}
+
+	public static boolean isText(FileDetails af) {
+		return af.getMediaType()!=null && TEXT_PATTERN.matcher(af.getMediaType()).matches()
+				|| af.getMediaType()==null && af.getExtension()!=null && "txt".equals(af.getExtension());
+	}
+	
+}

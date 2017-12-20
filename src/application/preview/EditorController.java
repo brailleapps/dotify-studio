@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.daisy.dotify.api.tasks.FileDetails;
 import org.daisy.dotify.common.xml.XMLTools;
 import org.daisy.dotify.common.xml.XMLToolsException;
 import org.daisy.dotify.common.xml.XmlEncodingDetectionException;
@@ -142,6 +143,13 @@ public class EditorController extends BorderPane implements Editor {
 		scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		setCenter(scrollPane);
 	}
+	
+	public static boolean supportsFormat(FileDetails editorFormat) {
+		// TODO: also support application/epub+zip
+		return FormatChecker.isText(editorFormat) || FormatChecker.isHTML(editorFormat) || FormatChecker.isXML(editorFormat);
+	}
+
+
 	
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
         String text = codeArea.getText();
