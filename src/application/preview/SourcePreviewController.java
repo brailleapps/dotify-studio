@@ -9,9 +9,9 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.daisy.dotify.api.tasks.AnnotatedFile;
-import org.daisy.dotify.api.tasks.FileDetails;
 import org.daisy.dotify.studio.api.Editor;
+import org.daisy.streamline.api.media.AnnotatedFile;
+import org.daisy.streamline.api.media.FileDetails;
 
 import application.l10n.Messages;
 import javafx.beans.binding.When;

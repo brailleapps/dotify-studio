@@ -3,7 +3,7 @@ package com.googlecode.e2u;
 import java.text.MessageFormat;
 import java.util.List;
 
-import org.daisy.dotify.api.validity.ValidatorMessage;
+import org.daisy.streamline.api.validity.ValidatorMessage;
 
 import com.googlecode.ajui.AContainer;
 import com.googlecode.ajui.ADefinitionDescription;

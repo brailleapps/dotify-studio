@@ -13,17 +13,17 @@ import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 
 import org.daisy.braille.utils.pef.PEFBook;
-import org.daisy.dotify.api.validity.ValidationReport;
-import org.daisy.dotify.api.validity.ValidatorFactoryMakerService;
-import org.daisy.dotify.api.validity.ValidatorMessage;
-import org.daisy.dotify.consumer.validity.ValidatorFactoryMaker;
+import org.daisy.streamline.api.validity.ValidationReport;
+import org.daisy.streamline.api.validity.ValidatorFactoryMaker;
+import org.daisy.streamline.api.validity.ValidatorFactoryMakerService;
+import org.daisy.streamline.api.validity.ValidatorMessage;
 
 public class BookReader {
 	private static final Logger logger = Logger.getLogger(BookReader.class.getCanonicalName());
 	private final File source;
     private SwingWorker<BookReaderResult, Void> bookReader;
     private BookReaderResult book = null;
-    private org.daisy.dotify.api.validity.Validator pv = null;
+    private org.daisy.streamline.api.validity.Validator pv = null;
 	private long lastUpdated;
     
     public static class BookReaderResult {

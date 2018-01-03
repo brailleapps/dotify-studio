@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.xml.stream.Location;
 
-import org.daisy.dotify.api.validity.ValidatorMessage;
+import org.daisy.streamline.api.validity.ValidatorMessage;
 
 /**
  * Provides a consumable message extractor to be used when parsing an xml document.

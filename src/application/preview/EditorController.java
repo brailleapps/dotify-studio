@@ -23,11 +23,11 @@ import java.util.logging.Logger;
 
 import javax.xml.bind.DatatypeConverter;
 
-import org.daisy.dotify.api.tasks.FileDetails;
 import org.daisy.dotify.common.xml.XMLTools;
 import org.daisy.dotify.common.xml.XMLToolsException;
 import org.daisy.dotify.common.xml.XmlEncodingDetectionException;
 import org.daisy.dotify.studio.api.Editor;
+import org.daisy.streamline.api.media.FileDetails;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;

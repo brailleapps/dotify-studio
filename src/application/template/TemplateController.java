@@ -9,9 +9,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.daisy.dotify.api.config.ConfigurationDetails;
-import org.daisy.dotify.api.config.ConfigurationsProviderException;
-import org.daisy.dotify.consumer.config.ConfigurationsCatalog;
+import org.daisy.streamline.api.config.ConfigurationDetails;
+import org.daisy.streamline.api.config.ConfigurationsCatalog;
+import org.daisy.streamline.api.config.ConfigurationsProviderException;
 
 import application.l10n.Messages;
 import javafx.fxml.FXML;

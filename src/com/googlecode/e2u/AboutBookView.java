@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import org.daisy.braille.utils.pef.PEFBook;
-import org.daisy.dotify.api.validity.ValidatorMessage;
+import org.daisy.streamline.api.validity.ValidatorMessage;
 
 import com.googlecode.ajui.AContainer;
 import com.googlecode.ajui.ADefinitionDescription;

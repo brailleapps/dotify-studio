@@ -30,10 +30,10 @@ import org.daisy.braille.utils.api.table.Table;
 import org.daisy.braille.utils.api.table.TableCatalog;
 import org.daisy.braille.utils.impl.tools.table.DefaultTableProvider;
 import org.daisy.braille.utils.pef.PEFBook;
-import org.daisy.dotify.api.validity.ValidationReport;
-import org.daisy.dotify.api.validity.ValidatorMessage;
 import org.daisy.dotify.common.text.ConditionalMapper;
 import org.daisy.dotify.common.text.SimpleUCharReplacer;
+import org.daisy.streamline.api.validity.ValidationReport;
+import org.daisy.streamline.api.validity.ValidatorMessage;
 
 import com.googlecode.e2u.MainPage;
 import com.googlecode.e2u.l10n.L10nKeys;

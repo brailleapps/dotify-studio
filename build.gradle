@@ -57,7 +57,7 @@ repositories {
     mavenCentral()
     //mavenLocal()
     maven { url "https://oss.sonatype.org/content/groups/staging" }
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    //maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
 }
 
 dependencies {
@@ -65,28 +65,28 @@ dependencies {
 
 	compile 'org.daisy.braille:braille-utils.api:4.2.0'
 	compile 'org.daisy.braille:braille-utils.impl:4.0.0'
-	compile ('org.daisy.braille:braille-utils.pef-tools:3.0.0') {
+	compile ('org.daisy.braille:braille-utils.pef-tools:3.0.1') {
 		exclude module: 'Saxon-HE'
 	}
-	compile 'com.googlecode.ajui:ajui:1.0.0-SNAPSHOT'
+	compile 'com.googlecode.ajui:ajui:1.0.0'
 	
-	compile 'org.daisy.dotify:dotify.api:3.2.0'
-	compile 'org.daisy.streamline:streamline-api:0.2.0'
-	compile 'org.daisy.dotify:dotify.common:3.8.0'
-	compile ('org.daisy.streamline:streamline-engine:0.2.0') {
+	compile 'org.daisy.dotify:dotify.api:4.0.0'
+	compile 'org.daisy.streamline:streamline-api:1.0.0'
+	compile 'org.daisy.dotify:dotify.common:4.0.0'
+	compile ('org.daisy.streamline:streamline-engine:1.0.0') {
 		exclude module: 'streamline-api'
 	}
 	compile 'org.fxmisc.richtext:richtextfx:0.8.1'
 	
 	testCompile group: 'junit', name: 'junit', version: "4.7"
 	
-	runtime ('org.daisy.dotify:dotify.formatter.impl:3.2.0') {
+	runtime ('org.daisy.dotify:dotify.formatter.impl:4.0.0') {
 		exclude module: 'Saxon-HE'
 	}
-	runtime 'org.daisy.dotify:dotify.hyphenator.impl:3.0.0'
-	runtime 'org.daisy.dotify:dotify.text.impl:3.0.0'
-	runtime 'org.daisy.dotify:dotify.translator.impl:3.0.0'
-	runtime ('org.daisy.dotify:dotify.task.impl:3.7.0') {
+	runtime 'org.daisy.dotify:dotify.hyphenator.impl:4.0.0'
+	runtime 'org.daisy.dotify:dotify.text.impl:4.0.0'
+	runtime 'org.daisy.dotify:dotify.translator.impl:4.0.0'
+	runtime ('org.daisy.dotify:dotify.task.impl:4.0.0') {
 		exclude module: 'Saxon-HE'
 	}
 

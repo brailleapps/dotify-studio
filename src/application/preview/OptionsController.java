@@ -10,9 +10,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.daisy.dotify.api.tasks.CompiledTaskSystem;
-import org.daisy.dotify.api.tasks.TaskOption;
-import org.daisy.dotify.tasks.runner.RunnerResult;
+import org.daisy.streamline.api.option.UserOption;
+import org.daisy.streamline.api.tasks.CompiledTaskSystem;
+import org.daisy.streamline.engine.RunnerResult;
 
 import application.l10n.Messages;
 import javafx.application.Platform;
@@ -25,7 +25,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
@@ -46,7 +45,7 @@ public class OptionsController extends BorderPane {
 	@FXML private CheckBox monitorCheckbox;
 	@FXML private ProgressIndicator progress;
 	private boolean refreshRequested;
-	private Set<TaskOption> values;
+	private Set<UserOption> values;
 
 	/**
 	 * Creates a new options controller.
@@ -78,17 +77,17 @@ public class OptionsController extends BorderPane {
 		}
 	}
 	
-	private void displayItems(String title, List<TaskOption> options, Map<String, Object> prvOpts) {
+	private void displayItems(String title, List<UserOption> options, Map<String, Object> prvOpts) {
 		if (options==null || options.isEmpty()) {
 			return;
 		}
 		addGroupTitle(title);
-		List<TaskOption> sortedOptions = options.stream()
+		List<UserOption> sortedOptions = options.stream()
 				.sorted((o1, o2) -> {
 					return o1.getKey().compareTo(o2.getKey());
 				})
 				.collect(Collectors.toList());
-		for (TaskOption o : sortedOptions) {
+		for (UserOption o : sortedOptions) {
 			addItem(o, prvOpts);
 		}
 	}
@@ -101,7 +100,7 @@ public class OptionsController extends BorderPane {
 		vbox.getChildren().add(label);
 	}
 	
-	private void addItem(TaskOption o, Map<String, Object> setOptions) {
+	private void addItem(UserOption o, Map<String, Object> setOptions) {
 		OptionItem item = new OptionItem(o, values.contains(o));
 		Object value = setOptions.get(o.getKey());
 		if (value!=null) {

@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import org.daisy.braille.utils.pef.PEFBook;
-import org.daisy.dotify.api.validity.ValidationReport;
+import org.daisy.streamline.api.validity.ValidationReport;
 
 import javafx.concurrent.Task;
 

@@ -23,10 +23,10 @@ import java.util.stream.Stream;
 
 import org.daisy.braille.utils.api.table.TableCatalog;
 import org.daisy.braille.utils.pef.TextConverterFacade;
-import org.daisy.dotify.api.tasks.AnnotatedFile;
-import org.daisy.dotify.consumer.identity.IdentityProvider;
-import org.daisy.dotify.consumer.tasks.TaskGroupFactoryMaker;
 import org.daisy.dotify.studio.api.Editor;
+import org.daisy.streamline.api.identity.IdentityProvider;
+import org.daisy.streamline.api.media.AnnotatedFile;
+import org.daisy.streamline.api.tasks.TaskGroupFactoryMaker;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

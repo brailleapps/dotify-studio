@@ -2,7 +2,7 @@ package application.preview;
 
 import java.util.regex.Pattern;
 
-import org.daisy.dotify.api.tasks.FileDetails;
+import org.daisy.streamline.api.media.FileDetails;
 
 public final class FormatChecker {
 	static final Pattern XML_PATTERN = Pattern.compile("\\Qapplication/\\E([\\w-]+\\+)?\\Qxml\\E");

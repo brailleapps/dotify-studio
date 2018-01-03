@@ -1,7 +1,7 @@
 package application.preview;
 
-import org.daisy.dotify.api.tasks.TaskOption;
-import org.daisy.dotify.api.tasks.TaskOptionValue;
+import org.daisy.streamline.api.option.UserOption;
+import org.daisy.streamline.api.option.UserOptionValue;
 
 import application.l10n.Messages;
 import javafx.geometry.Pos;
@@ -30,7 +30,7 @@ public class OptionItem extends BorderPane {
 	 * @param option the task option
 	 * @param disabled true if the option should be disabled, false otherwise
 	 */
-	public OptionItem(TaskOption option, boolean disabled) {
+	public OptionItem(UserOption option, boolean disabled) {
 		this.disabled = disabled;
 		key = new Label(option.getKey());
 		setLeft(key);
@@ -41,7 +41,7 @@ public class OptionItem extends BorderPane {
 		} else if (option.hasValues()) {
 			choiceValue = new ChoiceBox<>();
 			TaskOptionValueAdapter selected = null;
-			for (TaskOptionValue v : option.getValues()) {
+			for (UserOptionValue v : option.getValues()) {
 				TaskOptionValueAdapter current = new TaskOptionValueAdapter(v);
 				choiceValue.getItems().add(current);
 				if (v.getName().equals(option.getDefaultValue())) {
