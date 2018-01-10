@@ -38,6 +38,7 @@ import application.imports.ImportBrailleView;
 import application.l10n.Messages;
 import application.prefs.PreferencesView;
 import application.preview.EditorController;
+import application.preview.EditorWrapperController;
 import application.preview.FormatChecker;
 import application.preview.PreviewController;
 import application.preview.SourcePreviewController;
@@ -800,30 +801,11 @@ public class MainController {
     
     private void setupEditor(Tab tab, File source, Map<String, Object> options) {
 		AnnotatedFile ai = IdentityProvider.newInstance().identify(source);
-		if (SourcePreviewController.supportsFormat(ai) && FeatureSwitch.EDITOR.isOn()) {
-			if (options==null && FeatureSwitch.OPEN_OTHER_TYPES.isOn()) {
-				EditorController prv = new EditorController();
-				tab.setOnClosed(ev ->  {
-					prv.closing();
-				});
-				prv.load(source, FormatChecker.isXML(ai));
-				tab.setContent(prv);
-			} else {
-				SourcePreviewController prv = new SourcePreviewController();
-				tab.setOnClosed(ev ->  {
-					prv.closing();
-				});
-				prv.open(ai, options);
-				tab.setContent(prv);
-			}
-        } else {
-	        PreviewController prv = new PreviewController();
-	        tab.setOnClosed(ev ->  {
-	        	prv.closing();
-	        });
-	        prv.open(ai, options);
-	        tab.setContent(prv);	
-		}
+		EditorWrapperController prv = EditorWrapperController.newInstance(ai, options);
+		tab.setOnClosed(ev ->  {
+			prv.closing();
+		});
+		tab.setContent(prv);
 		tab.setOnCloseRequest(ev->{
 			if (((Editor)tab.getContent()).isModified()) {
 				Alert alert = new Alert(AlertType.CONFIRMATION, Messages.MESSAGE_CONFIRM_CLOSE_UNSAVED_CHANGES.localize(source.getName()), ButtonType.YES, ButtonType.CANCEL);
@@ -833,7 +815,6 @@ public class MainController {
 				}
 			}
 		});
-		Editor prv = ((Editor)tab.getContent());
 		prv.modifiedProperty().addListener((o, ov, nv)->{
 			String modified = "*";
 			String t = tab.getText();
