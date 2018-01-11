@@ -44,14 +44,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import shared.BuildInfo;
-//TODO: rename class
+
 /**
  * Provides a controller for Dotify.
  * @author Joel Håkansson
  *
  */
-public class OptionsController extends BorderPane {
-	private static final Logger logger = Logger.getLogger(OptionsController.class.getCanonicalName());
+public class DotifyController extends BorderPane {
+	private static final Logger logger = Logger.getLogger(DotifyController.class.getCanonicalName());
 	@FXML private ScrollPane options;
 	@FXML private VBox tools;
 	@FXML private Button toggle;
@@ -73,7 +73,7 @@ public class OptionsController extends BorderPane {
 	 * @param onSuccess 	a function to call when conversion has completed successfully, the returned consumer 
 	 * 						will be called if the result is updated.
 	 */
-	public OptionsController(AnnotatedFile selected, File out, String tag, Map<String, Object> options, Function<File, Consumer<File>> onSuccess) {
+	public DotifyController(AnnotatedFile selected, File out, String tag, Map<String, Object> options, Function<File, Consumer<File>> onSuccess) {
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Options.fxml"), Messages.getBundle());
 			fxmlLoader.setRoot(this);

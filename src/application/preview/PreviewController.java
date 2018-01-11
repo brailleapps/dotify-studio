@@ -70,7 +70,7 @@ import shared.Settings.Keys;
 public class PreviewController extends BorderPane implements Editor {
 	private static final Logger logger = Logger.getLogger(PreviewController.class.getCanonicalName());
 	@FXML WebView browser;
-	private OptionsController options;
+	private DotifyController options;
 	private Start start;
 	private boolean closing;
 	private EmbossView embossView;
@@ -123,7 +123,7 @@ public class PreviewController extends BorderPane implements Editor {
 				File out = File.createTempFile("dotify-studio", ".pef");
 				String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
 				if (options==null) {
-					options = new OptionsController(selected, out, tag, opts, f ->
+					options = new DotifyController(selected, out, tag, opts, f ->
 					{
 						Thread pefWatcher = open(f);
 						return f2 -> {
