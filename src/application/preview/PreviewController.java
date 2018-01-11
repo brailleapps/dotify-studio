@@ -9,14 +9,10 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,11 +30,6 @@ import org.daisy.braille.utils.pef.PEFHandler;
 import org.daisy.dotify.studio.api.Editor;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.media.FileDetails;
-import org.daisy.streamline.api.tasks.CompiledTaskSystem;
-import org.daisy.streamline.api.tasks.TaskSystem;
-import org.daisy.streamline.api.tasks.TaskSystemFactoryMaker;
-import org.daisy.streamline.engine.RunnerResult;
-import org.daisy.streamline.engine.TaskRunner;
 import org.xml.sax.SAXException;
 
 import com.googlecode.e2u.BookReader;
@@ -68,7 +59,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import shared.BuildInfo;
 import shared.Settings;
 import shared.Settings.Keys;
 
@@ -82,7 +72,6 @@ public class PreviewController extends BorderPane implements Editor {
 	@FXML WebView browser;
 	private OptionsController options;
 	private Start start;
-	private ExecutorService exeService;
 	private boolean closing;
 	private EmbossView embossView;
 	private final ReadOnlyBooleanProperty canEmbossProperty;
@@ -114,7 +103,6 @@ public class PreviewController extends BorderPane implements Editor {
                 return wv2.getEngine();
             }
         );
-		exeService = Executors.newWorkStealingPool();
 		closing = false;
 		canEmbossProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(true));
 		canExportProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(true));
@@ -125,32 +113,25 @@ public class PreviewController extends BorderPane implements Editor {
 	/**
 	 * Converts and opens a file.
 	 * @param selected the file
-	 * @param options the options
+	 * @param opts the options
 	 */
-	public void open(AnnotatedFile selected, Map<String, Object> options) {
-		if (options==null) {
+	public void open(AnnotatedFile selected, Map<String, Object> opts) {
+		if (opts==null) {
 			open(selected.getFile());
 		} else {
 			try {
 				File out = File.createTempFile("dotify-studio", ".pef");
 				String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
-				makeOptions();
-				setRunning(true);
-				DotifyTask dt = new DotifyTask(selected, out, tag, options);
-				dt.setOnSucceeded(ev -> {
-					Thread pefWatcher = open(out);
-					updateOptions(dt.getValue(), options);
-		    		Thread th = new Thread(new SourceDocumentWatcher(selected, out, tag, pefWatcher));
-		    		th.setDaemon(true);
-		    		th.start();
-				});
-				dt.setOnFailed(ev->{
-					setRunning(false);
-					logger.log(Level.WARNING, "Import failed.", dt.getException());
-		    		Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
-		    		alert.showAndWait();
-				});
-				exeService.submit(dt);
+				if (options==null) {
+					options = new OptionsController(selected, out, tag, opts, f ->
+					{
+						Thread pefWatcher = open(f);
+						return f2 -> {
+							pefWatcher.interrupt();
+						};
+					});
+					setLeft(options);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -160,83 +141,7 @@ public class PreviewController extends BorderPane implements Editor {
 	public static boolean supportsFormat(FileDetails format) {
 		return FormatChecker.isPEF(format);
 	}
-	
-	private void updateOptions(DotifyResult dr, Map<String, Object> opts) {
-		makeOptions();
-		options.setOptions(dr.getTaskSystem(), dr.getResults(), opts);
-		setRunning(false);
-	}
-	
-	private void makeOptions() {
-		if (options==null) {
-			options = new OptionsController();
-			setLeft(options);
-		}
-	}
-	
-	private void setRunning(boolean value) {
-		if (options!=null) {
-			options.setRunning(value);
-		}
-	}
-	
-    class SourceDocumentWatcher extends DocumentWatcher {
-    	private final AnnotatedFile annotatedInput;
-    	private final File output;
-    	private final String locale;
-    	private final Thread pefWatcher;
-    	private boolean isRunning;
 
-    	SourceDocumentWatcher(AnnotatedFile input, File output, String locale, Thread pefWatcher) {
-    		super(input.getFile());
-    		this.annotatedInput = input;
-    		this.output = output;
-    		this.locale = locale;
-    		this.pefWatcher = pefWatcher;
-    		this.isRunning = false;
-    	}
-
-		@Override
-		boolean shouldMonitor() {
-			return super.shouldMonitor() && !closing;
-		}
-
-		@Override
-		boolean shouldPerformAction() {
-			return !isRunning && ((super.shouldPerformAction() && options.isWatching()) || options.refreshRequested());
-		}
-
-		@Override
-		void performAction() {
-			try {
-				isRunning = true;
-				setRunning(true);
-				Map<String, Object> opts = options.getParams();
-	    		DotifyTask dt = new DotifyTask(annotatedInput, output, locale, opts);
-	    		dt.setOnFailed(ev->{
-	    			isRunning = false;
-	    			setRunning(false);
-	    			logger.log(Level.WARNING, "Update failed.", dt.getException());
-		    		Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
-		    		alert.showAndWait();
-	    		});
-	    		dt.setOnSucceeded(ev -> {
-	    			isRunning = false;
-	    			setRunning(false);
-	    			Platform.runLater(() -> {
-	    				if (pefWatcher!=null) {
-	    					pefWatcher.interrupt();
-	    				}
-	    				updateOptions(dt.getValue(), opts);
-	    			});
-	    		});
-	    		exeService.submit(dt);
-			} catch (Exception e) { 
-				logger.log(Level.SEVERE, "A severe error occurred.", e);
-			}
-		}
-    }
-    
     class PefDocumentWatcher extends DocumentWatcher {
     	PefDocumentWatcher(File pef) {
     		super(pef);
@@ -251,70 +156,6 @@ public class PreviewController extends BorderPane implements Editor {
 		void performAction() {
 			Platform.runLater(()->reload());
 		}
-
-    }
-    
-    private static class DotifyResult {
-    	private final CompiledTaskSystem taskSystem;
-    	private final List<RunnerResult> results;
-    	
-    	private DotifyResult(CompiledTaskSystem taskSystem, List<RunnerResult> results) {
-    		this.taskSystem = taskSystem;
-    		this.results = results;
-    	}
-
-		private CompiledTaskSystem getTaskSystem() {
-			return taskSystem;
-		}
-
-		private List<RunnerResult> getResults() {
-			return results;
-		}
-    	
-    }
-	
-    class DotifyTask extends Task<DotifyResult> {
-    	private final AnnotatedFile inputFile;
-    	private final File outputFile;
-    	private final String locale;
-    	private final Map<String, Object> params;
-    	
-    	DotifyTask(AnnotatedFile inputFile, File outputFile, String locale, Map<String, Object> params) {
-    		this.inputFile = inputFile;
-    		this.outputFile = outputFile;
-    		this.locale = locale;
-    		this.params = new HashMap<>(params);
-    		this.params.put("systemName", BuildInfo.NAME);
-    		this.params.put("systemBuild", BuildInfo.BUILD);
-    		this.params.put("systemRelease", BuildInfo.VERSION);
-    		this.params.put("conversionDate", new Date().toString());
-    	}
-    	
-    	@Override
-    	protected DotifyResult call() throws Exception {
-    		String inputFormat = getFormatString(inputFile);
-    		TaskSystem ts;
-			ts = TaskSystemFactoryMaker.newInstance().newTaskSystem(inputFormat, "pef", locale);
-			logger.info("About to run with parameters " + params);
-			
-			logger.info("Thread: " + Thread.currentThread().getThreadGroup());
-			CompiledTaskSystem tl = ts.compile(params);
-			TaskRunner.Builder builder = TaskRunner.withName(ts.getName());
-			return new DotifyResult(tl, builder.build().runTasks(inputFile, outputFile, tl));
-    	}
-
-    	//FIXME: Duplicated from Dotify CLI. If this function is needed to run Dotify, find a home for it
-    	private String getFormatString(AnnotatedFile f) {
-    		if (f.getFormatName()!=null) {
-    			return f.getFormatName();
-    		} else if (f.getExtension()!=null) {
-    			return f.getExtension();
-    		} else if (f.getMediaType()!=null) {
-    			return f.getMediaType();
-    		} else {
-    			return null;
-    		}
-    	}
 
     }
 
@@ -378,6 +219,9 @@ public class PreviewController extends BorderPane implements Editor {
 		closing = true;
 		if (start!=null) {
 			start.stopServer();
+		}
+		if (options!=null) {
+			options.closing();
 		}
 	}
 	
