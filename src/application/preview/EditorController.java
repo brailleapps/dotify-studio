@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -451,11 +450,6 @@ public class EditorController extends BorderPane implements Editor {
 		return canSaveProperty;
 	}
 
-	@Override
-	public Map<String, Object> getOptions() {
-		return null;
-	}
-	
 	private class ChangeWatcher extends DocumentWatcher {
 		private boolean shouldMonitor = true;
 

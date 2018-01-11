@@ -23,6 +23,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -105,14 +106,12 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	 * @param selected the file
 	 * @param options the options
 	 */
-	public void open(AnnotatedFile selected, Map<String, Object> options) {
-		PreviewController prv = new PreviewController();
+	public void open(AnnotatedFile selected, Editor prv) {
 		setupOpen(prv, selected);
-		prv.open(selected, options);
 	}
 
-	private void setupOpen(PreviewController prv, AnnotatedFile selected) {
-		preview.setContent(prv);
+	private void setupOpen(Editor prv, AnnotatedFile selected) {
+		preview.setContent((Node)prv);
 		source.setText(Messages.LABEL_SOURCE.localize(selected.getFile().getName()));
 		EditorController editor = new EditorController();
 		editor.load(selected.getFile(), FormatChecker.isXML(selected));
@@ -242,28 +241,8 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public Map<String, Object> getOptions() {
-		SingleSelectionModel<Tab> m = tabs.getSelectionModel();
-		if (m!=null) {
-			Tab t = m.getSelectedItem();
-			if (t!=null && t.getContent() instanceof Editor) {
-				Editor p = (Editor)t.getContent();
-				if (t == source) {
-					if (p.getURL().orElse("").endsWith(".pef")) {
-						return null;
-					} else {
-						return ((Editor)preview.getContent()).getOptions();
-					}
-				} else if (t == preview) {
-					return null;
-				}
-			}
-		}
-		throw new RuntimeException();
-	}
-
-	@Override
 	public void activate() {
 		getSelectedView().ifPresent(v->v.activate());
 	}
+
 }

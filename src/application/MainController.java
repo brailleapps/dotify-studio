@@ -37,11 +37,7 @@ import application.about.AboutView;
 import application.imports.ImportBrailleView;
 import application.l10n.Messages;
 import application.prefs.PreferencesView;
-import application.preview.EditorController;
 import application.preview.EditorWrapperController;
-import application.preview.FormatChecker;
-import application.preview.PreviewController;
-import application.preview.SourcePreviewController;
 import application.search.SearchController;
 import application.template.TemplateView;
 import javafx.application.Platform;
@@ -439,8 +435,8 @@ public class MainController {
     
     @FXML void saveAs() {
     	Tab t = tabPane.getSelectionModel().getSelectedItem();
-		if (t!=null) {
-			Editor controller = ((Editor)t.getContent());
+		if (t!=null && t.getContent() instanceof EditorWrapperController) {
+			EditorWrapperController controller = ((EditorWrapperController)t.getContent());
 			// display save dialog
 			Window stage = root.getScene().getWindow();
 	    	FileChooser fileChooser = new FileChooser();

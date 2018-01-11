@@ -3,7 +3,6 @@ package org.daisy.dotify.studio.api;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -165,14 +164,7 @@ public interface Editor {
 	 * views to toggle, nothing happens.
 	 */
 	public default void toggleView() { }
-	
-	/**
-	 * Gets the options of this editor.
-	 * @return returns the options.
-	 */
-	//TODO: this doesn't make much sense from an interface perspective
-	public Map<String, Object> getOptions();
-	
+
 	/**
 	 * Returns true if this editor has unsaved changes, false otherwise.
 	 * 

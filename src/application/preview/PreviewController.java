@@ -10,8 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +26,6 @@ import org.daisy.braille.utils.api.embosser.EmbosserWriter;
 import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.braille.utils.pef.PEFHandler;
 import org.daisy.dotify.studio.api.Editor;
-import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.media.FileDetails;
 import org.xml.sax.SAXException;
 
@@ -70,7 +67,6 @@ import shared.Settings.Keys;
 public class PreviewController extends BorderPane implements Editor {
 	private static final Logger logger = Logger.getLogger(PreviewController.class.getCanonicalName());
 	@FXML WebView browser;
-	private DotifyController options;
 	private Start start;
 	private boolean closing;
 	private EmbossView embossView;
@@ -109,35 +105,7 @@ public class PreviewController extends BorderPane implements Editor {
 		canSaveProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
 		urlProperty = new SimpleStringProperty();
 	}
-	
-	/**
-	 * Converts and opens a file.
-	 * @param selected the file
-	 * @param opts the options
-	 */
-	public void open(AnnotatedFile selected, Map<String, Object> opts) {
-		if (opts==null) {
-			open(selected.getFile());
-		} else {
-			try {
-				File out = File.createTempFile("dotify-studio", ".pef");
-				String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
-				if (options==null) {
-					options = new DotifyController(selected, out, tag, opts, f ->
-					{
-						Thread pefWatcher = open(f);
-						return f2 -> {
-							pefWatcher.interrupt();
-						};
-					});
-					setLeft(options);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
+
 	public static boolean supportsFormat(FileDetails format) {
 		return FormatChecker.isPEF(format);
 	}
@@ -164,7 +132,7 @@ public class PreviewController extends BorderPane implements Editor {
 	 * @param file the file
 	 * @return returns a thread that watches for changes in the pef file
 	 */
-	private Thread open(File file) {
+	Thread open(File file) {
 		Thread pefWatcherThread = null;
 		if (file!=null) {
 			PefDocumentWatcher pefWatcher = new PefDocumentWatcher(file);
@@ -219,9 +187,6 @@ public class PreviewController extends BorderPane implements Editor {
 		closing = true;
 		if (start!=null) {
 			start.stopServer();
-		}
-		if (options!=null) {
-			options.closing();
 		}
 	}
 	
@@ -315,11 +280,6 @@ public class PreviewController extends BorderPane implements Editor {
 	@Override
 	public ReadOnlyBooleanProperty canSaveProperty() {
 		return canSaveProperty;
-	}
-
-	@Override
-	public Map<String, Object> getOptions() {
-		return options!=null?options.getParams():null;
 	}
 
 	@Override
