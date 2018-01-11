@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.option.UserOption;
 import org.daisy.streamline.api.tasks.CompiledTaskSystem;
+import org.daisy.streamline.api.tasks.InternalTask;
 import org.daisy.streamline.api.tasks.TaskSystem;
 import org.daisy.streamline.api.tasks.TaskSystemFactoryMaker;
 import org.daisy.streamline.engine.RunnerResult;
@@ -116,8 +117,14 @@ public class DotifyController extends BorderPane {
 		clear();
 		values = new HashSet<>();
 		displayItems(ts.getName(), ts.getOptions(), prvOpts);
-		for (RunnerResult r : opts) {
-			displayItems(r.getTask().getName(), r.getTask().getOptions(), prvOpts);
+		if (opts!=null) {
+			for (RunnerResult r : opts) {
+				displayItems(r.getTask().getName(), r.getTask().getOptions(), prvOpts);
+			}
+		} else {
+			for (InternalTask r : ts) {
+				displayItems(r.getName(), r.getOptions(), prvOpts);
+			}
 		}
 		setParams(ui);
 	}
@@ -290,7 +297,7 @@ public class DotifyController extends BorderPane {
 		}
 	}
 
-	private static class DotifyTask extends Task<DotifyResult> {
+	private class DotifyTask extends Task<DotifyResult> {
 		private final AnnotatedFile inputFile;
 		private final File outputFile;
 		private final String locale;
@@ -318,6 +325,12 @@ public class DotifyController extends BorderPane {
 
 			logger.info("Thread: " + Thread.currentThread().getThreadGroup());
 			CompiledTaskSystem tl = ts.compile(params);
+			if (vbox.getChildren().isEmpty()) {
+				Platform.runLater(()->{
+					setOptions(tl, null, params);
+				});
+			}
+			
 			TaskRunner.Builder builder = TaskRunner.withName(ts.getName());
 			return new DotifyResult(tl, builder.build().runTasks(inputFile, outputFile, tl));
 		}
