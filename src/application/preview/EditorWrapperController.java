@@ -10,6 +10,7 @@ import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.dotify.studio.api.PreviewMaker;
 import org.daisy.streamline.api.media.AnnotatedFile;
+import org.daisy.streamline.api.media.FileDetails;
 
 import application.FeatureSwitch;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -35,12 +36,13 @@ public class EditorWrapperController extends BorderPane implements Editor {
 		DotifyController dotify = null;
 		Editor prv;
 		if (options!=null) {
-			OpenableEditor pr = previewMaker.newPreview(SourcePreviewController.PEF_FORMAT).orElse(null);
+			FileDetails previewDetails = FeatureSwitch.HTML_OUTPUT_FORMAT.isOn()?FileDetailsCatalog.HTML_FORMAT:FileDetailsCatalog.PEF_FORMAT;
+			OpenableEditor pr = previewMaker.newPreview(previewDetails).orElse(null);
 			prv = getEditor(selected, options, pr, previewMaker);
 			try {
-				File out = File.createTempFile("dotify-studio", ".pef");
+				File out = File.createTempFile("dotify-studio", "."+previewDetails.getExtension());
 				String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
-				dotify = new DotifyController(selected, out, tag, options, f ->
+				dotify = new DotifyController(selected, out, tag, previewDetails.getExtension(), options, f ->
 				{
 					return pr.open(f);
 				});

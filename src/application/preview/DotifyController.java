@@ -73,7 +73,7 @@ public class DotifyController extends BorderPane {
 	 * @param onSuccess 	a function to call when conversion has completed successfully, the returned consumer 
 	 * 						will be called if the result is updated.
 	 */
-	public DotifyController(AnnotatedFile selected, File out, String tag, Map<String, Object> options, Function<File, Consumer<File>> onSuccess) {
+	public DotifyController(AnnotatedFile selected, File out, String tag, String outputFormat, Map<String, Object> options, Function<File, Consumer<File>> onSuccess) {
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Options.fxml"), Messages.getBundle());
 			fxmlLoader.setRoot(this);
@@ -86,13 +86,13 @@ public class DotifyController extends BorderPane {
 		closing = false;
 		exeService = Executors.newWorkStealingPool();
 		setRunning(true);
-		DotifyTask dt = new DotifyTask(selected, out, tag, options);
+		DotifyTask dt = new DotifyTask(selected, out, tag, outputFormat, options);
 		dt.setOnSucceeded(ev -> {
 			Consumer<File> resultWatcher = onSuccess.apply(out);
 			DotifyResult dr = dt.getValue();
 			setOptions(dr.getTaskSystem(), dr.getResults(), options);
 			setRunning(false);
-			Thread th = new Thread(new SourceDocumentWatcher(selected, out, tag, resultWatcher));
+			Thread th = new Thread(new SourceDocumentWatcher(selected, out, tag, outputFormat, resultWatcher));
 			th.setDaemon(true);
 			th.start();
 		});
@@ -223,15 +223,17 @@ public class DotifyController extends BorderPane {
 		private final AnnotatedFile annotatedInput;
 		private final File output;
 		private final String locale;
+		private final String outputFormat;
 		// notify a caller about changes to the result file
 		private final Consumer<File> resultWatcher;
 		private boolean isRunning;
 
-		SourceDocumentWatcher(AnnotatedFile input, File output, String locale, Consumer<File> resultWatcher) {
+		SourceDocumentWatcher(AnnotatedFile input, File output, String locale, String outputFormat, Consumer<File> resultWatcher) {
 			super(input.getFile());
 			this.annotatedInput = input;
 			this.output = output;
 			this.locale = locale;
+			this.outputFormat = outputFormat;
 			this.resultWatcher = resultWatcher;
 			this.isRunning = false;
 		}
@@ -252,7 +254,7 @@ public class DotifyController extends BorderPane {
 				isRunning = true;
 				setRunning(true);
 				Map<String, Object> opts = getParams();
-				DotifyTask dt = new DotifyTask(annotatedInput, output, locale, opts);
+				DotifyTask dt = new DotifyTask(annotatedInput, output, locale, outputFormat, opts);
 				dt.setOnFailed(ev->{
 					isRunning = false;
 					setRunning(false);
@@ -283,12 +285,14 @@ public class DotifyController extends BorderPane {
 		private final AnnotatedFile inputFile;
 		private final File outputFile;
 		private final String locale;
+		private final String outputFormat;
 		private final Map<String, Object> params;
 
-		DotifyTask(AnnotatedFile inputFile, File outputFile, String locale, Map<String, Object> params) {
+		DotifyTask(AnnotatedFile inputFile, File outputFile, String locale, String outputFormat, Map<String, Object> params) {
 			this.inputFile = inputFile;
 			this.outputFile = outputFile;
 			this.locale = locale;
+			this.outputFormat = outputFormat;
 			this.params = new HashMap<>(params);
 			this.params.put("systemName", BuildInfo.NAME);
 			this.params.put("systemBuild", BuildInfo.BUILD);
@@ -300,7 +304,7 @@ public class DotifyController extends BorderPane {
 		protected DotifyResult call() throws Exception {
 			String inputFormat = getFormatString(inputFile);
 			TaskSystem ts;
-			ts = TaskSystemFactoryMaker.newInstance().newTaskSystem(inputFormat, "pef", locale);
+			ts = TaskSystemFactoryMaker.newInstance().newTaskSystem(inputFormat, outputFormat, locale);
 			logger.info("About to run with parameters " + params);
 
 			logger.info("Thread: " + Thread.currentThread().getThreadGroup());

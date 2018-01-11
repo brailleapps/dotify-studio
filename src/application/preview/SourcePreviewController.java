@@ -36,26 +36,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
  */
 public class SourcePreviewController extends BorderPane implements Editor {
 	private static final Logger logger = Logger.getLogger(SourcePreviewController.class.getCanonicalName());
-	static final FileDetails PEF_FORMAT = new FileDetails(){
-		@Override
-		public String getFormatName() {
-			return "pef";
-		}
-
-		@Override
-		public String getExtension() {
-			return "pef";
-		}
-
-		@Override
-		public String getMediaType() {
-			return "application/x-pef+xml";
-		}
-
-		@Override
-		public Map<String, Object> getProperties() {
-			return Collections.emptyMap();
-		}};
 
 	@FXML TabPane tabs;
 	@FXML Tab preview;
@@ -94,7 +74,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	 * @return returns true if the editor format is supported
 	 */
 	public static boolean supportsFormat(FileDetails editorFormat) {
-		return supportsFormat(editorFormat, PEF_FORMAT);
+		return supportsFormat(editorFormat, FileDetailsCatalog.PEF_FORMAT);
 	}
 	public static boolean supportsFormat(FileDetails editorFormat, FileDetails previewFormat) {
 		return EditorController.supportsFormat(editorFormat) && PreviewController.supportsFormat(previewFormat);
