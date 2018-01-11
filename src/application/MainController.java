@@ -548,6 +548,7 @@ public class MainController {
 		if (FeatureSwitch.OPEN_OTHER_TYPES.isOn()) {
 			fileChooser.getExtensionFilters().add(new ExtensionFilter("XML-files", "*.xml"));
 			fileChooser.getExtensionFilters().add(new ExtensionFilter("Text-files", "*.txt"));
+			fileChooser.getExtensionFilters().add(new ExtensionFilter("Html-files", "*.html"));
 		}
     	Settings.getSettings().getLastOpenPath().ifPresent(v->fileChooser.setInitialDirectory(v));
     	File selected = fileChooser.showOpenDialog(stage);

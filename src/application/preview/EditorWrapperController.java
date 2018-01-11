@@ -7,6 +7,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.daisy.dotify.studio.api.Editor;
+import org.daisy.dotify.studio.api.OpenableEditor;
+import org.daisy.dotify.studio.api.PreviewMaker;
 import org.daisy.streamline.api.media.AnnotatedFile;
 
 import application.FeatureSwitch;
@@ -29,33 +31,35 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	}
 
 	public static EditorWrapperController newInstance(AnnotatedFile selected, Map<String, Object> options) {
-		PreviewController pr = new PreviewController();
-		Editor prv = getEditor(selected, options, pr);
+		PreviewMaker previewMaker = PreviewMaker.newInstance();
 		DotifyController dotify = null;
+		Editor prv;
 		if (options!=null) {
+			OpenableEditor pr = previewMaker.newPreview(SourcePreviewController.PEF_FORMAT).orElse(null);
+			prv = getEditor(selected, options, pr, previewMaker);
 			try {
 				File out = File.createTempFile("dotify-studio", ".pef");
 				String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
 				dotify = new DotifyController(selected, out, tag, options, f ->
 				{
-					Thread pefWatcher = pr.open(f);
-					return f2 -> {
-						pefWatcher.interrupt();
-					};
+					return pr.open(f);
 				});
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		} else {
+			OpenableEditor pr = previewMaker.newPreview(selected).orElse(null);
+			prv = getEditor(selected, options, pr, previewMaker);
 		}
 		EditorWrapperController ret = new EditorWrapperController(prv, dotify);
-		ret.setCenter((Node)prv);
+		ret.setCenter(prv.getNode());
 		return ret;
 	}
 	
-	private static Editor getEditor(AnnotatedFile selected, Map<String, Object> options, PreviewController pr) {
+	private static Editor getEditor(AnnotatedFile selected, Map<String, Object> options, OpenableEditor pr, PreviewMaker previewMaker) {
 		// For now, we assume that the target format is PEF and that is supported or that no conversion is done
-		if (FeatureSwitch.EDITOR.isOn() && SourcePreviewController.supportsFormat(selected)) {
-			if (options==null && !PreviewController.supportsFormat(selected)) {
+		if (FeatureSwitch.EDITOR.isOn() && EditorController.supportsFormat(selected)) {
+			if (options==null && !previewMaker.supportsFormat(selected)) {
 				EditorController prv = new EditorController();
 				prv.load(selected.getFile(), FormatChecker.isXML(selected));
 				return prv;
@@ -158,6 +162,11 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	@Override
 	public void activate() {
 		impl.activate();
+	}
+
+	@Override
+	public Node getNode() {
+		return this;
 	}
 
 }

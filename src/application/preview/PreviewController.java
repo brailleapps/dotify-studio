@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,7 +26,7 @@ import org.daisy.braille.utils.api.embosser.EmbosserFeatures;
 import org.daisy.braille.utils.api.embosser.EmbosserWriter;
 import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.braille.utils.pef.PEFHandler;
-import org.daisy.dotify.studio.api.Editor;
+import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.streamline.api.media.FileDetails;
 import org.xml.sax.SAXException;
 
@@ -45,6 +46,7 @@ import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -64,7 +66,7 @@ import shared.Settings.Keys;
  * @author Joel Håkansson
  *
  */
-public class PreviewController extends BorderPane implements Editor {
+public class PreviewController extends BorderPane implements OpenableEditor {
 	private static final Logger logger = Logger.getLogger(PreviewController.class.getCanonicalName());
 	@FXML WebView browser;
 	private Start start;
@@ -132,14 +134,16 @@ public class PreviewController extends BorderPane implements Editor {
 	 * @param file the file
 	 * @return returns a thread that watches for changes in the pef file
 	 */
-	Thread open(File file) {
-		Thread pefWatcherThread = null;
+    @Override
+	public Consumer<File> open(File file) {
+		Thread pwt = null;
 		if (file!=null) {
 			PefDocumentWatcher pefWatcher = new PefDocumentWatcher(file);
-    		pefWatcherThread = new Thread(pefWatcher);
-    		pefWatcherThread.setDaemon(true);
-    		pefWatcherThread.start();
+    		pwt = new Thread(pefWatcher);
+    		pwt.setDaemon(true);
+    		pwt.start();
 		}
+		final Thread pefWatcherThread = pwt;
 		Task<String> startServer = new Task<String>() {
 
 			@Override
@@ -166,7 +170,13 @@ public class PreviewController extends BorderPane implements Editor {
 		Thread th = new Thread(startServer);
 		th.setDaemon(true);
 		th.start();
-		return pefWatcherThread;
+		if (pefWatcherThread!=null) {
+			return f2 -> {
+				pefWatcherThread.interrupt();
+			};
+		} else {
+			return f2 -> {};
+		}
 	}
 	
 	/**
@@ -285,6 +295,11 @@ public class PreviewController extends BorderPane implements Editor {
 	@Override
 	public void activate() {
 		browser.requestFocus();
+	}
+	
+	@Override
+	public Node getNode() {
+		return this;
 	}
 
 }

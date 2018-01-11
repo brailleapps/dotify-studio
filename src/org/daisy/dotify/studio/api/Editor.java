@@ -8,6 +8,7 @@ import java.util.Optional;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.Node;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 /**
@@ -184,5 +185,7 @@ public interface Editor {
 	}
 	
 	public void activate();
+	
+	public Node getNode();
 
 }

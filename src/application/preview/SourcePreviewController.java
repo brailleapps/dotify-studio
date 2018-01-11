@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,7 +36,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
  */
 public class SourcePreviewController extends BorderPane implements Editor {
 	private static final Logger logger = Logger.getLogger(SourcePreviewController.class.getCanonicalName());
-	private static final FileDetails PEF_FORMAT = new FileDetails(){
+	static final FileDetails PEF_FORMAT = new FileDetails(){
 		@Override
 		public String getFormatName() {
 			return "pef";
@@ -104,7 +103,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	/**
 	 * Converts and opens a file.
 	 * @param selected the file
-	 * @param options the options
+	 * @param prv the preview editor
 	 */
 	public void open(AnnotatedFile selected, Editor prv) {
 		setupOpen(prv, selected);
@@ -244,5 +243,9 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	public void activate() {
 		getSelectedView().ifPresent(v->v.activate());
 	}
-
+	
+	@Override
+	public Node getNode() {
+		return this;
+	}
 }

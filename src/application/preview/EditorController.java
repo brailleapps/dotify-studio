@@ -44,6 +44,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
@@ -488,6 +489,11 @@ public class EditorController extends BorderPane implements Editor {
 	@Override
 	public void activate() {
 		codeArea.requestFocus();
+	}
+	
+	@Override
+	public Node getNode() {
+		return this;
 	}
 
 }
