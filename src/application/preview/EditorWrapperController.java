@@ -60,7 +60,7 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	
 	private static Editor getEditor(AnnotatedFile selected, Map<String, Object> options, OpenableEditor pr, PreviewMaker previewMaker) {
 		// For now, we assume that the target format is PEF and that is supported or that no conversion is done
-		if (FeatureSwitch.EDITOR.isOn() && EditorController.supportsFormat(selected)) {
+		if (EditorController.supportsFormat(selected)) {
 			if (options==null && !previewMaker.supportsFormat(selected)) {
 				EditorController prv = new EditorController();
 				prv.load(selected.getFile(), FormatChecker.isXML(selected));
