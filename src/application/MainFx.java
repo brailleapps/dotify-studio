@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,7 +51,7 @@ public class MainFx extends Application {
 				logger.fine("Plugins folder: " + parent);
 			}
 			// list jars and convert to URL's
-			URL[] jars = FileTools.toURL(FileTools.listFiles(new File(parent, "plugins"), ".jar"));
+			URL[] jars = FileTools.toURL(listFiles(new File(parent, "plugins")).toArray(new File[]{}));
 			for (URL u : jars) {
 				logger.info("Found jars " + u);
 			}
@@ -90,6 +92,23 @@ public class MainFx extends Application {
 				}
 			}
 		});
+	}
+	
+	private static List<File> listFiles(File dir) {
+		List<File> files = new ArrayList<>();
+		for (File f : dir.listFiles(f->f.isDirectory())) {
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine("Scanning dir " + f);
+			}
+			files.addAll(listFiles(f));
+		}
+		for (File f : dir.listFiles(f->f.getName().endsWith(".jar"))) {
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine("Adding file: " + f);
+			}
+			files.add(f);
+		}
+		return files;
 	}
 
 }
