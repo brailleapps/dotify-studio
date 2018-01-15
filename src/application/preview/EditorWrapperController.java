@@ -140,6 +140,11 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	public void toggleView() {
 		impl.toggleView();
 	}
+	
+	@Override
+	public void toggleViewingMode() {
+		impl.toggleViewingMode();
+	}
 
 	@Override
 	public ReadOnlyBooleanProperty toggleViewProperty() {

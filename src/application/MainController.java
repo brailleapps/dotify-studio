@@ -115,6 +115,7 @@ public class MainController {
 	@FXML private MenuItem nextEditorViewMenuItem;
 	@FXML private MenuItem previousEditorViewMenuItem;
 	@FXML private MenuItem toggleViewMenuItem;
+	@FXML private MenuItem viewingModeMenuItem;
 	@FXML private MenuItem activateViewMenuItem;
 	private final double dividerPosition = 0.2;
 	private Tab searchTab;
@@ -235,6 +236,7 @@ public class MainController {
 					Bindings.size(tabPane.getTabs()).lessThan(2))
 				);
 		toggleViewMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canToggleView.not()));
+		viewingModeMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canToggleView.not()));
 		activateViewMenuItem.disableProperty().bind(noTabExceptHelpBinding);
 		saveAsMenuItem.disableProperty().bind(noTabExceptHelpBinding);
 		refreshMenuItem.disableProperty().bind(noTabBinding);
@@ -340,6 +342,10 @@ public class MainController {
 	
 	@FXML void toggleEditor() {
 		getSelectedPreview().ifPresent(p->p.toggleView());
+	}
+	
+	@FXML void toggleViewingMode() {
+		getSelectedPreview().ifPresent(p->p.toggleViewingMode());
 	}
 	
 	@FXML void nextEditor() {

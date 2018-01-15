@@ -24,6 +24,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
@@ -36,6 +37,8 @@ import javafx.stage.FileChooser.ExtensionFilter;
  */
 public class SourcePreviewController extends BorderPane implements Editor {
 	private static final Logger logger = Logger.getLogger(SourcePreviewController.class.getCanonicalName());
+	private static final int PREVIEW_INDEX = 0;
+	private static final int SOURCE_INDEX = 1;
 
 	@FXML TabPane tabs;
 	@FXML Tab preview;
@@ -45,6 +48,8 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	private final BooleanProperty canSaveProperty;
 	private final BooleanProperty modifiedProperty;
 	private final StringProperty urlProperty;
+	private Node sourceContent;
+	private Node previewContent;
 
 	/**
 	 * Creates a new preview controller.
@@ -90,35 +95,37 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	}
 
 	private void setupOpen(Editor prv, AnnotatedFile selected) {
-		preview.setContent((Node)prv);
+		previewContent = (Node)prv;
+		preview.setContent(previewContent);
 		source.setText(Messages.LABEL_SOURCE.localize(selected.getFile().getName()));
 		EditorController editor = new EditorController();
 		editor.load(selected.getFile(), FormatChecker.isXML(selected));
 		source.setContent(editor);
+		sourceContent = editor;
 		canEmbossProperty.bind(
-				tabs.getSelectionModel().selectedItemProperty().isEqualTo(preview).and(prv.canEmbossProperty())
+				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX).and(prv.canEmbossProperty())
 			.or(
-				tabs.getSelectionModel().selectedItemProperty().isEqualTo(source).and(editor.canEmbossProperty())
+				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(SOURCE_INDEX).and(editor.canEmbossProperty())
 			)
 		);
 		canExportProperty.bind(
-				tabs.getSelectionModel().selectedItemProperty().isEqualTo(preview).and(prv.canExportProperty())
+				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX).and(prv.canExportProperty())
 			.or(
-				tabs.getSelectionModel().selectedItemProperty().isEqualTo(source).and(editor.canExportProperty())
+				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(SOURCE_INDEX).and(editor.canExportProperty())
 			)
 		);
 		canSaveProperty.bind(
-				tabs.getSelectionModel().selectedItemProperty().isEqualTo(preview).and(prv.canSaveProperty())
+				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX).and(prv.canSaveProperty())
 			.or(
-				tabs.getSelectionModel().selectedItemProperty().isEqualTo(source).and(editor.canSaveProperty())
+				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(SOURCE_INDEX).and(editor.canSaveProperty())
 			)
 		);
 		modifiedProperty.bind(editor.modifiedProperty());
 		urlProperty.bind(
-				new When(tabs.getSelectionModel().selectedItemProperty().isEqualTo(preview))
+				new When(tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX))
 					.then(prv.urlProperty())
 					.otherwise(
-						new When(tabs.getSelectionModel().selectedItemProperty().isEqualTo(source))
+						new When(tabs.getSelectionModel().selectedIndexProperty().isEqualTo(SOURCE_INDEX))
 							.then(editor.urlProperty())
 							.otherwise(new SimpleStringProperty())
 					)
@@ -127,43 +134,51 @@ public class SourcePreviewController extends BorderPane implements Editor {
 
 	@Override
 	public void reload() {
-		getSelectedView().ifPresent(v->v.reload());
+		getCurrentEditor().ifPresent(v->v.reload());
 	}
 
 	@Override
 	public Optional<String> getURL() {
-		return getSelectedView().map(v->v.getURL()).orElse(Optional.empty());
+		return getCurrentEditor().map(v->v.getURL()).orElse(Optional.empty());
 	}
 
 	@Override
 	public void showEmbossDialog() {
-		((Editor)preview.getContent()).showEmbossDialog();
+		((Editor)previewContent).showEmbossDialog();
 	}
 
 	@Override
 	public void closing() {
-		((Editor)source.getContent()).closing();
-		((Editor)preview.getContent()).closing();
+		((Editor)sourceContent).closing();
+		((Editor)previewContent).closing();
 	}
 
-	private Optional<Editor> getSelectedView() {
+	private Optional<Editor> getCurrentEditor() {
 		return Optional.ofNullable(tabs.getSelectionModel())
-				.map(v->v.getSelectedItem().getContent())
-				.filter(v->v instanceof Editor)
-				.map(v->(Editor)v);
+				.flatMap(v->
+				{
+					switch (v.getSelectedIndex()) {
+						case PREVIEW_INDEX:
+							return Optional.of((Editor)previewContent);
+						case SOURCE_INDEX:
+							return Optional.of((Editor)sourceContent);
+						default:
+							return Optional.empty();
+					}			
+				});
 	}
 
 	@Override
 	public void save() {
-		SingleSelectionModel<Tab> m = tabs.getSelectionModel(); 
-		if (m!=null && m.getSelectedItem() == source) {
-			((EditorController)source.getContent()).save();
-		}
+		Optional<Editor> view = getCurrentEditor();
+		view.filter(v->v.canSave()).ifPresent(v->{
+			v.save();
+		});
 	}
 
 	@Override
 	public boolean saveAs(File f) throws IOException {
-		Optional<Editor> view = getSelectedView();
+		Optional<Editor> view = getCurrentEditor();
 		if (view.isPresent()) {
 			return view.get().saveAs(f);
 		} else {
@@ -173,7 +188,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 
 	@Override
 	public void export(File f) throws IOException {
-		((Editor)preview.getContent()).export(f);
+		((Editor)previewContent).export(f);
 	}
 
 	@Override
@@ -188,7 +203,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 
 	@Override
 	public List<ExtensionFilter> getSaveAsFilters() {
-		return getSelectedView().map(v->v.getSaveAsFilters()).orElse(Collections.emptyList());
+		return getCurrentEditor().map(v->v.getSaveAsFilters()).orElse(Collections.emptyList());
 	}
 
 	@Override
@@ -219,11 +234,43 @@ public class SourcePreviewController extends BorderPane implements Editor {
 		} else {
 			select.selectFirst();
 		}
+		if (getCenter() instanceof SplitPane) {
+			setSplitPane();
+		}
+	}
+	
+	@Override
+	public void toggleViewingMode() {
+		if (getCenter() instanceof TabPane) {
+			source.setContent(null);
+			preview.setContent(null);
+			setSplitPane();
+		} else if (getCenter() instanceof SplitPane) {
+			SplitPane sp = (SplitPane)getCenter();			
+			sp.getItems().clear();
+			source.setContent(sourceContent);
+			preview.setContent(previewContent);
+			setCenter(tabs);
+		}
+	}
+
+	private void setSplitPane() {
+		// Put the preview first by default and if it matches the selected view
+		boolean previewFirst = getCurrentEditor().map(v->v==previewContent).orElse(true);
+		SplitPane sp;
+		if (previewFirst) {
+			sp = new SplitPane(previewContent, sourceContent);
+		} else {
+			sp = new SplitPane(sourceContent, previewContent);
+		}
+		sp.setDividerPosition(0, 0.6);
+		setCenter(sp);
+
 	}
 
 	@Override
 	public void activate() {
-		getSelectedView().ifPresent(v->v.activate());
+		getCurrentEditor().ifPresent(v->v.activate());
 	}
 	
 	@Override

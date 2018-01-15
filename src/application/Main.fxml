@@ -122,7 +122,7 @@
                         <KeyCodeCombination alt="UP" code="F7" control="UP" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
-                  <MenuItem fx:id="previousEditorViewMenuItem" mnemonicParsing="false" onAction="#previousEditor" text="%menu-item-previous-editor" >
+                  <MenuItem fx:id="previousEditorViewMenuItem" mnemonicParsing="false" onAction="#previousEditor" text="%menu-item-previous-editor">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="F7" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
                      </accelerator>
@@ -133,6 +133,11 @@
 	                        <KeyCodeCombination alt="UP" code="F6" control="UP" meta="UP" shift="UP" shortcut="UP" />
 	                     </accelerator>
 	              </MenuItem>
+                  <MenuItem fx:id="viewingModeMenuItem" mnemonicParsing="false" onAction="#toggleViewingMode" text="%menu-item-toggle-viewing-mode">
+                  		<accelerator>
+	                        <KeyCodeCombination alt="UP" code="F7" control="UP" meta="UP" shift="UP" shortcut="UP" />
+	                     </accelerator>
+                  </MenuItem>
                   <MenuItem fx:id="activateViewMenuItem" mnemonicParsing="false" onAction="#activateView" text="%menu-item-activate-view">
 	                  <accelerator>
 	                        <KeyCodeCombination alt="UP" code="F12" control="UP" meta="UP" shift="UP" shortcut="UP" />

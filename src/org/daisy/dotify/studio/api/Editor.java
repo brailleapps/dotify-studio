@@ -166,6 +166,12 @@ public interface Editor {
 	 * views to toggle, nothing happens.
 	 */
 	public default void toggleView() { }
+	
+	/**
+	 * Splits/restores the editor views. If there is only one
+	 * view, nothing happens.
+	 */
+	public default void toggleViewingMode() { }
 
 	/**
 	 * Returns true if this editor has unsaved changes, false otherwise.
