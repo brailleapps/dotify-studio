@@ -10,7 +10,7 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 
 class XMLStyleHelper {
 	private static final Pattern XML_TAG = Pattern
-			.compile("(?<ELEMENT>(</?\\h*)(\\w+(?:\\:\\w+)?)([^<>]*)(\\h*/?>))" + "|(?<COMMENT><!--[^<>]+-->)" + "|(?<PI><\\?[^<>]+\\?>)" + "|(?<ENTITY>&[^&;]+;)");
+			.compile("(?<ELEMENT>(</?\\h*)(\\w[\\w-]*(?:\\:\\w[\\w-]*)?)([^<>]*)(\\h*/?>))" + "|(?<COMMENT><!--[^<>]+-->)" + "|(?<PI><\\?[^<>]+\\?>)" + "|(?<ENTITY>&[^&;]+;)");
 
 	private static final Pattern ATTRIBUTES = Pattern.compile("(\\w+(?:\\:\\w+)?\\h*)(=)(\\h*\"[^\"]*\")");
 
