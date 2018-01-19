@@ -48,9 +48,10 @@ public interface Editor {
 	/**
 	 * Saves the file to the specified location.
 	 * @param f the file to save to
+	 * @return returns false if the save operation was cancelled
 	 * @throws IOException if the file could not be saved
 	 */
-	public void saveAs(File f) throws IOException;
+	public boolean saveAs(File f) throws IOException;
 
 	/**
 	 * Returns true if this file can be exported.

@@ -283,9 +283,12 @@ public class EditorController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public void saveAs(File f) throws IOException {
+	public boolean saveAs(File f) throws IOException {
 		if (confirmSave()) {
 			updateFileInfo(saveToFileSynchronized(f, fileInfo, codeArea.getText()));
+			return true;
+		} else {
+			return false;
 		}
 	}
 

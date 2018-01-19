@@ -89,8 +89,8 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public void saveAs(File f) throws IOException {
-		impl.saveAs(f);
+	public boolean saveAs(File f) throws IOException {
+		return impl.saveAs(f);
 	}
 
 	@Override

@@ -155,9 +155,10 @@ public class PreviewHtmlController extends BorderPane implements OpenableEditor 
 	}
 
 	@Override
-	public void saveAs(File f) throws IOException {
+	public boolean saveAs(File f) throws IOException {
 		try {
 			Files.copy(this.file.toPath(), new FileOutputStream(f));
+			return true;
 		} catch (IOException e) {
 			throw e;
 		}

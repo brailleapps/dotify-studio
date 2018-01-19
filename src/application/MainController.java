@@ -447,12 +447,13 @@ public class MainController {
 	    	if (selected!=null) {
 	    		Settings.getSettings().setLastSavePath(selected.getParentFile());
 				try {
-					controller.saveAs(selected);
-					// stop watching
-					controller.closing();
-					// update contents of tab
-					setTab(t, selected.getName(), StartupDetails.open(selected), controller.getOptions());
-					// TODO: Restore document position
+					if (controller.saveAs(selected)) {
+						// stop watching
+						controller.closing();
+						// update contents of tab
+						setTab(t, selected.getName(), StartupDetails.open(selected), controller.getOptions());
+						// TODO: Restore document position
+					}
 				} catch (IOException e) {
 					Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
 		    		alert.showAndWait();

@@ -162,10 +162,12 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public void saveAs(File f) throws IOException {
+	public boolean saveAs(File f) throws IOException {
 		Optional<Editor> view = getSelectedView();
 		if (view.isPresent()) {
-			view.get().saveAs(f);
+			return view.get().saveAs(f);
+		} else {
+			return false;
 		}
 	}
 

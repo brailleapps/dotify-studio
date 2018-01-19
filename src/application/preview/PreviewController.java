@@ -237,10 +237,11 @@ public class PreviewController extends BorderPane implements OpenableEditor {
 	}
 
 	@Override
-	public void saveAs(File f) throws IOException {
+	public boolean saveAs(File f) throws IOException {
 		URI uri = getBookURI().orElseThrow(()->new IOException("Nothing to save."));		
 		try {
 			Files.copy(Paths.get(uri), new FileOutputStream(f));
+			return true;
 		} catch (IOException e) {
 			throw e;
 		}
