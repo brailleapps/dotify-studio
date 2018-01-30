@@ -142,6 +142,7 @@ public enum Messages {
 	VALUE_USE_DEFAULT("value-use-default"),
 	EXTENSION_FILTER_SUPPORTED_FILES("extension-filter-supported-files"),
 	EXTENSION_FILTER_ALL_FILES("extension-filter-all-files"),
+	EXTENSION_FILTER_FILE("extension-filter-file"),
 	OPTION_VALUE_LANDSCAPE("option-value-landscape"),
 	OPTION_VALUE_PORTRAIT("option-value-portrait"),
 	OPTION_VALUE_SQUARE("option-value-square"),

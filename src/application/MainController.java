@@ -10,7 +10,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -547,21 +549,14 @@ public class MainController {
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle(Messages.TITLE_OPEN_DIALOG.localize());
 		if (FeatureSwitch.OPEN_OTHER_TYPES.isOn()) {
-			List<ExtensionFilter> filters = new ArrayList<>();
-			filters.add(new ExtensionFilter("PEF-files", "*.pef"));
-			filters.add(new ExtensionFilter("XML-files", "*.xml"));
-			filters.add(new ExtensionFilter("Text-files", "*.txt"));
-			filters.add(new ExtensionFilter("Html-files", "*.html"));
-			filters.add(new ExtensionFilter("Obfl-files", "*.obfl"));
-			List<String> exts = filters.stream()
-					.map(ex->ex.getExtensions())
-					.flatMap(List::stream)
-					.distinct()
+			List<String> exts = Arrays.asList("*.pef", "*.xml", "*.txt", "*.html", "*.obfl");
+			List<ExtensionFilter> filters = exts.stream()
+					.map(ext -> new ExtensionFilter(toFilesDesc(ext), ext))
 					.collect(Collectors.toList());
 			fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_SUPPORTED_FILES.localize(), exts));
 			fileChooser.getExtensionFilters().addAll(filters);
 		} else {
-			fileChooser.getExtensionFilters().add(new ExtensionFilter("PEF-files", "*.pef"));
+			fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_FILE.localize("PEF"), "*.pef"));
 		}
     	Settings.getSettings().getLastOpenPath().ifPresent(v->fileChooser.setInitialDirectory(v));
     	File selected = fileChooser.showOpenDialog(stage);
@@ -642,7 +637,7 @@ public class MainController {
 		// TODO: additional information from the TaskGroupFactory about the formats (i.e. descriptions) would be useful for this list
 		fileChooser.getExtensionFilters().addAll(
 				exts.stream()
-				.map(ext->new ExtensionFilter(ext, ext))
+				.map(ext->new ExtensionFilter(toFilesDesc(ext), ext))
 				.collect(Collectors.toList())
 				);
 		fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_ALL_FILES.localize(), "*.*"));
@@ -652,6 +647,13 @@ public class MainController {
     		Settings.getSettings().setLastOpenPath(selected.getParentFile());
     		selectTemplateAndOpen(selected);
     	}
+    }
+    
+    private static String toFilesDesc(String ext) {
+    	String ext2 = ext.startsWith("*.")?ext.substring(2):ext;
+    	return Messages.EXTENSION_FILTER_FILE.localize(ext2.length()>3
+    			?ext2.substring(0, 1).toUpperCase() + ext2.substring(1)
+    			:ext2.toUpperCase());
     }
     
     private void selectTemplateAndOpen(File selected) {
