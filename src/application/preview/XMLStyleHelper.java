@@ -12,7 +12,7 @@ class XMLStyleHelper {
 	private static final Pattern XML_TAG = Pattern
 			.compile("(?<ELEMENT>(</?\\h*)(\\w[\\w-]*(?:\\:\\w[\\w-]*)?)([^<>]*)(\\h*/?>))" + "|(?<COMMENT><!--[^<>]+-->)" + "|(?<PI><\\?[^<>]+\\?>)" + "|(?<ENTITY>&[^&;]+;)");
 
-	private static final Pattern ATTRIBUTES = Pattern.compile("(\\w+(?:\\:\\w+)?\\h*)(=)(\\h*\"[^\"]*\")");
+	private static final Pattern ATTRIBUTES = Pattern.compile("(\\w[\\w-]*(?:\\:\\w[\\w-]*)?\\h*)(=)(\\h*\"[^\"]*\")");
 
 	private static final int GROUP_OPEN_BRACKET = 2;
 	private static final int GROUP_ELEMENT_NAME = 3;
