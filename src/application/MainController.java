@@ -550,6 +550,7 @@ public class MainController {
 			fileChooser.getExtensionFilters().add(new ExtensionFilter("XML-files", "*.xml"));
 			fileChooser.getExtensionFilters().add(new ExtensionFilter("Text-files", "*.txt"));
 			fileChooser.getExtensionFilters().add(new ExtensionFilter("Html-files", "*.html"));
+			fileChooser.getExtensionFilters().add(new ExtensionFilter("Obfl-files", "*.obfl"));
 		}
     	Settings.getSettings().getLastOpenPath().ifPresent(v->fileChooser.setInitialDirectory(v));
     	File selected = fileChooser.showOpenDialog(stage);
