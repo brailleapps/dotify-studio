@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -545,12 +546,22 @@ public class MainController {
     	Window stage = root.getScene().getWindow();
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle(Messages.TITLE_OPEN_DIALOG.localize());
-    	fileChooser.getExtensionFilters().add(new ExtensionFilter("PEF-files", "*.pef"));
 		if (FeatureSwitch.OPEN_OTHER_TYPES.isOn()) {
-			fileChooser.getExtensionFilters().add(new ExtensionFilter("XML-files", "*.xml"));
-			fileChooser.getExtensionFilters().add(new ExtensionFilter("Text-files", "*.txt"));
-			fileChooser.getExtensionFilters().add(new ExtensionFilter("Html-files", "*.html"));
-			fileChooser.getExtensionFilters().add(new ExtensionFilter("Obfl-files", "*.obfl"));
+			List<ExtensionFilter> filters = new ArrayList<>();
+			filters.add(new ExtensionFilter("PEF-files", "*.pef"));
+			filters.add(new ExtensionFilter("XML-files", "*.xml"));
+			filters.add(new ExtensionFilter("Text-files", "*.txt"));
+			filters.add(new ExtensionFilter("Html-files", "*.html"));
+			filters.add(new ExtensionFilter("Obfl-files", "*.obfl"));
+			List<String> exts = filters.stream()
+					.map(ex->ex.getExtensions())
+					.flatMap(List::stream)
+					.distinct()
+					.collect(Collectors.toList());
+			fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_SUPPORTED_FILES.localize(), exts));
+			fileChooser.getExtensionFilters().addAll(filters);
+		} else {
+			fileChooser.getExtensionFilters().add(new ExtensionFilter("PEF-files", "*.pef"));
 		}
     	Settings.getSettings().getLastOpenPath().ifPresent(v->fileChooser.setInitialDirectory(v));
     	File selected = fileChooser.showOpenDialog(stage);
