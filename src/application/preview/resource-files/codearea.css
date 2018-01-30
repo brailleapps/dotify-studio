@@ -1,0 +1,33 @@
+.tagmark {
+    -fx-fill: dimgray;
+}
+.anytag {
+    -fx-fill: blue;
+}
+.paren {
+    -fx-fill: firebrick;
+    -fx-font-weight: bold;
+}
+.attribute {
+    -fx-fill: crimson;
+}
+.avalue {
+    -fx-fill: darkorchid;
+}
+
+.comment {
+	-fx-fill: green;
+}
+
+.pi {
+	-fx-fill: teal;
+}
+
+.entity {
+	-fx-fill: darkorange;
+}
+
+.lineno {
+	-fx-font-style: normal;
+	-fx-background-color: #eee;
+}

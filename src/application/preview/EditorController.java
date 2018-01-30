@@ -2,6 +2,7 @@ package application.preview;
 
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -21,6 +22,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.bind.DatatypeConverter;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.daisy.dotify.common.xml.XMLTools;
 import org.daisy.dotify.common.xml.XMLToolsException;
@@ -52,6 +56,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 /**
@@ -63,10 +68,12 @@ public class EditorController extends BorderPane implements Editor {
 	private static final Logger logger = Logger.getLogger(EditorController.class.getCanonicalName());
 	private static final char BYTE_ORDER_MARK = '\uFEFF';
 
+	@FXML HBox optionsBox;
 	@FXML CheckBox wordWrap;
 	@FXML CheckBox lineNumbers;
 	@FXML Label encodingLabel;
 	@FXML Label bomLabel;
+	@FXML HBox xmlTools;
 	private CodeArea codeArea;
 	private VirtualizedScrollPane<CodeArea> scrollPane;
 	private FileInfo fileInfo = new FileInfo.Builder((File)null).build();
@@ -110,7 +117,7 @@ public class EditorController extends BorderPane implements Editor {
 	
 	@FXML void initialize() {
 		codeArea = new CodeArea();
-		codeArea.getStylesheets().add(this.getClass().getResource("resource-files/editor.css").toExternalForm());
+		codeArea.getStylesheets().add(this.getClass().getResource("resource-files/codearea.css").toExternalForm());
 		codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
 		/*
 		codeArea.textProperty().addListener((obs, oldText, newText)-> {
@@ -199,6 +206,14 @@ public class EditorController extends BorderPane implements Editor {
 	 * @param xml if the file is xml
 	 */
 	public void load(File f, boolean xml) {
+		if (!xml) {
+			optionsBox.getChildren().remove(xmlTools);
+		} else {
+			if (!optionsBox.getChildren().contains(xmlTools)) {
+				optionsBox.getChildren().add(2, xmlTools);
+			}
+		}
+		xmlTools.setVisible(xml);
 		FileInfo.Builder builder = new FileInfo.Builder(f);
 		try {
 			String text = loadData(Files.readAllBytes(f.toPath()), builder, xml);
@@ -257,6 +272,22 @@ public class EditorController extends BorderPane implements Editor {
 			codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
 		} else {
 			codeArea.setParagraphGraphicFactory(null);
+		}
+	}
+	
+	@FXML void correctFormatting() {
+		if (fileInfo.isXml()) {
+			try {
+				FileInfo.Builder builder = FileInfo.with(fileInfo);
+				Source source = new StreamSource(new ByteArrayInputStream(prepareSaveToFile(builder, fileInfo, codeArea.getText())));
+				source.setSystemId(fileInfo.getFile().toURI().toASCIIString());
+				ByteArrayOutputStream result = new ByteArrayOutputStream();
+				XMLTools.transform(source, new StreamResult(result), this.getClass().getResource("resource-files/pretty-print.xsl"), Collections.emptyMap());
+				codeArea.replaceText(0, codeArea.getLength(), loadData(result.toByteArray(), builder, fileInfo.isXml()));
+			} catch (XMLToolsException | IOException | XmlEncodingDetectionException e) {
+				//TODO: show alert
+				e.printStackTrace();
+			}
 		}
 	}
 
