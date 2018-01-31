@@ -139,17 +139,12 @@ public class DotifyController extends BorderPane {
 		Label label = new Label(name);
 		label.setTextFill(Paint.valueOf("#404040"));
 		label.setFont(new Font("System Bold", 12));
-		VBox.setMargin(label, new Insets(0, 0, 10, 0));
+		VBox.setMargin(label, new Insets(0, 0, 10, 5));
 		vbox.getChildren().add(label);
 	}
 	
 	private void addItem(UserOption o, Map<String, Object> setOptions) {
-		OptionItem item = new OptionItem(o, values.contains(o));
-		Object value = setOptions.get(o.getKey());
-		if (value!=null) {
-			item.setValue(value.toString());
-		}
-		VBox.setMargin(item, new Insets(0, 0, 10, 0));
+		OptionItem item = new OptionItem(o, values.contains(o), setOptions.get(o.getKey()));
 		vbox.getChildren().add(item);
 		values.add(o);
 	}

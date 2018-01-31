@@ -19,7 +19,9 @@ import javafx.scene.text.TextAlignment;
  *
  */
 public class OptionItem extends BorderPane {
+	private static final String OPTIONS_CLASS = "option-changed";
 	private final boolean disabled;
+	private final String originalValue;
 	private Label key;
 	private ChoiceBox<TaskOptionValueAdapter> choiceValue;
 	private TextField stringValue;
@@ -30,7 +32,7 @@ public class OptionItem extends BorderPane {
 	 * @param option the task option
 	 * @param disabled true if the option should be disabled, false otherwise
 	 */
-	public OptionItem(UserOption option, boolean disabled) {
+	public OptionItem(UserOption option, boolean disabled, Object value) {
 		this.disabled = disabled;
 		key = new Label(option.getKey());
 		setLeft(key);
@@ -51,10 +53,14 @@ public class OptionItem extends BorderPane {
 			if (selected!=null) {
 				choiceValue.getSelectionModel().select(selected);
 			}
+			choiceValue.getSelectionModel().selectedItemProperty().addListener((v, ov, nv)->{
+				updateStyle(nv.getValue().getName());
+			});
 			setRight(choiceValue);
 		} else {
 			stringValue = new TextField();
 			stringValue.setPromptText(option.getDefaultValue());
+			stringValue.textProperty().addListener((v, ov, nv)->updateStyle(nv));
 			setRight(stringValue);
 		}
 		description = new Label(option.getDescription());
@@ -63,6 +69,15 @@ public class OptionItem extends BorderPane {
 		description.setFont(new Font("System Italic", 12));
 		setBottom(description);
 		setAlignment(description, Pos.CENTER_RIGHT);
+		if (value!=null) {
+			originalValue = value.toString();
+			setValue(value.toString(), false);
+		} else if (option.hasValues()) {
+			originalValue = option.getDefaultValue();
+		} else {
+			originalValue = "";
+		}
+		getStyleClass().add("options");
 	}
 
 	/**
@@ -78,6 +93,10 @@ public class OptionItem extends BorderPane {
 	 * @param value the value
 	 */
 	public void setValue(String value) {
+		setValue(value, true);
+	}
+	
+	private void setValue(String value, boolean highlight) {
 		if (choiceValue!=null) {
 			for (TaskOptionValueAdapter tva : choiceValue.getItems()) {
 				if (value.equals(tva.getValue().getName())) {
@@ -90,8 +109,22 @@ public class OptionItem extends BorderPane {
 		} else if (!disabled) {
 			throw new RuntimeException("Error in code.");
 		}
+		if (highlight) {
+			updateStyle(value);
+		} else {
+			getStyleClass().remove(OPTIONS_CLASS);
+		}
 	}
 	
+	private void updateStyle(String currentValue) {
+		if (!disabled && currentValue!=null && !originalValue.equals(currentValue)) {
+			getStyleClass().remove(OPTIONS_CLASS);
+			getStyleClass().add(OPTIONS_CLASS);
+		} else {
+			getStyleClass().remove(OPTIONS_CLASS);
+		}
+	}
+
 	/**
 	 * Gets the option value.
 	 * @return returns the option value

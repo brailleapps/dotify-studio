@@ -2,3 +2,11 @@
 	-fx-border-width: 0 1px 0 0;
 	-fx-border-color: #aaa;
 }
+
+.option-changed {
+	-fx-background-color: ccf0ff; /*#8df; */
+}
+
+.options {
+	-fx-padding: 5px;
+}
