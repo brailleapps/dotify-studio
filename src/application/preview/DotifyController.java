@@ -112,12 +112,14 @@ public class DotifyController extends BorderPane {
 	 * @param prvOpts the previous options
 	 */
 	public void setOptions(CompiledTaskSystem ts, List<RunnerResult> opts, Map<String, Object> prvOpts) {
+		Map<String, Object> ui = getParams();
 		clear();
 		values = new HashSet<>();
 		displayItems(ts.getName(), ts.getOptions(), prvOpts);
 		for (RunnerResult r : opts) {
 			displayItems(r.getTask().getName(), r.getTask().getOptions(), prvOpts);
 		}
+		setParams(ui);
 	}
 	
 	private void displayItems(String title, List<UserOption> options, Map<String, Object> prvOpts) {
@@ -170,6 +172,18 @@ public class DotifyController extends BorderPane {
 			}
 		}
 		return opts;
+	}
+	
+	public void setParams(Map<String, Object> opts) {
+		for (Node n : vbox.getChildren()) {
+			if (n instanceof OptionItem) {
+				OptionItem o = (OptionItem)n;
+				Object value = opts.get(o.getKey());
+				if (value!=null) {
+					o.setValue(value.toString());
+				}
+			}
+		}
 	}
 	
 	@FXML void requestRefresh() {
