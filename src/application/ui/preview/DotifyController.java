@@ -28,6 +28,7 @@ import org.daisy.streamline.engine.TaskRunner;
 import application.common.BuildInfo;
 import application.common.FeatureSwitch;
 import application.l10n.Messages;
+import application.template.TemplateView;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -46,6 +47,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 
 /**
  * Provides a controller for Dotify.
@@ -211,6 +213,16 @@ public class DotifyController extends BorderPane {
 			toggle.setText("<");
 			toggle.getTooltip().setText(Messages.TOOLTIP_HIDE_OPTIONS.localize());
 		}
+	}
+	
+	@FXML void selectTemplate() {
+		TemplateView dialog = new TemplateView();
+		if (dialog.hasTemplates()) {
+			dialog.initOwner(getScene().getWindow());
+			dialog.initModality(Modality.APPLICATION_MODAL); 
+			dialog.showAndWait();
+		}
+		setParams(dialog.getSelectedConfiguration());
 	}
 	
 	boolean isWatching() {

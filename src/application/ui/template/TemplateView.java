@@ -22,12 +22,15 @@ public class TemplateView extends Stage {
 	private static final Logger logger = Logger.getLogger(TemplateView.class.getCanonicalName());
 	private FXMLLoader loader;
 
+	public TemplateView() {
+		this(null);
+	}
 	/**
 	 * Creates a new template view.
 	 * @param file the file target
 	 */
 	public TemplateView(File file) {
-		String title = Messages.TITLE_TEMPLATES_DIALOG.localize(file.getName());
+		String title = Messages.TITLE_TEMPLATES_DIALOG.localize(file==null?"":file.getName());
 		try {
 			loader = new FXMLLoader(this.getClass().getResource("Template.fxml"), Messages.getBundle());
 			Parent root = loader.load();
