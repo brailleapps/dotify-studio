@@ -4,13 +4,12 @@ package application.ui.template;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.daisy.streamline.api.config.ConfigurationDetails;
-import org.daisy.streamline.api.config.ConfigurationsCatalog;
+import org.daisy.streamline.api.config.ConfigurationsCatalogService;
 import org.daisy.streamline.api.config.ConfigurationsProviderException;
 
 import application.l10n.Messages;
@@ -20,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import shared.Singleton;
 
 /**
  * Provides a controller for a template view.
@@ -30,44 +30,52 @@ public class TemplateController {
 	private static final Logger logger = Logger.getLogger(TemplateController.class.getCanonicalName());
 	@FXML private VBox templates;
 	@FXML private Label title;
-	private ConfigurationsCatalog cc;
-	private final Set<ConfigurationDetails> details;
-	private final boolean hasTemplates;
 	private String selected = null;
 	
 	/**
 	 * Creates a new template controller.
 	 */
 	public TemplateController() {
-		details = getConfigurationsCatalog().getConfigurationDetails();
-		hasTemplates = !details.isEmpty();
+		
+	}
+	
+	private boolean isEmpty() {
+		return getConfigurationsCatalog().getConfigurationDetails().isEmpty();
 	}
 
 	@FXML void initialize() {
-		if (hasTemplates) {
-			List<ConfigurationDetails> sortedDetails = details.stream()
+		if (!isEmpty()) {
+			List<ConfigurationDetails> sortedDetails = getConfigurationsCatalog().getConfigurationDetails().stream()
 					.sorted((o1, o2) -> {
 						return o1.getKey().compareTo(o2.getKey());
 					})
 					.collect(Collectors.toList());
 			for (ConfigurationDetails conf : sortedDetails) {
-				addItem(new ConfigurationItem(conf.getNiceName(), conf.getDescription(), ev -> {
+				boolean removable = getConfigurationsCatalog().isRemovable(conf.getKey());
+				ConfigurationItem item = new ConfigurationItem(conf.getNiceName(), conf.getDescription(), removable);
+				item.setApplyAction(ev -> {
 					selected = conf.getKey();
 					((Stage)templates.getScene().getWindow()).close();
-				}));
+				});
+				if (removable) {
+					item.setRemoveAction(ev -> {
+						getConfigurationsCatalog().removeConfiguration(conf.getKey());
+						templates.getChildren().remove(item);
+					});
+				}
+				addItem(item);
 			}
-			addItem(new ConfigurationItem(Messages.LABEL_NONE.localize(), "", ev -> {
+			ConfigurationItem item = new ConfigurationItem(Messages.LABEL_NONE.localize(), "", false);
+			item.setApplyAction(ev -> {
 				selected = null;
 				closeWindow();
-			}));
+			});
+			addItem(item);
 		}
 	}
 
-	private ConfigurationsCatalog getConfigurationsCatalog() {
-		if (cc==null) {
-			cc = ConfigurationsCatalog.newInstance();
-		}
-		return cc;
+	private ConfigurationsCatalogService getConfigurationsCatalog() {
+		return Singleton.getInstance().getConfigurationsCatalog();
 	}
 	
 	void closeWindow() {
@@ -79,7 +87,7 @@ public class TemplateController {
 	}
 
 	boolean hasTemplates() {
-		return hasTemplates;
+		return !isEmpty();
 	}
 	
 	Map<String, Object> getSelectedConfiguration() {

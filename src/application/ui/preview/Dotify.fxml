@@ -42,6 +42,7 @@
                      <tooltip>
                         <Tooltip text="%tooltip-watch-source" />
                      </tooltip></CheckBox>
+                  <Button mnemonicParsing="false" onAction="#saveTemplate" text="+" />
                   <Button mnemonicParsing="false" onAction="#selectTemplate" text="Template" />
       						   <Button fx:id="applyButton" mnemonicParsing="false" onAction="#requestRefresh" text="%button-apply" />
                </children>

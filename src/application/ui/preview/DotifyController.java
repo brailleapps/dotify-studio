@@ -48,6 +48,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
+import shared.Singleton;
 
 /**
  * Provides a controller for Dotify.
@@ -213,6 +214,10 @@ public class DotifyController extends BorderPane {
 			toggle.setText("<");
 			toggle.getTooltip().setText(Messages.TOOLTIP_HIDE_OPTIONS.localize());
 		}
+	}
+	
+	@FXML void saveTemplate() {
+		Singleton.getInstance().getConfigurationsCatalog().addConfiguration(System.currentTimeMillis()+"", "no desc", getParams());
 	}
 	
 	@FXML void selectTemplate() {
