@@ -51,13 +51,16 @@ public class MainFx extends Application {
 				logger.fine("Plugins folder: " + parent);
 			}
 			// list jars and convert to URL's
-			URL[] jars = FileTools.toURL(listFiles(new File(parent, "plugins")).toArray(new File[]{}));
-			for (URL u : jars) {
-				logger.info("Found jars " + u);
-			}
-			// set context class loader
-			if (jars.length>0) {
-				Thread.currentThread().setContextClassLoader(new URLClassLoader(jars));
+			File plugins = new File(parent, "plugins");
+			if (plugins.isDirectory()) {
+				URL[] jars = FileTools.toURL(listFiles(plugins).toArray(new File[]{}));
+				for (URL u : jars) {
+					logger.info("Found jars " + u);
+				}
+				// set context class loader
+				if (jars.length>0) {
+					Thread.currentThread().setContextClassLoader(new URLClassLoader(jars));
+				}
 			}
 		} catch (URISyntaxException e) {
 			if (logger.isLoggable(Level.FINE)) {
