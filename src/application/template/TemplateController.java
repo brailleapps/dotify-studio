@@ -58,7 +58,7 @@ public class TemplateController {
 			}
 			addItem(new ConfigurationItem(Messages.LABEL_NONE.localize(), "", ev -> {
 				selected = null;
-				((Stage)templates.getScene().getWindow()).close();
+				closeWindow();
 			}));
 		}
 	}
@@ -68,6 +68,10 @@ public class TemplateController {
 			cc = ConfigurationsCatalog.newInstance();
 		}
 		return cc;
+	}
+	
+	void closeWindow() {
+		((Stage)templates.getScene().getWindow()).close();
 	}
 	
 	void setHeading(String value) {

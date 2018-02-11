@@ -10,6 +10,8 @@ import application.l10n.Messages;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 /**
@@ -29,7 +31,14 @@ public class TemplateView extends Stage {
 		try {
 			loader = new FXMLLoader(this.getClass().getResource("Template.fxml"), Messages.getBundle());
 			Parent root = loader.load();
-	    	setScene(new Scene(root));
+			TemplateController controller = loader.<TemplateController>getController();
+			Scene scene = new Scene(root);
+	    	setScene(scene);
+			scene.addEventHandler(KeyEvent.KEY_PRESSED, ev->{
+				if (ev.getCode()==KeyCode.ESCAPE) {
+					controller.closeWindow();
+				}
+			});
 	    	loader.<TemplateController>getController().setHeading(title);
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Failed to load view", e);
