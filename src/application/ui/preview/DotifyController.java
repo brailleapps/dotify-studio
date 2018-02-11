@@ -217,7 +217,14 @@ public class DotifyController extends BorderPane {
 	}
 	
 	@FXML void saveTemplate() {
-		Singleton.getInstance().getConfigurationsCatalog().addConfiguration(System.currentTimeMillis()+"", "no desc", getParams());
+		TemplateDetailsView dialog = new TemplateDetailsView();
+		dialog.initOwner(this.getScene().getWindow());
+		dialog.initModality(Modality.APPLICATION_MODAL); 
+		dialog.showAndWait();
+		if (dialog.getResult().isPresent()) {
+			NameDesc nameDesc = dialog.getResult().get();
+			Singleton.getInstance().getConfigurationsCatalog().addConfiguration(nameDesc.getName(), nameDesc.getDesc(), getParams());
+		}
 	}
 	
 	@FXML void selectTemplate() {

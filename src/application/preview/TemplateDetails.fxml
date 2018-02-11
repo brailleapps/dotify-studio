@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="300.0" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.preview.TemplateDetailsController">
+   <children>
+      <Label text="%label-name" />
+      <TextField fx:id="name" />
+      <Label text="%label-description" />
+      <TextArea fx:id="desc" prefHeight="100.0" wrapText="true" />
+      <HBox alignment="CENTER" spacing="10.0">
+         <children>
+            <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction" text="%button-ok" />
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#closeWindow" text="%button-cancel" />
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</VBox>
