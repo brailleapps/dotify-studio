@@ -13,9 +13,13 @@ import org.daisy.streamline.api.config.ConfigurationsCatalogService;
 import org.daisy.streamline.api.config.ConfigurationsProviderException;
 
 import application.l10n.Messages;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -59,8 +63,14 @@ public class TemplateController {
 				});
 				if (removable) {
 					item.setRemoveAction(ev -> {
-						getConfigurationsCatalog().removeConfiguration(conf.getKey());
-						templates.getChildren().remove(item);
+						Platform.runLater(()->{
+							Alert alert = new Alert(AlertType.CONFIRMATION, "Delete " +conf.getNiceName(), ButtonType.OK, ButtonType.CANCEL);
+				    		alert.showAndWait();
+				    		if (alert.getResult().equals(ButtonType.OK)) { 
+				    			getConfigurationsCatalog().removeConfiguration(conf.getKey());
+				    			templates.getChildren().remove(item);
+				    		}
+						});
 					});
 				}
 				addItem(item);
