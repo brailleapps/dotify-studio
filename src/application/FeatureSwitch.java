@@ -14,7 +14,7 @@ public enum FeatureSwitch {
 	/**
 	 * Defines if opening of other file types than PEF are enabled.
 	 */
-	OPEN_OTHER_TYPES("on".equalsIgnoreCase(System.getProperty("application.feature.open-other-types", "off"))),
+	OPEN_OTHER_TYPES("on".equalsIgnoreCase(System.getProperty("application.feature.open-other-types", "on"))),
 	/**
 	 * Defines if the output format should be HTML (instead of PEF)
 	 */
