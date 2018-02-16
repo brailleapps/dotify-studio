@@ -4,10 +4,16 @@
 Dotify Studio provides an accessible graphical user interface for creating, managing and embossing PEF-files.
 
 ## Preferences ##
-Before you can emboss PEF-files, you must complete the setup. The menu item `Preferences` opens a dialog with tabs.
+Before you can convert to or emboss a PEF-file, you must complete the setup. The menu item `Preferences` opens a dialog with tabs.
 
 ### General ###
-The `General` tab contains a couple of basic settings, such as the target locale used when converting source documents into PEF and the preview font used when viewing a PEF-file. 
+The `General` tab contains a couple of basic settings, such as the target locale used when converting source documents into PEF and the preview font used when viewing a PEF-file.
+
+Currently the target locale must be `sv-SE` in order to convert a document into PEF.
+
+![Setup view](images/GeneralSetup.png)
+
+_Screenshot of general setup view._ 
 
 ### Emboss ###
 The `Emboss` tab contains settings related to embossing. 
@@ -18,7 +24,7 @@ Additional options will be presented when embosser has been selected. Once all r
 
 ![Setup view](images/EmbosserSetup.png)
 
-_Screenshot of Setup view._
+_Screenshot of embosser setup view._
 
 #### Embosser limitations ####
 All embosser implementations have limitations. In other words, none of the implementations support
@@ -32,7 +38,8 @@ Under the **Model** drop-down, support for these key features are presented when
 The `Manage paper` tab is used to define and manage custom paper formats.
 
 ## Open a file ##
-To open a file, select the **Open...** menu option in the **File** menu. 
+To open a file, select the **Open...** menu option in the **File** menu. Dotify Studio supports 
+opening PEF-files and HTML-files for editing with preview and OBFL, XML and TXT for editing without preview.
 
 ### Find files ###
 If you keep your PEF-files below a common folder, they can be found using the metadata supplied with the PEF-files.
@@ -42,9 +49,18 @@ To do this, open the `search` tab in the tools area, select the **Show search** 
 the "user home folder" is scanned, but it can be changed by clicking the `Select folder` button.
 
 ## Import source documents ##
+Note that the target locale must be `sv-SE` for this to work.
+
 A source document is a document that isn't braille yet, but can be. To import source documents, use the menu item `Import/Source document...`. 
 
-Note that the target locale must be `sv-SE` for this to work.
+When importing, a connection with the source document is maintained until the result is saved as a PEF-file. 
+This means that the import can be re-run if the source is changed or if an option is modified. If the source is modified, the import
+is automatically triggered and the result is updated as soon as the import is completed. Note that if the embedded editor is used, the source
+document must be saved in order to trigger the automatic import. If an option is modified, the import can be manually updated by clicking `Apply`.
+
+The import panel options are dynamic, which means that available options may depend on the value of other options. In
+some cases, additional options can be activated by changing the value of an "activator" parameter. In this case, the import
+must be re-run before the additional options show up.
 
 ## Import braille text files ##
 A braille text file is a text file containing line breaks and form feeds to indicate where lines and pages end. In addition,
