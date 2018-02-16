@@ -21,8 +21,9 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.xml.bind.DatatypeConverter;
+
 import javax.xml.transform.Source;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -66,6 +67,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
  */
 public class EditorController extends BorderPane implements Editor {
 	private static final Logger logger = Logger.getLogger(EditorController.class.getCanonicalName());
+	private static final TransformerFactory XSLT_FACTORY = TransformerFactory.newInstance();
 	private static final char BYTE_ORDER_MARK = '\uFEFF';
 
 	@FXML HBox optionsBox;
@@ -282,23 +284,13 @@ public class EditorController extends BorderPane implements Editor {
 				Source source = new StreamSource(new ByteArrayInputStream(prepareSaveToFile(builder, fileInfo, codeArea.getText())));
 				source.setSystemId(fileInfo.getFile().toURI().toASCIIString());
 				ByteArrayOutputStream result = new ByteArrayOutputStream();
-				XMLTools.transform(source, new StreamResult(result), this.getClass().getResource("resource-files/pretty-print.xsl"), Collections.emptyMap());
+				XMLTools.transform(source, new StreamResult(result), this.getClass().getResource("resource-files/pretty-print.xsl"), Collections.emptyMap(), XSLT_FACTORY);
 				codeArea.replaceText(0, codeArea.getLength(), loadData(result.toByteArray(), builder, fileInfo.isXml()));
 			} catch (XMLToolsException | IOException | XmlEncodingDetectionException e) {
 				//TODO: show alert
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private String makeHash(String data) {
-		try {
-			MessageDigest md = MessageDigest.getInstance("SHA-256");
-			return DatatypeConverter.printHexBinary(md.digest(data.getBytes())).toUpperCase();
-		} catch (NoSuchAlgorithmException e) {
-			logger.warning("Failed to create checksum");
-		}
-		return null;
 	}
 
 	@Override
