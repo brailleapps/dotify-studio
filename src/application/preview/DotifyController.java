@@ -314,6 +314,7 @@ public class DotifyController extends BorderPane {
 			this.params.put("systemBuild", BuildInfo.BUILD);
 			this.params.put("systemRelease", BuildInfo.VERSION);
 			this.params.put("conversionDate", new Date().toString());
+			this.params.put("allows-ending-volume-on-hyphen", "false");
 		}
 
 		@Override
