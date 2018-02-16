@@ -1,5 +1,28 @@
 [[Table of Contents|Toc]]
 
+# 0.7.0 #
+## New in this version ##
+- User interface
+  - Adds pretty printing of XML-files
+  - Makes it possible to open OBFL, HTML, XML and TXT-files
+  - Supports HTML preview when opening HTML-files
+  - Highlights modified options
+  - Displays some preliminary options before the first conversion has finished
+  - Keeps changes made to options while converting
+  - Makes it possible to close template view with ESC
+  - Improves the open and import dialog file filters
+  - Improves converter panel layout including the possibility to show/hide converter options
+  - Improves XML styling
+  - Prevents a cancelled save action from proceeding (fixes #53)
+  - Wraps browser call in a new thread (fixes #44)
+  - Supports scanning sub folders in the plugins folder (fixes #41)
+  - Starts even if the plugins-folder is missing
+- Formatting
+  - Supports volume transitions
+  - Disallows ending volume on hyphen
+  - Improves volume splitting
+- Other
+  -Improves documentation
 
 # 0.6.1 #
 ## New in this version ##
