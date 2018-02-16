@@ -26,6 +26,7 @@ import org.daisy.streamline.engine.RunnerResult;
 import org.daisy.streamline.engine.TaskRunner;
 
 import application.common.BuildInfo;
+import application.common.FeatureSwitch;
 import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -87,19 +88,19 @@ public class DotifyController extends BorderPane {
 		refreshRequested = false;
 		closing = false;
 		exeService = Executors.newWorkStealingPool();
-		setRunning(true);
+		setRunning(0);
 		DotifyTask dt = new DotifyTask(selected, out, tag, outputFormat, options);
 		dt.setOnSucceeded(ev -> {
 			Consumer<File> resultWatcher = onSuccess.apply(out);
 			DotifyResult dr = dt.getValue();
 			setOptions(dr.getTaskSystem(), dr.getResults(), options);
-			setRunning(false);
+			setRunning(1);
 			Thread th = new Thread(new SourceDocumentWatcher(selected, out, tag, outputFormat, resultWatcher));
 			th.setDaemon(true);
 			th.start();
 		});
 		dt.setOnFailed(ev->{
-			setRunning(false);
+			setRunning(1);
 			logger.log(Level.WARNING, "Import failed.", dt.getException());
 			Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
 			alert.showAndWait();
@@ -224,9 +225,13 @@ public class DotifyController extends BorderPane {
 		return false;
 	}
 	
-	void setRunning(boolean running) {
+	void setRunning(double p) {
+		boolean running = p<1&&p>=0;
 		Platform.runLater(()->{
-			progress.setProgress(running?ProgressIndicator.INDETERMINATE_PROGRESS:1);
+			progress.setProgress(
+				FeatureSwitch.REPORT_PROGRESS.isOn()?p:
+					p<1?ProgressIndicator.INDETERMINATE_PROGRESS:1
+				);
 			progress.setVisible(running);
 			applyButton.setVisible(!running);
 		});
@@ -269,26 +274,26 @@ public class DotifyController extends BorderPane {
 		void performAction() {
 			try {
 				isRunning = true;
-				setRunning(true);
+				setRunning(0);
 				Map<String, Object> opts = getParams();
 				DotifyTask dt = new DotifyTask(annotatedInput, output, locale, outputFormat, opts);
 				dt.setOnFailed(ev->{
 					isRunning = false;
-					setRunning(false);
+					setRunning(1);
 					logger.log(Level.WARNING, "Update failed.", dt.getException());
 					Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
 					alert.showAndWait();
 				});
 				dt.setOnSucceeded(ev -> {
 					isRunning = false;
-					setRunning(false);
+					setRunning(1);
 					Platform.runLater(() -> {
 						if (resultWatcher!=null) {
 							resultWatcher.accept(output);
 						}
 						DotifyResult dr = dt.getValue();
 						setOptions(dr.getTaskSystem(), dr.getResults(), opts);
-						setRunning(false);
+						setRunning(1);
 					});
 				});
 				exeService.submit(dt);
@@ -334,7 +339,10 @@ public class DotifyController extends BorderPane {
 			}
 			
 			TaskRunner.Builder builder = TaskRunner.withName(ts.getName());
-			return new DotifyResult(tl, builder.build().runTasks(inputFile, outputFile, tl));
+			return new DotifyResult(tl, builder
+					.addProgressListener(v->setRunning(v.getProgress()))
+					.build()
+					.runTasks(inputFile, outputFile, tl));
 		}
 
 		//FIXME: Duplicated from Dotify CLI. If this function is needed to run Dotify, find a home for it

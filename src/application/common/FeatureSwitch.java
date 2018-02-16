@@ -18,7 +18,11 @@ public enum FeatureSwitch {
 	/**
 	 * Defines if the output format should be HTML (instead of PEF)
 	 */
-	HTML_OUTPUT_FORMAT("on".equalsIgnoreCase(System.getProperty("application.feature.html-output-format", "off")));
+	HTML_OUTPUT_FORMAT("on".equalsIgnoreCase(System.getProperty("application.feature.html-output-format", "off"))),
+	/**
+	 * When on, the progress indicator in the Dotify panel uses progress values reported from the task system   
+	 */
+	REPORT_PROGRESS("on".equalsIgnoreCase(System.getProperty("application.feature.report-progress", "off")));
 
 	private final boolean on;
 	FeatureSwitch(boolean on) {
