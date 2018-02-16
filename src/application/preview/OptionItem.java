@@ -9,8 +9,12 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 /**
@@ -22,10 +26,10 @@ public class OptionItem extends BorderPane {
 	private static final String OPTIONS_CLASS = "option-changed";
 	private final boolean disabled;
 	private final String originalValue;
-	private Label key;
+	private Text key;
 	private ChoiceBox<TaskOptionValueAdapter> choiceValue;
 	private TextField stringValue;
-	private Label description;
+	private Text description;
 
 	/**
 	 * Creates a new option item with the supplied parameters.
@@ -34,12 +38,17 @@ public class OptionItem extends BorderPane {
 	 */
 	public OptionItem(UserOption option, boolean disabled, Object value) {
 		this.disabled = disabled;
-		key = new Label(option.getKey());
-		setLeft(key);
+		HBox keyValue = new HBox();
+		keyValue.setSpacing(5);
+		key = new Text(option.getKey());
+		keyValue.getChildren().add(key);
+		Region r = new Region();
+		HBox.setHgrow(r, Priority.ALWAYS);
+		keyValue.getChildren().add(r);
 		if (disabled) {
 			Label above = new Label(Messages.LABEL_EDIT_ABOVE.localize());
 			above.setTextFill(Paint.valueOf("#808080"));
-			setRight(above);
+			keyValue.getChildren().add(above);
 		} else if (option.hasValues()) {
 			choiceValue = new ChoiceBox<>();
 			TaskOptionValueAdapter selected = null;
@@ -56,17 +65,18 @@ public class OptionItem extends BorderPane {
 			choiceValue.getSelectionModel().selectedItemProperty().addListener((v, ov, nv)->{
 				updateStyle(nv.getValue().getName());
 			});
-			setRight(choiceValue);
+			keyValue.getChildren().add(choiceValue);
 		} else {
 			stringValue = new TextField();
 			stringValue.setPromptText(option.getDefaultValue());
 			stringValue.textProperty().addListener((v, ov, nv)->updateStyle(nv));
-			setRight(stringValue);
+			keyValue.getChildren().add(stringValue);
 		}
-		description = new Label(option.getDescription());
-		description.setTextAlignment(TextAlignment.RIGHT);
-		description.setWrapText(true);
+		setCenter(keyValue);
+		description = new Text(option.getDescription());
+		description.setWrappingWidth(200);
 		description.setFont(new Font("System Italic", 12));
+		description.setTextAlignment(TextAlignment.RIGHT);
 		setBottom(description);
 		setAlignment(description, Pos.CENTER_RIGHT);
 		if (value!=null) {
