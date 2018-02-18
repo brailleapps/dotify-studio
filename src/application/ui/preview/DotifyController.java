@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.option.UserOption;
+import org.daisy.streamline.api.option.UserOptionValue;
 import org.daisy.streamline.api.tasks.CompiledTaskSystem;
 import org.daisy.streamline.api.tasks.InternalTask;
 import org.daisy.streamline.api.tasks.TaskSystem;
@@ -187,15 +188,19 @@ public class DotifyController extends BorderPane {
 	}
 	
 	public void setParams(Map<String, Object> opts) {
+		Map<String, Object> optsCopy = new HashMap<>(opts);
 		for (Node n : vbox.getChildren()) {
 			if (n instanceof OptionItem) {
 				OptionItem o = (OptionItem)n;
-				Object value = opts.get(o.getKey());
+				Object value = optsCopy.remove(o.getKey());
 				if (value!=null) {
 					o.setValue(value.toString());
 				}
 			}
 		}
+		displayItems("Template", optsCopy.entrySet().stream()
+				.map(v->new UserOption.Builder(v.getKey()).defaultValue("").addValue(new UserOptionValue.Builder(v.getValue().toString()).build()).build())
+				.collect(Collectors.toList()), optsCopy);
 	}
 	
 	@FXML void requestRefresh() {
@@ -233,8 +238,9 @@ public class DotifyController extends BorderPane {
 			dialog.initOwner(getScene().getWindow());
 			dialog.initModality(Modality.APPLICATION_MODAL); 
 			dialog.showAndWait();
+			//TODO: clear params
+			setParams(dialog.getSelectedConfiguration());
 		}
-		setParams(dialog.getSelectedConfiguration());
 	}
 	
 	boolean isWatching() {
