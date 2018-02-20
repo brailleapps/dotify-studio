@@ -1,0 +1,7 @@
+#upButton {
+	-fx-graphic: url('resource-files/arrow-up.png');
+}
+
+#downButton {
+	-fx-graphic: url('resource-files/arrow-down.png');
+}

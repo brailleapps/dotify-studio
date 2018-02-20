@@ -21,7 +21,7 @@ used "braille" text formats.
   * Convert from text to a PEF-file
   * Convert from a PEF-file to text
   * ~~Split a PEF-file into one file per volume~~ [not implemented]
-  * ~~Merge several PEF-files into one~~ [not implemented]
+  * Merge several PEF-files into one
 
 ### Supported embossers ###
 Dotify Studio supports a range of embossers, including popular [Index](http://www.indexbraille.com/) and [Braillo](http://www.braillo.com/) embossers. Note however that several embossers are untested, due to lack of access and/or time.

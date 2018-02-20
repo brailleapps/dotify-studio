@@ -3,6 +3,7 @@ package application.ui;
 import java.awt.Desktop;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -23,11 +24,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.daisy.braille.utils.api.table.TableCatalog;
+import org.daisy.braille.utils.pef.PEFFileMerger;
+import org.daisy.braille.utils.pef.PEFFileMerger.SortType;
 import org.daisy.braille.utils.pef.TextHandler;
 import org.daisy.dotify.studio.api.Editor;
 import org.daisy.streamline.api.identity.IdentityProvider;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.tasks.TaskGroupFactoryMaker;
+import org.daisy.streamline.api.validity.Validator;
+import org.daisy.streamline.api.validity.ValidatorFactoryMaker;
+import org.daisy.streamline.api.validity.ValidatorFactoryMakerService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -36,6 +42,7 @@ import application.common.Settings;
 import application.l10n.Messages;
 import application.ui.about.AboutView;
 import application.ui.imports.ImportBrailleView;
+import application.ui.imports.ImportMergeView;
 import application.ui.prefs.PreferencesView;
 import application.ui.preview.EditorWrapperController;
 import application.ui.preview.server.StartupDetails;
@@ -605,6 +612,65 @@ public class MainController {
 				}
     		}
     	}
+    }
+    
+    @FXML void showImportMergeDialog() {
+        ValidatorFactoryMakerService factory = ValidatorFactoryMaker.newInstance();
+        Validator validator = factory.newValidator("application/x-pef+xml");
+        if (validator==null) {
+    		Alert alert = new Alert(AlertType.ERROR, "Failed to initialize file merge.", ButtonType.OK);
+    		alert.showAndWait();
+        	return;
+        }
+    	Window stage = root.getScene().getWindow();
+    	FileChooser fileChooser = new FileChooser();
+    	fileChooser.setTitle(Messages.TITLE_IMPORT_BRAILLE_MERGE_DIALOG.localize());
+    	fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_FILE.localize("PEF"), "*.pef"));
+    	Settings.getSettings().getLastOpenPath().ifPresent(v->fileChooser.setInitialDirectory(v));
+    	List<File> selected = fileChooser.showOpenMultipleDialog(stage);
+    	if (selected!=null) {
+    		selected.stream().findAny().ifPresent(v->Settings.getSettings().setLastOpenPath(v.getParentFile()));
+    		File[] selectedArray = selected.toArray(new File[selected.size()]);
+    		SortType.NUMERAL_GROUPING.sort(selectedArray);
+    		ImportMergeView brailleView = new ImportMergeView(Arrays.asList(selectedArray));
+    		brailleView.initOwner(root.getScene().getWindow());
+    		brailleView.initModality(Modality.APPLICATION_MODAL);
+    		brailleView.showAndWait();
+    		if (!brailleView.isCancelled()) {
+	    		String identifier = brailleView.getIdentifier().orElse("AUTO-ID-"+System.currentTimeMillis());
+	    		try {
+	    			File[] files = brailleView.getFiles().toArray(new File[brailleView.getFiles().size()]);
+	        		PEFFileMerger merger = new PEFFileMerger(t->validator.validate(t).isValid());
+					File output = File.createTempFile("unsaved", ".pef");
+					output.deleteOnExit();
+					Task<Void> importTask = new Task<Void>() {
+						@Override
+						protected Void call() throws Exception {
+							try (OutputStream os = new FileOutputStream(output)) {
+								if (!merger.merge(files, os, identifier)) {
+									throw new RuntimeException("Failed to merge.");
+								}
+								return null;
+							}
+						}
+					};
+			    	importTask.setOnFailed(e->{
+			    		output.delete();
+			    		logger.log(Level.WARNING, "Import failed.", importTask.getException());
+			    		Platform.runLater(()->{
+				    		Alert alert = new Alert(AlertType.ERROR, importTask.getException().toString(), ButtonType.OK);
+				    		alert.showAndWait();
+			    		});
+			    	});
+					importTask.setOnSucceeded(e->{
+			    		Platform.runLater(()->addTab(output));
+			    	});
+					exeService.submit(importTask);
+	    		} catch (IOException e) {
+	    			logger.log(Level.WARNING, "An IOException occurred.", e);
+	    		}
+    		}
+    	}    	
     }
     
     /**

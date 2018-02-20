@@ -79,6 +79,7 @@ public enum Messages {
 	TITLE_IMPORT_SOURCE_DOCUMENT_DIALOG("title-import-source-document-dialog"),
 	TITLE_IMPORT_BRAILLE_OPTIONS_DIALOG("title-import-braille-options-dialog"),
 	TITLE_IMPORT_BRAILLE_TEXT_DIALOG("title-import-braille-text-dialog"),
+	TITLE_IMPORT_BRAILLE_MERGE_DIALOG("title-import-braille-merge-dialog"),
 	TITLE_EXPORT_DIALOG("title-export-dialog"),
 	TITLE_SAVE_AS_DIALOG("title-save-as-dialog"),
 	TITLE_TEMPLATES_DIALOG("title-templates-dialog"),

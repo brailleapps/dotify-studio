@@ -81,6 +81,8 @@
                               <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
                            </accelerator></MenuItem>
                         <MenuItem mnemonicParsing="false" onAction="#showImportBrailleDialog" text="%menu-item-import-braille-document" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#showImportMergeDialog" text="%menu-item-merge-pef-files" />
                     </items>
                   </Menu>
                   <MenuItem fx:id="exportMenuItem" mnemonicParsing="false" onAction="#exportFile" text="%menu-item-export" />
