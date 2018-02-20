@@ -567,8 +567,10 @@ public class MainController {
     	Window stage = root.getScene().getWindow();
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle(Messages.TITLE_IMPORT_BRAILLE_TEXT_DIALOG.localize());
+    	Settings.getSettings().getLastOpenPath().ifPresent(v->fileChooser.setInitialDirectory(v));
     	File selected = fileChooser.showOpenDialog(stage);
     	if (selected!=null) {
+    		Settings.getSettings().setLastOpenPath(selected.getParentFile());
     		ImportBrailleView brailleView = new ImportBrailleView(selected);
     		brailleView.initOwner(root.getScene().getWindow());
     		brailleView.initModality(Modality.APPLICATION_MODAL);
