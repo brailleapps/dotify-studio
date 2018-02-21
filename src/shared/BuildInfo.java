@@ -6,15 +6,13 @@ import java.net.URL;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import com.googlecode.e2u.MainPage;
-
 //TODO: move ManifestRetriever from dotify-cli to common and use that
 public class BuildInfo {
 	public final static String NAME;
 	public final static String VERSION;
 	public final static String BUILD;
 	static {
-		Class<MainPage> clazz = MainPage.class;
+		Class<BuildInfo> clazz = BuildInfo.class;
 		String className = clazz.getSimpleName() + ".class";
 		String classPath = clazz.getResource(className).toString();
 		boolean failed = false;
