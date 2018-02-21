@@ -46,11 +46,7 @@ public class BookViewController {
     public boolean bookIsValid() {
     	return bookReader.getResult().isValid();
     }
-    
-    public ValidationView getValidationView() {
-    	return new ValidationView(bookReader.getResult().getValidationMessages());
-    }
-    
+
     public AboutBookView getAboutBookView() {
     	return new AboutBookView(bookReader.getResult().getBook(), bookReader.getResult().getValidationMessages());
     }
