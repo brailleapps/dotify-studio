@@ -15,9 +15,9 @@ import java.util.Optional;
 import com.googlecode.ajui.AContainer;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
-import com.googlecode.e2u.BookReader.BookReaderResult;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
+import com.googlecode.e2u.preview.stax.BookReader.BookReaderResult;
 
 import shared.BuildInfo;
 import shared.Settings;

@@ -12,9 +12,9 @@ import org.daisy.braille.utils.pef.PEFHandler.Alignment;
 import org.daisy.braille.utils.pef.PrinterDevice;
 import org.daisy.braille.utils.pef.Range;
 
-import application.FeatureSwitch;
 import javafx.concurrent.Task;
 import shared.Configuration;
+import shared.FeatureSwitch;
 
 class EmbossTask extends Task<Void> {
 	private static final Logger logger = Logger.getLogger(EmbossTask.class.getCanonicalName());

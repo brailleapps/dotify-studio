@@ -1,4 +1,4 @@
-package com.googlecode.e2u;
+package com.googlecode.e2u.preview.stax;
 
 import java.io.File;
 import java.net.URI;

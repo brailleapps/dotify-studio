@@ -30,10 +30,10 @@ import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.streamline.api.media.FileDetails;
 import org.xml.sax.SAXException;
 
-import com.googlecode.e2u.BookReader;
 import com.googlecode.e2u.Start;
 import com.googlecode.e2u.StartupDetails;
 import com.googlecode.e2u.StartupDetails.Mode;
+import com.googlecode.e2u.preview.stax.BookReader;
 
 import application.l10n.Messages;
 import javafx.application.Platform;

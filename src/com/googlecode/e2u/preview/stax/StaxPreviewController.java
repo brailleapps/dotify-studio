@@ -7,8 +7,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
-import com.googlecode.e2u.BookReader;
-import com.googlecode.e2u.BookReader.BookReaderResult;
+import com.googlecode.e2u.preview.stax.BookReader.BookReaderResult;
 
 import shared.Settings;
 import shared.Settings.Keys;
