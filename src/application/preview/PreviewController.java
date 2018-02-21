@@ -33,7 +33,7 @@ import org.xml.sax.SAXException;
 import com.googlecode.e2u.Start;
 import com.googlecode.e2u.StartupDetails;
 import com.googlecode.e2u.StartupDetails.Mode;
-import com.googlecode.e2u.preview.stax.BookReader;
+import com.googlecode.e2u.preview.stax.BookReaderResult;
 
 import application.l10n.Messages;
 import javafx.application.Platform;
@@ -213,7 +213,7 @@ public class PreviewController extends BorderPane implements OpenableEditor {
 	 */
 	public void showEmbossDialog() {
 		if (start!=null) {
-			Optional<BookReader.BookReaderResult> reader = start.getMainPage().getBookReaderResult();
+			Optional<BookReaderResult> reader = start.getMainPage().getBookReaderResult();
 			if (reader.isPresent() && reader.get().isValid()) {
 				PEFBook book = reader.get().getBook();
 				if (embossView==null) {

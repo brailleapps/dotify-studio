@@ -7,8 +7,8 @@ import java.net.URISyntaxException;
 import org.daisy.braille.utils.pef.PEFBook;
 
 import com.googlecode.e2u.preview.stax.BookReader;
+import com.googlecode.e2u.preview.stax.BookReaderResult;
 import com.googlecode.e2u.preview.stax.StaxPreviewController;
-import com.googlecode.e2u.preview.stax.BookReader.BookReaderResult;
 
 import shared.Settings;
 
