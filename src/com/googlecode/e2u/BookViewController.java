@@ -12,12 +12,12 @@ import com.googlecode.e2u.preview.stax.StaxPreviewController;
 import shared.Settings;
 
 public class BookViewController {
+	private static final Settings settings = Settings.getSettings();
 	private BookReader bookReader;
 	private AboutBookView aboutBookView;
 	private StaxPreviewController controller;
-	private Settings settings;
-	
-	public BookViewController(File f, Settings settings) {
+
+	public BookViewController(File f) {
 		if (f==null) {
 	    	try {
 	    		bookReader = new BookReader("resource-files/book.pef");
@@ -29,7 +29,6 @@ public class BookViewController {
 		}
     	aboutBookView = null;
     	controller = null;
-    	this.settings = settings;
 	}
 	
 	public URI getBookURI() {
