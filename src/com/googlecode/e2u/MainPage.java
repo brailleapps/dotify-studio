@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.googlecode.ajui.AContainer;
 import com.googlecode.ajui.Context;
-import com.googlecode.ajui.XHTMLTagger;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
 import com.googlecode.e2u.preview.stax.BookReaderResult;
@@ -23,31 +21,18 @@ import shared.BuildInfo;
 
 public class MainPage extends BasePage implements AListener {
 	public final static String ENCODING = "utf-8";
-	private BookViewController bookController;
+	private final BookViewController bookController;
 
 	public MainPage(File f) {
-		buildMenu();
 		bookController = new BookViewController(f);
-
-	}
-
-	public void buildMenu() {
 	}
 
 	public Optional<URI> getBookURI() {
-		if (bookController!=null) {
-			return Optional.of(bookController.getBookURI());
-		} else {
-			return Optional.<URI>empty();
-		}
+		return Optional.of(bookController.getBookURI());
 	}
 
 	public Optional<BookReaderResult> getBookReaderResult() {
-		if (bookController!=null) {
-			return Optional.ofNullable(bookController.getBookReaderResult());
-		} else {
-			return Optional.<BookReaderResult>empty();
-		}
+		return Optional.ofNullable(bookController.getBookReaderResult());
 	}
 
 	private Reader previewReader(String key, Context context) {
@@ -70,14 +55,10 @@ public class MainPage extends BasePage implements AListener {
 			//TODO: this is the same as the default
 			return previewReader(key, context);
 		} else if ("meta".equals(context.getArgs().get("method"))) {
-			return new StringReader(buildHTML(renderView(context, bookController.getAboutBookView()), Messages.getString(L10nKeys.ABOUT_THE_BOOK), true));
+			return new StringReader(buildHTML(bookController.getAboutBookView().getHTML(context), Messages.getString(L10nKeys.ABOUT_THE_BOOK), true));
 		} else {
 			return previewReader(key, context);
 		}
-	}
-
-	private XHTMLTagger renderView(Context context, AContainer subview) {
-		return subview.getHTML(context);
 	}
 
 	@Override
