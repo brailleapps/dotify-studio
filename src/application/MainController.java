@@ -83,6 +83,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+import shared.FeatureSwitch;
 import shared.Settings;
 
 /**

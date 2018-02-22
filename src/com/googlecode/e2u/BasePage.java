@@ -41,29 +41,13 @@ public abstract class BasePage implements Content {
     	//Header
 		if (header) {
 			sb.start("div").attr("id", "view");
-			sb.start("form").attr("action", "close.html").attr("method", "get").start("p")
-				/*
-				.start("span").attr("id", "item-emboss")
-					.start("a").attr("href", "index.html?method=emboss").text(Messages.getString(L10nKeys.EMBOSS_VIEW)).end()
-				.end()*/
+			sb.start("form").attr("action", "#").attr("method", "get").start("p")
 				.start("span").attr("id", "item-preview")
 					.start("a").attr("href", "view.html").text(Messages.getString(L10nKeys.PREVIEW_VIEW)).end()
 				.end()
 				.start("span")
 					.start("a").attr("href", "index.html?method=meta").text(Messages.getString(L10nKeys.MENU_ABOUT_BOOK)).end()
 				.end()
-				/*
-				.start("span")
-					.start("a").attr("href", "index.html?method=find").text(Messages.getString(L10nKeys.MENU_OPEN)).end()
-				.end()*/
-				/*
-				.start("span")
-					.start("a").attr("href", "index.html?method=setup").text(Messages.getString(L10nKeys.MENU_SETUP)).end()
-				.end()*/
-				/*
-				.start("span")
-					.start("a").attr("href", "index.html?method=about").text(Messages.getString(L10nKeys.MENU_ABOUT_SOFTWARE)).end()
-				.end()*/
 				.start("input").attr("id", "connected").attr("type", "submit").attr("value", "").attr("title", "Avsluta").attr("disabled", "disabled").end()
 				.start("input").attr("id", "notConnected").attr("type", "submit").attr("value", "").attr("title", "Avsluta").attr("disabled", "disabled").end()
 			.end().end().end();

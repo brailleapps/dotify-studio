@@ -24,10 +24,7 @@ public interface L10nKeys {
 	public final static String EMBOSSING_FAILED = "Worker.error-transformer";
 	public final static String FILE_EMBOSSED_OK = "Worker.file-embossed-ok";
 	
-	public final static String MENU_SETUP = "Worker.menu-setup"; // not referenced in code
 	public final static String MENU_ABOUT_BOOK = "Worker.menu-about-book";
-	public final static String MENU_OPEN = "Worker.menu-open"; // not referenced in code
-	public final static String MENU_ABOUT_SOFTWARE = "Worker.menu-about-software"; // not referenced in code
 	
 	//element name is appended to "Worker.dc."
 	public final static String DC_CREATOR = "Worker.dc.creator";
@@ -50,11 +47,9 @@ public interface L10nKeys {
 	public final static String VALIDATION_FAILED = "Worker.validation-failed";
 	public final static String EIGHT_DOT_NOT_SUPPORTED = "Worker.8-dot-not-supported"; // not referenced
 
-	public final static String EMBOSS_VIEW = "Worker.emboss-view";
 	public final static String PREVIEW_VIEW = "Worker.preview-view";
 	
 	public final static String XSLT_TOGGLE_VIEW = "xslt.toggle-view-label";
-	public final static String XSLT_RETURN_LABEL = "xslt.return-label";
 	public final static String XSLT_SHOWING_PAGES = "xslt.showing-pages";
 	public final static String XSLT_ABOUT_LABEL = "xslt.about-label";
 	public final static String XSLT_VIEW_SOURCE = "xslt.view-source";
@@ -62,7 +57,6 @@ public interface L10nKeys {
 	public final static String XSLT_SECTION_LABEL = "xslt.section-label";
 	public final static String XSLT_PAGE_LABEL = "xslt.page-label";
 	public final static String XSLT_SHEETS_LABEL = "xslt.sheets-label";
-	public final static String XSLT_VIEWING_LABEL = "xslt.viewing-label";
 	public final static String XSLT_GO_TO_PAGE_LABEL = "xslt.go-to-page-label";
 	public static final String VALIDATION_ISSUES = "validation-issues";
 	

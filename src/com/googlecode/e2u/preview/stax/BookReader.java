@@ -1,12 +1,10 @@
-package com.googlecode.e2u;
+package com.googlecode.e2u.preview.stax;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
@@ -16,7 +14,6 @@ import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.streamline.api.validity.ValidationReport;
 import org.daisy.streamline.api.validity.ValidatorFactoryMaker;
 import org.daisy.streamline.api.validity.ValidatorFactoryMakerService;
-import org.daisy.streamline.api.validity.ValidatorMessage;
 
 public class BookReader {
 	private static final Logger logger = Logger.getLogger(BookReader.class.getCanonicalName());
@@ -25,53 +22,6 @@ public class BookReader {
     private BookReaderResult book = null;
     private org.daisy.streamline.api.validity.Validator pv = null;
 	private long lastUpdated;
-    
-    public static class BookReaderResult {
-    	private final PEFBook book;
-    	private final File bookFile;
-    	private final URI uri;
-    	private final ValidationReport report;
-    	private final boolean validateOK;
-    	private final List<ValidatorMessage> messages;
-    	
-    	private BookReaderResult(PEFBook book, File bookFile, URI uri, ValidationReport report) {
-    		this.book = book;
-    		this.bookFile = bookFile;
-    		this.uri = uri;
-    		this.report = report;
-    		if (report!=null) {
-    			this.validateOK = report.isValid();
-    			this.messages = report.getMessages();
-    		} else {
-    			this.validateOK = false;
-    			this.messages = Collections.emptyList();
-    		}
-    	}
-    	
-    	public PEFBook getBook() {
-    		return book;
-    	}
-    	
-    	public File getBookFile() {
-    		return bookFile;
-    	}
-    	
-    	public URI getURI() {
-    		return uri;
-    	}
-
-    	public boolean isValid() {
-    		return validateOK;
-    	}
-    	
-    	public ValidationReport getValidationReport() {
-    		return report;
-    	}
-    	
-    	public List<ValidatorMessage> getValidationMessages() {
-    		return messages;
-    	}
-    }
     
     public BookReader(final String resource) throws URISyntaxException {
     	this.source = null;

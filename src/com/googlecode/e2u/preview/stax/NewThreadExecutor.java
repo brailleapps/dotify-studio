@@ -1,4 +1,4 @@
-package com.googlecode.e2u;
+package com.googlecode.e2u.preview.stax;
 
 import java.util.concurrent.Executor;
 

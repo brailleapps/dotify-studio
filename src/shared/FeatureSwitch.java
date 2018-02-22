@@ -1,4 +1,4 @@
-package application;
+package shared;
 
 /**
  * Provides a place to put feature switches, so that it is easy to find a list of 

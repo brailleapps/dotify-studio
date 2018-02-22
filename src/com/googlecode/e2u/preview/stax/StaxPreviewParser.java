@@ -428,7 +428,7 @@ class StaxPreviewParser {
 	
 	private void writeCloseForm() throws XMLStreamException {
 		out.writeStartElement(HTML_NS, "form");
-		out.writeAttribute("action", "close.html");
+		out.writeAttribute("action", "#");
 		out.writeAttribute("method", "get");
 		out.writeCharacters("\n");
 		
