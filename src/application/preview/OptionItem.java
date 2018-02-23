@@ -35,6 +35,7 @@ public class OptionItem extends BorderPane {
 	 * Creates a new option item with the supplied parameters.
 	 * @param option the task option
 	 * @param disabled true if the option should be disabled, false otherwise
+	 * @param value an initial value
 	 */
 	public OptionItem(UserOption option, boolean disabled, Object value) {
 		this.disabled = disabled;
