@@ -1,7 +1,6 @@
 package com.googlecode.e2u;
 
 import java.io.File;
-import java.util.Objects;
 import java.util.Optional;
 
 public class StartupDetails {
@@ -11,10 +10,7 @@ public class StartupDetails {
 	private final boolean log;
 	public enum Mode {
 		UNDEFINED,
-		SETUP,
-		EMBOSS,
-		OPEN,
-		VIEW;
+		OPEN;
 	}
 	
 	public static class Builder {
@@ -63,8 +59,6 @@ public class StartupDetails {
 			if (builder.file!=null) {
 				throw new IllegalArgumentException("Illegal combination: " + builder.mode + " / " + builder.file);
 			}
-		} else if (builder.mode!=Mode.SETUP) {
-			Objects.requireNonNull(builder.file);
 		}
 		this.mode = builder.mode;
 		this.file = builder.file;
@@ -80,17 +74,10 @@ public class StartupDetails {
 	public static Optional<StartupDetails> parse(String[] args) {
 		if (args.length==0) {
 			return Optional.of(new StartupDetails.Builder().build());
-		} else if (args.length==1 && args[0].equalsIgnoreCase("-setup")) {
-			return Optional.of(new StartupDetails.Builder().mode(Mode.SETUP).build());
-		} else if (args.length==2 && args[0].equalsIgnoreCase("-emboss")) {
-			return Optional.of(new StartupDetails.Builder().mode(Mode.EMBOSS)
-				.file(new File(args[1])).build());
 		} else if (args.length==2 && args[0].equalsIgnoreCase("-open")) {
 			return Optional.of(new StartupDetails.Builder().mode(Mode.OPEN)
 				.file(new File(args[1]))
 				.build());
-		} else if (args.length==2 && (args[0].equalsIgnoreCase("-view") || args[0].equalsIgnoreCase("-print"))) {
-			return Optional.of(new StartupDetails.Builder().mode(Mode.VIEW).file(new File(args[1])).build());
 		} else {
 			return Optional.empty();
 		}
