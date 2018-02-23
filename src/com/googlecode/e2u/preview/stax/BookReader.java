@@ -7,17 +7,17 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
-import javax.swing.SwingWorker;
-
 import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.streamline.api.validity.ValidationReport;
 import org.daisy.streamline.api.validity.ValidatorFactoryMaker;
 import org.daisy.streamline.api.validity.ValidatorFactoryMakerService;
 
+import javafx.concurrent.Task;
+
 public class BookReader {
 	private static final Logger logger = Logger.getLogger(BookReader.class.getCanonicalName());
 	private final File source;
-	private SwingWorker<BookReaderResult, Void> bookReader;
+	private Task<BookReaderResult> bookReader;
 	private BookReaderResult book = null;
 	private org.daisy.streamline.api.validity.Validator pv = null;
 	private long lastUpdated;
@@ -31,31 +31,28 @@ public class BookReader {
 
 	private void readBook(File f) {
 		lastUpdated = System.currentTimeMillis();
-		bookReader = new SwingWorker<BookReaderResult, Void>() {
-			Date d;
+		bookReader = new Task<BookReaderResult>() {
 			@Override
-			protected BookReaderResult doInBackground() throws Exception {
-				d = new Date();
-				ValidationReport report = null;
-				if (pv != null) {
-					report = pv.validate(f.toURI().toURL());
+			protected BookReaderResult call() throws Exception {
+				Date d = new Date();
+				try {
+					ValidationReport report = null;
+					if (pv != null) {
+						report = pv.validate(f.toURI().toURL());
+					}
+					URI uri = f.toURI();
+					PEFBook p = PEFBook.load(uri);
+					return new BookReaderResult(p, f, uri, report);
+				} finally {
+					logger.info("Book Reader (file): " + (new Date().getTime() - d.getTime()));
 				}
-				URI uri = f.toURI();
-				PEFBook p = PEFBook.load(uri);
-				return new BookReaderResult(p, f, uri, report);
 			}
-
-			@Override
-			protected void done() {
-				logger.info("Book Reader (file): " + (new Date().getTime() - d.getTime()));
-			}
-
 		};
 		new NewThreadExecutor().execute(bookReader);
 	}
 
 	public boolean cancel() {
-		return bookReader.cancel(true);
+		return bookReader.cancel();
 	}
 
 	private synchronized void reload() {
