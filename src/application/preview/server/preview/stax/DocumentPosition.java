@@ -1,4 +1,4 @@
-package com.googlecode.e2u.preview.stax;
+package application.preview.server.preview.stax;
 final class DocumentPosition implements Comparable<DocumentPosition> {
 	private final int line;
 	private final int column;

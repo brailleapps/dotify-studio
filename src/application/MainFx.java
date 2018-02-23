@@ -13,9 +13,8 @@ import java.util.logging.Logger;
 
 import org.daisy.braille.utils.pef.FileTools;
 
-import com.googlecode.e2u.StartupDetails;
-
 import application.l10n.Messages;
+import application.preview.server.StartupDetails;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;

@@ -1,4 +1,4 @@
-package com.googlecode.e2u.preview.stax;
+package application.preview.server.preview.stax;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

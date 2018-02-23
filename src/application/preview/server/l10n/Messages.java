@@ -1,4 +1,4 @@
-package com.googlecode.e2u.l10n;
+package application.preview.server.l10n;
 
 import java.text.MessageFormat;
 import java.util.Locale;
