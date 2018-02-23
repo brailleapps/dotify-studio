@@ -1,4 +1,4 @@
-package com.googlecode.e2u.preview.stax;
+package application.preview.server.preview.stax;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,9 +35,8 @@ import org.daisy.dotify.common.text.SimpleUCharReplacer;
 import org.daisy.streamline.api.validity.ValidationReport;
 import org.daisy.streamline.api.validity.ValidatorMessage;
 
-import com.googlecode.e2u.MainPage;
-import com.googlecode.e2u.l10n.Messages;
-
+import application.preview.server.MainPage;
+import application.preview.server.l10n.Messages;
 import shared.Settings;
 import shared.Settings.Keys;
 

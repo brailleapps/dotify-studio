@@ -1,4 +1,4 @@
-package com.googlecode.e2u;
+package application.preview.server;
 
 import java.io.File;
 import java.util.Objects;

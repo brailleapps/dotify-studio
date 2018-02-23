@@ -1,4 +1,4 @@
-package com.googlecode.e2u;
+package application.preview.server;
 
 import java.util.Objects;
 
@@ -10,7 +10,7 @@ public class Start {
 
 	public String start(StartupDetails args) throws Exception  {
 		Objects.requireNonNull(args);
-		BrowserUI.Builder buildUi = new BrowserUI.Builder("com/googlecode/e2u/resource-files");
+		BrowserUI.Builder buildUi = new BrowserUI.Builder("application/preview/server/resource-files");
 		buildUi.timeout(5000);
 		if (!args.shouldLog()) { 
 			buildUi.logStream(null);

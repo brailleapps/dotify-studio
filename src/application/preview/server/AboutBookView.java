@@ -1,4 +1,4 @@
-package com.googlecode.e2u;
+package application.preview.server;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -14,7 +14,8 @@ import com.googlecode.ajui.AHeading;
 import com.googlecode.ajui.ALabel;
 import com.googlecode.ajui.ALink;
 import com.googlecode.ajui.AParagraph;
-import com.googlecode.e2u.l10n.Messages;
+
+import application.preview.server.l10n.Messages;
 
 public class AboutBookView extends AContainer {
 

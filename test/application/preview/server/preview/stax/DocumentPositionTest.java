@@ -1,4 +1,4 @@
-package com.googlecode.e2u.preview.stax;
+package application.preview.server.preview.stax;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+
+import application.preview.server.preview.stax.DocumentPosition;
 
 @SuppressWarnings("javadoc")
 public class DocumentPositionTest {

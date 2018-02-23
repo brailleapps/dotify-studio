@@ -1,4 +1,4 @@
-package com.googlecode.e2u;
+package application.preview.server;
 
 import java.io.File;
 import java.net.URI;
@@ -6,10 +6,9 @@ import java.util.Objects;
 
 import org.daisy.braille.utils.pef.PEFBook;
 
-import com.googlecode.e2u.preview.stax.BookReader;
-import com.googlecode.e2u.preview.stax.BookReaderResult;
-import com.googlecode.e2u.preview.stax.StaxPreviewController;
-
+import application.preview.server.preview.stax.BookReader;
+import application.preview.server.preview.stax.BookReaderResult;
+import application.preview.server.preview.stax.StaxPreviewController;
 import shared.Settings;
 
 public class BookViewController {

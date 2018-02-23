@@ -31,13 +31,12 @@ import org.daisy.streamline.api.tasks.TaskGroupFactoryMaker;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.googlecode.e2u.StartupDetails;
-
 import application.about.AboutView;
 import application.imports.ImportBrailleView;
 import application.l10n.Messages;
 import application.prefs.PreferencesView;
 import application.preview.EditorWrapperController;
+import application.preview.server.StartupDetails;
 import application.search.SearchController;
 import application.template.TemplateView;
 import javafx.application.Platform;

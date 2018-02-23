@@ -1,4 +1,4 @@
-package com.googlecode.e2u;
+package application.preview.server;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,9 +16,9 @@ import java.util.Optional;
 import com.googlecode.ajui.Content;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
-import com.googlecode.e2u.l10n.Messages;
-import com.googlecode.e2u.preview.stax.BookReaderResult;
 
+import application.preview.server.l10n.Messages;
+import application.preview.server.preview.stax.BookReaderResult;
 import shared.BuildInfo;
 
 public class MainPage implements Content {
