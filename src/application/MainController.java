@@ -9,10 +9,8 @@ import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,7 +32,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.googlecode.e2u.StartupDetails;
-import com.googlecode.e2u.StartupDetails.Mode;
 
 import application.about.AboutView;
 import application.imports.ImportBrailleView;
@@ -324,13 +321,7 @@ public class MainController {
 	}
 	
 	void openArgs(StartupDetails args) {
-        if (args.getMode()!=Mode.UNDEFINED) {
-        	String title = null;
-        	if (args.getMode()==Mode.OPEN) {
-        		title = args.getFile().getName();
-        	}
-        	addTab(title, args);
-        }
+		addTab(args.getFile().getName(), args);
 	}
 	
 	private Optional<Editor> getSelectedPreview() {

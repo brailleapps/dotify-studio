@@ -32,7 +32,6 @@ import org.xml.sax.SAXException;
 
 import com.googlecode.e2u.Start;
 import com.googlecode.e2u.StartupDetails;
-import com.googlecode.e2u.StartupDetails.Mode;
 import com.googlecode.e2u.preview.stax.BookReaderResult;
 
 import application.l10n.Messages;
@@ -150,7 +149,7 @@ public class PreviewController extends BorderPane implements OpenableEditor {
 			protected String call() throws Exception {
 		        try {
 		        	start = new Start();
-		        	return start.start(new StartupDetails.Builder().mode(Mode.OPEN).file(file).log(false).display(false).build());
+		        	return start.start(new StartupDetails.Builder(file).log(false).display(false).build());
 				} catch (Exception e1) {
 					Logger.getLogger(this.getClass().getCanonicalName()).log(Level.SEVERE, "Failed to load server.", e1);;
 				}  
