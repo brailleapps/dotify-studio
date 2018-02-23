@@ -16,7 +16,6 @@ import java.util.Optional;
 import com.googlecode.ajui.Content;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
-import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
 import com.googlecode.e2u.preview.stax.BookReaderResult;
 
@@ -58,7 +57,7 @@ public class MainPage implements Content {
 			//TODO: this is the same as the default
 			return previewReader(key, context);
 		} else if ("meta".equals(context.getArgs().get("method"))) {
-			return new StringReader(buildHTML(bookController.getAboutBookView().getHTML(context), Messages.getString(L10nKeys.ABOUT_THE_BOOK), true));
+			return new StringReader(buildHTML(bookController.getAboutBookView().getHTML(context), Messages.ABOUT_THE_BOOK.localize(), true));
 		} else {
 			return previewReader(key, context);
 		}
@@ -122,10 +121,10 @@ public class MainPage implements Content {
 			sb.start("div").attr("id", "view");
 			sb.start("form").attr("action", "#").attr("method", "get").start("p")
 			.start("span").attr("id", "item-preview")
-			.start("a").attr("href", "view.html").text(Messages.getString(L10nKeys.PREVIEW_VIEW)).end()
+			.start("a").attr("href", "view.html").text(Messages.PREVIEW_VIEW.localize()).end()
 			.end()
 			.start("span")
-			.start("a").attr("href", "index.html?method=meta").text(Messages.getString(L10nKeys.MENU_ABOUT_BOOK)).end()
+			.start("a").attr("href", "index.html?method=meta").text(Messages.MENU_ABOUT_BOOK.localize()).end()
 			.end()
 			.start("input").attr("id", "connected").attr("type", "submit").attr("value", "").attr("title", "Avsluta").attr("disabled", "disabled").end()
 			.start("input").attr("id", "notConnected").attr("type", "submit").attr("value", "").attr("title", "Avsluta").attr("disabled", "disabled").end()

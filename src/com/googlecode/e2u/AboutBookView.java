@@ -14,7 +14,6 @@ import com.googlecode.ajui.AHeading;
 import com.googlecode.ajui.ALabel;
 import com.googlecode.ajui.ALink;
 import com.googlecode.ajui.AParagraph;
-import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
 
 public class AboutBookView extends AContainer {
@@ -57,12 +56,12 @@ public class AboutBookView extends AContainer {
 		ADefinitionList dl = new ADefinitionList();
 		{
 			ADefinitionTerm dt = new ADefinitionTerm();
-			dt.add(new ALabel(Messages.getString(L10nKeys.SIZE)));
+			dt.add(new ALabel(Messages.SIZE.localize()));
 			dl.add(dt);
 		}
 		{	
 			ADefinitionDescription dd = new ADefinitionDescription();
-			dd.add(new ALabel(MessageFormat.format(Messages.getString(L10nKeys.SIZE_PAGES), book.getPages())));
+			dd.add(new ALabel(MessageFormat.format(Messages.SIZE_PAGES.localize(), book.getPages())));
 			dl.add(dd);
 		}
 		{
@@ -80,28 +79,28 @@ public class AboutBookView extends AContainer {
 	    	}
 			{	
 				ADefinitionDescription dd = new ADefinitionDescription();
-				dd.add(new ALabel(MessageFormat.format(Messages.getString(L10nKeys.SIZE_SHEETS), book.getSheets(), s)));
+				dd.add(new ALabel(MessageFormat.format(Messages.SIZE_SHEETS.localize(), book.getSheets(), s)));
 				dl.add(dd);
 			}
 		}
 		{	
 			ADefinitionDescription dd = new ADefinitionDescription();
-			dd.add(new ALabel(MessageFormat.format(Messages.getString(L10nKeys.SIZE_VOLUMES), book.getVolumes())));
+			dd.add(new ALabel(MessageFormat.format(Messages.SIZE_VOLUMES.localize(), book.getVolumes())));
 			dl.add(dd);
 		}
 		{
 			ADefinitionTerm dt = new ADefinitionTerm();
-			dt.add(new ALabel(Messages.getString(L10nKeys.DIMENSIONS)));
+			dt.add(new ALabel(Messages.DIMENSIONS.localize()));
 			dl.add(dt);
 		}
 		{	
 			ADefinitionDescription dd = new ADefinitionDescription();
-			dd.add(new ALabel(MessageFormat.format(Messages.getString(L10nKeys.FILE_DIMENSIONS), book.getMaxWidth(), book.getMaxHeight())));
+			dd.add(new ALabel(MessageFormat.format(Messages.FILE_DIMENSIONS.localize(), book.getMaxWidth(), book.getMaxHeight())));
 			dl.add(dd);
 		}
 		{
 			ADefinitionTerm dt = new ADefinitionTerm();
-			dt.add(new ALabel(Messages.getString(L10nKeys.DUPLEX)));
+			dt.add(new ALabel(Messages.DUPLEX.localize()));
 			dl.add(dt);
 		}
 		{	
@@ -109,23 +108,23 @@ public class AboutBookView extends AContainer {
 			float ratio = book.getPages()/(float)book.getPageTags();
 			String info;
 			if (ratio<=1) {
-				info = Messages.getString(L10nKeys.DUPLEX_YES);
+				info = Messages.DUPLEX_YES.localize();
 			} else if (ratio>=2) {
-				info = Messages.getString(L10nKeys.DUPLEX_NO);
+				info = Messages.DUPLEX_NO.localize();
 			} else {
-				info = Messages.getString(L10nKeys.DUPLEX_MIXED);
+				info = Messages.DUPLEX_MIXED.localize();
 			}
 			dd.add(new ALabel(info));
 			dl.add(dd);
 		}
 		{
 			ADefinitionTerm dt = new ADefinitionTerm();
-			dt.add(new ALabel(Messages.getString(L10nKeys.EIGHT_DOT)));
+			dt.add(new ALabel(Messages.EIGHT_DOT.localize()));
 			dl.add(dt);
 		}
 		{	
 			ADefinitionDescription dd = new ADefinitionDescription();
-			dd.add(new ALabel((book.containsEightDot() ? Messages.getString(L10nKeys.YES) : Messages.getString(L10nKeys.NO))));
+			dd.add(new ALabel((book.containsEightDot() ? Messages.YES.localize() : Messages.NO.localize())));
 			dl.add(dd);
 		}
 		add(dl);
@@ -149,7 +148,7 @@ public class AboutBookView extends AContainer {
     	AParagraph p = new AParagraph();
     	ALink a = new ALink("#");
     	a.addAttribute("onclick", "window.open('book.xml','source'); return false;");
-    	a.add(new ALabel(Messages.getString(L10nKeys.XSLT_VIEW_SOURCE)));
+    	a.add(new ALabel(Messages.XSLT_VIEW_SOURCE.localize()));
     	p.add(a);
     	add(p);
 	}
