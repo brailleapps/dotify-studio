@@ -20,18 +20,9 @@ public class Start {
 		if (args.getMode()==Mode.UNDEFINED) {
 			page = "";
 			content = new MainPage(null);
-		} else if (args.getMode()==Mode.SETUP) {
-			page = "index.html?method=setup";
-			content = new MainPage(args.getFile());
-		} else if (args.getMode()==Mode.EMBOSS) {
-			content = new MainPage(args.getFile());
-			page = "index.html?method=do";
 		} else if (args.getMode()==Mode.OPEN) {
 			content = new MainPage(args.getFile());
 			page = "view.html";
-		} else if (args.getMode()==Mode.VIEW) {
-			content = new MainPage(args.getFile());
-			page = "";
 		} else {
 			throw new RuntimeException("Coding error.");
 		}
