@@ -76,7 +76,10 @@
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <Menu mnemonicParsing="false" text="%menu-item-import">
                     <items>
-                      <MenuItem mnemonicParsing="false" onAction="#showImportDialog" text="%menu-item-import-document" />
+                      <MenuItem mnemonicParsing="false" onAction="#showImportDialog" text="%menu-item-import-document">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
+                           </accelerator></MenuItem>
                         <MenuItem mnemonicParsing="false" onAction="#showImportBrailleDialog" text="%menu-item-import-braille-document" />
                     </items>
                   </Menu>
