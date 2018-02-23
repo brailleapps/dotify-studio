@@ -94,7 +94,7 @@ public class MainFx extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
-		if (!args.isPresent()) {
+		if (!args.isPresent() && getParameters().getRaw().size()>0) {
 			Platform.runLater(()->{
 				Alert alert = new Alert(AlertType.ERROR, Messages.ERROR_INVALID_ARGUMENTS.localize(getParameters().getRaw()), ButtonType.OK);
 				alert.showAndWait();
