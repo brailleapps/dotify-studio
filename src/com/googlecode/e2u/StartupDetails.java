@@ -2,6 +2,7 @@ package com.googlecode.e2u;
 
 import java.io.File;
 import java.util.Objects;
+import java.util.Optional;
 
 public class StartupDetails {
 	private final Mode mode;
@@ -71,38 +72,27 @@ public class StartupDetails {
 		this.log = builder.log;
 	}
 
-	public static StartupDetails parse(String[] args) {
+	/**
+	 * Parses the supplied string array for startup commands.
+	 * @param args the arguments
+	 * @return the startup details
+	 */
+	public static Optional<StartupDetails> parse(String[] args) {
 		if (args.length==0) {
-			return new StartupDetails.Builder().build();
-			/*
-			page = "";
-			content = new MainPage(null);*/
+			return Optional.of(new StartupDetails.Builder().build());
 		} else if (args.length==1 && args[0].equalsIgnoreCase("-setup")) {
-			return new StartupDetails.Builder().mode(Mode.SETUP).build();
-			/*
-			page = "index.html?method=setup";
-			content = new MainPage(null);
-			*/
+			return Optional.of(new StartupDetails.Builder().mode(Mode.SETUP).build());
 		} else if (args.length==2 && args[0].equalsIgnoreCase("-emboss")) {
-			return new StartupDetails.Builder().mode(Mode.EMBOSS)
-				.file(new File(args[1])).build();
-			/*
-			content = new MainPage(new File(args[1]));
-			page = "index.html?method=do";*/
+			return Optional.of(new StartupDetails.Builder().mode(Mode.EMBOSS)
+				.file(new File(args[1])).build());
 		} else if (args.length==2 && args[0].equalsIgnoreCase("-open")) {
-			return new StartupDetails.Builder().mode(Mode.OPEN)
+			return Optional.of(new StartupDetails.Builder().mode(Mode.OPEN)
 				.file(new File(args[1]))
-				.build();
-			/*
-			content = new MainPage(new File(args[1]));
-			page = "view.html";*/
+				.build());
 		} else if (args.length==2 && (args[0].equalsIgnoreCase("-view") || args[0].equalsIgnoreCase("-print"))) {
-			return new StartupDetails.Builder().mode(Mode.VIEW).file(new File(args[1])).build();
-			/*
-			content = new MainPage(new File(args[1]));
-			page = "";*/
+			return Optional.of(new StartupDetails.Builder().mode(Mode.VIEW).file(new File(args[1])).build());
 		} else {
-			return null;
+			return Optional.empty();
 		}
 	}
 	

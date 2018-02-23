@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,11 +17,15 @@ import com.googlecode.e2u.StartupDetails;
 
 import application.l10n.Messages;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -83,11 +88,19 @@ public class MainFx extends Application {
 		Scene scene = new Scene(root);
 
 		MainController controller = fxmlLoader.<MainController>getController();
-		controller.openArgs(StartupDetails.parse(getParameters().getRaw().toArray(new String[]{})));
+		Optional<StartupDetails> args = StartupDetails.parse(getParameters().getRaw().toArray(new String[]{}));
+		args.ifPresent(a->controller.openArgs(a));
 
 		primaryStage.setScene(scene);
 		primaryStage.show();
-		
+
+		if (!args.isPresent()) {
+			Platform.runLater(()->{
+				Alert alert = new Alert(AlertType.ERROR, Messages.ERROR_INVALID_ARGUMENTS.localize(getParameters().getRaw()), ButtonType.OK);
+				alert.showAndWait();
+			});
+		}
+
 		scene.getWindow().setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent ev) {
 				if (!controller.confirmShutdown()) {

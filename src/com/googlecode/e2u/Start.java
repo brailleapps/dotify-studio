@@ -1,5 +1,7 @@
 package com.googlecode.e2u;
 
+import java.util.Objects;
+
 import com.googlecode.ajui.BrowserUI;
 import com.googlecode.e2u.StartupDetails.Mode;
 
@@ -8,16 +10,7 @@ public class Start {
 	private BrowserUI ui;
 
 	public String start(StartupDetails args) throws Exception  {
-		if (args==null) {
-			System.out.println("Supplied arguments do not match any of the following:");
-			System.out.println("\t-setup");
-			System.out.println("\t-open path-to-file");
-			System.out.println("\t-print path-to-file");
-			//System.out.println("\t-emboss path-to-file");
-			//System.out.println("\t-view path-to-file");
-			content = new MainPage(null);
-			System.exit(-1);			
-		}
+		Objects.requireNonNull(args);
 		BrowserUI.Builder buildUi = new BrowserUI.Builder("com/googlecode/e2u/resource-files");
 		buildUi.timeout(5000);
 		if (!args.shouldLog()) { 
