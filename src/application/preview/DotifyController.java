@@ -67,10 +67,11 @@ public class DotifyController extends BorderPane {
 
 	/**
 	 * Creates a new options controller.
-	 * @param selected
-	 * @param out
-	 * @param tag
-	 * @param options
+	 * @param selected the input file
+	 * @param out output file
+	 * @param tag target locale
+	 * @param outputFormat output format
+	 * @param options converter options
 	 * @param onSuccess 	a function to call when conversion has completed successfully, the returned consumer 
 	 * 						will be called if the result is updated.
 	 */
