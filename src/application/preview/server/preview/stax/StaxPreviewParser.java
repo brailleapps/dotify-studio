@@ -35,8 +35,8 @@ import org.daisy.dotify.common.text.SimpleUCharReplacer;
 import org.daisy.streamline.api.validity.ValidationReport;
 import org.daisy.streamline.api.validity.ValidatorMessage;
 
+import application.l10n.Messages;
 import application.preview.server.MainPage;
-import application.preview.server.l10n.Messages;
 import shared.Settings;
 import shared.Settings.Keys;
 

@@ -155,7 +155,36 @@ public enum Messages {
 	OPTION_VALUE_PAGE_ALIGNMENT_INNER("option-value-page-alignment-inner"),
 	OPTION_VALUE_PAGE_ALIGNMENT_OUTER("option-value-page-alignment-outer"),
 	OPTION_VALUE_REGULAR_PRINT_MODE("option-value-regular-print-mode"),
-	OPTION_VALUE_MAGAZINE_PRINT_MODE("option-value-magazine-print-mode")
+	OPTION_VALUE_MAGAZINE_PRINT_MODE("option-value-magazine-print-mode"),
+	
+	ABOUT_THE_BOOK("Worker.heading-about-book"),
+	UNKNOWN_TITLE("Worker.unknown-title"),
+	UNKNOWN_AUTHOR("Worker.unknown-author"),
+	SIZE("Worker.size"),
+	SIZE_PAGES("Worker.size-format"),
+	SIZE_SHEETS("Worker.size-sheets"),
+	SIZE_VOLUMES("Worker.size-volumes"),
+	DIMENSIONS("Worker.dimensions"),
+	EIGHT_DOT("Worker.eight-dot"),
+	DUPLEX("Worker.duplex"),
+	DUPLEX_NO("Worker.duplex-no"),
+	DUPLEX_YES("Worker.duplex-yes"),
+	DUPLEX_MIXED("Worker.duplex-mixed"),
+	YES("Worker.yes"),
+	NO("Worker.no"),
+	FILE_DIMENSIONS("Worker.file-dimensions"),
+	MENU_ABOUT_BOOK("Worker.menu-about-book"),
+	PREVIEW_VIEW("Worker.preview-view"),
+	XSLT_TOGGLE_VIEW("xslt.toggle-view-label"),
+	XSLT_SHOWING_PAGES("xslt.showing-pages"),
+	XSLT_ABOUT_LABEL("xslt.about-label"),
+	XSLT_VIEW_SOURCE("xslt.view-source"),
+	XSLT_VOLUME_LABEL("xslt.volume-label"),
+	XSLT_SECTION_LABEL("xslt.section-label"),
+	XSLT_PAGE_LABEL("xslt.page-label"),
+	XSLT_SHEETS_LABEL("xslt.sheets-label"),
+	XSLT_GO_TO_PAGE_LABEL("xslt.go-to-page-label"),
+	VALIDATION_ISSUES("validation-issues")
 	;
 
 	private static final String BUNDLE_NAME = Messages.class.getPackage().getName() + ".messages"; //$NON-NLS-1$
@@ -174,18 +203,22 @@ public enum Messages {
 		return RESOURCE_BUNDLE;
 	}
 
+	public static String getString(String key) {
+		try {
+			return RESOURCE_BUNDLE.getString(key);
+		} catch (MissingResourceException e) {
+			return '!' + key + '!';
+		}
+	}
+
 	/**
 	 * Localizes the message without any variables.
 	 * @return returns the localized message
 	 */
 	public String localize() {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}		
+		return getString(key);
 	}
-	
+
 	/**
 	 * Localizes the message with the specified variables.
 	 * @param variables the variables to insert into the localized message

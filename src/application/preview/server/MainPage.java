@@ -17,7 +17,7 @@ import com.googlecode.ajui.Content;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
 
-import application.preview.server.l10n.Messages;
+import application.l10n.Messages;
 import application.preview.server.preview.stax.BookReaderResult;
 import shared.BuildInfo;
 

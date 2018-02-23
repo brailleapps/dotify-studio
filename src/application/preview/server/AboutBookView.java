@@ -15,7 +15,7 @@ import com.googlecode.ajui.ALabel;
 import com.googlecode.ajui.ALink;
 import com.googlecode.ajui.AParagraph;
 
-import application.preview.server.l10n.Messages;
+import application.l10n.Messages;
 
 public class AboutBookView extends AContainer {
 
