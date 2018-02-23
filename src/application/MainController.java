@@ -320,7 +320,7 @@ public class MainController {
 	}
 	
 	void openArgs(StartupDetails args) {
-		addTab(args.getFile().getName(), args);
+		Platform.runLater(()->addTab(args.getFile().getName(), args));
 	}
 	
 	private Optional<Editor> getSelectedPreview() {

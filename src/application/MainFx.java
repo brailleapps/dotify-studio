@@ -86,12 +86,12 @@ public class MainFx extends Application {
 		Parent root = fxmlLoader.load();
 		Scene scene = new Scene(root);
 
+		primaryStage.setScene(scene);
+		primaryStage.show();
+		
 		MainController controller = fxmlLoader.<MainController>getController();
 		Optional<StartupDetails> args = StartupDetails.parse(getParameters().getRaw().toArray(new String[]{}));
 		args.ifPresent(a->controller.openArgs(a));
-
-		primaryStage.setScene(scene);
-		primaryStage.show();
 
 		if (!args.isPresent() && getParameters().getRaw().size()>0) {
 			Platform.runLater(()->{
