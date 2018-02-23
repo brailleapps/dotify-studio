@@ -10,16 +10,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
+import com.googlecode.ajui.Content;
 import com.googlecode.ajui.Context;
+import com.googlecode.ajui.XHTMLTagger;
 import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
 import com.googlecode.e2u.preview.stax.BookReaderResult;
 
 import shared.BuildInfo;
 
-public class MainPage extends BasePage implements AListener {
+public class MainPage implements Content {
 	public final static String ENCODING = "utf-8";
 	private final BookViewController bookController;
 
@@ -67,24 +70,18 @@ public class MainPage extends BasePage implements AListener {
 	}
 
 	@Override
-	public synchronized void changeHappened(Object o) {
-	}
-
-	@Override
 	public String toString() {
 		return BuildInfo.NAME + " " + BuildInfo.VERSION + ", " + BuildInfo.BUILD;
 	}
 
-	@Override
-	protected Map<String, String> getBodyAttributes() {
+	private Map<String, String> getBodyAttributes() {
 		HashMap<String, String> bodyAtts = new HashMap<>();
 		bodyAtts.put("onload", "get('ping.xml?updates=true'+getUpdateString())");
 		bodyAtts.put("class", "ui");
 		return bodyAtts;
 	}
 
-	@Override
-	protected List<String> getStylePaths() {
+	private List<String> getStylePaths() {
 		List<String> styles = new ArrayList<>();
 		styles.add("styles/default/base.css");
 		styles.add("styles/default/theme.css");
@@ -93,11 +90,62 @@ public class MainPage extends BasePage implements AListener {
 		return styles;
 	}
 
-	@Override
-	protected List<String> getScriptPaths() {
+	private List<String> getScriptPaths() {
 		List<String> scripts = new ArrayList<>();
 		scripts.add("script/index.js");
 		return scripts;
 	}
+	
+	private String buildHTML(XHTMLTagger content, String title, boolean footer) {
+		return buildHTML(content, title, footer, true);
+	}
 
+	private String buildHTML(XHTMLTagger content, String title, boolean footer, boolean header) {
+		XHTMLTagger sb = new XHTMLTagger();
+		sb.start("html").attr("xmlns", "http://www.w3.org/1999/xhtml")
+		.start("head")
+		.start("meta").attr("http-equiv", "content-type").attr("content", "text/html; charset=UTF-8").end()
+		.start("title").text(title).end();
+		for (String style : getStylePaths()) {
+			sb.start("link").attr("rel", "stylesheet").attr("type", "text/css").attr("href", style).end();
+		}
+		for (String script : getScriptPaths()) {
+			sb.start("script").attr("src", script).end();
+		}
+		sb.end();
+		sb.start("body");
+		for (Entry<String, String> entry : getBodyAttributes().entrySet()) {
+			sb.attr(entry.getKey(), entry.getValue());
+		}
+		//Header
+		if (header) {
+			sb.start("div").attr("id", "view");
+			sb.start("form").attr("action", "#").attr("method", "get").start("p")
+			.start("span").attr("id", "item-preview")
+			.start("a").attr("href", "view.html").text(Messages.getString(L10nKeys.PREVIEW_VIEW)).end()
+			.end()
+			.start("span")
+			.start("a").attr("href", "index.html?method=meta").text(Messages.getString(L10nKeys.MENU_ABOUT_BOOK)).end()
+			.end()
+			.start("input").attr("id", "connected").attr("type", "submit").attr("value", "").attr("title", "Avsluta").attr("disabled", "disabled").end()
+			.start("input").attr("id", "notConnected").attr("type", "submit").attr("value", "").attr("title", "Avsluta").attr("disabled", "disabled").end()
+			.end().end().end();
+			sb.start("div").attr("id", "top-nav").start("p").end().end();
+		}
+		sb.start("div").attr("id", "main").start("div").attr("id", "content");
+		if (title!=null && !"".equals(title)) {
+			sb.tag("h1", title);
+		}
+		if (content!=null) {
+			sb.insert(content);
+		}
+		sb.end().end().start("div").attr("id", "bottom-bar").end();
+		//Footer
+		sb.insert(
+				new XHTMLTagger()
+				);
+		sb.end();
+		sb.end();
+		return sb.getResult();
+	}
 }

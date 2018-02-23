@@ -48,7 +48,7 @@ public class BookReader {
 				}
 			}
 		};
-		new NewThreadExecutor().execute(bookReader);
+		new Thread(bookReader).start();
 	}
 
 	public boolean cancel() {
