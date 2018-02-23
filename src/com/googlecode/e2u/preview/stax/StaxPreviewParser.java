@@ -36,7 +36,6 @@ import org.daisy.streamline.api.validity.ValidationReport;
 import org.daisy.streamline.api.validity.ValidatorMessage;
 
 import com.googlecode.e2u.MainPage;
-import com.googlecode.e2u.l10n.L10nKeys;
 import com.googlecode.e2u.l10n.Messages;
 
 import shared.Settings;
@@ -419,7 +418,7 @@ class StaxPreviewParser {
 		out.writeCharacters("\n");
 		out.writeStartElement(HTML_NS, "p");
 		out.writeAttribute("class", "volume-header");
-		out.writeCharacters(Messages.getString(L10nKeys.XSLT_VOLUME_LABEL) + " " + volNumber + " (" + book.getSheets(volNumber) + " " + Messages.getString(L10nKeys.XSLT_SHEETS_LABEL) + ")");
+		out.writeCharacters(Messages.XSLT_VOLUME_LABEL.localize() + " " + volNumber + " (" + book.getSheets(volNumber) + " " + Messages.XSLT_SHEETS_LABEL.localize() + ")");
 		
 		out.writeEndElement();
 		out.writeCharacters("\n");
@@ -437,14 +436,14 @@ class StaxPreviewParser {
 		out.writeStartElement(HTML_NS, "span");
 		out.writeStartElement(HTML_NS, "a");
 		out.writeAttribute("href", "view.html");
-		out.writeCharacters(Messages.getString(L10nKeys.PREVIEW_VIEW));
+		out.writeCharacters(Messages.PREVIEW_VIEW.localize());
 		out.writeEndElement();
 		out.writeEndElement();
 
 		out.writeStartElement(HTML_NS, "span");
 		out.writeStartElement(HTML_NS, "a");
 		out.writeAttribute("href", "index.html?method=meta");
-		out.writeCharacters(Messages.getString(L10nKeys.XSLT_ABOUT_LABEL));
+		out.writeCharacters(Messages.XSLT_ABOUT_LABEL.localize());
 		out.writeEndElement();
 		out.writeEndElement();
 		
@@ -485,7 +484,7 @@ class StaxPreviewParser {
 		out.writeAttribute("href", "#");
 		out.writeAttribute("onclick", "toggleViews();return false;");
 		out.writeAttribute("accesskey", "V"); //TODO: is this correct?
-		out.writeCharacters(Messages.getString(L10nKeys.XSLT_TOGGLE_VIEW));
+		out.writeCharacters(Messages.XSLT_TOGGLE_VIEW.localize());
 		out.writeEndElement();
 		
 		out.writeEndElement();
@@ -500,21 +499,21 @@ class StaxPreviewParser {
 			out.writeCharacters("\n");
 			out.writeStartElement(HTML_NS, "option");
 			out.writeAttribute("value", "view.html?book.xml&volume="+(i));
-			out.writeAttribute("title", "("+book.getSheets(i) + " " + Messages.getString(L10nKeys.XSLT_SHEETS_LABEL) + ")");
+			out.writeAttribute("title", "("+book.getSheets(i) + " " + Messages.XSLT_SHEETS_LABEL.localize() + ")");
 			if (i==volNumber) {
 				out.writeAttribute("selected", "selected");
 			}
-			out.writeCharacters(Messages.getString(L10nKeys.XSLT_VOLUME_LABEL) + " " + i);
+			out.writeCharacters(Messages.XSLT_VOLUME_LABEL.localize() + " " + i);
 			out.writeEndElement();
 			for (int j=1; j<=book.getSectionsInVolume(i); j++) {
 				out.writeCharacters("\n");
 				out.writeStartElement(HTML_NS, "option");
 				out.writeAttribute("value", "view.html?book.xml&volume="+(i)+"#"+toSectionId(i, j));
-				out.writeAttribute("title", "("+book.getSheets(i, j) + " " + Messages.getString(L10nKeys.XSLT_SHEETS_LABEL) + ")");
+				out.writeAttribute("title", "("+book.getSheets(i, j) + " " + Messages.XSLT_SHEETS_LABEL.localize() + ")");
 				out.writeEntityRef("nbsp");
 				out.writeEntityRef("nbsp");
 				out.writeEntityRef("nbsp");
-				out.writeCharacters(Messages.getString(L10nKeys.XSLT_SECTION_LABEL) + " " + j);
+				out.writeCharacters(Messages.XSLT_SECTION_LABEL.localize() + " " + j);
 				out.writeEndElement();
 			}
 		}
@@ -523,7 +522,7 @@ class StaxPreviewParser {
 		out.writeEndElement();
 		
 		out.writeStartElement(HTML_NS, "span");
-		out.writeCharacters(Messages.getString(L10nKeys.XSLT_GO_TO_PAGE_LABEL));
+		out.writeCharacters(Messages.XSLT_GO_TO_PAGE_LABEL.localize());
 		out.writeStartElement(HTML_NS, "input");
 		out.writeAttribute("id", "gotoPage");
 		out.writeAttribute("type", "text");
@@ -541,7 +540,7 @@ class StaxPreviewParser {
 			out.writeAttribute("id", "warning-image");
 			out.writeAttribute("src", "images/warning.png");
 			out.writeEndElement();
-			out.writeCharacters(Messages.getString(L10nKeys.VALIDATION_ISSUES));
+			out.writeCharacters(Messages.VALIDATION_ISSUES.localize());
 			out.writeEndElement();
 		}
 		
@@ -602,7 +601,7 @@ class StaxPreviewParser {
 			break;
 		}
 		if (!hasTitle) {
-			out.writeCharacters(Messages.getString(L10nKeys.UNKNOWN_TITLE));
+			out.writeCharacters(Messages.UNKNOWN_TITLE.localize());
 		}
 		out.writeEndElement();
 		out.writeStartElement(HTML_NS, "br");
@@ -621,7 +620,7 @@ class StaxPreviewParser {
 			}
 		}
 		if (!hasAuthor) {
-			out.writeCharacters(Messages.getString(L10nKeys.UNKNOWN_AUTHOR));
+			out.writeCharacters(Messages.UNKNOWN_AUTHOR.localize());
 		}
 		out.writeEndElement();
 		out.writeCharacters("");
@@ -636,7 +635,7 @@ class StaxPreviewParser {
 		}
 		
 		out.writeStartElement(HTML_NS, "p");
-		out.writeCharacters(Messages.getString(L10nKeys.XSLT_SHOWING_PAGES) + ": " + 
+		out.writeCharacters(Messages.XSLT_SHOWING_PAGES.localize() + ": " + 
 							book.getFirstPage(volNumber) + "-" + book.getLastPage(volNumber));
 
 		out.writeEndElement();
@@ -753,9 +752,9 @@ class StaxPreviewParser {
 		out.writeCharacters("\n");
 		out.writeStartElement(HTML_NS, "p");
 		out.writeAttribute("class", "section-header");
-		out.writeCharacters(Messages.getString(L10nKeys.XSLT_SECTION_LABEL) + " " + sectionNumber 
+		out.writeCharacters(Messages.XSLT_SECTION_LABEL.localize() + " " + sectionNumber 
 				+ " (" + book.getSheets(volumeNumber, sectionNumber) 
-				+ " " + Messages.getString(L10nKeys.XSLT_SHEETS_LABEL) + ")");
+				+ " " + Messages.XSLT_SHEETS_LABEL.localize() + ")");
 		out.writeEndElement();
 		out.writeCharacters("\n");
 	}
@@ -774,13 +773,13 @@ class StaxPreviewParser {
 		out.writeStartElement(HTML_NS, "p");
 		out.writeAttribute("class", "page-header");
 		out.writeAttribute("id", "pagenum"+pageNumber);
-		out.writeCharacters(Messages.getString(L10nKeys.XSLT_VOLUME_LABEL) + 
+		out.writeCharacters(Messages.XSLT_VOLUME_LABEL.localize() + 
 							" " + volNumber + 
 							", " +
-							Messages.getString(L10nKeys.XSLT_SECTION_LABEL) +
+							Messages.XSLT_SECTION_LABEL.localize() +
 							" " + sectionNumber + 
 							" | " + 
-							Messages.getString(L10nKeys.XSLT_PAGE_LABEL) + 
+							Messages.XSLT_PAGE_LABEL.localize() + 
 							" " + pageNumber);
 		out.writeEndElement();
 		out.writeCharacters("\n");
