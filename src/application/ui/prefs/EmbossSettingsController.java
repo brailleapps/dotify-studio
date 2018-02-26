@@ -106,7 +106,7 @@ public class EmbossSettingsController extends BorderPane {
 		Task<Configuration> readConfig = new Task<Configuration>() {
 			@Override
 			protected Configuration call() throws Exception {
-				return Configuration.getConfiguration(Settings.getSettings());
+				return Configuration.getConfiguration();
 			}
 		};
 		readConfig.setOnSucceeded(ev -> {

@@ -170,7 +170,7 @@ public class EmbossController {
 			return;
 		}
 		Settings settings = Settings.getSettings();
-		Configuration conf = Configuration.getConfiguration(settings);
+		Configuration conf = Configuration.getConfiguration();
 		String device = settings.getString(Keys.device);
 		String align = settings.getString(Keys.align);
 		int copiesValue = (Integer)copies.getValue();

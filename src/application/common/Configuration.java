@@ -24,14 +24,12 @@ import org.daisy.braille.utils.api.table.TableCatalog;
 import application.common.Settings.Keys;
 
 
+/**
+ * Provides an embosser configuration.
+ * @author Joel Håkansson
+ */
 public class Configuration {
 	private static final Logger logger = Logger.getLogger(Configuration.class.getCanonicalName());
-	public enum ErrorCode {
-		NOT_SET,
-		INCOMPLETE,
-		INVALID
-	}
-	private final Settings settings;
 	private final PaperCatalog paperCatalog;
 	private final Collection<FactoryProperties> embossers;
 	private EmbosserCatalog embosserCatalog;
@@ -53,28 +51,22 @@ public class Configuration {
 	private Length pWidth = Length.newMillimeterValue(0);
 	private Length pHeight = Length.newMillimeterValue(0);
 	private Shape s = null;
-	private ErrorCode errorCode = ErrorCode.NOT_SET;
-	
-	
-	private Configuration(Settings settings) {
-		this.settings = settings;
+
+	Configuration() {
+		Settings settings = Settings.getSettings();
 		this.paperCatalog = PaperCatalog.newInstance();
 		this.embosserCatalog = EmbosserCatalog.newInstance();
 		this.tableCatalog = TableCatalog.newInstance();
 		this.embossers = embosserCatalog.list();
-		
-    	//String device = settings.getString(Keys.device);
     	String embosser = settings.getString(Keys.embosser);
     	String printMode = settings.getString(Keys.printMode);
     	String paper = settings.getString(Keys.paper);
     	String lengthValue = settings.getString(Keys.cutLengthValue);
     	String lengthUnit = settings.getString(Keys.cutLengthUnit);
-    	//String align = settings.getString(Keys.align);
     	String table = settings.getString(Keys.table);
 
     	String orientation = settings.getString(Keys.orientation, "DEFAULT");
     	String zFolding = settings.getString(Keys.zFolding);
-		errorCode = ErrorCode.INCOMPLETE;
 		if ((em = embosserCatalog.get(embosser))==null) {
 			supportedTables = new ArrayList<>();
 			supportedPapers = new ArrayList<>();
@@ -163,7 +155,6 @@ public class Configuration {
 					em.setFeature(EmbosserFeatures.PAGE_FORMAT, pageFormat);
 					settingsOK = true;
 				} catch (IllegalArgumentException e) {
-					errorCode = ErrorCode.INVALID;
 					e.printStackTrace();
 				}
 	    	}
@@ -190,10 +181,6 @@ public class Configuration {
 		return embossers;
 	}
 
-	public Settings getSettings() {
-		return settings;
-	}
-	
 	public Collection<FactoryProperties> getSupportedTables() {
 		return supportedTables;
 	}
@@ -225,11 +212,7 @@ public class Configuration {
 	public boolean settingOK() {
 		return settingsOK;
 	}
-	
-	public ErrorCode getErrorCode() {
-		return errorCode;
-	}
-	
+
 	public int getMaxWidth() {
 		return width;
 	}
@@ -249,17 +232,13 @@ public class Configuration {
 	public Length getPaperHeight() {
 		return pHeight;
 	}
-	
-	public String getPaperName() {
-		return p.getDisplayName();
-	}
-	
+
 	public Embosser getConfiguredEmbosser() {
 		return em;
 	}
 	
-	public static Configuration getConfiguration(Settings settings) {
-		return new Configuration(settings);
+	public static Configuration getConfiguration() {
+		return new Configuration();
 	}
 
 }
