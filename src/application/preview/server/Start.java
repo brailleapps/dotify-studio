@@ -5,12 +5,13 @@ import java.util.Objects;
 import com.googlecode.ajui.BrowserUI;
 
 public class Start {
+	private static final String RESOURCES_PATH = Start.class.getPackage().getName().replace('.', '/')+"/resource-files";
 	private MainPage content;
 	private BrowserUI ui;
 
 	public String start(StartupDetails args) throws Exception  {
 		Objects.requireNonNull(args);
-		BrowserUI.Builder buildUi = new BrowserUI.Builder("application/preview/server/resource-files");
+		BrowserUI.Builder buildUi = new BrowserUI.Builder(RESOURCES_PATH);
 		buildUi.timeout(5000);
 		if (!args.shouldLog()) { 
 			buildUi.logStream(null);
