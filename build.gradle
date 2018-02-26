@@ -3,7 +3,7 @@ apply plugin: 'application'
 apply plugin: 'maven'
 apply plugin: "signing"
 
-mainClassName = "application.MainFx"
+mainClassName = "application.ui.MainFx"
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 javadoc {
@@ -45,7 +45,7 @@ jar {
 			'Implementation-Title': "$releaseName",
 			'Implementation-Version': version,
 			'Implementation-URL': "$repositoryURL",
-			'Main-Class': 'application.MainFx',
+			'Main-Class': 'application.ui.MainFx',
 			'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
 			)
 		}

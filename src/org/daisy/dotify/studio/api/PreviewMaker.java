@@ -3,11 +3,9 @@ package org.daisy.dotify.studio.api;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
 
-import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.media.FileDetails;
 
 public class PreviewMaker {

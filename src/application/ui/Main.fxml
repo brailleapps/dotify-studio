@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.web.WebView?>
+
+<BorderPane fx:id="root" prefHeight="600.0" prefWidth="800.0" stylesheets="@main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui.MainController">
+   <center>
+      <SplitPane fx:id="splitPane" dividerPositions="0.0" BorderPane.alignment="CENTER">
+         <items>
+            <TabPane fx:id="toolsPane" SplitPane.resizableWithParent="false" />
+            <SplitPane fx:id="verticalSplitPane" dividerPositions="0.8" orientation="VERTICAL" SplitPane.resizableWithParent="false">
+               <items>
+                  <TabPane fx:id="tabPane" tabClosingPolicy="ALL_TABS" />
+                  <BorderPane fx:id="consoleRoot" SplitPane.resizableWithParent="false">
+                     <center>
+                        <WebView fx:id="console" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" />
+                     </center>
+                     <top>
+                        <HBox alignment="TOP_RIGHT" spacing="5.0" style="-fx-border-style: hidden hidden solid hidden; -fx-border-color: #e0e0e0;" BorderPane.alignment="CENTER">
+                           <children>
+                              <ToggleButton fx:id="scrollLockButton" accessibleText="%accessible-text-scroll-lock" mnemonicParsing="false" selected="false">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </ToggleButton>
+                              <Button fx:id="clearButton" accessibleText="%accessible-text-clear-console" mnemonicParsing="false" onAction="#clearConsole">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                           <BorderPane.margin>
+                              <Insets />
+                           </BorderPane.margin>
+                           <padding>
+                              <Insets bottom="2.0" left="4.0" right="4.0" top="2.0" />
+                           </padding>
+                        </HBox>
+                     </top>
+                  </BorderPane>
+               </items>
+            </SplitPane>
+         </items>
+      </SplitPane>
+   </center>
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="%menu-item-file">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#showOpenDialog" text="%menu-item-open">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                     </accelerator>
+                  </MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#save" text="%menu-item-save">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" onAction="#saveAs" text="%menu-item-save-as" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <Menu mnemonicParsing="false" text="%menu-item-import">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#showImportDialog" text="%menu-item-import-document">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
+                           </accelerator></MenuItem>
+                        <MenuItem mnemonicParsing="false" onAction="#showImportBrailleDialog" text="%menu-item-import-braille-document" />
+                    </items>
+                  </Menu>
+                  <MenuItem fx:id="exportMenuItem" mnemonicParsing="false" onAction="#exportFile" text="%menu-item-export" />
+                  <MenuItem fx:id="embossMenuItem" mnemonicParsing="false" onAction="#emboss" text="%menu-item-emboss">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="P" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#closeTab" text="%menu-item-close">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="W" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                     </accelerator>
+                  </MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#openPreferences" text="%menu-item-preferences" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#closeApplication" text="%menu-item-quit" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="%menu-item-edit">
+            <items>
+              <MenuItem fx:id="refreshMenuItem" mnemonicParsing="false" onAction="#refresh" text="%menu-item-refresh">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="F5" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem fx:id="openInBrowserMenuItem" mnemonicParsing="false" onAction="#openInBrowser" text="%menu-item-open-browser" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="%menu-item-window">
+              <items>
+                  <CheckMenuItem fx:id="showSearchMenuItem" mnemonicParsing="false" onAction="#showHideSearch" text="%menu-item-show-search">
+                     <accelerator>
+                        <KeyCodeCombination alt="DOWN" code="F" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator></CheckMenuItem>
+                  <CheckMenuItem fx:id="showConsoleMenuItem" mnemonicParsing="false" onAction="#showHideConsole" selected="true" text="%menu-item-show-console">
+                     <accelerator>
+                        <KeyCodeCombination alt="DOWN" code="C" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator></CheckMenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="nextEditorViewMenuItem" mnemonicParsing="false" onAction="#nextEditor" text="%menu-item-next-editor">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="F7" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem fx:id="previousEditorViewMenuItem" mnemonicParsing="false" onAction="#previousEditor" text="%menu-item-previous-editor">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="F7" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="toggleViewMenuItem" mnemonicParsing="false" onAction="#toggleEditor" text="%menu-item-toggle-view">
+	                  <accelerator>
+	                        <KeyCodeCombination alt="UP" code="F6" control="UP" meta="UP" shift="UP" shortcut="UP" />
+	                     </accelerator>
+	              </MenuItem>
+                  <MenuItem fx:id="viewingModeMenuItem" mnemonicParsing="false" onAction="#toggleViewingMode" text="%menu-item-toggle-viewing-mode">
+                  		<accelerator>
+	                        <KeyCodeCombination alt="UP" code="F7" control="UP" meta="UP" shift="UP" shortcut="UP" />
+	                     </accelerator>
+                  </MenuItem>
+                  <MenuItem fx:id="activateViewMenuItem" mnemonicParsing="false" onAction="#activateView" text="%menu-item-activate-view">
+	                  <accelerator>
+	                        <KeyCodeCombination alt="UP" code="F12" control="UP" meta="UP" shift="UP" shortcut="UP" />
+	                     </accelerator>
+	              </MenuItem>
+              </items>
+            </Menu>
+          <Menu mnemonicParsing="false" text="%menu-item-help">
+            <items>
+                  <MenuItem mnemonicParsing="false" onAction="#openHelpTab" text="%menu-item-help-contents">
+                  	<accelerator>
+                        <KeyCodeCombination alt="UP" code="F1" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+              <MenuItem mnemonicParsing="false" onAction="#openAbout" text="%menu-item-about" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+</BorderPane>
