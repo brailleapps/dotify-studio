@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.daisy.braille.utils.api.factory.FactoryProperties;
 import org.daisy.braille.utils.api.table.TableCatalog;
 
+import application.common.FactoryPropertiesAdapter;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -20,7 +21,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import shared.FactoryPropertiesAdapter;
 
 /**
  * Provides a controller for the dialog that imports formatted braille.

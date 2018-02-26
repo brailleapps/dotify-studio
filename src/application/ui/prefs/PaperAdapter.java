@@ -6,8 +6,8 @@ import org.daisy.braille.utils.api.paper.RollPaper;
 import org.daisy.braille.utils.api.paper.SheetPaper;
 import org.daisy.braille.utils.api.paper.TractorPaper;
 
+import application.common.NiceName;
 import application.l10n.Messages;
-import shared.NiceName;
 
 class PaperAdapter extends NiceName implements Comparable<PaperAdapter> {
 	private final Paper p;

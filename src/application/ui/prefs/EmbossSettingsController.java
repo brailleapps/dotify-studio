@@ -20,6 +20,11 @@ import org.daisy.braille.utils.api.embosser.Embosser;
 import org.daisy.braille.utils.api.factory.FactoryProperties;
 import org.daisy.braille.utils.pef.PEFGenerator;
 
+import application.common.Configuration;
+import application.common.FactoryPropertiesAdapter;
+import application.common.NiceName;
+import application.common.Settings;
+import application.common.Settings.Keys;
 import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -31,11 +36,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import shared.Configuration;
-import shared.FactoryPropertiesAdapter;
-import shared.NiceName;
-import shared.Settings;
-import shared.Settings.Keys;
 
 /**
  * Provides a controller for the embosser settings view.

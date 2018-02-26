@@ -1,4 +1,4 @@
-package shared;
+package application.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,7 +21,7 @@ import org.daisy.braille.utils.api.paper.SheetPaperFormat;
 import org.daisy.braille.utils.api.paper.TractorPaperFormat;
 import org.daisy.braille.utils.api.table.TableCatalog;
 
-import shared.Settings.Keys;
+import application.common.Settings.Keys;
 
 
 public class Configuration {

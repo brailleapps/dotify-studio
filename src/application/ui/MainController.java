@@ -31,6 +31,8 @@ import org.daisy.streamline.api.tasks.TaskGroupFactoryMaker;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import application.common.FeatureSwitch;
+import application.common.Settings;
 import application.l10n.Messages;
 import application.ui.about.AboutView;
 import application.ui.imports.ImportBrailleView;
@@ -79,8 +81,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
-import shared.FeatureSwitch;
-import shared.Settings;
 
 /**
  * Provides the controller for the main view.

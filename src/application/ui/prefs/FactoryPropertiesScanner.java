@@ -6,10 +6,10 @@ import java.util.List;
 
 import org.daisy.braille.utils.api.factory.FactoryProperties;
 
+import application.common.FactoryPropertiesAdapter;
+import application.common.Settings;
+import application.common.Settings.Keys;
 import javafx.concurrent.Task;
-import shared.FactoryPropertiesAdapter;
-import shared.Settings;
-import shared.Settings.Keys;
 
 class FactoryPropertiesScanner extends Task<List<FactoryPropertiesAdapter>> {
 	private final String currentIdentifier;

@@ -6,10 +6,10 @@ import java.util.Objects;
 
 import org.daisy.braille.utils.pef.PEFBook;
 
+import application.common.Settings;
 import application.ui.preview.server.preview.stax.BookReader;
 import application.ui.preview.server.preview.stax.BookReaderResult;
 import application.ui.preview.server.preview.stax.StaxPreviewController;
-import shared.Settings;
 
 public class BookViewController {
 	private static final Settings settings = Settings.getSettings();

@@ -25,6 +25,7 @@ import org.daisy.streamline.api.tasks.TaskSystemFactoryMaker;
 import org.daisy.streamline.engine.RunnerResult;
 import org.daisy.streamline.engine.TaskRunner;
 
+import application.common.BuildInfo;
 import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -44,7 +45,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
-import shared.BuildInfo;
 
 /**
  * Provides a controller for Dotify.

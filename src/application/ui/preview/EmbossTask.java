@@ -9,12 +9,14 @@ import org.daisy.braille.utils.api.embosser.EmbosserWriter;
 import org.daisy.braille.utils.pef.PEFConverterFacade;
 import org.daisy.braille.utils.pef.PEFHandler;
 import org.daisy.braille.utils.pef.PEFHandler.Alignment;
+
+import application.common.Configuration;
+import application.common.FeatureSwitch;
+
 import org.daisy.braille.utils.pef.PrinterDevice;
 import org.daisy.braille.utils.pef.Range;
 
 import javafx.concurrent.Task;
-import shared.Configuration;
-import shared.FeatureSwitch;
 
 class EmbossTask extends Task<Void> {
 	private static final Logger logger = Logger.getLogger(EmbossTask.class.getCanonicalName());

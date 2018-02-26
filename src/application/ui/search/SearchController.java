@@ -18,6 +18,7 @@ import org.daisy.braille.utils.pef.PEFLibrary;
 import org.daisy.braille.utils.pef.PEFSearchIndex;
 import org.xml.sax.SAXException;
 
+import application.common.Settings;
 import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -33,7 +34,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
-import shared.Settings;
 
 /**
  * Provides a controller for the search view.

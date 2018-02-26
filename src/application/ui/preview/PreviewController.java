@@ -30,6 +30,8 @@ import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.streamline.api.media.FileDetails;
 import org.xml.sax.SAXException;
 
+import application.common.Settings;
+import application.common.Settings.Keys;
 import application.l10n.Messages;
 import application.ui.preview.server.Start;
 import application.ui.preview.server.StartupDetails;
@@ -56,8 +58,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import shared.Settings;
-import shared.Settings.Keys;
 
 /**
  * Provides a preview controller.

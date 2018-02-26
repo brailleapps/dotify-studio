@@ -1,4 +1,4 @@
-package shared;
+package application.common;
 
 import java.io.File;
 import java.util.HashMap;

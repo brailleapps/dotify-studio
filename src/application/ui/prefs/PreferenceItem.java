@@ -2,6 +2,7 @@ package application.ui.prefs;
 
 import java.util.Collection;
 
+import application.common.NiceName;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceBox;
@@ -13,7 +14,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
-import shared.NiceName;
 
 class PreferenceItem extends BorderPane {
 	private static final NiceName empty = new NiceName("", "");

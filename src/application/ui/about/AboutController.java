@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import application.common.BuildInfo;
 import application.l10n.Messages;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -13,7 +14,6 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import shared.BuildInfo;
 
 /**
  * Provides a controller for the dialog that displays information about the software.

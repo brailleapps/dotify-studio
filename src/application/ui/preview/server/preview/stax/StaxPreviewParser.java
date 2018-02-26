@@ -35,10 +35,10 @@ import org.daisy.dotify.common.text.SimpleUCharReplacer;
 import org.daisy.streamline.api.validity.ValidationReport;
 import org.daisy.streamline.api.validity.ValidatorMessage;
 
+import application.common.Settings;
+import application.common.Settings.Keys;
 import application.l10n.Messages;
 import application.ui.preview.server.MainPage;
-import shared.Settings;
-import shared.Settings.Keys;
 
 class StaxPreviewParser {
 	private static final Logger logger = Logger.getLogger(StaxPreviewParser.class.getCanonicalName());

@@ -11,6 +11,8 @@ import org.daisy.braille.utils.api.paper.CustomPaperCollection;
 import org.daisy.braille.utils.api.paper.Length;
 import org.daisy.braille.utils.api.paper.Paper;
 
+import application.common.NiceName;
+import application.common.Tools;
 import application.l10n.Messages;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,8 +27,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
-import shared.NiceName;
-import shared.Tools;
 
 /**
  * Provides a controller for a paper settings view.

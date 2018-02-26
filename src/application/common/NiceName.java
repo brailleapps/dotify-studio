@@ -1,4 +1,4 @@
-package shared;
+package application.common;
 
 public class NiceName {
 	private final String key;

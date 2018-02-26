@@ -13,6 +13,9 @@ import java.util.logging.Logger;
 import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.braille.utils.pef.Range;
 
+import application.common.Configuration;
+import application.common.Settings;
+import application.common.Settings.Keys;
 import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -28,9 +31,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import shared.Configuration;
-import shared.Settings;
-import shared.Settings.Keys;
 
 /**
  * Provides a controller for the embosser view.

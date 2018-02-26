@@ -1,4 +1,4 @@
-package shared;
+package application.common;
 
 import org.daisy.braille.utils.api.factory.FactoryProperties;
 

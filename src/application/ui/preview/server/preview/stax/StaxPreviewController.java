@@ -7,8 +7,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
-import shared.Settings;
-import shared.Settings.Keys;
+import application.common.Settings;
+import application.common.Settings.Keys;
 
 public class StaxPreviewController {
 	private final BookReader r;

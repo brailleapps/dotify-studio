@@ -17,9 +17,9 @@ import com.googlecode.ajui.Content;
 import com.googlecode.ajui.Context;
 import com.googlecode.ajui.XHTMLTagger;
 
+import application.common.BuildInfo;
 import application.l10n.Messages;
 import application.ui.preview.server.preview.stax.BookReaderResult;
-import shared.BuildInfo;
 
 public class MainPage implements Content {
 	public final static String ENCODING = "utf-8";

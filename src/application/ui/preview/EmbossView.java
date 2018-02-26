@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import org.daisy.braille.utils.pef.PEFBook;
 
+import application.common.FeatureSwitch;
 import application.l10n.Messages;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,7 +14,6 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import shared.FeatureSwitch;
 
 /**
  * Provides an embosser view.

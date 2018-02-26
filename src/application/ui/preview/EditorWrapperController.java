@@ -12,14 +12,14 @@ import org.daisy.dotify.studio.api.PreviewMaker;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.media.FileDetails;
 
+import application.common.FeatureSwitch;
+import application.common.Settings;
+import application.common.Settings.Keys;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser.ExtensionFilter;
-import shared.FeatureSwitch;
-import shared.Settings;
-import shared.Settings.Keys;
 
 public class EditorWrapperController extends BorderPane implements Editor {
 	private final Editor impl;

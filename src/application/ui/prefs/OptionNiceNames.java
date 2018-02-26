@@ -10,8 +10,8 @@ import org.daisy.braille.utils.api.embosser.PrintPage.Shape;
 import org.daisy.braille.utils.api.paper.Length;
 import org.daisy.braille.utils.api.paper.SheetPaperFormat;
 
+import application.common.NiceName;
 import application.l10n.Messages;
-import shared.NiceName;
 
 class OptionNiceNames {
 	private final Set<NiceName> printModeNN;
