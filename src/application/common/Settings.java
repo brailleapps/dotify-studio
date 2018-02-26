@@ -11,7 +11,8 @@ import java.util.prefs.Preferences;
  * Provides a store for settings.
  * @author Joel Håkansson
  */
-public class Settings {
+public enum Settings {
+	INSTANCE;
 	public enum Keys {version, device, embosser, printMode, table, paper, cutLengthValue, cutLengthUnit, orientation, zFolding, charset, align, brailleFont, textFont, libraryPath, locale,
 		lastOpenPath, lastSavePath};
 	/**
@@ -19,16 +20,17 @@ public class Settings {
 	 */
 	private final static String PREFS_VERSION = "1";
     private Preferences p;
-    private static Settings settings;
 	
     /**
      * Creates a new settings node at the specified path and with the specified defaults.
      * Note that the defaults must only use keys from the {@link Keys} enum.
-     * @param path the path
-     * @param defaults the defaults
      * @throws IllegalArgumentException if a key in the defaults map is not found in the {@link Keys} enum
      */
-    private Settings(String path, HashMap<String, String> defaults) {
+    private Settings() {
+		HashMap<String, String> defaults = new HashMap<>();
+		defaults.put(Settings.Keys.align.toString(), "center_inner");
+		String path = "/DotifyStudio/prefs_v"+PREFS_VERSION;
+
         p = Preferences.userRoot().node(path); //$NON-NLS-1$
         if (!BuildInfo.VERSION.equals(p.get(Keys.version.toString(), ""))) {
         	// if no version information is found, clear and add defaults
@@ -48,16 +50,11 @@ public class Settings {
     }
     
     /**
-     * Gets the default settings instance.
+     * Gets the settings instance.
      * @return returns the settings
      */
-    public synchronized static Settings getSettings() {
-    	if (settings==null) {
-    		HashMap<String, String> def = new HashMap<>();
-    		def.put(Settings.Keys.align.toString(), "center_inner");
-    		settings = new Settings("/DotifyStudio/prefs_v"+PREFS_VERSION, def);
-    	}
-    	return settings;
+    public static Settings getSettings() {
+    	return INSTANCE;
     }
     
     private String getHash(Keys key) {
