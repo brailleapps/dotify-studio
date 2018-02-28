@@ -64,8 +64,8 @@ import javafx.stage.StageStyle;
  * @author Joel Håkansson
  *
  */
-public class PreviewController extends BorderPane implements OpenableEditor {
-	private static final Logger logger = Logger.getLogger(PreviewController.class.getCanonicalName());
+public class PreviewPefController extends BorderPane implements OpenableEditor {
+	private static final Logger logger = Logger.getLogger(PreviewPefController.class.getCanonicalName());
 	@FXML WebView browser;
 	private Start start;
 	private boolean closing;
@@ -79,7 +79,7 @@ public class PreviewController extends BorderPane implements OpenableEditor {
 	/**
 	 * Creates a new preview controller.
 	 */
-	public PreviewController() {
+	public PreviewPefController() {
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Preview.fxml"), Messages.getBundle());
 			fxmlLoader.setRoot(this);

@@ -77,7 +77,7 @@ public class DotifyController extends BorderPane {
 	 */
 	public DotifyController(AnnotatedFile selected, File out, String tag, String outputFormat, Map<String, Object> options, Function<File, Consumer<File>> onSuccess) {
 		try {
-			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Options.fxml"), Messages.getBundle());
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Dotify.fxml"), Messages.getBundle());
 			fxmlLoader.setRoot(this);
 			fxmlLoader.setController(this);
 			fxmlLoader.load();

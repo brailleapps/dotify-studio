@@ -4,7 +4,7 @@ import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.dotify.studio.api.PreviewProvider;
 import org.daisy.streamline.api.media.FileDetails;
 
-public class PefPreviewProviderImpl implements PreviewProvider {
+public class DefaultPreviewProviderImpl implements PreviewProvider {
 	
 	@Override
 	public boolean supportsFormat(FileDetails format) {
@@ -14,7 +14,7 @@ public class PefPreviewProviderImpl implements PreviewProvider {
 	@Override
 	public OpenableEditor newPreview(FileDetails selected) {
 		if (FormatChecker.isPEF(selected)) {
-			PreviewController prv = new PreviewController();
+			PreviewPefController prv = new PreviewPefController();
 			return prv;
 		} else if (FormatChecker.isHTML(selected)) {
 			PreviewHtmlController prv = new PreviewHtmlController();

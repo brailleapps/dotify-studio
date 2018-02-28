@@ -82,7 +82,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 		return supportsFormat(editorFormat, FileDetailsCatalog.PEF_FORMAT);
 	}
 	public static boolean supportsFormat(FileDetails editorFormat, FileDetails previewFormat) {
-		return EditorController.supportsFormat(editorFormat) && PreviewController.supportsFormat(previewFormat);
+		return EditorController.supportsFormat(editorFormat) && PreviewPefController.supportsFormat(previewFormat);
 	}
 
 	/**
