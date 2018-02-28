@@ -273,7 +273,7 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 
 	@Override
 	public List<ExtensionFilter> getSaveAsFilters() {
-		return Arrays.asList(new ExtensionFilter("PEF-file", "*.pef"));
+		return Arrays.asList(new ExtensionFilter(Messages.EXTENSION_FILTER_FILE.localize("PEF"), "*.pef"));
 	}
 
 	@Override

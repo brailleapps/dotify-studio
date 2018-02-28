@@ -438,7 +438,7 @@ public class EditorController extends BorderPane implements Editor {
 			int dot = name.lastIndexOf('.');			
 			if (dot>=0 && dot<name.length()) {
 				String ext = name.substring(dot+1, name.length());
-				return Arrays.asList(new ExtensionFilter(ext + "-files", "*." + ext));
+				return Arrays.asList(new ExtensionFilter(Messages.EXTENSION_FILTER_FILE.localize(ext), "*." + ext));
 			}
 		}
 		return Collections.emptyList();

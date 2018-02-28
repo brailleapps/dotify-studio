@@ -171,7 +171,7 @@ public class PreviewHtmlController extends BorderPane implements OpenableEditor 
 
 	@Override
 	public List<ExtensionFilter> getSaveAsFilters() {
-		return Arrays.asList(new ExtensionFilter("HTML-files", "*.html"));
+		return Arrays.asList(new ExtensionFilter(Messages.EXTENSION_FILTER_FILE.localize("HTML"), "*.html"));
 	}
 
 	@Override
