@@ -65,7 +65,7 @@ dependencies {
 
 	compile 'org.daisy.braille:braille-utils.api:4.2.0'
 	compile 'org.daisy.braille:braille-utils.impl:4.0.0'
-	compile ('org.daisy.braille:braille-utils.pef-tools:3.0.1') {
+	compile ('org.daisy.braille:braille-utils.pef-tools:3.1.0') {
 		exclude module: 'Saxon-HE'
 	}
 	compile 'com.googlecode.ajui:ajui:1.0.0'
@@ -86,7 +86,7 @@ dependencies {
 	runtime 'org.daisy.dotify:dotify.hyphenator.impl:4.0.0'
 	runtime 'org.daisy.dotify:dotify.text.impl:4.0.0'
 	runtime 'org.daisy.dotify:dotify.translator.impl:4.0.0'
-	runtime ('org.daisy.dotify:dotify.task.impl:4.1.0') {
+	runtime ('org.daisy.dotify:dotify.task.impl:4.2.0') {
 		exclude module: 'Saxon-HE'
 	}
 

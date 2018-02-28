@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.daisy.braille.utils.api.table.TableCatalog;
-import org.daisy.braille.utils.pef.TextConverterFacade;
+import org.daisy.braille.utils.pef.TextHandler;
 import org.daisy.dotify.studio.api.Editor;
 import org.daisy.streamline.api.identity.IdentityProvider;
 import org.daisy.streamline.api.media.AnnotatedFile;
@@ -581,8 +581,9 @@ public class MainController {
 			    	Task<Void> importTask = new Task<Void>(){
 						@Override
 						protected Void call() throws Exception {
-				    		TextConverterFacade f = new TextConverterFacade(TableCatalog.newInstance());
-				    		f.parseTextFile(selected, output, settings);
+							TextHandler.with(selected, output, TableCatalog.newInstance())
+								.options(settings)
+								.parse();
 							return null;
 						}
 			    	};
