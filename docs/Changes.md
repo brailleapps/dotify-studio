@@ -1,5 +1,21 @@
 [[Table of Contents|Toc]]
 
+# 0.8.0 #
+## New in this version ##
+- User interface
+  - Supports side-by-side view
+  - Remembers last open directory in import braille dialog
+  - Adds a keyboard shortcut to "import source document" menu item
+  - Updates Norwegian translations
+  - Enables localization in a couple of places
+- Dtbook & epub converters
+  - Adds the possibility to add content to the beginning of the book
+- Other
+  - Fixes a temp file cleanup issue
+  - Ignores invalid startup arguments (fixes #58)
+  - Replaces SwingWorker with Task (fixes #59)
+  - Code cleanup (including #31)
+
 # 0.7.0 #
 ## New in this version ##
 - User interface
