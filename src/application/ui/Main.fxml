@@ -138,7 +138,7 @@
 	              </MenuItem>
                   <MenuItem fx:id="viewingModeMenuItem" mnemonicParsing="false" onAction="#toggleViewingMode" text="%menu-item-toggle-viewing-mode">
                   		<accelerator>
-	                        <KeyCodeCombination alt="UP" code="F7" control="UP" meta="UP" shift="UP" shortcut="UP" />
+	                        <KeyCodeCombination alt="UP" code="F8" control="UP" meta="UP" shift="UP" shortcut="UP" />
 	                     </accelerator>
                   </MenuItem>
                   <MenuItem fx:id="activateViewMenuItem" mnemonicParsing="false" onAction="#activateView" text="%menu-item-activate-view">
