@@ -57,7 +57,7 @@
       </SplitPane>
    </center>
    <top>
-      <MenuBar BorderPane.alignment="CENTER" useSystemMenuBar="true">
+      <MenuBar BorderPane.alignment="CENTER" useSystemMenuBar="false">
         <menus>
           <Menu mnemonicParsing="false" text="%menu-item-file">
             <items>
