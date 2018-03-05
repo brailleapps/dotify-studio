@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 @SuppressWarnings("javadoc")
 public enum Messages {
 	ABOUT_WINDOW_TITLE("about-window-title"),
+	FIND_WINDOW_TITLE("find-window-title"),
 	APPLICATION_TITLE("application-title"),
 	APPLICATION_DESCRIPTION("application-description"),
 	APPLICATION_VERSION("application-version"),

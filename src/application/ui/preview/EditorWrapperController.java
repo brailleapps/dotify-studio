@@ -13,6 +13,8 @@ import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.ExportAction;
 import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.dotify.studio.api.PreviewMaker;
+import org.daisy.dotify.studio.api.SearchCapabilities;
+import org.daisy.dotify.studio.api.SearchOptions;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.media.FileDetails;
 import org.daisy.streamline.api.validity.ValidationReport;
@@ -209,6 +211,21 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	@Override
 	public boolean scrollTo(DocumentPosition msg) {
 		return impl.scrollTo(msg);
+	}
+
+	@Override
+	public boolean findNext(String text, SearchOptions opts) {
+		return impl.findNext(text, opts);
+	}
+
+	@Override
+	public void replace(String replace) {
+		impl.replace(replace);
+	}
+
+	@Override
+	public ObservableObjectValue<SearchCapabilities> searchCapabilities() {
+		return impl.searchCapabilities();
 	}
 
 }

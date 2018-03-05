@@ -7,12 +7,10 @@ import java.util.Optional;
 
 import org.daisy.streamline.api.media.FileDetails;
 import org.daisy.streamline.api.validity.ValidationReport;
-import org.daisy.streamline.api.validity.ValidatorMessage;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.scene.Node;
@@ -23,7 +21,7 @@ import javafx.stage.Window;
  * Provides an interface for editors.
  * @author Joel Håkansson
  */
-public interface Editor {
+public interface Editor extends Searchable {
 
 	/**
 	 * Indicates if this editor can be saved at its current location (it has

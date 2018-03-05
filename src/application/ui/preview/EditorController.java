@@ -19,6 +19,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerFactory;
@@ -31,6 +33,8 @@ import org.daisy.dotify.common.xml.XmlEncodingDetectionException;
 import org.daisy.dotify.studio.api.DocumentPosition;
 import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.ExportAction;
+import org.daisy.dotify.studio.api.SearchCapabilities;
+import org.daisy.dotify.studio.api.SearchOptions;
 import org.daisy.streamline.api.identity.IdentityProvider;
 import org.daisy.streamline.api.media.FileDetails;
 import org.daisy.streamline.api.media.InputStreamSupplier;
@@ -49,6 +53,7 @@ import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -80,6 +85,15 @@ public class EditorController extends BorderPane implements Editor {
 	private static final Logger logger = Logger.getLogger(EditorController.class.getCanonicalName());
 	private static final TransformerFactory XSLT_FACTORY = TransformerFactory.newInstance();
 	private static final char BYTE_ORDER_MARK = '\uFEFF';
+	private static final ReadOnlyObjectProperty<SearchCapabilities> SEARCH_CAPABILITIES = new SimpleObjectProperty<>(
+			new SearchCapabilities.Builder()
+			.direction(false)
+			.matchCase(true)
+			.wrap(true)
+			.find(true)
+			.replace(true)
+			.build()
+	);
 
 	@FXML HBox optionsBox;
 	@FXML CheckBox wordWrap;
@@ -357,6 +371,36 @@ public class EditorController extends BorderPane implements Editor {
 			}
 		}
 	}
+	
+	@Override
+	public boolean findNext(String text, SearchOptions opts) {
+		int pos = codeArea.getCaretPosition();
+		Pattern pattern = Pattern.compile(
+				(opts.shouldMatchCase()?"":"(?i)")
+				+Pattern.quote(text)
+				);
+		Matcher m = pattern.matcher(codeArea.getText());
+		boolean wrap = false;
+		if (m.find(pos) || (opts.shouldWrapAround() && (wrap=m.find(0)))) {
+			int s = m.start();
+			int e = m.end();
+			if (wrap && s > pos) {
+				// no more matches;
+				return false;
+			}
+			codeArea.selectRange(s, e);
+			codeArea.showParagraphInViewport(codeArea.getCurrentParagraph());
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public void replace(String replace) {
+		if (codeArea.getSelection().getLength()>0) {
+			codeArea.replaceSelection(replace);
+		}
+	}
 
 	@Override
 	public void save() {
@@ -609,6 +653,11 @@ public class EditorController extends BorderPane implements Editor {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public ObservableObjectValue<SearchCapabilities> searchCapabilities() {
+		return SEARCH_CAPABILITIES;
 	}
 
 }
