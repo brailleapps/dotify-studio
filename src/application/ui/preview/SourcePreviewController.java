@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 import org.daisy.dotify.studio.api.DocumentPosition;
 import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.ExportAction;
+import org.daisy.dotify.studio.api.SearchCapabilities;
+import org.daisy.dotify.studio.api.SearchOptions;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.media.FileDetails;
 import org.daisy.streamline.api.validity.ValidationReport;
@@ -61,6 +63,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	private Node previewContent;
 	private ObjectProperty<FileDetails> fileDetails;
 	private ObjectProperty<Optional<ValidationReport>> validationReport;
+	private ObjectProperty<SearchCapabilities> searchCapabilities;
 	private final BindingStore bindings;
 
 	/**
@@ -74,6 +77,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 		urlProperty = new SimpleStringProperty();
 		fileDetails = new SimpleObjectProperty<>();
 		validationReport = new SimpleObjectProperty<>(Optional.empty());
+		searchCapabilities = new SimpleObjectProperty<>(SearchCapabilities.NONE);
 		bindings = new BindingStore();
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SourcePreview.fxml"), Messages.getBundle());
@@ -107,6 +111,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 		urlProperty.unbind();
 		fileDetails.unbind();
 		validationReport.unbind();
+		searchCapabilities.unbind();
 		previewContent = (Node)prv;
 		preview.setContent(previewContent);
 		source.setText(Messages.LABEL_SOURCE.localize(selected.getPath().toFile().getName()));
@@ -129,6 +134,11 @@ public class SourcePreviewController extends BorderPane implements Editor {
 			new When(tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX))
 			.then(prv.validationReport())
 			.otherwise(editor.validationReport())
+		));
+		searchCapabilities.bind(bindings.add(
+			new When(tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX))
+			.then(prv.searchCapabilities())
+			.otherwise(editor.searchCapabilities())
 		));
 		canSaveProperty.bind(bindings.add(
 				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX).and(prv.canSave())
@@ -318,4 +328,20 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	public boolean scrollTo(DocumentPosition msg) {
 		return getCurrentEditor().map(v->v.scrollTo(msg)).orElse(false);
 	}
+
+	@Override
+	public boolean findNext(String text, SearchOptions opts) {
+		return getCurrentEditor().map(v->v.findNext(text, opts)).orElse(false);
+	}
+
+	@Override
+	public void replace(String replace) {
+		getCurrentEditor().ifPresent(v->v.replace(replace));
+	}
+
+	@Override
+	public ObservableObjectValue<SearchCapabilities> searchCapabilities() {
+		return searchCapabilities;
+	}
+	
 }

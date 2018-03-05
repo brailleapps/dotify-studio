@@ -18,6 +18,8 @@ import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.dotify.studio.api.DocumentPosition;
 import org.daisy.dotify.studio.api.ExportAction;
 import org.daisy.dotify.studio.api.OpenableEditor;
+import org.daisy.dotify.studio.api.SearchCapabilities;
+import org.daisy.dotify.studio.api.SearchOptions;
 import org.daisy.streamline.api.media.FileDetails;
 import org.daisy.streamline.api.validity.ValidationReport;
 
@@ -30,6 +32,7 @@ import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -61,6 +64,15 @@ import javafx.stage.Window;
  */
 public class PreviewPefController extends BorderPane implements OpenableEditor {
 	private static final Logger logger = Logger.getLogger(PreviewPefController.class.getCanonicalName());
+	private static final ReadOnlyObjectProperty<SearchCapabilities> SEARCH_CAPABILITIES = new SimpleObjectProperty<>(
+			new SearchCapabilities.Builder()
+			.direction(true)
+			.matchCase(true)
+			.wrap(true)
+			.find(true)
+			.replace(false)
+			.build()
+	);
 	@FXML WebView browser;
 	private Start start;
 	private boolean closing;
@@ -317,6 +329,24 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 				.map(v->DocumentPosition.with(v.getLineNumber(), v.getColumnNumber()))
 				.filter(v->v.equals(location))
 				.count()>0;
+	}
+
+	@Override
+	public boolean findNext(String text, SearchOptions opts) {
+		return (Boolean)browser.getEngine().executeScript(
+			String.format("self.find('%s', %b, %b, %b)", text, 
+			opts.shouldMatchCase(), opts.shouldReverseSearch(), opts.shouldWrapAround())
+		);
+	}
+
+	@Override
+	public void replace(String replace) {
+		// Not supported
+	}
+
+	@Override
+	public ObservableObjectValue<SearchCapabilities> searchCapabilities() {
+		return SEARCH_CAPABILITIES;
 	}
 
 }

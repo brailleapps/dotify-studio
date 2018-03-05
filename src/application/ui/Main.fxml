@@ -112,6 +112,12 @@
           </Menu>
           <Menu mnemonicParsing="false" text="%menu-item-edit">
             <items>
+                  <MenuItem mnemonicParsing="false" onAction="#openFindDialog" text="%menu-item-find-replace">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="F" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                     </accelerator>
+                  </MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="openInBrowserMenuItem" mnemonicParsing="false" onAction="#openInBrowser" text="%menu-item-open-browser" />
             </items>
           </Menu>

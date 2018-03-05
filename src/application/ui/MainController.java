@@ -34,6 +34,9 @@ import org.daisy.dotify.studio.api.DocumentPosition;
 import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.ExportActionDescription;
 import org.daisy.dotify.studio.api.ExportActionMaker;
+import org.daisy.dotify.studio.api.SearchCapabilities;
+import org.daisy.dotify.studio.api.SearchOptions;
+import org.daisy.dotify.studio.api.Searchable;
 import org.daisy.streamline.api.identity.IdentityProvider;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.tasks.TaskGroupFactoryMaker;
@@ -50,6 +53,8 @@ import application.common.FeatureSwitch;
 import application.common.Settings;
 import application.l10n.Messages;
 import application.ui.about.AboutView;
+import application.ui.find.FindController;
+import application.ui.find.FindView;
 import application.ui.imports.ImportBrailleView;
 import application.ui.imports.ImportMergeView;
 import application.ui.prefs.PreferencesView;
@@ -62,10 +67,13 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.WeakChangeListener;
 import javafx.concurrent.Task;
 import javafx.event.Event;
@@ -145,6 +153,7 @@ public class MainController {
 	@FXML private Tab consoleTab;
 	@FXML private Tab validationTab;
 	private ValidationController validationController;
+	private FindView findDialog;
 	private final double dividerPosition = 0.2;
 	private final BindingStore tabBindings = new BindingStore();
 	private final BindingStore rootBindings = new BindingStore();
@@ -160,6 +169,7 @@ public class MainController {
 	private BooleanProperty canToggleView;
 	private StringProperty urlProperty;
 	private ChangeListener<Optional<ValidationReport>> validationListener;
+	private ChangeListener<SearchCapabilities> searchCapabilitiesListener;
 	static final KeyCombination CTRL_F4 = new KeyCodeCombination(KeyCode.F4, KeyCombination.CONTROL_DOWN);
 	private final ExportActionMaker exportActions = ExportActionMaker.newInstance();
 
@@ -326,6 +336,12 @@ public class MainController {
 				watchSourceMenuItem.selectedProperty().unbindBidirectional(v.watchSourceProperty());
 			});
 		}
+		if (nv!=null) {
+			Object x = nv.getContent();
+			if (x instanceof Searchable) {
+				setSearchCapabilities((Searchable)x);
+			}
+		}
 		if (nv!=null && nv.getContent() instanceof Editor) {
 			Editor p = ((Editor)nv.getContent());
 			canExport.bind(tabBindings.add(
@@ -397,6 +413,23 @@ public class MainController {
 			canSaveAs.set(false);
 			canToggleView.set(false);
 			urlProperty.set(null);
+		}
+	}
+	
+	private void setSearchCapabilities(Searchable x) {
+		if (findDialog!=null) {
+			if (x!=null) {
+				Searchable p = (Searchable)x;
+				searchCapabilitiesListener = (o, ov1, nv1) -> {
+					findDialog.getController().setSearchCapabilities(nv1);
+				};
+				p.searchCapabilities().addListener(new WeakChangeListener<>(searchCapabilitiesListener));
+				{
+					findDialog.getController().setSearchCapabilities(p.searchCapabilities().getValue());
+				}
+			} else {
+				findDialog.getController().setSearchCapabilities(SearchCapabilities.NONE);
+			}
 		}
 	}
 	
@@ -480,6 +513,14 @@ public class MainController {
 				.map(n->(Editor)n);
 	}
 	
+	private Optional<Searchable> getSelectedSearchable() {
+		return Optional.ofNullable(tabPane.getSelectionModel().getSelectedItem())
+				.map(t->t.getContent())
+				.filter(n->(n instanceof Searchable))
+				.map(n->(Searchable)n);
+	}
+
+	
 	@FXML void toggleEditor() {
 		getSelectedPreview().ifPresent(p->p.toggleView());
 	}
@@ -532,6 +573,28 @@ public class MainController {
 	
 	@FXML void applyTemplate() {
 		getSelectedPreview().flatMap(v->v.getConverter()).ifPresent(v->v.selectTemplateAndApply());
+	}
+	
+	@FXML void openFindDialog() {
+		if (findDialog==null) {
+			findDialog = new FindView();
+			findDialog.initOwner(root.getScene().getWindow());
+			findDialog.alwaysOnTopProperty();
+			FindController controller = findDialog.getController();
+			controller.setOnFindAction(v->getSelectedSearchable().ifPresent(y->y.findNext(controller.getFindText(), controller.getSearchOptions())));
+			controller.setOnReplaceAction(v->getSelectedSearchable().ifPresent(y->y.replace(controller.getReplaceText())));
+			controller.setOnFindReplaceAction(v->getSelectedSearchable().ifPresent(y->{
+				y.replace(controller.getReplaceText());
+				y.findNext(controller.getFindText(), controller.getSearchOptions());
+			}));
+			setSearchCapabilities(getSelectedSearchable().orElse(null));
+		}
+		if (!findDialog.isShowing()) {
+			findDialog.show();
+		}
+		if (!findDialog.isFocused()) {
+			findDialog.requestFocus();
+		}
 	}
 
 	@FXML void openInBrowser() {
@@ -885,17 +948,10 @@ public class MainController {
 		// if the tab is not visible, recreate it (this is a workaround for https://github.com/brailleapps/dotify-studio/issues/20)
 		Tab old = helpTab;
 		if (helpTab==null || !tabPane.getTabs().contains(helpTab)) {
-			WebView wv = new WebView();
-			wv.setOnDragOver(event->event.consume());
-			helpTab = new Tab(Messages.TAB_HELP_CONTENTS.localize(), wv);
+			HelpView hv = new HelpView();
+			helpTab = new Tab(Messages.TAB_HELP_CONTENTS.localize(), hv);
 			helpTab.setGraphic(buildImage(this.getClass().getResource("resource-files/help.png")));
-			String helpURL = getHelpURL();
-			if (helpURL!=null) {
-				WebEngine engine = wv.getEngine();
-				engine.load(helpURL);
-			} else {
-				wv.getEngine().loadContent("<html><body><p>"+Messages.ERROR_FAILED_TO_LOAD_HELP.localize()+"</p></body></html>");
-			}
+			hv.loadURL(getHelpURL());
 		}
 		if (!tabPane.getTabs().contains(helpTab)) {
 			tabPane.getTabs().add(helpTab);

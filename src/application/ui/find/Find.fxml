@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefWidth="400.0" spacing="10.0" stylesheets="@find.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui.find.FindController">
+   <children>
+      <HBox>
+         <children>
+            <Label text="%label-find" />
+            <Region HBox.hgrow="ALWAYS" />
+            <TextField fx:id="findField" prefWidth="200.0" />
+         </children>
+      </HBox>
+      <HBox>
+         <children>
+            <Label text="%label-replace-with" />
+            <Region HBox.hgrow="ALWAYS" />
+            <TextField fx:id="replaceField" prefWidth="200.0" />
+         </children>
+      </HBox>
+      <HBox spacing="10.0">
+         <children>
+            <StackPane fx:id="dirStackPane" styleClass="optionsGroup" HBox.hgrow="ALWAYS">
+               <children>
+                  <StackPane>
+                     <children>
+                        <VBox spacing="10.0">
+                           <children>
+                              <RadioButton fx:id="forwardRadioButton" mnemonicParsing="false" selected="true" text="%label-forward">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="directionToggleGroup" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="backwardRadioButton" mnemonicParsing="false" text="%label-backward" toggleGroup="$directionToggleGroup" />
+                           </children>
+                        </VBox>
+                     </children>
+                     <StackPane.margin>
+                        <Insets top="9.0" />
+                     </StackPane.margin>
+                  </StackPane>
+                  <Label text="%label-direction" StackPane.alignment="TOP_LEFT">
+                     <StackPane.margin>
+                        <Insets left="10.0" />
+                     </StackPane.margin>
+                     <padding>
+                        <Insets left="5.0" right="5.0" />
+                     </padding>
+                  </Label>
+               </children>
+            </StackPane>
+            <StackPane styleClass="optionsGroup" HBox.hgrow="ALWAYS">
+               <children>
+                  <StackPane style="-fx-border-color: #ccc;">
+                     <children>
+                        <VBox spacing="10.0">
+                           <children>
+                              <CheckBox fx:id="caseSensitiveCheckbox" mnemonicParsing="false" text="%label-match-case" />
+                              <CheckBox fx:id="wrapCheckbox" mnemonicParsing="false" selected="true" text="%label-wrap-search" />
+                           </children>
+                        </VBox>
+                     </children>
+                     <StackPane.margin>
+                        <Insets top="9.0" />
+                     </StackPane.margin>
+                  </StackPane>
+                  <Label style="-fx-background-color: #f4f4f4;" text="%label-search-options" StackPane.alignment="TOP_LEFT">
+                     <StackPane.margin>
+                        <Insets left="10.0" />
+                     </StackPane.margin>
+                  </Label>
+               </children>
+            </StackPane>
+         </children>
+      </HBox>
+      <Region VBox.vgrow="ALWAYS" />
+      <HBox>
+         <children>
+            <HBox alignment="CENTER_RIGHT" spacing="10.0">
+               <children>
+                  <Button fx:id="findButton" mnemonicParsing="false" text="%button-find" />
+                  <Button fx:id="replaceButton" mnemonicParsing="false" text="%button-replace" />
+                  <Button fx:id="replaceFindButton" mnemonicParsing="false" text="%button-replace-find" />
+               </children>
+            </HBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeWindow" text="%button-close" />
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>

@@ -1,0 +1,14 @@
+
+StackPane.optionsGroup > StackPane {
+	-fx-padding: 12 10 10 10;
+	-fx-border-color: #ccc;
+}
+
+StackPane.optionsGroup > Label {
+	-fx-padding: 0 5 0 5;
+	-fx-background-color: #f4f4f4;
+}
+
+StackPane.optionsGroup > Label:disabled {
+	-fx-opacity: 1.0;
+}
