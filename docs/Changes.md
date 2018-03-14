@@ -61,7 +61,7 @@
   - Supports Index V5 embossers
   - Adds 8-dot embossing for Index V4 and V5 embossers
   - Adds unprintable margins for Index V4 and V5 (fixes brailleapps/braille-utils.impl#3)
-  - Corrects width calculation on Braillo 300 (fixes brailleapps/braille-utils.impl#1)
+  - ~~Corrects width calculation on Braillo 300 (fixes brailleapps/braille-utils.impl#1)~~
 - User interface
   - Restores the inner margin indicator
   - Fixes page numbering for single sided sections (fixes #43)
