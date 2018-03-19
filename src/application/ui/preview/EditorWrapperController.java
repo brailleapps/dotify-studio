@@ -7,6 +7,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.daisy.dotify.studio.api.Editor;
+import org.daisy.dotify.studio.api.ExportAction;
+import org.daisy.dotify.studio.api.FileDetailsProperty;
 import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.dotify.studio.api.PreviewMaker;
 import org.daisy.streamline.api.media.AnnotatedFile;
@@ -20,6 +22,7 @@ import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Window;
 
 public class EditorWrapperController extends BorderPane implements Editor {
 	private final Editor impl;
@@ -95,16 +98,6 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty canExportProperty() {
-		return impl.canExportProperty();
-	}
-
-	@Override
-	public void export(File f) throws IOException {
-		impl.export(f);
-	}
-
-	@Override
 	public void closing() {
 		impl.closing();
 		if (dotify!=null) {
@@ -175,6 +168,16 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	@Override
 	public Node getNode() {
 		return this;
+	}
+
+	@Override
+	public void export(Window ownerWindow, ExportAction action) throws IOException {
+		impl.export(ownerWindow, action);
+	}
+
+	@Override
+	public FileDetailsProperty fileDetailsProperty() {
+		return impl.fileDetailsProperty();
 	}
 
 }

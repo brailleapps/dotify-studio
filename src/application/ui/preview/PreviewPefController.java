@@ -1,10 +1,8 @@
 package application.ui.preview;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -15,23 +13,12 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.daisy.braille.utils.api.embosser.Embosser;
-import org.daisy.braille.utils.api.embosser.EmbosserCatalog;
-import org.daisy.braille.utils.api.embosser.EmbosserCatalogService;
-import org.daisy.braille.utils.api.embosser.EmbosserFeatures;
-import org.daisy.braille.utils.api.embosser.EmbosserWriter;
 import org.daisy.braille.utils.pef.PEFBook;
-import org.daisy.braille.utils.pef.PEFHandler;
+import org.daisy.dotify.studio.api.ExportAction;
+import org.daisy.dotify.studio.api.FileDetailsProperty;
 import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.streamline.api.media.FileDetails;
-import org.xml.sax.SAXException;
 
-import application.common.Settings;
-import application.common.Settings.Keys;
 import application.l10n.Messages;
 import application.ui.preview.server.Start;
 import application.ui.preview.server.StartupDetails;
@@ -58,6 +45,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 
 /**
  * Provides a preview controller.
@@ -71,10 +59,9 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	private boolean closing;
 	private EmbossView embossView;
 	private final ReadOnlyBooleanProperty canEmbossProperty;
-	private final ReadOnlyBooleanProperty canExportProperty;
 	private final ReadOnlyBooleanProperty canSaveProperty;
 	private StringProperty urlProperty;
-	
+	private FileDetailsProperty fileDetailsProperty = new FileDetailsProperty(FileDetailsCatalog.PEF_FORMAT);
 
 	/**
 	 * Creates a new preview controller.
@@ -101,7 +88,6 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
         );
 		closing = false;
 		canEmbossProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(true));
-		canExportProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(true));
 		canSaveProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
 		urlProperty = new SimpleStringProperty();
 	}
@@ -246,32 +232,6 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	}
 
 	@Override
-	public void export(File f) throws IOException {
-		URI uri = getBookURI().orElseThrow(()->new IOException("Nothing to export."));
-		File input = new File(uri);
-		//TODO: sync this with the embossing code and its settings
-    	OutputStream os = new FileOutputStream(f);
-    	EmbosserCatalogService ef = EmbosserCatalog.newInstance();
-    	Embosser emb = ef.newEmbosser("org_daisy.GenericEmbosserProvider.EmbosserType.NONE");
-    	String table = Settings.getSettings().getString(Keys.charset);
-    	if (table!=null) {
-    		emb.setFeature(EmbosserFeatures.TABLE, table);
-    	}
-		EmbosserWriter embosser = emb.newEmbosserWriter(os);
-		PEFHandler ph = new PEFHandler.Builder(embosser).build();
-		FileInputStream is = new FileInputStream(input);
-		SAXParserFactory spf = SAXParserFactory.newInstance();
-		spf.setNamespaceAware(true);
-		SAXParser sp;
-		try {
-			sp = spf.newSAXParser();
-			sp.parse(is, ph);
-		} catch (ParserConfigurationException | SAXException e) {
-			throw new IOException("Failed to export", e);
-		}
-	}
-
-	@Override
 	public List<ExtensionFilter> getSaveAsFilters() {
 		return Arrays.asList(new ExtensionFilter(Messages.EXTENSION_FILTER_FILE.localize("PEF"), "*.pef"));
 	}
@@ -279,11 +239,6 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	@Override
 	public ReadOnlyBooleanProperty canEmbossProperty() {
 		return canEmbossProperty;
-	}
-
-	@Override
-	public ReadOnlyBooleanProperty canExportProperty() {
-		return canExportProperty;
 	}
 
 	@Override
@@ -299,6 +254,18 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	@Override
 	public Node getNode() {
 		return this;
+	}
+
+	@Override
+	public void export(Window ownerWindow, ExportAction action) throws IOException {
+		URI uri = getBookURI().orElseThrow(()->new IOException("Nothing to export."));
+		File input = new File(uri);
+		action.export(ownerWindow, input);
+	}
+
+	@Override
+	public FileDetailsProperty fileDetailsProperty() {
+		return fileDetailsProperty;
 	}
 
 }

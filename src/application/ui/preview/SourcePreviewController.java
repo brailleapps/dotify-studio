@@ -9,6 +9,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.daisy.dotify.studio.api.Editor;
+import org.daisy.dotify.studio.api.ExportAction;
+import org.daisy.dotify.studio.api.FileDetailsProperty;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.media.FileDetails;
 
@@ -20,6 +22,7 @@ import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -29,6 +32,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Window;
 
 /**
  * Provides a preview controller.
@@ -44,22 +48,22 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	@FXML Tab preview;
 	@FXML Tab source;
 	private final BooleanProperty canEmbossProperty;
-	private final BooleanProperty canExportProperty;
 	private final BooleanProperty canSaveProperty;
 	private final BooleanProperty modifiedProperty;
 	private final StringProperty urlProperty;
 	private Node sourceContent;
 	private Node previewContent;
+	private FileDetailsProperty fileDetailsProperty;
 
 	/**
 	 * Creates a new preview controller.
 	 */
 	public SourcePreviewController() {
 		canEmbossProperty = new SimpleBooleanProperty();
-		canExportProperty = new SimpleBooleanProperty();
 		canSaveProperty = new SimpleBooleanProperty();
 		modifiedProperty = new SimpleBooleanProperty();
 		urlProperty = new SimpleStringProperty();
+		fileDetailsProperty = new FileDetailsProperty();
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SourcePreview.fxml"), Messages.getBundle());
 			fxmlLoader.setRoot(this);
@@ -108,11 +112,25 @@ public class SourcePreviewController extends BorderPane implements Editor {
 				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(SOURCE_INDEX).and(editor.canEmbossProperty())
 			)
 		);
-		canExportProperty.bind(
-				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX).and(prv.canExportProperty())
-			.or(
-				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(SOURCE_INDEX).and(editor.canExportProperty())
-			)
+		fileDetailsProperty.formatNameProperty().bind(
+			new When(tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX))
+				.then(prv.fileDetailsProperty().formatNameProperty())
+				.otherwise(editor.fileDetailsProperty().formatNameProperty())
+		);
+		fileDetailsProperty.extensionProperty().bind(
+			new When(tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX))
+				.then(prv.fileDetailsProperty().extensionProperty())
+				.otherwise(editor.fileDetailsProperty().extensionProperty())
+		);
+		fileDetailsProperty.mediaTypeProperty().bind(
+			new When(tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX))
+				.then(prv.fileDetailsProperty().mediaTypeProperty())
+				.otherwise(editor.fileDetailsProperty().mediaTypeProperty())
+		);
+		fileDetailsProperty.propertiesProperty().bind(
+			new When(tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX))
+			.then(prv.fileDetailsProperty().propertiesProperty())
+			.otherwise((ObservableMap<String, Object>)editor.fileDetailsProperty().propertiesProperty())
 		);
 		canSaveProperty.bind(
 				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX).and(prv.canSaveProperty())
@@ -187,18 +205,8 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public void export(File f) throws IOException {
-		((Editor)previewContent).export(f);
-	}
-
-	@Override
 	public ReadOnlyBooleanProperty canEmbossProperty() {
 		return canEmbossProperty;
-	}
-
-	@Override
-	public ReadOnlyBooleanProperty canExportProperty() {
-		return canExportProperty;
 	}
 
 	@Override
@@ -276,5 +284,19 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	@Override
 	public Node getNode() {
 		return this;
+	}
+
+	@Override
+	public void export(Window ownerWindow, ExportAction action) throws IOException {
+		Optional<Editor> v = getCurrentEditor();
+		//Not using ifPresent, because export might throw IOException
+		if (v.isPresent()) {
+			v.get().export(ownerWindow, action);
+		}
+	}
+
+	@Override
+	public FileDetailsProperty fileDetailsProperty() {
+		return fileDetailsProperty;
 	}
 }

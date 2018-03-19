@@ -11,6 +11,8 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.daisy.dotify.studio.api.ExportAction;
+import org.daisy.dotify.studio.api.FileDetailsProperty;
 import org.daisy.dotify.studio.api.OpenableEditor;
 
 import application.l10n.Messages;
@@ -31,6 +33,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 
 /**
  * Provides a preview controller.
@@ -42,10 +45,10 @@ public class PreviewHtmlController extends BorderPane implements OpenableEditor 
 	@FXML WebView browser;
 	private boolean closing;
 	private final ReadOnlyBooleanProperty canEmbossProperty;
-	private final ReadOnlyBooleanProperty canExportProperty;
 	private final ReadOnlyBooleanProperty canSaveProperty;
 	private final StringProperty urlProperty;
 	private File file;
+	private FileDetailsProperty fileDetailsProperty = new FileDetailsProperty(FileDetailsCatalog.HTML_FORMAT);
 
 	/**
 	 * Creates a new preview controller.
@@ -72,7 +75,6 @@ public class PreviewHtmlController extends BorderPane implements OpenableEditor 
         );
 		closing = false;
 		canEmbossProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
-		canExportProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
 		canSaveProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
 		urlProperty = new SimpleStringProperty();
 	}
@@ -165,11 +167,6 @@ public class PreviewHtmlController extends BorderPane implements OpenableEditor 
 	}
 
 	@Override
-	public void export(File f) throws IOException {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public List<ExtensionFilter> getSaveAsFilters() {
 		return Arrays.asList(new ExtensionFilter(Messages.EXTENSION_FILTER_FILE.localize("HTML"), "*.html"));
 	}
@@ -177,11 +174,6 @@ public class PreviewHtmlController extends BorderPane implements OpenableEditor 
 	@Override
 	public ReadOnlyBooleanProperty canEmbossProperty() {
 		return canEmbossProperty;
-	}
-
-	@Override
-	public ReadOnlyBooleanProperty canExportProperty() {
-		return canExportProperty;
 	}
 
 	@Override
@@ -197,6 +189,16 @@ public class PreviewHtmlController extends BorderPane implements OpenableEditor 
 	@Override
 	public Node getNode() {
 		return this;
+	}
+
+	@Override
+	public void export(Window ownerWindow, ExportAction action) throws IOException {
+		action.export(ownerWindow, file);
+	}
+
+	@Override
+	public FileDetailsProperty fileDetailsProperty() {
+		return fileDetailsProperty;
 	}
 
 }

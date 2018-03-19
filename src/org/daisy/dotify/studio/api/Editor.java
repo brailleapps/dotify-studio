@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import org.daisy.streamline.api.media.FileDetails;
+
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Window;
 
 /**
  * Provides an interface for editors.
@@ -54,32 +57,29 @@ public interface Editor {
 	public boolean saveAs(File f) throws IOException;
 
 	/**
-	 * Returns true if this file can be exported.
-	 * 
-	 * See also {@link #canExportProperty()}.
-	 * 
-	 * @return true if the file can be exported, false otherwise
+	 * Exports the file.
+	 * @param ownerWindow the owner window
+	 * @param action the export action
+	 * @throws IOException if the file could not be exported
 	 */
-	public default boolean canExport() {
-		return canExportProperty().get();
-	}
+	public void export(Window ownerWindow, ExportAction action) throws IOException;
 	
 	/**
-	 * Indicates if the file in this editor can be exported.
-	 * 
-	 * See also {@link #export(File)}.
-	 * 
-	 * @return returns a boolean property
+	 * Gets the file details for the file in the editor.
+	 * @return returns the file details
 	 */
-	public ReadOnlyBooleanProperty canExportProperty();
+	public default FileDetails getFileDetails() {
+		return fileDetailsProperty();
+	}
 
 	/**
-	 * Exports the file.
-	 * @param f the file to export
-	 * @throws IOException if the file could not be exported
-	 * @throws UnsupportedOperationException if the operation is not supported
+	 * Gets the file details property in the editor.
+	 * 
+	 * See also {@link #getFileDetails()}.
+	 * 
+	 * @return returns the file details property
 	 */
-	public void export(File f) throws IOException;
+	public FileDetailsProperty fileDetailsProperty();
 
 	/**
 	 * Informs the controller that it should stop all activity and release any

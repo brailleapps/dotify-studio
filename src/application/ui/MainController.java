@@ -3,6 +3,7 @@ package application.ui;
 import java.awt.Desktop;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,8 +24,18 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.daisy.braille.utils.api.embosser.Embosser;
+import org.daisy.braille.utils.api.embosser.EmbosserCatalog;
+import org.daisy.braille.utils.api.embosser.EmbosserCatalogService;
+import org.daisy.braille.utils.api.embosser.EmbosserFeatures;
+import org.daisy.braille.utils.api.embosser.EmbosserWriter;
 import org.daisy.braille.utils.api.table.TableCatalog;
 import org.daisy.braille.utils.pef.PEFFileMerger;
+import org.daisy.braille.utils.pef.PEFHandler;
 import org.daisy.braille.utils.pef.PEFFileMerger.SortType;
 import org.daisy.braille.utils.pef.TextHandler;
 import org.daisy.dotify.studio.api.Editor;
@@ -36,15 +47,18 @@ import org.daisy.streamline.api.validity.ValidatorFactoryMaker;
 import org.daisy.streamline.api.validity.ValidatorFactoryMakerService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 import application.common.FeatureSwitch;
 import application.common.Settings;
+import application.common.Settings.Keys;
 import application.l10n.Messages;
 import application.ui.about.AboutView;
 import application.ui.imports.ImportBrailleView;
 import application.ui.imports.ImportMergeView;
 import application.ui.prefs.PreferencesView;
 import application.ui.preview.EditorWrapperController;
+import application.ui.preview.FileDetailsCatalog;
 import application.ui.preview.server.StartupDetails;
 import application.ui.search.SearchController;
 import application.ui.template.TemplateView;
@@ -213,7 +227,7 @@ public class MainController {
 			if (nv!=null && nv.getContent() instanceof Editor) {
 				Editor p = ((Editor)nv.getContent());
 				canEmboss.bind(p.canEmbossProperty());
-				canExport.bind(p.canExportProperty());
+				canExport.bind(p.fileDetailsProperty().mediaTypeProperty().isEqualTo(FileDetailsCatalog.PEF_FORMAT.getMediaType()));
 				canSave.bind(p.canSaveProperty());
 				canToggleView.bind(p.toggleViewProperty());
 				urlProperty.bind(p.urlProperty());
@@ -739,29 +753,54 @@ public class MainController {
     	Tab t = tabPane.getSelectionModel().getSelectedItem();
 		if (t!=null) {
 			Editor controller = ((Editor)t.getContent());
-			if (controller.canExport()) {
-		    	Window stage = root.getScene().getWindow();
-		    	FileChooser fileChooser = new FileChooser();
-		    	fileChooser.setTitle(Messages.TITLE_EXPORT_DIALOG.localize());
-		    	Settings.getSettings().getLastSavePath().ifPresent(v->fileChooser.setInitialDirectory(v));
-		    	File selected = fileChooser.showSaveDialog(stage);
-		    	if (selected!=null) {
-		    		Settings.getSettings().setLastSavePath(selected.getParentFile());
-			    	Task<Void> exportTask = new Task<Void>() {
-						@Override
-						protected Void call() throws Exception {
-							controller.export(selected);
-							return null;
+			if (FileDetailsCatalog.PEF_FORMAT.getMediaType().equals(controller.getFileDetails().getMediaType())) {
+				try {
+					controller.export(root.getScene().getWindow(), (stage, source)->{
+						FileChooser fileChooser = new FileChooser();
+						fileChooser.setTitle(Messages.TITLE_EXPORT_DIALOG.localize());
+						Settings.getSettings().getLastSavePath().ifPresent(v->fileChooser.setInitialDirectory(v));
+						File target = fileChooser.showSaveDialog(stage);
+						if (target!=null) {
+							Settings.getSettings().setLastSavePath(target.getParentFile());
+							Task<Void> exportTask = new Task<Void>() {
+								@Override
+								protected Void call() throws Exception {
+									//TODO: sync this with the embossing code and its settings
+									OutputStream os = new FileOutputStream(target);
+									EmbosserCatalogService ef = EmbosserCatalog.newInstance();
+									Embosser emb = ef.newEmbosser("org_daisy.GenericEmbosserProvider.EmbosserType.NONE");
+									String table = Settings.getSettings().getString(Keys.charset);
+									if (table!=null) {
+										emb.setFeature(EmbosserFeatures.TABLE, table);
+									}
+									EmbosserWriter embosser = emb.newEmbosserWriter(os);
+									PEFHandler ph = new PEFHandler.Builder(embosser).build();
+									FileInputStream is = new FileInputStream(source);
+									SAXParserFactory spf = SAXParserFactory.newInstance();
+									spf.setNamespaceAware(true);
+									SAXParser sp;
+									try {
+										sp = spf.newSAXParser();
+										sp.parse(is, ph);
+									} catch (ParserConfigurationException | SAXException e) {
+										throw new IOException("Failed to export", e);
+									}
+									return null;
+								}
+							};
+							exportTask.setOnFailed(e->{
+								exportTask.getException().printStackTrace();
+								Alert alert = new Alert(AlertType.ERROR, exportTask.getException().toString(), ButtonType.OK);
+								alert.showAndWait();
+							});
+							exeService.submit(exportTask);
 						}
-			    	};
-			    	exportTask.setOnFailed(e->{
-			    		exportTask.getException().printStackTrace();
-			    		Alert alert = new Alert(AlertType.ERROR, exportTask.getException().toString(), ButtonType.OK);
-			    		alert.showAndWait();
-			    	});
-			    	exeService.submit(exportTask);
-				}	
-	    	}
+					});
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
     }
 

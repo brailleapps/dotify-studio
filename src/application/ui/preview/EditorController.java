@@ -28,6 +28,9 @@ import org.daisy.dotify.common.xml.XMLTools;
 import org.daisy.dotify.common.xml.XMLToolsException;
 import org.daisy.dotify.common.xml.XmlEncodingDetectionException;
 import org.daisy.dotify.studio.api.Editor;
+import org.daisy.dotify.studio.api.ExportAction;
+import org.daisy.dotify.studio.api.FileDetailsProperty;
+import org.daisy.streamline.api.identity.IdentityProvider;
 import org.daisy.streamline.api.media.FileDetails;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
@@ -56,6 +59,7 @@ import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Window;
 
 /**
  * Provides an editor controller.
@@ -76,9 +80,9 @@ public class EditorController extends BorderPane implements Editor {
 	private CodeArea codeArea;
 	private VirtualizedScrollPane<CodeArea> scrollPane;
 	private FileInfo fileInfo = new FileInfo.Builder((File)null).build();
+	private FileDetailsProperty fileDetailsProperty = new FileDetailsProperty();
 	private ExecutorService executor;
 	private final ReadOnlyBooleanProperty canEmbossProperty;
-	private final ReadOnlyBooleanProperty canExportProperty;
 	private final BooleanProperty isLoadedProperty;
 	private final BooleanProperty canSaveProperty;
 	private final ReadOnlyStringProperty urlProperty;
@@ -99,7 +103,6 @@ public class EditorController extends BorderPane implements Editor {
 		hasCancelledUpdateProperty = new SimpleBooleanProperty(false);
 		atMarkProperty = new SimpleBooleanProperty();
 		canEmbossProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
-		canExportProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
 		isLoadedProperty = new SimpleBooleanProperty(false);
 		canSaveProperty = new SimpleBooleanProperty();
 		urlProperty = new SimpleStringProperty();
@@ -154,8 +157,6 @@ public class EditorController extends BorderPane implements Editor {
 		// TODO: also support application/epub+zip
 		return FormatChecker.isText(editorFormat) || FormatChecker.isHTML(editorFormat) || FormatChecker.isXML(editorFormat);
 	}
-
-
 	
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
         String text = codeArea.getText();
@@ -335,6 +336,7 @@ public class EditorController extends BorderPane implements Editor {
 	
 	private void updateFileInfo(FileInfo fileInfo) {
 		this.fileInfo = fileInfo;
+		fileDetailsProperty.setFileDetails(IdentityProvider.newInstance().identify(fileInfo.getFile()));
 		encodingLabel.setText(fileInfo.getCharset().name());
 		bomLabel.setText(fileInfo.hasBom()?"BOM":"");
 		hasCancelledUpdateProperty.set(false);
@@ -421,11 +423,6 @@ public class EditorController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public void export(File f) throws IOException {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public void closing() {
 		closing = true;
 		executor.shutdown();
@@ -457,11 +454,6 @@ public class EditorController extends BorderPane implements Editor {
 	@Override
 	public ReadOnlyBooleanProperty canEmbossProperty() {
 		return canEmbossProperty;
-	}
-
-	@Override
-	public ReadOnlyBooleanProperty canExportProperty() {
-		return canExportProperty;
 	}
 
 	@Override
@@ -517,6 +509,18 @@ public class EditorController extends BorderPane implements Editor {
 	@Override
 	public Node getNode() {
 		return this;
+	}
+
+	@Override
+	public void export(Window ownerWindow, ExportAction action) throws IOException {
+		//TODO: save file first!
+		//See https://github.com/brailleapps/dotify-studio/issues/64
+		action.export(ownerWindow, fileInfo.getFile());
+	}
+
+	@Override
+	public FileDetailsProperty fileDetailsProperty() {
+		return fileDetailsProperty;
 	}
 
 }
