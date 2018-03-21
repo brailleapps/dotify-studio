@@ -3,7 +3,6 @@ package application.ui;
 import java.awt.Desktop;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,21 +23,13 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.daisy.braille.utils.api.embosser.Embosser;
-import org.daisy.braille.utils.api.embosser.EmbosserCatalog;
-import org.daisy.braille.utils.api.embosser.EmbosserCatalogService;
-import org.daisy.braille.utils.api.embosser.EmbosserFeatures;
-import org.daisy.braille.utils.api.embosser.EmbosserWriter;
 import org.daisy.braille.utils.api.table.TableCatalog;
 import org.daisy.braille.utils.pef.PEFFileMerger;
-import org.daisy.braille.utils.pef.PEFHandler;
 import org.daisy.braille.utils.pef.PEFFileMerger.SortType;
 import org.daisy.braille.utils.pef.TextHandler;
 import org.daisy.dotify.studio.api.Editor;
+import org.daisy.dotify.studio.api.ExportActionDescription;
+import org.daisy.dotify.studio.api.ExportActionMaker;
 import org.daisy.streamline.api.identity.IdentityProvider;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.tasks.TaskGroupFactoryMaker;
@@ -47,11 +38,9 @@ import org.daisy.streamline.api.validity.ValidatorFactoryMaker;
 import org.daisy.streamline.api.validity.ValidatorFactoryMakerService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 import application.common.FeatureSwitch;
 import application.common.Settings;
-import application.common.Settings.Keys;
 import application.l10n.Messages;
 import application.ui.about.AboutView;
 import application.ui.imports.ImportBrailleView;
@@ -77,6 +66,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SingleSelectionModel;
@@ -120,7 +110,7 @@ public class MainController {
 	@FXML private WebView console;
 	@FXML private ScrollPane consoleScroll;
 	@FXML private MenuItem closeMenuItem;
-	@FXML private MenuItem exportMenuItem;
+	@FXML private Menu exportMenu;
 	@FXML private MenuItem saveMenuItem;
 	@FXML private MenuItem saveAsMenuItem;
 	@FXML private MenuItem refreshMenuItem;
@@ -145,6 +135,7 @@ public class MainController {
 	private BooleanProperty canToggleView;
 	private StringProperty urlProperty;
 	static final KeyCombination CTRL_F4 = new KeyCodeCombination(KeyCode.F4, KeyCombination.CONTROL_DOWN);
+	private final ExportActionMaker exportActions = ExportActionMaker.newInstance();
 
 	@FXML void initialize() {
 		toolsPane.addEventHandler(KeyEvent.KEY_RELEASED, ev-> {
@@ -224,6 +215,7 @@ public class MainController {
 			canSave.unbind();
 			canToggleView.unbind();
 			urlProperty.unbind();
+			exportMenu.getItems().clear();
 			if (nv!=null && nv.getContent() instanceof Editor) {
 				Editor p = ((Editor)nv.getContent());
 				canEmboss.bind(p.canEmbossProperty());
@@ -231,6 +223,26 @@ public class MainController {
 				canSave.bind(p.canSaveProperty());
 				canToggleView.bind(p.toggleViewProperty());
 				urlProperty.bind(p.urlProperty());
+				for (ExportActionDescription ead : exportActions.listActions(p.getFileDetails())) {
+					exportActions.newExportAction(ead.getIdentifier())
+						.ifPresent(ea->{
+							MenuItem it = new MenuItem(ead.getName());
+							it.setOnAction(v->{
+								Tab t = tabPane.getSelectionModel().getSelectedItem();
+								if (nv!=t) {
+									throw new AssertionError("Internal error");
+								}
+								try {
+									p.export(root.getScene().getWindow(), ea);
+								} catch (IOException e) {
+									logger.log(Level.WARNING, "Export failed.", e);
+									Alert alert = new Alert(AlertType.ERROR, e.toString(), ButtonType.OK);
+									alert.showAndWait();
+								}
+							});
+							exportMenu.getItems().add(it);
+					});
+				}
 			} else {
 				canEmboss.set(false);
 				canExport.set(false);
@@ -244,7 +256,7 @@ public class MainController {
 				tabPane.getSelectionModel().selectedItemProperty().isEqualTo(helpTab)
 		);
 		closeMenuItem.disableProperty().bind(noTabBinding);
-		exportMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canExport.not()));
+		exportMenu.disableProperty().bind(noTabExceptHelpBinding.or(canExport.not()));
 		saveMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canSave.not()));
 		nextEditorViewMenuItem.disableProperty().bind(noTabBinding.or(
 					Bindings.size(tabPane.getTabs()).lessThan(2))
@@ -747,61 +759,6 @@ public class MainController {
 
 		// convert then add tab
 		addSourceTab(selected, dialog.getSelectedConfiguration());
-    }
-    
-    @FXML void exportFile() {
-    	Tab t = tabPane.getSelectionModel().getSelectedItem();
-		if (t!=null) {
-			Editor controller = ((Editor)t.getContent());
-			if (FileDetailsCatalog.PEF_FORMAT.getMediaType().equals(controller.getFileDetails().getMediaType())) {
-				try {
-					controller.export(root.getScene().getWindow(), (stage, source)->{
-						FileChooser fileChooser = new FileChooser();
-						fileChooser.setTitle(Messages.TITLE_EXPORT_DIALOG.localize());
-						Settings.getSettings().getLastSavePath().ifPresent(v->fileChooser.setInitialDirectory(v));
-						File target = fileChooser.showSaveDialog(stage);
-						if (target!=null) {
-							Settings.getSettings().setLastSavePath(target.getParentFile());
-							Task<Void> exportTask = new Task<Void>() {
-								@Override
-								protected Void call() throws Exception {
-									//TODO: sync this with the embossing code and its settings
-									OutputStream os = new FileOutputStream(target);
-									EmbosserCatalogService ef = EmbosserCatalog.newInstance();
-									Embosser emb = ef.newEmbosser("org_daisy.GenericEmbosserProvider.EmbosserType.NONE");
-									String table = Settings.getSettings().getString(Keys.charset);
-									if (table!=null) {
-										emb.setFeature(EmbosserFeatures.TABLE, table);
-									}
-									EmbosserWriter embosser = emb.newEmbosserWriter(os);
-									PEFHandler ph = new PEFHandler.Builder(embosser).build();
-									FileInputStream is = new FileInputStream(source);
-									SAXParserFactory spf = SAXParserFactory.newInstance();
-									spf.setNamespaceAware(true);
-									SAXParser sp;
-									try {
-										sp = spf.newSAXParser();
-										sp.parse(is, ph);
-									} catch (ParserConfigurationException | SAXException e) {
-										throw new IOException("Failed to export", e);
-									}
-									return null;
-								}
-							};
-							exportTask.setOnFailed(e->{
-								exportTask.getException().printStackTrace();
-								Alert alert = new Alert(AlertType.ERROR, exportTask.getException().toString(), ButtonType.OK);
-								alert.showAndWait();
-							});
-							exeService.submit(exportTask);
-						}
-					});
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
     }
 
 	@FXML void closeApplication() {

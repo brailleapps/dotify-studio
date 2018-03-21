@@ -192,7 +192,7 @@ public class PreviewHtmlController extends BorderPane implements OpenableEditor 
 	}
 
 	@Override
-	public void export(Window ownerWindow, ExportAction action) throws IOException {
+	public void export(Window ownerWindow, ExportAction action) {
 		action.export(ownerWindow, file);
 	}
 

@@ -20,7 +20,7 @@ used "braille" text formats.
   * Search meta data in collection of PEF-files
   * Convert from text to a PEF-file
   * Convert from a PEF-file to text
-  * ~~Split a PEF-file into one file per volume~~ [not implemented]
+  * Split a PEF-file into one file per volume
   * Merge several PEF-files into one
 
 ### Supported embossers ###

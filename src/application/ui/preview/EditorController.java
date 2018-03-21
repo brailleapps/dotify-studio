@@ -512,7 +512,7 @@ public class EditorController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public void export(Window ownerWindow, ExportAction action) throws IOException {
+	public void export(Window ownerWindow, ExportAction action) {
 		//TODO: save file first!
 		//See https://github.com/brailleapps/dotify-studio/issues/64
 		action.export(ownerWindow, fileInfo.getFile());

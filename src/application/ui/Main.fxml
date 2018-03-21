@@ -85,7 +85,9 @@
                         <MenuItem mnemonicParsing="false" onAction="#showImportMergeDialog" text="%menu-item-merge-pef-files" />
                     </items>
                   </Menu>
-                  <MenuItem fx:id="exportMenuItem" mnemonicParsing="false" onAction="#exportFile" text="%menu-item-export" />
+                  <Menu fx:id="exportMenu" mnemonicParsing="false" text="%menu-item-export" >
+                  	<items></items>
+                  </Menu>
                   <MenuItem fx:id="embossMenuItem" mnemonicParsing="false" onAction="#emboss" text="%menu-item-emboss">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="P" control="UP" meta="UP" shift="UP" shortcut="DOWN" />

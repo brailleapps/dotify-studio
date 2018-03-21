@@ -70,8 +70,14 @@ files, use the menu item `Import/Braille text files...`.
 If you have a text file that is plain text, but _not_ braille, the above option should be used instead.
 
 ## Exporting ##
-Exporting a file as text can be done by using the menu item `Export`. This will export the file as text, using the same
-translation that is used when rendering the preview.
+The available export commands depend on the file type in the selected editor. Currently, only PEF-files has export commands, but export commands for other file formats may be added in the future.
+
+### PEF: Export to text ###
+Exporting a PEF-file as text can be done by using the menu item `File/Export/Export to text...`. This will export the file as text. By default, the same translation is used as when previewing a PEF-file, but this can be changed in the dialog that appears after the target file has been selected.
+
+### PEF: Split PEF ###
+
+A PEF-file can be split into several files using the menu item `File/Export/Split PEF`. Select a folder where the resulting files should be stored. It is recommended that an empty folder is selected. Note that a folder might _appear_ empty when it's not because the dialog only displays folders.
 
 ## Embossing ##
 The menu item `Emboss` opens an emboss dialog. Review the document information to verify that you are embossing the correct document.
