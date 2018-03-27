@@ -1,4 +1,4 @@
-package application.preview;
+package application.ui.preview;
 
 import java.io.IOException;
 import java.util.Optional;

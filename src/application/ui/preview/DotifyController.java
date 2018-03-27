@@ -29,7 +29,7 @@ import org.daisy.streamline.engine.TaskRunner;
 import application.common.BuildInfo;
 import application.common.FeatureSwitch;
 import application.l10n.Messages;
-import application.template.TemplateView;
+import application.ui.template.TemplateView;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
