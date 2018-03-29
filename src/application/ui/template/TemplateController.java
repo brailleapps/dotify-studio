@@ -4,6 +4,7 @@ package application.ui.template;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -34,7 +35,7 @@ public class TemplateController {
 	private static final Logger logger = Logger.getLogger(TemplateController.class.getCanonicalName());
 	@FXML private VBox templates;
 	@FXML private Label title;
-	private String selected = null;
+	private Optional<Map<String, Object>> selected = Optional.empty();
 	
 	/**
 	 * Creates a new template controller.
@@ -49,6 +50,13 @@ public class TemplateController {
 
 	@FXML void initialize() {
 		if (!isEmpty()) {
+			{
+				ConfigurationItem item = new ConfigurationItem(Messages.LABEL_NONE.localize(), "", false);
+				item.setApplyAction(ev -> {
+					selectNoTemplate();
+				});
+				addItem(item);
+			}
 			List<ConfigurationDetails> sortedDetails = getConfigurationsCatalog().getConfigurationDetails().stream()
 					.sorted((o1, o2) -> {
 						return o1.getKey().compareTo(o2.getKey());
@@ -58,7 +66,13 @@ public class TemplateController {
 				boolean removable = getConfigurationsCatalog().isRemovable(conf.getKey());
 				ConfigurationItem item = new ConfigurationItem(conf.getNiceName(), conf.getDescription(), removable);
 				item.setApplyAction(ev -> {
-					selected = conf.getKey();
+					String key = conf.getKey();
+					try {
+						selected = Optional.of(getConfigurationsCatalog().getConfiguration(key));
+					} catch (ConfigurationsProviderException e) {
+						logger.log(Level.WARNING, "Failed to load configuration with key: " + selected, e);
+						selected = Optional.empty();
+					}
 					((Stage)templates.getScene().getWindow()).close();
 				});
 				if (removable) {
@@ -75,12 +89,6 @@ public class TemplateController {
 				}
 				addItem(item);
 			}
-			ConfigurationItem item = new ConfigurationItem(Messages.LABEL_NONE.localize(), "", false);
-			item.setApplyAction(ev -> {
-				selected = null;
-				closeWindow();
-			});
-			addItem(item);
 		}
 	}
 
@@ -88,7 +96,12 @@ public class TemplateController {
 		return Singleton.getInstance().getConfigurationsCatalog();
 	}
 	
-	void closeWindow() {
+	@FXML void selectNoTemplate() {
+		selected = Optional.of(Collections.emptyMap());
+		closeWindow();
+	}
+	
+	@FXML void closeWindow() {
 		((Stage)templates.getScene().getWindow()).close();
 	}
 	
@@ -100,17 +113,8 @@ public class TemplateController {
 		return !isEmpty();
 	}
 	
-	Map<String, Object> getSelectedConfiguration() {
-		if (selected==null) {
-			return Collections.emptyMap();
-		} else {
-			try {
-				return getConfigurationsCatalog().getConfiguration(selected);
-			} catch (ConfigurationsProviderException e) {
-				logger.log(Level.WARNING, "Failed to load configuration with key: " + selected, e);
-				return Collections.emptyMap();
-			}
-		}
+	Optional<Map<String, Object>> getSelectedConfiguration() {
+		return selected;
 	}
 
 	private void addItem(Node item) {

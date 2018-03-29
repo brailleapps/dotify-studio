@@ -730,9 +730,10 @@ public class MainController {
 			dialog.initModality(Modality.APPLICATION_MODAL); 
 			dialog.showAndWait();
 		}
-
-		// convert then add tab
-		addSourceTab(selected, dialog.getSelectedConfiguration());
+		if (dialog.getSelectedConfiguration().isPresent()) {
+			// convert then add tab
+			addSourceTab(selected, dialog.getSelectedConfiguration().get());
+		}
     }
     
     @FXML void exportFile() {

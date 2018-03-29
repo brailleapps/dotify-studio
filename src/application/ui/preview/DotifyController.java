@@ -58,6 +58,7 @@ import shared.Singleton;
  */
 public class DotifyController extends BorderPane {
 	private static final Logger logger = Logger.getLogger(DotifyController.class.getCanonicalName());
+	private final Wrapper<Map<String, Object>> overrideParameters = new Wrapper<>();
 	@FXML private ScrollPane options;
 	@FXML private VBox tools;
 	@FXML private Button toggle;
@@ -239,7 +240,14 @@ public class DotifyController extends BorderPane {
 			dialog.initModality(Modality.APPLICATION_MODAL); 
 			dialog.showAndWait();
 			//TODO: clear params
-			setParams(dialog.getSelectedConfiguration());
+			//setParams(dialog.getSelectedConfiguration());
+			if (dialog.getSelectedConfiguration().isPresent()) {
+				synchronized (overrideParameters) {
+					overrideParameters.setValue(dialog.getSelectedConfiguration().get());
+				}
+				vbox.getChildren().clear();
+				requestRefresh();
+			}
 		}
 	}
 	
@@ -305,7 +313,20 @@ public class DotifyController extends BorderPane {
 			try {
 				isRunning = true;
 				setRunning(0);
-				Map<String, Object> opts = getParams();
+				Map<String, Object> opts;
+				// Using a local variable as intermediary storage here to avoid synchronization
+				// on the else statement
+				Map<String, Object> overrides = null;
+				synchronized(overrideParameters) {
+					overrides = overrideParameters.getValue();
+					overrideParameters.setValue(null);
+				}
+				if (overrides!=null) {
+					opts = overrides;
+				} else {
+					opts = getParams();
+				}
+				
 				DotifyTask dt = new DotifyTask(annotatedInput, output, locale, outputFormat, opts);
 				dt.setOnFailed(ev->{
 					isRunning = false;
