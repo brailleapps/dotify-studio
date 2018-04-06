@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/brailleapps/dotify-studio.svg)](https://travis-ci.org/brailleapps/dotify-studio)
+[![Type](https://img.shields.io/badge/type-application-blue.svg)](https://github.com/brailleapps/wiki/wiki/Types)
 
 # Dotify Studio #
 Provides an accessible graphical user interface for creating, managing and embossing PEF-files.
