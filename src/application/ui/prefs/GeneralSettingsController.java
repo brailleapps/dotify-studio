@@ -3,22 +3,30 @@ package application.ui.prefs;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.daisy.braille.utils.api.table.BrailleConstants;
 import org.daisy.braille.utils.api.table.TableCatalog;
+import org.daisy.streamline.api.media.FileDetails;
 
 import application.common.FactoryPropertiesAdapter;
+import application.common.FeatureSwitch;
+import application.common.NiceName;
 import application.common.Settings;
 import application.common.Settings.Keys;
 import application.l10n.Messages;
+import application.ui.preview.FileDetailsCatalog;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 /**
  * Provides a controller for the general settings view.
@@ -33,9 +41,29 @@ public class GeneralSettingsController {
 	@FXML private ComboBox<FactoryPropertiesAdapter> selectTable;
 	@FXML private ComboBox<FontEntry> selectBrailleFont;
 	@FXML private ComboBox<FontEntry> selectTextFont;
+	@FXML private VBox rootVBox;
+	@FXML private HBox hboxOutputFormat;
+	@FXML private ComboBox<NiceName> selectOutputFormat;
 	@FXML private ComboBox<String> selectLocale;
 
 	@FXML void initialize() {
+		if (FeatureSwitch.SELECT_OUTPUT_FORMAT.isOn()) {
+			// TODO: This list should be created dynamically from available outputs.
+			// Note that the issue with this isn't to generate the list of outputs, this can be done easily.
+			// However, currently there isn't a way to filter the list of inputs based on the selected output
+			// (in the import dialog). Html is allowed in the list, because it has a reasonably broad support.
+			selectOutputFormat.getItems().addAll(
+					Arrays.asList(FileDetailsCatalog.PEF_FORMAT, FileDetailsCatalog.HTML_FORMAT).stream()
+					.map(v->new NiceName(v.getMediaType(), v.getFormatName()))
+					.collect(Collectors.toList())
+			);
+			FileDetails current = FileDetailsCatalog.forMediaType(Settings.getSettings().getConvertTargetFormat());
+			selectOutputFormat.getSelectionModel().select(new NiceName(current.getMediaType(), current.getFormatName()));
+			selectOutputFormat.valueProperty().addListener((ov, t0, t1)->Settings.getSettings().setConvertTargetFormat(t1.getKey()));
+		} else {
+			rootVBox.getChildren().remove(hboxOutputFormat);
+		}
+
 		previewDescription.setText("");
 		FactoryPropertiesScanner tableScanner = new FactoryPropertiesScanner(()->TableCatalog.newInstance().list(), Keys.charset);
 		tableScanner.setOnSucceeded(ev -> {

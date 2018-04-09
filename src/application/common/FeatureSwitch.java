@@ -16,9 +16,9 @@ public enum FeatureSwitch {
 	 */
 	OPEN_OTHER_TYPES("on".equalsIgnoreCase(System.getProperty("application.feature.open-other-types", "on"))),
 	/**
-	 * Defines if the output format should be HTML (instead of PEF)
+	 * Defines if it should be possible to select output format
 	 */
-	HTML_OUTPUT_FORMAT("on".equalsIgnoreCase(System.getProperty("application.feature.html-output-format", "off"))),
+	SELECT_OUTPUT_FORMAT("on".equalsIgnoreCase(System.getProperty("application.feature.select-output-format", "off"))),
 	/**
 	 * When on, the progress indicator in the Dotify panel uses progress values reported from the task system   
 	 */

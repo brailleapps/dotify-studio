@@ -52,4 +52,43 @@ public class FileDetailsCatalog {
 	private FileDetailsCatalog() {
 		throw new AssertionError("No instances allowed.");
 	}
+	
+	public static FileDetails forMediaType(String mediaType) {
+		if (mediaType.equals(PEF_FORMAT.getMediaType())) {
+			return PEF_FORMAT;
+		} else if (mediaType.equals(HTML_FORMAT.getMediaType())) {
+			return HTML_FORMAT;
+		} else {
+			return new MediaTypeDetails(mediaType);
+		}
+	}
+	
+	private static class MediaTypeDetails implements FileDetails {
+		private final String mediaType;
+		
+		private MediaTypeDetails(String mediaType) {
+			this.mediaType = mediaType;
+		}
+
+		@Override
+		public String getFormatName() {
+			return null;
+		}
+
+		@Override
+		public String getExtension() {
+			return null;
+		}
+
+		@Override
+		public String getMediaType() {
+			return mediaType;
+		}
+
+		@Override
+		public Map<String, Object> getProperties() {
+			return Collections.emptyMap();
+		}
+		
+	}
 }

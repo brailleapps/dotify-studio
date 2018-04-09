@@ -3,29 +3,40 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox minWidth="200.0" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui.prefs.GeneralSettingsController">
+<VBox fx:id="rootVBox" minWidth="200.0" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui.prefs.GeneralSettingsController">
 	<children>
       <Label text="%label-import">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <BorderPane>
-         <left>
-            <Label fx:id="brailleFont1" minWidth="100.0" text="%label-target-locale" BorderPane.alignment="CENTER">
+      <HBox>
+         <children>
+            <Label minWidth="100.0" text="%label-target-locale">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
             </Label>
-         </left>
-         <right>
-            <ComboBox fx:id="selectLocale" maxWidth="-Infinity" prefWidth="210.0" BorderPane.alignment="CENTER" />
-         </right>
-      </BorderPane>
+            <Region HBox.hgrow="ALWAYS" />
+            <ComboBox fx:id="selectLocale" maxWidth="-Infinity" prefWidth="210.0" />
+         </children>
+      </HBox>
+      <HBox fx:id="hboxOutputFormat">
+         <children>
+	         <Label minWidth="100.0" text="%label-target-format">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
+            <Region HBox.hgrow="ALWAYS" />
+	         <ComboBox fx:id="selectOutputFormat" maxWidth="-Infinity" prefWidth="210.0" />
+         </children>
+      </HBox>
       <Label text="%label-preview">
          <font>
             <Font name="System Bold" size="18.0" />

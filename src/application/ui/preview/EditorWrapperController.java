@@ -39,7 +39,9 @@ public class EditorWrapperController extends BorderPane implements Editor {
 		DotifyController dotify = null;
 		Editor prv;
 		if (options!=null) {
-			FileDetails previewDetails = FeatureSwitch.HTML_OUTPUT_FORMAT.isOn()?FileDetailsCatalog.HTML_FORMAT:FileDetailsCatalog.PEF_FORMAT;
+			FileDetails previewDetails = FeatureSwitch.SELECT_OUTPUT_FORMAT.isOn()?
+					FileDetailsCatalog.forMediaType(Settings.getSettings().getConvertTargetFormat())
+					:FileDetailsCatalog.PEF_FORMAT;
 			OpenableEditor pr = previewMaker.newPreview(previewDetails).orElse(null);
 			prv = getEditor(selected, options, pr, previewMaker);
 			try {
