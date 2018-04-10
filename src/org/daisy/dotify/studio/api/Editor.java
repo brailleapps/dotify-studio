@@ -190,6 +190,14 @@ public interface Editor {
 	public default ReadOnlyBooleanProperty modifiedProperty() {
 		return new SimpleBooleanProperty(false);
 	}
+
+	/**
+	 * Gets the converter.
+	 * @return the converter
+	 */
+	public default Optional<Converter> getConverter() {
+		return Optional.empty();
+	}
 	
 	public void activate();
 	
