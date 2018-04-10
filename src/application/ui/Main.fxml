@@ -57,7 +57,7 @@
       </SplitPane>
    </center>
    <top>
-      <MenuBar BorderPane.alignment="CENTER" useSystemMenuBar="false">
+      <MenuBar fx:id="topMenuBar" BorderPane.alignment="CENTER" useSystemMenuBar="false">
         <menus>
           <Menu mnemonicParsing="false" text="%menu-item-file">
             <items>
@@ -106,12 +106,28 @@
           </Menu>
           <Menu mnemonicParsing="false" text="%menu-item-edit">
             <items>
-              <MenuItem fx:id="refreshMenuItem" mnemonicParsing="false" onAction="#refresh" text="%menu-item-refresh">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="F5" control="UP" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator></MenuItem>
                   <MenuItem fx:id="openInBrowserMenuItem" mnemonicParsing="false" onAction="#openInBrowser" text="%menu-item-open-browser" />
             </items>
+          </Menu>
+          <Menu fx:id="convertMenu" mnemonicParsing="false" text="%menu-item-converter">
+          	<items>
+          		<MenuItem fx:id="refreshConverterMenuItem" mnemonicParsing="false" onAction="#refreshConverter" text="%menu-item-update">
+          			<accelerator>
+                        <KeyCodeCombination alt="UP" code="F5" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator>
+          		</MenuItem>
+          		<SeparatorMenuItem mnemonicParsing="false" />
+          		<MenuItem fx:id="saveTemplateMenuItem" mnemonicParsing="false" onAction="#saveTemplate" text="%menu-item-save-template"/>
+          		<MenuItem fx:id="applyTemplateMenuItem" mnemonicParsing="false" onAction="#applyTemplate" text="%menu-item-apply-template"/>
+          		<SeparatorMenuItem mnemonicParsing="false" />
+          		<CheckMenuItem fx:id="showConverterMenuItem" mnemonicParsing="false" text="%menu-item-show-converter">
+		         		<accelerator>
+		                    <KeyCodeCombination alt="DOWN" code="O" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+		         		</accelerator>
+		         </CheckMenuItem>
+          		<SeparatorMenuItem mnemonicParsing="false" />
+          		<CheckMenuItem fx:id="watchSourceMenuItem" mnemonicParsing="false" text="%checkbox-watch-source"/>
+          	</items>
           </Menu>
             <Menu mnemonicParsing="false" text="%menu-item-window">
               <items>
@@ -123,6 +139,11 @@
                      <accelerator>
                         <KeyCodeCombination alt="DOWN" code="C" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
                      </accelerator></CheckMenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="refreshMenuItem" mnemonicParsing="false" onAction="#refresh" text="%menu-item-refresh">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="F5" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="nextEditorViewMenuItem" mnemonicParsing="false" onAction="#nextEditor" text="%menu-item-next-editor">
                      <accelerator>

@@ -22,7 +22,12 @@ public enum FeatureSwitch {
 	/**
 	 * When on, the progress indicator in the Dotify panel uses progress values reported from the task system   
 	 */
-	REPORT_PROGRESS("on".equalsIgnoreCase(System.getProperty("application.feature.report-progress", "off")));
+	REPORT_PROGRESS("on".equalsIgnoreCase(System.getProperty("application.feature.report-progress", "off"))),
+	/**
+	 * When on, the template dialog is opened on import 
+	 */
+	TEMPLATE_DIALOG_ON_IMPORT("on".equalsIgnoreCase(System.getProperty("application.feature.template-dialog-on-import", "on"))),
+	;
 
 	private final boolean on;
 	FeatureSwitch(boolean on) {

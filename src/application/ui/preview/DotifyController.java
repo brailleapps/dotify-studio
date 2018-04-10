@@ -16,8 +16,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.daisy.dotify.studio.api.Converter;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.option.UserOption;
+import org.daisy.streamline.api.option.UserOptionValue;
 import org.daisy.streamline.api.tasks.CompiledTaskSystem;
 import org.daisy.streamline.api.tasks.InternalTask;
 import org.daisy.streamline.api.tasks.TaskSystem;
@@ -27,8 +29,13 @@ import org.daisy.streamline.engine.TaskRunner;
 
 import application.common.BuildInfo;
 import application.common.FeatureSwitch;
+import application.common.Singleton;
 import application.l10n.Messages;
+import application.ui.template.TemplateView;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -46,14 +53,16 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 
 /**
  * Provides a controller for Dotify.
  * @author Joel Håkansson
  *
  */
-public class DotifyController extends BorderPane {
+public class DotifyController extends BorderPane implements Converter {
 	private static final Logger logger = Logger.getLogger(DotifyController.class.getCanonicalName());
+	private final Wrapper<Map<String, Object>> overrideParameters = new Wrapper<>();
 	@FXML private ScrollPane options;
 	@FXML private VBox tools;
 	@FXML private Button toggle;
@@ -61,10 +70,13 @@ public class DotifyController extends BorderPane {
 	@FXML private Button applyButton;
 	@FXML private CheckBox monitorCheckbox;
 	@FXML private ProgressIndicator progress;
+	private final File input;
 	private boolean refreshRequested;
 	private Set<UserOption> values;
 	private boolean closing;
 	private ExecutorService exeService;
+	private BooleanProperty showOptions;
+	private BooleanProperty canRequestUpdate;
 
 	/**
 	 * Creates a new options controller.
@@ -85,21 +97,39 @@ public class DotifyController extends BorderPane {
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Failed to load view", e);
 		}
+		this.input = selected.getFile();
 		refreshRequested = false;
 		closing = false;
 		exeService = Executors.newWorkStealingPool();
+		showOptions = new SimpleBooleanProperty(true);
+		showOptions.addListener((o, ov, nv)->{
+			if (nv.booleanValue()) {
+				setBottom(tools);
+				setCenter(this.options);
+				toggle.setText("<");
+				toggle.getTooltip().setText(Messages.TOOLTIP_HIDE_CONVERTER.localize());
+			} else {
+				setBottom(null);
+				setCenter(null);
+				toggle.setText(">");
+				toggle.getTooltip().setText(Messages.TOOLTIP_SHOW_CONVERTER.localize());
+			}		
+		});
+		canRequestUpdate = new SimpleBooleanProperty(false);
 		setRunning(0);
 		DotifyTask dt = new DotifyTask(selected, out, tag, outputFormat, options);
 		dt.setOnSucceeded(ev -> {
 			Consumer<File> resultWatcher = onSuccess.apply(out);
 			DotifyResult dr = dt.getValue();
 			setOptions(dr.getTaskSystem(), dr.getResults(), options);
+			canRequestUpdate.set(true);
 			setRunning(1);
 			Thread th = new Thread(new SourceDocumentWatcher(selected, out, tag, outputFormat, resultWatcher));
 			th.setDaemon(true);
 			th.start();
 		});
 		dt.setOnFailed(ev->{
+			canRequestUpdate.set(true);
 			setRunning(1);
 			logger.log(Level.WARNING, "Import failed.", dt.getException());
 			Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
@@ -184,32 +214,90 @@ public class DotifyController extends BorderPane {
 	}
 	
 	public void setParams(Map<String, Object> opts) {
+		Map<String, Object> optsCopy = new HashMap<>(opts);
 		for (Node n : vbox.getChildren()) {
 			if (n instanceof OptionItem) {
 				OptionItem o = (OptionItem)n;
-				Object value = opts.get(o.getKey());
+				Object value = optsCopy.remove(o.getKey());
 				if (value!=null) {
 					o.setValue(value.toString());
 				}
 			}
 		}
+		displayItems("Template", optsCopy.entrySet().stream()
+				.map(v->new UserOption.Builder(v.getKey()).defaultValue("").addValue(new UserOptionValue.Builder(v.getValue().toString()).build()).build())
+				.collect(Collectors.toList()), optsCopy);
 	}
+	
+	@Override
+	public void selectTemplateAndApply() {
+		TemplateView dialog = new TemplateView(input);
+		dialog.initOwner(getScene().getWindow());
+		dialog.initModality(Modality.APPLICATION_MODAL); 
+		dialog.showAndWait();
+		if (dialog.getSelectedConfiguration().isPresent()) {
+			synchronized (overrideParameters) {
+				overrideParameters.setValue(dialog.getSelectedConfiguration().get());
+			}
+			vbox.getChildren().clear();
+			requestRefresh();
+		}
+	}
+
+	@Override
+	public void apply() {
+		requestRefresh();
+	}
+	
+	@Override
+	public boolean getWatchSource() {
+		return monitorCheckbox.selectedProperty().get();
+	}
+
+	@Override
+	public void setWatchSource(boolean value) {
+		monitorCheckbox.selectedProperty().set(value);
+	}
+
+	@Override
+	public BooleanProperty watchSourceProperty() {
+		return monitorCheckbox.selectedProperty();
+	}
+
 	
 	@FXML void requestRefresh() {
 		refreshRequested = true;
+		canRequestUpdate.set(false);
+		setRunning(0);
 	}
 	
-	@FXML void toggleOptions() {
-		if (getBottom()==tools) {
-			setBottom(null);
-			setCenter(null);
-			toggle.setText(">");
-			toggle.getTooltip().setText(Messages.TOOLTIP_SHOW_OPTIONS.localize());
-		} else {
-			setBottom(tools);
-			setCenter(options);
-			toggle.setText("<");
-			toggle.getTooltip().setText(Messages.TOOLTIP_HIDE_OPTIONS.localize());
+	@Override
+	public final boolean getShowOptions() {
+		return showOptions.get();
+	}
+
+	@Override
+	public final void setShowOptions(boolean value) {
+		showOptions.set(value);
+	}
+
+	@FXML public void toggleOptions() {
+		setShowOptions(getBottom()!=tools);
+	}
+	
+	@Override
+	public BooleanProperty showOptionsProperty() {
+		return showOptions;
+	}
+	
+	@Override public void saveTemplate() {
+		TemplateDetailsView dialog = new TemplateDetailsView();
+		dialog.initOwner(this.getScene().getWindow());
+		dialog.initModality(Modality.APPLICATION_MODAL); 
+		dialog.showAndWait();
+		if (dialog.getResult().isPresent()) {
+			NameDesc nameDesc = dialog.getResult().get();
+			Singleton.getInstance().getConfigurationsCatalog().addConfiguration(nameDesc.getName(), nameDesc.getDesc(), getParams());
 		}
 	}
 	
@@ -275,11 +363,25 @@ public class DotifyController extends BorderPane {
 			try {
 				isRunning = true;
 				setRunning(0);
-				Map<String, Object> opts = getParams();
+				Map<String, Object> opts;
+				// Using a local variable as intermediary storage here to avoid synchronization
+				// on the else statement
+				Map<String, Object> overrides = null;
+				synchronized(overrideParameters) {
+					overrides = overrideParameters.getValue();
+					overrideParameters.setValue(null);
+				}
+				if (overrides!=null) {
+					opts = overrides;
+				} else {
+					opts = getParams();
+				}
+				
 				DotifyTask dt = new DotifyTask(annotatedInput, output, locale, outputFormat, opts);
 				dt.setOnFailed(ev->{
 					isRunning = false;
 					setRunning(1);
+					canRequestUpdate.set(true);
 					logger.log(Level.WARNING, "Update failed.", dt.getException());
 					Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
 					alert.showAndWait();
@@ -287,6 +389,7 @@ public class DotifyController extends BorderPane {
 				dt.setOnSucceeded(ev -> {
 					isRunning = false;
 					setRunning(1);
+					canRequestUpdate.set(true);
 					Platform.runLater(() -> {
 						if (resultWatcher!=null) {
 							resultWatcher.accept(output);
@@ -375,6 +478,16 @@ public class DotifyController extends BorderPane {
 		private List<RunnerResult> getResults() {
 			return results;
 		}
+	}
+
+	@Override
+	public ReadOnlyBooleanProperty isIdleProperty() {
+		return canRequestUpdate;
+	}
+
+	@Override
+	public boolean getIsIdle() {
+		return canRequestUpdate.get();
 	}
 
 }

@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
+import org.daisy.dotify.studio.api.Converter;
 import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.ExportAction;
 import org.daisy.dotify.studio.api.FileDetailsProperty;
@@ -19,6 +21,7 @@ import application.common.Settings;
 import application.common.Settings.Keys;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -26,7 +29,7 @@ import javafx.stage.Window;
 
 public class EditorWrapperController extends BorderPane implements Editor {
 	private final Editor impl;
-	private DotifyController dotify;
+	private final DotifyController dotify;
 	
 	private EditorWrapperController(Editor impl, DotifyController converter) {
 		this.impl = impl;
@@ -180,6 +183,11 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	@Override
 	public FileDetailsProperty fileDetailsProperty() {
 		return impl.fileDetailsProperty();
+	}
+
+	@Override
+	public Optional<Converter> getConverter() {
+		return Optional.ofNullable(dotify);
 	}
 
 }

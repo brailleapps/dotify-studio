@@ -19,6 +19,7 @@ public enum Messages {
 	APPLICATION_ENVIRONMENT("application-environment"),
 	BUTTON_OK("button-ok"),
 	BUTTON_SELECT("button-select"),
+	BUTTON_DELETE("button-delete"),
 	EMBOSS_WINDOW_TITLE("emboss-window-title"),
 	/**
 	 * The file is invalid and cannot be embossed.
@@ -83,6 +84,7 @@ public enum Messages {
 	TITLE_EXPORT_DIALOG("title-export-dialog"),
 	TITLE_SAVE_AS_DIALOG("title-save-as-dialog"),
 	TITLE_TEMPLATES_DIALOG("title-templates-dialog"),
+	TITLE_SAVE_TEMPLATES_DIALOG("title-save-template-dialog"),
 	LABEL_BRAILLE_FONT("label-braille-font"),
 	LABEL_TEXT_FONT("label-text-font"),
 	LABEL_TRANSLATION("label-translation"),
@@ -100,7 +102,7 @@ public enum Messages {
 	LABEL_SETUP_INVALID("label-setup-invalid"),
 	LABEL_CREATE_TEST_DOCUMENT("label-create-test-document"),
 	LABEL_PAPER_DIMENSIONS("label-paper-dimensions"),
-	LABEL_NONE("label-none"),
+	LABEL_EMPTY("label-empty"),
 	LABEL_HEIGHT("label-height"),
 	LABEL_WIDTH("label-width"),
 	LABEL_ROLL_SIZE("label-roll-size"),
@@ -123,7 +125,7 @@ public enum Messages {
 	/**
 	 * Confirm delete a custom paper
 	 */
-	MESSAGE_CONFIRM_DELETE_PAPER("message-confirm-delete-paper"),
+	MESSAGE_CONFIRM_DELETE("message-confirm-delete"),
 	MESSAGE_FILE_MODIFIED_BY_ANOTHER_APPLICATION("message-file-modified-by-another-application"),
 	MESSAGE_CONFIRM_SAVE_MALFORMED_XML("message-confirm-save-malformed-xml"),
 	MESSAGE_CONFIRM_QUIT_UNSAVED_CHANGES("message-confirm-quit-unsaved-changes"),
@@ -140,8 +142,8 @@ public enum Messages {
 	TOOLTIP_NO_VOLUME_SUPPORT("tooltip-no-volume-support"),
 	TOOLTIP_ACCURATE_LINE_SPACING("tooltip-accurate-line-spacing"),
 	TOOLTIP_SIMPLE_LINE_SPACING("tooltip-simple-line-spacing"),
-	TOOLTIP_SHOW_OPTIONS("tooltip-show-options"),
-	TOOLTIP_HIDE_OPTIONS("tooltip-hide-options"),
+	TOOLTIP_SHOW_CONVERTER("tooltip-show-converter"),
+	TOOLTIP_HIDE_CONVERTER("tooltip-hide-converter"),
 	VALUE_USE_DEFAULT("value-use-default"),
 	EXTENSION_FILTER_SUPPORTED_FILES("extension-filter-supported-files"),
 	EXTENSION_FILTER_ALL_FILES("extension-filter-all-files"),

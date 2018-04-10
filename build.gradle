@@ -72,8 +72,8 @@ dependencies {
 	compile 'com.googlecode.ajui:ajui:1.0.0'
 	
 	compile 'org.daisy.dotify:dotify.api:4.1.1'
-	compile 'org.daisy.streamline:streamline-api:1.0.1'
-	compile 'org.daisy.dotify:dotify.common:4.1.0'
+	compile 'org.daisy.streamline:streamline-api:1.1.0'
+	compile 'org.daisy.dotify:dotify.common:4.2.0'
 	compile ('org.daisy.streamline:streamline-engine:1.1.0') {
 		exclude module: 'streamline-api'
 	}

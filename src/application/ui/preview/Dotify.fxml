@@ -42,7 +42,7 @@
                      <tooltip>
                         <Tooltip text="%tooltip-watch-source" />
                      </tooltip></CheckBox>
-      						   <Button fx:id="applyButton" mnemonicParsing="false" onAction="#requestRefresh" text="%button-apply" />
+      				<Button fx:id="applyButton" mnemonicParsing="false" onAction="#requestRefresh" text="%button-apply" />
                </children>
             </HBox>
 				</children>
@@ -57,7 +57,7 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </BorderPane.margin>
          <tooltip>
-            <Tooltip text="%tooltip-hide-options" />
+            <Tooltip text="%tooltip-hide-converter" />
          </tooltip></Button>
    </top>
 </fx:root>

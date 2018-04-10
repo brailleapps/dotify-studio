@@ -11,6 +11,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,6 +28,7 @@ import org.daisy.braille.utils.api.table.TableCatalog;
 import org.daisy.braille.utils.pef.PEFFileMerger;
 import org.daisy.braille.utils.pef.PEFFileMerger.SortType;
 import org.daisy.braille.utils.pef.TextHandler;
+import org.daisy.dotify.studio.api.Converter;
 import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.ExportActionDescription;
 import org.daisy.dotify.studio.api.ExportActionMaker;
@@ -67,6 +69,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SingleSelectionModel;
@@ -110,20 +113,27 @@ public class MainController {
 	@FXML private WebView console;
 	@FXML private ScrollPane consoleScroll;
 	@FXML private MenuItem closeMenuItem;
+	@FXML private MenuBar topMenuBar;
+	@FXML private Menu convertMenu;
 	@FXML private Menu exportMenu;
 	@FXML private MenuItem saveMenuItem;
 	@FXML private MenuItem saveAsMenuItem;
 	@FXML private MenuItem refreshMenuItem;
 	@FXML private MenuItem openInBrowserMenuItem;
 	@FXML private MenuItem embossMenuItem;
+	@FXML private CheckMenuItem showConverterMenuItem;
 	@FXML private CheckMenuItem showSearchMenuItem;
 	@FXML private CheckMenuItem showConsoleMenuItem;
+	@FXML private CheckMenuItem watchSourceMenuItem;
 	@FXML private ToggleButton scrollLockButton;
 	@FXML private MenuItem nextEditorViewMenuItem;
 	@FXML private MenuItem previousEditorViewMenuItem;
 	@FXML private MenuItem toggleViewMenuItem;
 	@FXML private MenuItem viewingModeMenuItem;
 	@FXML private MenuItem activateViewMenuItem;
+	@FXML private MenuItem refreshConverterMenuItem;
+	@FXML private MenuItem applyTemplateMenuItem;
+	@FXML private MenuItem saveTemplateMenuItem;
 	private final double dividerPosition = 0.2;
 	private Tab searchTab;
 	private Tab helpTab;
@@ -204,53 +214,13 @@ public class MainController {
 		canSave = new SimpleBooleanProperty();
 		canToggleView = new SimpleBooleanProperty();
 		urlProperty = new SimpleStringProperty();
+		topMenuBar.getMenus().remove(convertMenu);
 		//add menu bindings
-		setMenuBindings();
+		Platform.runLater(()->setMenuBindings());
 	}
 	
 	private void setMenuBindings() {
-		tabPane.getSelectionModel().selectedItemProperty().addListener((o, ov, nv)->{
-			canEmboss.unbind();
-			canExport.unbind();
-			canSave.unbind();
-			canToggleView.unbind();
-			urlProperty.unbind();
-			exportMenu.getItems().clear();
-			if (nv!=null && nv.getContent() instanceof Editor) {
-				Editor p = ((Editor)nv.getContent());
-				canEmboss.bind(p.canEmbossProperty());
-				canExport.bind(p.fileDetailsProperty().mediaTypeProperty().isEqualTo(FileDetailsCatalog.PEF_FORMAT.getMediaType()));
-				canSave.bind(p.canSaveProperty());
-				canToggleView.bind(p.toggleViewProperty());
-				urlProperty.bind(p.urlProperty());
-				for (ExportActionDescription ead : exportActions.listActions(p.getFileDetails())) {
-					exportActions.newExportAction(ead.getIdentifier())
-						.ifPresent(ea->{
-							MenuItem it = new MenuItem(ead.getName());
-							it.setOnAction(v->{
-								Tab t = tabPane.getSelectionModel().getSelectedItem();
-								if (nv!=t) {
-									throw new AssertionError("Internal error");
-								}
-								try {
-									p.export(root.getScene().getWindow(), ea);
-								} catch (IOException e) {
-									logger.log(Level.WARNING, "Export failed.", e);
-									Alert alert = new Alert(AlertType.ERROR, e.toString(), ButtonType.OK);
-									alert.showAndWait();
-								}
-							});
-							exportMenu.getItems().add(it);
-					});
-				}
-			} else {
-				canEmboss.set(false);
-				canExport.set(false);
-				canSave.set(false);
-				canToggleView.set(false);
-				urlProperty.set(null);
-			}
-		});
+		tabPane.getSelectionModel().selectedItemProperty().addListener((o, ov, nv)->updateTab(ov, nv));
 		BooleanBinding noTabBinding = tabPane.getSelectionModel().selectedItemProperty().isNull();
 		BooleanBinding noTabExceptHelpBinding = noTabBinding.or(
 				tabPane.getSelectionModel().selectedItemProperty().isEqualTo(helpTab)
@@ -271,6 +241,72 @@ public class MainController {
 		refreshMenuItem.disableProperty().bind(noTabBinding);
 		openInBrowserMenuItem.disableProperty().bind(noTabBinding.or(urlProperty.isNull()));
 		embossMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canEmboss.not()));
+	}
+	
+	private void updateTab(Tab ov, Tab nv) {
+		canEmboss.unbind();
+		canExport.unbind();
+		canSave.unbind();
+		canToggleView.unbind();
+		urlProperty.unbind();
+		refreshConverterMenuItem.disableProperty().unbind();
+		applyTemplateMenuItem.disableProperty().unbind();
+		saveTemplateMenuItem.disableProperty().unbind();
+		exportMenu.getItems().clear();
+		topMenuBar.getMenus().remove(convertMenu);
+		if (ov!=null && ov.getContent() instanceof Editor) {
+			Editor p = ((Editor)ov.getContent());
+			p.getConverter().ifPresent(v->{
+				showConverterMenuItem.selectedProperty().unbindBidirectional(v.showOptionsProperty());
+				watchSourceMenuItem.selectedProperty().unbindBidirectional(v.watchSourceProperty());
+			});
+		}
+		if (nv!=null && nv.getContent() instanceof Editor) {
+			Editor p = ((Editor)nv.getContent());
+			canExport.bind(p.fileDetailsProperty().mediaTypeProperty().isEqualTo(FileDetailsCatalog.PEF_FORMAT.getMediaType()));
+			canEmboss.bind(p.canEmbossProperty());
+			canSave.bind(p.canSaveProperty());
+			canToggleView.bind(p.toggleViewProperty());
+			urlProperty.bind(p.urlProperty());
+			if (p.getConverter().isPresent()) {
+				Converter v = p.getConverter().get();
+				showConverterMenuItem.selectedProperty().bindBidirectional(v.showOptionsProperty());
+				watchSourceMenuItem.selectedProperty().bindBidirectional(v.watchSourceProperty());
+				BooleanBinding refreshDisableBinding = Bindings.not(v.isIdleProperty());
+				refreshConverterMenuItem.disableProperty().bind(refreshDisableBinding);
+				applyTemplateMenuItem.disableProperty().bind(refreshDisableBinding);
+				saveTemplateMenuItem.disableProperty().bind(refreshDisableBinding);	
+			}
+			for (ExportActionDescription ead : exportActions.listActions(p.getFileDetails())) {
+				exportActions.newExportAction(ead.getIdentifier())
+					.ifPresent(ea->{
+						MenuItem it = new MenuItem(ead.getName());
+						it.setOnAction(v->{
+							Tab t = tabPane.getSelectionModel().getSelectedItem();
+							if (nv!=t) {
+								throw new AssertionError("Internal error");
+							}
+							try {
+								p.export(root.getScene().getWindow(), ea);
+							} catch (IOException e) {
+								logger.log(Level.WARNING, "Export failed.", e);
+								Alert alert = new Alert(AlertType.ERROR, e.toString(), ButtonType.OK);
+								alert.showAndWait();
+							}
+						});
+						exportMenu.getItems().add(it);
+				});
+			}
+			if (p.getConverter().isPresent()) {
+				topMenuBar.getMenus().add(2, convertMenu);
+			}
+		} else {
+			canEmboss.set(false);
+			canExport.set(false);
+			canSave.set(false);
+			canToggleView.set(false);
+			urlProperty.set(null);
+		}
 	}
 	
 	private static boolean canDropFiles(List<File> files) {
@@ -393,7 +429,7 @@ public class MainController {
 		getSelectedPreview().ifPresent(v->v.activate());
 	}
 
-    @FXML void refresh() {
+	@FXML void refresh() {
 		Tab t = tabPane.getSelectionModel().getSelectedItem();
 		if (t!=null) {
 			javafx.scene.Node node = t.getContent();
@@ -403,9 +439,21 @@ public class MainController {
 				((Editor)node).reload();
 			}
 		}
-    }
-    
-    @FXML void openInBrowser() {
+	}
+
+	@FXML void refreshConverter() {
+		getSelectedPreview().flatMap(v->v.getConverter()).ifPresent(v->v.apply());
+	}
+	
+	@FXML void saveTemplate() {
+		getSelectedPreview().flatMap(v->v.getConverter()).ifPresent(v->v.saveTemplate());
+	}
+	
+	@FXML void applyTemplate() {
+		getSelectedPreview().flatMap(v->v.getConverter()).ifPresent(v->v.selectTemplateAndApply());
+	}
+
+	@FXML void openInBrowser() {
 		if (Desktop.isDesktopSupported()) {
 			Tab t = tabPane.getSelectionModel().getSelectedItem();
 			if (t!=null) {
@@ -485,6 +533,7 @@ public class MainController {
 						controller.closing();
 						// update contents of tab
 						setTab(t, selected.getName(), StartupDetails.open(selected), controller.getOptions());
+						updateTab(t, t);
 						// TODO: Restore document position
 					}
 				} catch (IOException e) {
@@ -747,19 +796,22 @@ public class MainController {
     			?ext2.substring(0, 1).toUpperCase() + ext2.substring(1)
     			:ext2.toUpperCase());
     }
-    
-    private void selectTemplateAndOpen(File selected) {
-		// choose template
-		TemplateView dialog = new TemplateView(selected);
-		if (dialog.hasTemplates()) {
+	
+	private void selectTemplateAndOpen(File selected) {
+		TemplateView dialog = null;
+		if (FeatureSwitch.TEMPLATE_DIALOG_ON_IMPORT.isOn() && (dialog = new TemplateView(selected)).hasTemplates()) {
+			// choose template
 			dialog.initOwner(root.getScene().getWindow());
 			dialog.initModality(Modality.APPLICATION_MODAL); 
 			dialog.showAndWait();
+			if (dialog.getSelectedConfiguration().isPresent()) {
+				// convert then add tab
+				addSourceTab(selected, dialog.getSelectedConfiguration().get());
+			}
+		} else {
+			addSourceTab(selected, Collections.emptyMap());
 		}
-
-		// convert then add tab
-		addSourceTab(selected, dialog.getSelectedConfiguration());
-    }
+	}
 
 	@FXML void closeApplication() {
 		Stage stage = ((Stage)root.getScene().getWindow());
