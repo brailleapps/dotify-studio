@@ -79,7 +79,7 @@ public class PaperSettingsController extends BorderPane {
 		list.setOnKeyTyped(ev -> {
 			if ("\u007F".equals(ev.getCharacter())) { //DEL
 				PaperAdapter pa = list.getSelectionModel().getSelectedItem();
-				Alert alert = new Alert(AlertType.CONFIRMATION, Messages.MESSAGE_CONFIRM_DELETE_PAPER.localize(pa.getDisplayName()));
+				Alert alert = new Alert(AlertType.CONFIRMATION, Messages.MESSAGE_CONFIRM_DELETE.localize(pa.getDisplayName()));
 	    		alert.showAndWait()
 	    			.filter(response -> response == ButtonType.OK)
 	    			.ifPresent(response -> {

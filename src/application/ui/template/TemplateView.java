@@ -3,6 +3,7 @@ package application.ui.template;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,7 +28,7 @@ public class TemplateView extends Stage {
 	 * @param file the file target
 	 */
 	public TemplateView(File file) {
-		String title = Messages.TITLE_TEMPLATES_DIALOG.localize(file.getName());
+		String title = Messages.TITLE_TEMPLATES_DIALOG.localize(file==null?"":file.getName());
 		try {
 			loader = new FXMLLoader(this.getClass().getResource("Template.fxml"), Messages.getBundle());
 			Parent root = loader.load();
@@ -58,7 +59,7 @@ public class TemplateView extends Stage {
 	 * Gets the selected configuration, or an empty map if none is selected.
 	 * @return returns the selected configuration, or an empty map
 	 */
-	public Map<String, Object> getSelectedConfiguration() {
+	public Optional<Map<String, Object>> getSelectedConfiguration() {
 		return loader.<TemplateController>getController().getSelectedConfiguration();
 	}
 }

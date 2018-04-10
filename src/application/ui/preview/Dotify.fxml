@@ -27,7 +27,7 @@
    <bottom>
       <VBox fx:id="tools" BorderPane.alignment="CENTER">
       	<children>
-            <Label text="%label-converter-tools" textFill="#404040">
+            <Label text="%label-importer-tools" textFill="#404040">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
@@ -42,7 +42,7 @@
                      <tooltip>
                         <Tooltip text="%tooltip-watch-source" />
                      </tooltip></CheckBox>
-      						   <Button fx:id="applyButton" mnemonicParsing="false" onAction="#requestRefresh" text="%button-apply" />
+      				<Button fx:id="applyButton" mnemonicParsing="false" onAction="#requestRefresh" text="%button-apply" />
                </children>
             </HBox>
 				</children>
