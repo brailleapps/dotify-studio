@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -17,6 +18,7 @@ import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 
 import org.daisy.braille.utils.api.embosser.Embosser;
+import org.daisy.braille.utils.api.embosser.EmbosserFactoryProperties;
 import org.daisy.braille.utils.api.factory.FactoryProperties;
 import org.daisy.braille.utils.pef.PEFGenerator;
 
@@ -66,6 +68,7 @@ public class EmbossSettingsController extends BorderPane {
 	@FXML private ComboBox<NiceName> alignSelect;
 	@FXML private VBox parent;
 	private PreferenceItem deviceItem;
+	private PreferenceItem makerItem;
 	private PreferenceItem embosserItem;
 	private PreferenceItem printModeItem;
 	private PreferenceItem tableItem;
@@ -77,6 +80,7 @@ public class EmbossSettingsController extends BorderPane {
 	private final OptionNiceNames nn = new OptionNiceNames();
 	private DeviceScanner deviceScanner;
 	private File generatedFile;
+	private String currentMake = null;
 
 	/**
 	 * Creates a new embosser settings controller.
@@ -118,10 +122,19 @@ public class EmbossSettingsController extends BorderPane {
 		th.setDaemon(true);
 		th.start();
 	}
+	
+	private void setMake(String value) {
+		this.currentMake = value;
+	}
 
 	private void updateComponentsInner(Configuration conf) {
 		Config config = new Config();
 		config.update();
+		if (currentMake==null) {
+			currentMake = Optional.ofNullable(conf.getEmbosserCatalog().get(config.embosser))
+				.map(v->v.getMake())
+				.orElse(Optional.ofNullable(makerItem).map(v->v.getKey()).orElse(""));
+		}
 		parent.getChildren().clear();
 		
 		deviceItem = new PreferenceItem(Messages.LABEL_DEVICE.localize(), deviceScanner.getValue(), config.device, (o, t0, t1) -> {
@@ -131,86 +144,100 @@ public class EmbossSettingsController extends BorderPane {
 		parent.getChildren().add(deviceItem);
 
 		if (!"".equals(config.device)) {
-			embosserItem = new PreferenceItem(Messages.LABEL_EMBOSSER.localize(), wrap(conf.getEmbossers()), config.embosser, (o, t0, t1) -> {
-				Settings.getSettings().put(Keys.embosser, t1.getKey());
-				updateComponents();
-			});
-			parent.getChildren().add(embosserItem);
-			if (!"".equals(config.embosser)) {
-				Embosser em = conf.getConfiguredEmbosser();
-				//TODO: Don't use fixed line spacing value 
-				parent.getChildren().add(new DriverDetails(em.supports8dot(), em.supportsVolumes(), false));
-				if (conf.supportsBothPrintModes()) {
-					printModeItem = new PreferenceItem(Messages.LABEL_PRINT_MODE.localize(), nn.getPrintModeNN(), config.printMode, (o, t0, t1) -> {
-						Settings.getSettings().put(Keys.printMode, t1.getKey());
+			makerItem = new PreferenceItem(Messages.LABEL_MAKE.localize(), conf.getEmbossers().stream()
+					.map(v->new NiceName(v.getMake(), v.getMake()))
+					.sorted((o1, o2)->o1.getDisplayName().compareTo(o2.getDisplayName()))
+					.distinct()
+					.collect(Collectors.toList()), currentMake, (o, t0, t1) -> {
+						setMake(t1.getKey());
+						Settings.getSettings().put(Keys.embosser, "");
 						updateComponents();
 					});
-					parent.getChildren().add(printModeItem);
-				} else {
-					printModeItem = null;
-				}
-		
-				if (conf.getSupportedTables().size()>1) {
-					tableItem = new PreferenceItem(Messages.LABEL_TABLE.localize(), wrap(conf.getSupportedTables()), config.table, (o, t0, t1) -> {
-						Settings.getSettings().put(Keys.table, t1.getKey());
-						updateComponents();
-					});
-					parent.getChildren().add(tableItem);
-				} else {
-					tableItem = null;
-				}
-				
-				paperItem = new PreferenceItem(Messages.LABEL_PAPER.localize(), wrap(conf.getSupportedPapers()), config.paper, (o, t0, t1) -> {
-					Settings.getSettings().put(Keys.paper, t1.getKey());
+			parent.getChildren().add(makerItem);
+			if (!"".equals(currentMake)) {
+				conf.getEmbosserCatalog().list(v->true);
+				embosserItem = new PreferenceItem(Messages.LABEL_EMBOSSER.localize(), wrapEmbossers(conf.getEmbossers().stream()
+						.filter(v->v.getMake().equals(currentMake)).collect(Collectors.toList())), config.embosser, (o, t0, t1) -> {
+					Settings.getSettings().put(Keys.embosser, t1.getKey());
 					updateComponents();
 				});
-				parent.getChildren().add(paperItem);
+				parent.getChildren().add(embosserItem);
+				if (!"".equals(config.embosser)) {
+					Embosser em = conf.getConfiguredEmbosser();
+					//TODO: Don't use fixed line spacing value 
+					parent.getChildren().add(new DriverDetails(em.supports8dot(), em.supportsVolumes(), false));
+					if (conf.supportsBothPrintModes()) {
+						printModeItem = new PreferenceItem(Messages.LABEL_PRINT_MODE.localize(), nn.getPrintModeNN(), config.printMode, (o, t0, t1) -> {
+							Settings.getSettings().put(Keys.printMode, t1.getKey());
+							updateComponents();
+						});
+						parent.getChildren().add(printModeItem);
+					} else {
+						printModeItem = null;
+					}
+			
+					if (conf.getSupportedTables().size()>1) {
+						tableItem = new PreferenceItem(Messages.LABEL_TABLE.localize(), wrap(conf.getSupportedTables()), config.table, (o, t0, t1) -> {
+							Settings.getSettings().put(Keys.table, t1.getKey());
+							updateComponents();
+						});
+						parent.getChildren().add(tableItem);
+					} else {
+						tableItem = null;
+					}
+					
+					paperItem = new PreferenceItem(Messages.LABEL_PAPER.localize(), wrap(conf.getSupportedPapers()), config.paper, (o, t0, t1) -> {
+						Settings.getSettings().put(Keys.paper, t1.getKey());
+						updateComponents();
+					});
+					parent.getChildren().add(paperItem);
+		
+					if (conf.isRollPaper()) {
+						parent.getChildren().add(new PreferenceItem(Messages.LABEL_CUT_LENGTH.localize(), nn.getLengthNN(), config.lengthValue, config.lengthUnit, (f1, f2)->{
+							Settings.getSettings().put(Keys.cutLengthValue, f1);
+							Settings.getSettings().put(Keys.cutLengthUnit, f2);
+							updateComponents();
+						}));
+					}
+					
+					if (conf.supportsOrientation()) {
+						orientationItem = new PreferenceItem(Messages.LABEL_ORIENTATION.localize(), nn.getOrientationNN(), config.orientation, (o, t0, t1) -> {
+									Settings.getSettings().put(Keys.orientation, t1.getKey());
+									updateComponents();
+								});
+						parent.getChildren().add(orientationItem);
+					} else {
+						orientationItem = null;
+					}
 	
-				if (conf.isRollPaper()) {
-					parent.getChildren().add(new PreferenceItem(Messages.LABEL_CUT_LENGTH.localize(), nn.getLengthNN(), config.lengthValue, config.lengthUnit, (f1, f2)->{
-						Settings.getSettings().put(Keys.cutLengthValue, f1);
-						Settings.getSettings().put(Keys.cutLengthUnit, f2);
-						updateComponents();
-					}));
-				}
-				
-				if (conf.supportsOrientation()) {
-					orientationItem = new PreferenceItem(Messages.LABEL_ORIENTATION.localize(), nn.getOrientationNN(), config.orientation, (o, t0, t1) -> {
-								Settings.getSettings().put(Keys.orientation, t1.getKey());
-								updateComponents();
-							});
-					parent.getChildren().add(orientationItem);
-				} else {
-					orientationItem = null;
-				}
-
-    			if (conf.settingOK()) {
-    				// this is a way to add a second description which isn't dependent on any of the above
-    				parent.getChildren().add(
-    						new PreferenceItem(null, Messages.LABEL_PAPER_DIMENSIONS.localize( 
-    								conf.getShape()==null?"":nn.getShapeNN().get(conf.getShape().name()),
-    										conf.getPaperWidth(), conf.getPaperHeight(), conf.getMaxWidth(), conf.getMaxHeight()), null, null, null)
-    						
-    				);
-    			}
-				
-				if (conf.supportsZFolding()) {
-					zFoldingItem = new PreferenceItem(Messages.LABEL_Z_FOLDING.localize(), nn.getZfoldingNN(), config.zFolding, (o, t0, t1) -> {
-						Settings.getSettings().put(Keys.zFolding, t1.getKey());
-						updateComponents();
-					});
-					parent.getChildren().add(zFoldingItem);
-				} else {
-					zFoldingItem = null;
-				}
-				if (conf.supportsAligning()) {
-					alignItem = new PreferenceItem(Messages.LABEL_ALIGNMENT.localize(), nn.getAlignNN(), config.align, (o, t0, t1) -> {
-						Settings.getSettings().put(Keys.align, t1.getKey());
-						updateComponents();
-					});
-					parent.getChildren().add(alignItem);
-				} else {
-					alignItem = null;
+	    			if (conf.settingOK()) {
+	    				// this is a way to add a second description which isn't dependent on any of the above
+	    				parent.getChildren().add(
+	    						new PreferenceItem(null, Messages.LABEL_PAPER_DIMENSIONS.localize( 
+	    								conf.getShape()==null?"":nn.getShapeNN().get(conf.getShape().name()),
+	    										conf.getPaperWidth(), conf.getPaperHeight(), conf.getMaxWidth(), conf.getMaxHeight()), null, null, null)
+	    						
+	    				);
+	    			}
+					
+					if (conf.supportsZFolding()) {
+						zFoldingItem = new PreferenceItem(Messages.LABEL_Z_FOLDING.localize(), nn.getZfoldingNN(), config.zFolding, (o, t0, t1) -> {
+							Settings.getSettings().put(Keys.zFolding, t1.getKey());
+							updateComponents();
+						});
+						parent.getChildren().add(zFoldingItem);
+					} else {
+						zFoldingItem = null;
+					}
+					if (conf.supportsAligning()) {
+						alignItem = new PreferenceItem(Messages.LABEL_ALIGNMENT.localize(), nn.getAlignNN(), config.align, (o, t0, t1) -> {
+							Settings.getSettings().put(Keys.align, t1.getKey());
+							updateComponents();
+						});
+						parent.getChildren().add(alignItem);
+					} else {
+						alignItem = null;
+					}
 				}
 			}
 		}
@@ -246,9 +273,13 @@ public class EmbossSettingsController extends BorderPane {
 	File generatedTestFile() {
 		return generatedFile;
 	}
-	
+
 	private static List<FactoryPropertiesAdapter> wrap(Collection<? extends FactoryProperties> props) {
 		return props.stream().sorted((o1, o2)->o1.getDisplayName().compareTo(o2.getDisplayName())).map(p->new FactoryPropertiesAdapter(p)).collect(Collectors.toList());
+	}
+	
+	private static List<NiceName> wrapEmbossers(Collection<EmbosserFactoryProperties> props) {
+		return props.stream().sorted((o1, o2)->o1.getModel().compareTo(o2.getModel())).map(p->new NiceName(p.getIdentifier(), p.getModel(), p.getDescription())).collect(Collectors.toList());
 	}
 
 	private static class DeviceScanner extends Task<List<PrintServiceAdapter>> {

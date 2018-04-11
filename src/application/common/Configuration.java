@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import org.daisy.braille.utils.api.embosser.Embosser;
 import org.daisy.braille.utils.api.embosser.EmbosserCatalog;
+import org.daisy.braille.utils.api.embosser.EmbosserFactoryProperties;
 import org.daisy.braille.utils.api.embosser.EmbosserFeatures;
 import org.daisy.braille.utils.api.embosser.EmbosserProperties.PrintMode;
 import org.daisy.braille.utils.api.embosser.PrintPage;
@@ -31,7 +32,7 @@ import application.common.Settings.Keys;
 public class Configuration {
 	private static final Logger logger = Logger.getLogger(Configuration.class.getCanonicalName());
 	private final PaperCatalog paperCatalog;
-	private final Collection<FactoryProperties> embossers;
+	private final Collection<EmbosserFactoryProperties> embossers;
 	private EmbosserCatalog embosserCatalog;
 	private TableCatalog tableCatalog;
 	private Embosser em;
@@ -57,7 +58,7 @@ public class Configuration {
 		this.paperCatalog = PaperCatalog.newInstance();
 		this.embosserCatalog = EmbosserCatalog.newInstance();
 		this.tableCatalog = TableCatalog.newInstance();
-		this.embossers = embosserCatalog.list();
+		this.embossers = embosserCatalog.listEmbossers();
     	String embosser = settings.getString(Keys.embosser);
     	String printMode = settings.getString(Keys.printMode);
     	String paper = settings.getString(Keys.paper);
@@ -177,7 +178,7 @@ public class Configuration {
 		return embosserCatalog;
 	}
 	
-	public Collection<FactoryProperties> getEmbossers() {
+	public Collection<EmbosserFactoryProperties> getEmbossers() {
 		return embossers;
 	}
 
