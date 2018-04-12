@@ -23,6 +23,7 @@ import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -172,7 +173,7 @@ public class PreviewHtmlController extends BorderPane implements OpenableEditor 
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty canEmbossProperty() {
+	public ObservableBooleanValue canEmboss() {
 		return canEmbossProperty;
 	}
 

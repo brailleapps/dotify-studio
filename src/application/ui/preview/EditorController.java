@@ -46,6 +46,7 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -455,7 +456,7 @@ public class EditorController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty canEmbossProperty() {
+	public ObservableBooleanValue canEmboss() {
 		return canEmbossProperty;
 	}
 

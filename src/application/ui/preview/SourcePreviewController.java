@@ -23,6 +23,7 @@ import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -111,9 +112,9 @@ public class SourcePreviewController extends BorderPane implements Editor {
 		source.setContent(editor);
 		sourceContent = editor;
 		canEmbossProperty.bind(bindings.add(
-				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX).and(prv.canEmbossProperty())
+				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX).and(prv.canEmboss())
 			.or(
-				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(SOURCE_INDEX).and(editor.canEmbossProperty())
+				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(SOURCE_INDEX).and(editor.canEmboss())
 			)
 		));
 		fileDetailsProperty.formatNameProperty().bind(bindings.add(
@@ -209,7 +210,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty canEmbossProperty() {
+	public ObservableBooleanValue canEmboss() {
 		return canEmbossProperty;
 	}
 

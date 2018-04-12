@@ -21,7 +21,7 @@ import application.common.Settings;
 import application.common.Settings.Keys;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -30,10 +30,12 @@ import javafx.stage.Window;
 public class EditorWrapperController extends BorderPane implements Editor {
 	private final Editor impl;
 	private final DotifyController dotify;
+	private final ObservableBooleanValue canEmboss;
 	
 	private EditorWrapperController(Editor impl, DotifyController converter) {
 		this.impl = impl;
 		this.dotify = converter;
+		this.canEmboss = dotify!=null ? dotify.isIdleProperty().and(impl.canEmboss()):impl.canEmboss();
 		setLeft(dotify);
 	}
 
@@ -126,8 +128,8 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty canEmbossProperty() {
-		return impl.canEmbossProperty();
+	public ObservableBooleanValue canEmboss() {
+		return canEmboss;
 	}
 
 	@Override

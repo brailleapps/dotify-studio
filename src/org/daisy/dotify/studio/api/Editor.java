@@ -10,6 +10,7 @@ import org.daisy.streamline.api.media.FileDetails;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
@@ -118,21 +119,13 @@ public interface Editor {
 	public void reload();
 
 	/**
-	 * Returns true if this editor can emboss.
-	 * @return true if the editor can emboss, false otherwise
-	 */
-	public default boolean canEmboss() {
-		return canEmbossProperty().get();
-	}
-	
-	/**
 	 * Indicates if the editor can emboss or not.
 	 * 
 	 * See also {@link #showEmbossDialog()}.
 	 * 
-	 * @return a boolean property
+	 * @return an observable boolean value
 	 */
-	public ReadOnlyBooleanProperty canEmbossProperty();
+	public ObservableBooleanValue canEmboss();
 
 	/**
 	 * Shows the emboss dialog.
