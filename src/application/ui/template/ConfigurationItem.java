@@ -26,7 +26,7 @@ public class ConfigurationItem extends BorderPane {
 	 * Creates a new configuration item with the supplied details.
 	 * @param name the name of the configuration
 	 * @param desc the description
-	 * @param action the action to perform when pressing the button
+	 * @param removable true if the configuration is removable, false otherwise
 	 */
 	public ConfigurationItem(String name, String desc, boolean removable) {
 		key = new Label(name);
