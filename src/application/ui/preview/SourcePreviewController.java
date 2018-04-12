@@ -14,6 +14,7 @@ import org.daisy.dotify.studio.api.FileDetailsProperty;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.media.FileDetails;
 
+import application.common.BindingStore;
 import application.l10n.Messages;
 import javafx.beans.binding.When;
 import javafx.beans.property.BooleanProperty;
@@ -54,6 +55,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	private Node sourceContent;
 	private Node previewContent;
 	private FileDetailsProperty fileDetailsProperty;
+	private final BindingStore bindings;
 
 	/**
 	 * Creates a new preview controller.
@@ -64,6 +66,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 		modifiedProperty = new SimpleBooleanProperty();
 		urlProperty = new SimpleStringProperty();
 		fileDetailsProperty = new FileDetailsProperty();
+		bindings = new BindingStore();
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SourcePreview.fxml"), Messages.getBundle());
 			fxmlLoader.setRoot(this);
@@ -99,6 +102,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	}
 
 	private void setupOpen(Editor prv, AnnotatedFile selected) {
+		bindings.clear();
 		previewContent = (Node)prv;
 		preview.setContent(previewContent);
 		source.setText(Messages.LABEL_SOURCE.localize(selected.getFile().getName()));
@@ -106,40 +110,40 @@ public class SourcePreviewController extends BorderPane implements Editor {
 		editor.load(selected.getFile(), FormatChecker.isXML(selected));
 		source.setContent(editor);
 		sourceContent = editor;
-		canEmbossProperty.bind(
+		canEmbossProperty.bind(bindings.add(
 				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX).and(prv.canEmbossProperty())
 			.or(
 				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(SOURCE_INDEX).and(editor.canEmbossProperty())
 			)
-		);
-		fileDetailsProperty.formatNameProperty().bind(
+		));
+		fileDetailsProperty.formatNameProperty().bind(bindings.add(
 			new When(tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX))
 				.then(prv.fileDetailsProperty().formatNameProperty())
 				.otherwise(editor.fileDetailsProperty().formatNameProperty())
-		);
-		fileDetailsProperty.extensionProperty().bind(
+		));
+		fileDetailsProperty.extensionProperty().bind(bindings.add(
 			new When(tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX))
 				.then(prv.fileDetailsProperty().extensionProperty())
 				.otherwise(editor.fileDetailsProperty().extensionProperty())
-		);
-		fileDetailsProperty.mediaTypeProperty().bind(
+		));
+		fileDetailsProperty.mediaTypeProperty().bind(bindings.add(
 			new When(tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX))
 				.then(prv.fileDetailsProperty().mediaTypeProperty())
 				.otherwise(editor.fileDetailsProperty().mediaTypeProperty())
-		);
-		fileDetailsProperty.propertiesProperty().bind(
+		));
+		fileDetailsProperty.propertiesProperty().bind(bindings.add(
 			new When(tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX))
 			.then(prv.fileDetailsProperty().propertiesProperty())
 			.otherwise((ObservableMap<String, Object>)editor.fileDetailsProperty().propertiesProperty())
-		);
-		canSaveProperty.bind(
+		));
+		canSaveProperty.bind(bindings.add(
 				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX).and(prv.canSaveProperty())
 			.or(
 				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(SOURCE_INDEX).and(editor.canSaveProperty())
 			)
-		);
+		));
 		modifiedProperty.bind(editor.modifiedProperty());
-		urlProperty.bind(
+		urlProperty.bind(bindings.add(
 				new When(tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX))
 					.then(prv.urlProperty())
 					.otherwise(
@@ -147,7 +151,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 							.then(editor.urlProperty())
 							.otherwise(new SimpleStringProperty())
 					)
-				);
+				));
 	}
 
 	@Override

@@ -38,6 +38,7 @@ import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.xml.sax.InputSource;
 
+import application.common.BindingStore;
 import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -89,6 +90,7 @@ public class EditorController extends BorderPane implements Editor {
 	private final SimpleBooleanProperty modifiedProperty;
 	private final SimpleBooleanProperty hasCancelledUpdateProperty;
 	private final BooleanProperty atMarkProperty;
+	private final BindingStore bindings;
 	private ChangeWatcher changeWatcher;
 	private boolean needsUpdate = false;
 	private Long lastSaved = 0l;
@@ -106,6 +108,7 @@ public class EditorController extends BorderPane implements Editor {
 		isLoadedProperty = new SimpleBooleanProperty(false);
 		canSaveProperty = new SimpleBooleanProperty();
 		urlProperty = new SimpleStringProperty();
+		bindings = new BindingStore();
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Editor.fxml"), Messages.getBundle());
 			fxmlLoader.setRoot(this);
@@ -145,8 +148,8 @@ public class EditorController extends BorderPane implements Editor {
 			})
 			.subscribe(this::applyHighlighting);
 		atMarkProperty.bind(codeArea.getUndoManager().atMarkedPositionProperty());
-		modifiedProperty.bind(atMarkProperty.not().or(hasCancelledUpdateProperty));
-		canSaveProperty.bind(isLoadedProperty.and(modifiedProperty));
+		modifiedProperty.bind(bindings.add(atMarkProperty.not().or(hasCancelledUpdateProperty)));
+		canSaveProperty.bind(bindings.add(isLoadedProperty.and(modifiedProperty)));
 		codeArea.setWrapText(true);
 		scrollPane = new VirtualizedScrollPane<>(codeArea);
 		scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);

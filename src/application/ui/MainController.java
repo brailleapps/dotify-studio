@@ -41,6 +41,7 @@ import org.daisy.streamline.api.validity.ValidatorFactoryMakerService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import application.common.BindingStore;
 import application.common.FeatureSwitch;
 import application.common.Settings;
 import application.l10n.Messages;
@@ -135,10 +136,13 @@ public class MainController {
 	@FXML private MenuItem applyTemplateMenuItem;
 	@FXML private MenuItem saveTemplateMenuItem;
 	private final double dividerPosition = 0.2;
+	private final BindingStore tabBindings = new BindingStore();
+	private final BindingStore rootBindings = new BindingStore();
 	private Tab searchTab;
 	private Tab helpTab;
 	private ExecutorService exeService;
 	private double[] verticalDividerPositions;
+	
 	private BooleanProperty canEmboss;
 	private BooleanProperty canExport;
 	private BooleanProperty canSave;
@@ -220,30 +224,33 @@ public class MainController {
 	}
 	
 	private void setMenuBindings() {
+		rootBindings.clear();
 		tabPane.getSelectionModel().selectedItemProperty().addListener((o, ov, nv)->updateTab(ov, nv));
-		BooleanBinding noTabBinding = tabPane.getSelectionModel().selectedItemProperty().isNull();
-		BooleanBinding noTabExceptHelpBinding = noTabBinding.or(
+		BooleanBinding noTabBinding = rootBindings.add(tabPane.getSelectionModel().selectedItemProperty().isNull());
+		BooleanBinding noTabExceptHelpBinding = rootBindings.add(noTabBinding.or(
 				tabPane.getSelectionModel().selectedItemProperty().isEqualTo(helpTab)
-		);
+		));
 		closeMenuItem.disableProperty().bind(noTabBinding);
-		exportMenu.disableProperty().bind(noTabExceptHelpBinding.or(canExport.not()));
-		saveMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canSave.not()));
-		nextEditorViewMenuItem.disableProperty().bind(noTabBinding.or(
+		exportMenu.disableProperty().bind(rootBindings.add(noTabExceptHelpBinding.or(canExport.not())));
+		saveMenuItem.disableProperty().bind(rootBindings.add(noTabExceptHelpBinding.or(canSave.not())));
+		nextEditorViewMenuItem.disableProperty().bind(rootBindings.add(noTabBinding.or(
 					Bindings.size(tabPane.getTabs()).lessThan(2))
-				);
-		previousEditorViewMenuItem.disableProperty().bind(noTabBinding.or(
+				));
+		previousEditorViewMenuItem.disableProperty().bind(rootBindings.add(noTabBinding.or(
 					Bindings.size(tabPane.getTabs()).lessThan(2))
-				);
-		toggleViewMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canToggleView.not()));
-		viewingModeMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canToggleView.not()));
+				));
+		BooleanBinding toggleViewBinding = rootBindings.add(noTabExceptHelpBinding.or(canToggleView.not()));
+		toggleViewMenuItem.disableProperty().bind(toggleViewBinding);
+		viewingModeMenuItem.disableProperty().bind(toggleViewBinding);
 		activateViewMenuItem.disableProperty().bind(noTabExceptHelpBinding);
 		saveAsMenuItem.disableProperty().bind(noTabExceptHelpBinding);
 		refreshMenuItem.disableProperty().bind(noTabBinding);
-		openInBrowserMenuItem.disableProperty().bind(noTabBinding.or(urlProperty.isNull()));
-		embossMenuItem.disableProperty().bind(noTabExceptHelpBinding.or(canEmboss.not()));
+		openInBrowserMenuItem.disableProperty().bind(rootBindings.add(noTabBinding.or(urlProperty.isNull())));
+		embossMenuItem.disableProperty().bind(rootBindings.add(noTabExceptHelpBinding.or(canEmboss.not())));
 	}
 	
 	private void updateTab(Tab ov, Tab nv) {
+		tabBindings.clear();
 		canEmboss.unbind();
 		canExport.unbind();
 		canSave.unbind();
@@ -263,7 +270,7 @@ public class MainController {
 		}
 		if (nv!=null && nv.getContent() instanceof Editor) {
 			Editor p = ((Editor)nv.getContent());
-			canExport.bind(p.fileDetailsProperty().mediaTypeProperty().isEqualTo(FileDetailsCatalog.PEF_FORMAT.getMediaType()));
+			canExport.bind(tabBindings.add(p.fileDetailsProperty().mediaTypeProperty().isEqualTo(FileDetailsCatalog.PEF_FORMAT.getMediaType())));
 			canEmboss.bind(p.canEmbossProperty());
 			canSave.bind(p.canSaveProperty());
 			canToggleView.bind(p.toggleViewProperty());
@@ -272,7 +279,7 @@ public class MainController {
 				Converter v = p.getConverter().get();
 				showConverterMenuItem.selectedProperty().bindBidirectional(v.showOptionsProperty());
 				watchSourceMenuItem.selectedProperty().bindBidirectional(v.watchSourceProperty());
-				BooleanBinding refreshDisableBinding = Bindings.not(v.isIdleProperty());
+				BooleanBinding refreshDisableBinding = tabBindings.add(Bindings.not(v.isIdleProperty()));
 				refreshConverterMenuItem.disableProperty().bind(refreshDisableBinding);
 				applyTemplateMenuItem.disableProperty().bind(refreshDisableBinding);
 				saveTemplateMenuItem.disableProperty().bind(refreshDisableBinding);	
