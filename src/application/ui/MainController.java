@@ -275,7 +275,8 @@ public class MainController {
 		if (nv!=null && nv.getContent() instanceof Editor) {
 			Editor p = ((Editor)nv.getContent());
 			canExport.bind(tabBindings.add(
-				Bindings.createBooleanBinding(()->p.fileDetails().get().getMediaType().equals(FileDetailsCatalog.PEF_FORMAT.getMediaType()), p.fileDetails())
+				Bindings.createBooleanBinding(()->!exportActions.listActions(p.fileDetails().get()).isEmpty(), p.fileDetails())
+				.and(p.canSaveAs())
 			));
 			canEmboss.bind(p.canEmboss());
 			canSave.bind(p.canSave());
