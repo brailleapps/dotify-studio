@@ -11,6 +11,7 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.scene.Node;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
@@ -68,18 +69,7 @@ public interface Editor {
 	 * Gets the file details for the file in the editor.
 	 * @return returns the file details
 	 */
-	public default FileDetails getFileDetails() {
-		return fileDetailsProperty();
-	}
-
-	/**
-	 * Gets the file details property in the editor.
-	 * 
-	 * See also {@link #getFileDetails()}.
-	 * 
-	 * @return returns the file details property
-	 */
-	public FileDetailsProperty fileDetailsProperty();
+	public ObservableObjectValue<FileDetails> fileDetails();
 
 	/**
 	 * Informs the controller that it should stop all activity and release any

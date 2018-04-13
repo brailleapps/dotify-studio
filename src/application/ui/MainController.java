@@ -274,7 +274,9 @@ public class MainController {
 		}
 		if (nv!=null && nv.getContent() instanceof Editor) {
 			Editor p = ((Editor)nv.getContent());
-			canExport.bind(tabBindings.add(p.fileDetailsProperty().mediaTypeProperty().isEqualTo(FileDetailsCatalog.PEF_FORMAT.getMediaType())));
+			canExport.bind(tabBindings.add(
+				Bindings.createBooleanBinding(()->p.fileDetails().get().getMediaType().equals(FileDetailsCatalog.PEF_FORMAT.getMediaType()), p.fileDetails())
+			));
 			canEmboss.bind(p.canEmboss());
 			canSave.bind(p.canSave());
 			canSaveAs.bind(p.canSaveAs());
@@ -289,7 +291,7 @@ public class MainController {
 				applyTemplateMenuItem.disableProperty().bind(refreshDisableBinding);
 				saveTemplateMenuItem.disableProperty().bind(refreshDisableBinding);	
 			}
-			for (ExportActionDescription ead : exportActions.listActions(p.getFileDetails())) {
+			for (ExportActionDescription ead : exportActions.listActions(p.fileDetails().get())) {
 				exportActions.newExportAction(ead.getIdentifier())
 					.ifPresent(ea->{
 						MenuItem it = new MenuItem(ead.getName());

@@ -10,7 +10,6 @@ import java.util.Optional;
 import org.daisy.dotify.studio.api.Converter;
 import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.ExportAction;
-import org.daisy.dotify.studio.api.FileDetailsProperty;
 import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.dotify.studio.api.PreviewMaker;
 import org.daisy.streamline.api.media.AnnotatedFile;
@@ -22,6 +21,7 @@ import application.common.Settings.Keys;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -190,8 +190,8 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public FileDetailsProperty fileDetailsProperty() {
-		return impl.fileDetailsProperty();
+	public ObservableObjectValue<FileDetails> fileDetails() {
+		return impl.fileDetails();
 	}
 
 	@Override

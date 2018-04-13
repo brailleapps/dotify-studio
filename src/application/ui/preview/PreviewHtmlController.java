@@ -12,18 +12,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.daisy.dotify.studio.api.ExportAction;
-import org.daisy.dotify.studio.api.FileDetailsProperty;
 import org.daisy.dotify.studio.api.OpenableEditor;
+import org.daisy.streamline.api.media.FileDetails;
 
 import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -50,7 +53,7 @@ public class PreviewHtmlController extends BorderPane implements OpenableEditor 
 	private final ObservableBooleanValue canSaveAsProperty;
 	private final StringProperty urlProperty;
 	private File file;
-	private FileDetailsProperty fileDetailsProperty = new FileDetailsProperty(FileDetailsCatalog.HTML_FORMAT);
+	private ObjectProperty<FileDetails> fileDetails = new SimpleObjectProperty<>(FileDetailsCatalog.HTML_FORMAT);
 
 	/**
 	 * Creates a new preview controller.
@@ -205,8 +208,8 @@ public class PreviewHtmlController extends BorderPane implements OpenableEditor 
 	}
 
 	@Override
-	public FileDetailsProperty fileDetailsProperty() {
-		return fileDetailsProperty;
+	public ObservableObjectValue<FileDetails> fileDetails() {
+		return fileDetails;
 	}
 
 }
