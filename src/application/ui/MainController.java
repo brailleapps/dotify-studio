@@ -272,7 +272,7 @@ public class MainController {
 			Editor p = ((Editor)nv.getContent());
 			canExport.bind(tabBindings.add(p.fileDetailsProperty().mediaTypeProperty().isEqualTo(FileDetailsCatalog.PEF_FORMAT.getMediaType())));
 			canEmboss.bind(p.canEmboss());
-			canSave.bind(p.canSaveProperty());
+			canSave.bind(p.canSave());
 			canToggleView.bind(p.toggleViewProperty());
 			urlProperty.bind(p.urlProperty());
 			if (p.getConverter().isPresent()) {
@@ -515,7 +515,7 @@ public class MainController {
     	Tab t = tabPane.getSelectionModel().getSelectedItem();
 		if (t!=null) {
 			Editor controller = ((Editor)t.getContent());
-			if (controller.canSave()) {
+			if (controller.canSave().get()) {
 				controller.save();
 			}
 		}

@@ -243,7 +243,7 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty canSaveProperty() {
+	public ObservableBooleanValue canSave() {
 		return canSaveProperty;
 	}
 

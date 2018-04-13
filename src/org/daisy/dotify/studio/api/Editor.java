@@ -22,25 +22,14 @@ import javafx.stage.Window;
 public interface Editor {
 
 	/**
-	 * Returns true if this editor can be saved at its current location (it has
-	 * a location that was selected by the user, either through save as or through import/open).
-	 * 
-	 * See also {@link #canSaveProperty()}, {@link #save()}.
-	 * @return returns true if the file can be saved, false otherwise
-	 */
-	public default boolean canSave() {
-		return canSaveProperty().get();
-	}
-
-	/**
 	 * Indicates if this editor can be saved at its current location (it has
 	 * a location that was selected by the user, either through save as or through import/open).
 	 * 
 	 * See also {@link #save()}.
 	 * 
-	 * @return returns a boolean property
+	 * @return an observable boolean value
 	 */
-	public ReadOnlyBooleanProperty canSaveProperty();
+	public ObservableBooleanValue canSave();
 
 	/**
 	 * Saves the file to the current location.

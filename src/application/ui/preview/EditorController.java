@@ -466,7 +466,7 @@ public class EditorController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty canSaveProperty() {
+	public ObservableBooleanValue canSave() {
 		return canSaveProperty;
 	}
 

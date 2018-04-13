@@ -90,8 +90,8 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty canSaveProperty() {
-		return impl.canSaveProperty();
+	public ObservableBooleanValue canSave() {
+		return impl.canSave();
 	}
 
 	@Override
@@ -163,7 +163,7 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	 */
 	public Map<String, Object> getOptions() {
 		return dotify!=null
-				&& impl.canSave()?
+				&& impl.canSave().get()?
 						dotify.getParams():null;
 	}
 

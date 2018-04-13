@@ -138,9 +138,9 @@ public class SourcePreviewController extends BorderPane implements Editor {
 			.otherwise((ObservableMap<String, Object>)editor.fileDetailsProperty().propertiesProperty())
 		));
 		canSaveProperty.bind(bindings.add(
-				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX).and(prv.canSaveProperty())
+				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX).and(prv.canSave())
 			.or(
-				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(SOURCE_INDEX).and(editor.canSaveProperty())
+				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(SOURCE_INDEX).and(editor.canSave())
 			)
 		));
 		modifiedProperty.bind(editor.modifiedProperty());
@@ -194,7 +194,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	@Override
 	public void save() {
 		Optional<Editor> view = getCurrentEditor();
-		view.filter(v->v.canSave()).ifPresent(v->{
+		view.filter(v->v.canSave().get()).ifPresent(v->{
 			v.save();
 		});
 	}
@@ -225,7 +225,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty canSaveProperty() {
+	public ObservableBooleanValue canSave() {
 		return canSaveProperty;
 	}
 
