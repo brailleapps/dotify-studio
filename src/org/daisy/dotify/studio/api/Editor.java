@@ -10,6 +10,8 @@ import org.daisy.streamline.api.media.FileDetails;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.scene.Node;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
@@ -21,25 +23,24 @@ import javafx.stage.Window;
 public interface Editor {
 
 	/**
-	 * Returns true if this editor can be saved at its current location (it has
-	 * a location that was selected by the user, either through save as or through import/open).
-	 * 
-	 * See also {@link #canSaveProperty()}, {@link #save()}.
-	 * @return returns true if the file can be saved, false otherwise
-	 */
-	public default boolean canSave() {
-		return canSaveProperty().get();
-	}
-
-	/**
 	 * Indicates if this editor can be saved at its current location (it has
 	 * a location that was selected by the user, either through save as or through import/open).
 	 * 
 	 * See also {@link #save()}.
 	 * 
-	 * @return returns a boolean property
+	 * @return an observable boolean value
 	 */
-	public ReadOnlyBooleanProperty canSaveProperty();
+	public ObservableBooleanValue canSave();
+
+	/**
+	 * Indicates if this editor can be saved to a new location.
+	 * 
+	 * See also {@link #saveAs(File)}.
+	 * 
+	 * @return an observable boolean value
+	 */
+	public ObservableBooleanValue canSaveAs();
+
 
 	/**
 	 * Saves the file to the current location.
@@ -68,18 +69,7 @@ public interface Editor {
 	 * Gets the file details for the file in the editor.
 	 * @return returns the file details
 	 */
-	public default FileDetails getFileDetails() {
-		return fileDetailsProperty();
-	}
-
-	/**
-	 * Gets the file details property in the editor.
-	 * 
-	 * See also {@link #getFileDetails()}.
-	 * 
-	 * @return returns the file details property
-	 */
-	public FileDetailsProperty fileDetailsProperty();
+	public ObservableObjectValue<FileDetails> fileDetails();
 
 	/**
 	 * Informs the controller that it should stop all activity and release any
@@ -118,21 +108,13 @@ public interface Editor {
 	public void reload();
 
 	/**
-	 * Returns true if this editor can emboss.
-	 * @return true if the editor can emboss, false otherwise
-	 */
-	public default boolean canEmboss() {
-		return canEmbossProperty().get();
-	}
-	
-	/**
 	 * Indicates if the editor can emboss or not.
 	 * 
 	 * See also {@link #showEmbossDialog()}.
 	 * 
-	 * @return a boolean property
+	 * @return an observable boolean value
 	 */
-	public ReadOnlyBooleanProperty canEmbossProperty();
+	public ObservableBooleanValue canEmboss();
 
 	/**
 	 * Shows the emboss dialog.

@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 
 import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.dotify.studio.api.ExportAction;
-import org.daisy.dotify.studio.api.FileDetailsProperty;
 import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.streamline.api.media.FileDetails;
 
@@ -25,11 +24,15 @@ import application.ui.preview.server.StartupDetails;
 import application.ui.preview.server.preview.stax.BookReaderResult;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -60,8 +63,9 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	private EmbossView embossView;
 	private final ReadOnlyBooleanProperty canEmbossProperty;
 	private final ReadOnlyBooleanProperty canSaveProperty;
+	private final ObservableBooleanValue canSaveAsProperty;
 	private StringProperty urlProperty;
-	private FileDetailsProperty fileDetailsProperty = new FileDetailsProperty(FileDetailsCatalog.PEF_FORMAT);
+	private ObjectProperty<FileDetails> fileDetails = new SimpleObjectProperty<>(FileDetailsCatalog.PEF_FORMAT);
 
 	/**
 	 * Creates a new preview controller.
@@ -89,6 +93,7 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 		closing = false;
 		canEmbossProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(true));
 		canSaveProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
+		canSaveAsProperty = new SimpleBooleanProperty(true);
 		urlProperty = new SimpleStringProperty();
 	}
 
@@ -237,13 +242,18 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty canEmbossProperty() {
+	public ObservableBooleanValue canEmboss() {
 		return canEmbossProperty;
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty canSaveProperty() {
+	public ObservableBooleanValue canSave() {
 		return canSaveProperty;
+	}
+	
+	@Override
+	public ObservableBooleanValue canSaveAs() {
+		return canSaveAsProperty;
 	}
 
 	@Override
@@ -264,8 +274,8 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	}
 
 	@Override
-	public FileDetailsProperty fileDetailsProperty() {
-		return fileDetailsProperty;
+	public ObservableObjectValue<FileDetails> fileDetails() {
+		return fileDetails;
 	}
 
 }

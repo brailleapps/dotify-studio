@@ -29,7 +29,6 @@ import org.daisy.dotify.common.xml.XMLToolsException;
 import org.daisy.dotify.common.xml.XmlEncodingDetectionException;
 import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.ExportAction;
-import org.daisy.dotify.studio.api.FileDetailsProperty;
 import org.daisy.streamline.api.identity.IdentityProvider;
 import org.daisy.streamline.api.media.FileDetails;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -42,10 +41,14 @@ import application.common.BindingStore;
 import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -81,7 +84,7 @@ public class EditorController extends BorderPane implements Editor {
 	private CodeArea codeArea;
 	private VirtualizedScrollPane<CodeArea> scrollPane;
 	private FileInfo fileInfo = new FileInfo.Builder((File)null).build();
-	private FileDetailsProperty fileDetailsProperty = new FileDetailsProperty();
+	private ObjectProperty<FileDetails> fileDetails = new SimpleObjectProperty<>();
 	private ExecutorService executor;
 	private final ReadOnlyBooleanProperty canEmbossProperty;
 	private final BooleanProperty isLoadedProperty;
@@ -339,7 +342,7 @@ public class EditorController extends BorderPane implements Editor {
 	
 	private void updateFileInfo(FileInfo fileInfo) {
 		this.fileInfo = fileInfo;
-		fileDetailsProperty.setFileDetails(IdentityProvider.newInstance().identify(fileInfo.getFile()));
+		fileDetails.set(IdentityProvider.newInstance().identify(fileInfo.getFile()));
 		encodingLabel.setText(fileInfo.getCharset().name());
 		bomLabel.setText(fileInfo.hasBom()?"BOM":"");
 		hasCancelledUpdateProperty.set(false);
@@ -455,7 +458,7 @@ public class EditorController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty canEmbossProperty() {
+	public ObservableBooleanValue canEmboss() {
 		return canEmbossProperty;
 	}
 
@@ -465,9 +468,14 @@ public class EditorController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty canSaveProperty() {
+	public ObservableBooleanValue canSave() {
 		return canSaveProperty;
 	}
+	
+	@Override
+	public ObservableBooleanValue canSaveAs() {
+		return isLoadedProperty;
+	}; 
 
 	private class ChangeWatcher extends DocumentWatcher {
 		private boolean shouldMonitor = true;
@@ -522,8 +530,8 @@ public class EditorController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public FileDetailsProperty fileDetailsProperty() {
-		return fileDetailsProperty;
+	public ObservableObjectValue<FileDetails> fileDetails() {
+		return fileDetails;
 	}
 
 }

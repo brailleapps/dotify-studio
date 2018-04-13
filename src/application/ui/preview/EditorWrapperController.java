@@ -10,7 +10,6 @@ import java.util.Optional;
 import org.daisy.dotify.studio.api.Converter;
 import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.ExportAction;
-import org.daisy.dotify.studio.api.FileDetailsProperty;
 import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.dotify.studio.api.PreviewMaker;
 import org.daisy.streamline.api.media.AnnotatedFile;
@@ -21,7 +20,8 @@ import application.common.Settings;
 import application.common.Settings.Keys;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -30,10 +30,14 @@ import javafx.stage.Window;
 public class EditorWrapperController extends BorderPane implements Editor {
 	private final Editor impl;
 	private final DotifyController dotify;
+	private final ObservableBooleanValue canEmboss;
+	private final ObservableBooleanValue canSaveAs;
 	
 	private EditorWrapperController(Editor impl, DotifyController converter) {
 		this.impl = impl;
 		this.dotify = converter;
+		this.canSaveAs = dotify!=null ? dotify.isIdleProperty().and(impl.canSaveAs()):impl.canSaveAs();
+		this.canEmboss = dotify!=null ? dotify.isIdleProperty().and(impl.canEmboss()):impl.canEmboss();
 		setLeft(dotify);
 	}
 
@@ -88,8 +92,13 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty canSaveProperty() {
-		return impl.canSaveProperty();
+	public ObservableBooleanValue canSave() {
+		return impl.canSave();
+	}
+	
+	@Override
+	public ObservableBooleanValue canSaveAs() {
+		return canSaveAs;
 	}
 
 	@Override
@@ -126,8 +135,8 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public ReadOnlyBooleanProperty canEmbossProperty() {
-		return impl.canEmbossProperty();
+	public ObservableBooleanValue canEmboss() {
+		return canEmboss;
 	}
 
 	@Override
@@ -161,7 +170,7 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	 */
 	public Map<String, Object> getOptions() {
 		return dotify!=null
-				&& impl.canSave()?
+				&& impl.canSave().get()?
 						dotify.getParams():null;
 	}
 
@@ -181,8 +190,8 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	}
 
 	@Override
-	public FileDetailsProperty fileDetailsProperty() {
-		return impl.fileDetailsProperty();
+	public ObservableObjectValue<FileDetails> fileDetails() {
+		return impl.fileDetails();
 	}
 
 	@Override
