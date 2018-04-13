@@ -293,24 +293,23 @@ public class MainController {
 				saveTemplateMenuItem.disableProperty().bind(refreshDisableBinding);	
 			}
 			for (ExportActionDescription ead : exportActions.listActions(p.fileDetails().get())) {
-				exportActions.newExportAction(ead.getIdentifier())
-					.ifPresent(ea->{
-						MenuItem it = new MenuItem(ead.getName());
-						it.setOnAction(v->{
-							Tab t = tabPane.getSelectionModel().getSelectedItem();
-							if (nv!=t) {
-								throw new AssertionError("Internal error");
-							}
-							try {
-								p.export(root.getScene().getWindow(), ea);
-							} catch (IOException e) {
-								logger.log(Level.WARNING, "Export failed.", e);
-								Alert alert = new Alert(AlertType.ERROR, e.toString(), ButtonType.OK);
-								alert.showAndWait();
-							}
-						});
-						exportMenu.getItems().add(it);
+				MenuItem it = new MenuItem(ead.getName());
+				it.setOnAction(v->{
+					Tab t = tabPane.getSelectionModel().getSelectedItem();
+					if (nv!=t) {
+						throw new AssertionError("Internal error");
+					}
+					exportActions.newExportAction(ead.getIdentifier()).ifPresent(ea->{
+						try {
+							p.export(root.getScene().getWindow(), ea);
+						} catch (IOException e) {
+							logger.log(Level.WARNING, "Export failed.", e);
+							Alert alert = new Alert(AlertType.ERROR, e.toString(), ButtonType.OK);
+							alert.showAndWait();
+						}
+					});
 				});
+				exportMenu.getItems().add(it);
 			}
 			if (p.getConverter().isPresent()) {
 				topMenuBar.getMenus().add(2, convertMenu);
