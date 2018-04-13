@@ -47,6 +47,7 @@ public class PreviewHtmlController extends BorderPane implements OpenableEditor 
 	private boolean closing;
 	private final ReadOnlyBooleanProperty canEmbossProperty;
 	private final ReadOnlyBooleanProperty canSaveProperty;
+	private final ObservableBooleanValue canSaveAsProperty;
 	private final StringProperty urlProperty;
 	private File file;
 	private FileDetailsProperty fileDetailsProperty = new FileDetailsProperty(FileDetailsCatalog.HTML_FORMAT);
@@ -77,6 +78,7 @@ public class PreviewHtmlController extends BorderPane implements OpenableEditor 
 		closing = false;
 		canEmbossProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
 		canSaveProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
+		canSaveAsProperty = new SimpleBooleanProperty(true);
 		urlProperty = new SimpleStringProperty();
 	}
 	
@@ -180,6 +182,11 @@ public class PreviewHtmlController extends BorderPane implements OpenableEditor 
 	@Override
 	public ObservableBooleanValue canSave() {
 		return canSaveProperty;
+	}
+	
+	@Override
+	public ObservableBooleanValue canSaveAs() {
+		return canSaveAsProperty;
 	}
 
 	@Override

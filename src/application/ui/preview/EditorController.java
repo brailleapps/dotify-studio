@@ -469,6 +469,11 @@ public class EditorController extends BorderPane implements Editor {
 	public ObservableBooleanValue canSave() {
 		return canSaveProperty;
 	}
+	
+	@Override
+	public ObservableBooleanValue canSaveAs() {
+		return isLoadedProperty;
+	}; 
 
 	private class ChangeWatcher extends DocumentWatcher {
 		private boolean shouldMonitor = true;

@@ -31,10 +31,12 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	private final Editor impl;
 	private final DotifyController dotify;
 	private final ObservableBooleanValue canEmboss;
+	private final ObservableBooleanValue canSaveAs;
 	
 	private EditorWrapperController(Editor impl, DotifyController converter) {
 		this.impl = impl;
 		this.dotify = converter;
+		this.canSaveAs = dotify!=null ? dotify.isIdleProperty().and(impl.canSaveAs()):impl.canSaveAs();
 		this.canEmboss = dotify!=null ? dotify.isIdleProperty().and(impl.canEmboss()):impl.canEmboss();
 		setLeft(dotify);
 	}
@@ -92,6 +94,11 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	@Override
 	public ObservableBooleanValue canSave() {
 		return impl.canSave();
+	}
+	
+	@Override
+	public ObservableBooleanValue canSaveAs() {
+		return canSaveAs;
 	}
 
 	@Override

@@ -61,6 +61,7 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	private EmbossView embossView;
 	private final ReadOnlyBooleanProperty canEmbossProperty;
 	private final ReadOnlyBooleanProperty canSaveProperty;
+	private final ObservableBooleanValue canSaveAsProperty;
 	private StringProperty urlProperty;
 	private FileDetailsProperty fileDetailsProperty = new FileDetailsProperty(FileDetailsCatalog.PEF_FORMAT);
 
@@ -90,6 +91,7 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 		closing = false;
 		canEmbossProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(true));
 		canSaveProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
+		canSaveAsProperty = new SimpleBooleanProperty(true);
 		urlProperty = new SimpleStringProperty();
 	}
 
@@ -245,6 +247,11 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	@Override
 	public ObservableBooleanValue canSave() {
 		return canSaveProperty;
+	}
+	
+	@Override
+	public ObservableBooleanValue canSaveAs() {
+		return canSaveAsProperty;
 	}
 
 	@Override

@@ -32,6 +32,16 @@ public interface Editor {
 	public ObservableBooleanValue canSave();
 
 	/**
+	 * Indicates if this editor can be saved to a new location.
+	 * 
+	 * See also {@link #saveAs(File)}.
+	 * 
+	 * @return an observable boolean value
+	 */
+	public ObservableBooleanValue canSaveAs();
+
+
+	/**
 	 * Saves the file to the current location.
 	 * @throws IllegalStateException if no location has been set by the user through import, open 
 	 * or save as

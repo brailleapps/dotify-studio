@@ -146,6 +146,7 @@ public class MainController {
 	private BooleanProperty canEmboss;
 	private BooleanProperty canExport;
 	private BooleanProperty canSave;
+	private BooleanProperty canSaveAs;
 	private BooleanProperty canToggleView;
 	private StringProperty urlProperty;
 	static final KeyCombination CTRL_F4 = new KeyCodeCombination(KeyCode.F4, KeyCombination.CONTROL_DOWN);
@@ -216,6 +217,7 @@ public class MainController {
 		canEmboss = new SimpleBooleanProperty();
 		canExport = new SimpleBooleanProperty();
 		canSave = new SimpleBooleanProperty();
+		canSaveAs = new SimpleBooleanProperty();
 		canToggleView = new SimpleBooleanProperty();
 		urlProperty = new SimpleStringProperty();
 		topMenuBar.getMenus().remove(convertMenu);
@@ -233,6 +235,7 @@ public class MainController {
 		closeMenuItem.disableProperty().bind(noTabBinding);
 		exportMenu.disableProperty().bind(rootBindings.add(noTabExceptHelpBinding.or(canExport.not())));
 		saveMenuItem.disableProperty().bind(rootBindings.add(noTabExceptHelpBinding.or(canSave.not())));
+		saveAsMenuItem.disableProperty().bind(rootBindings.add(noTabExceptHelpBinding.or(canSaveAs.not())));
 		nextEditorViewMenuItem.disableProperty().bind(rootBindings.add(noTabBinding.or(
 					Bindings.size(tabPane.getTabs()).lessThan(2))
 				));
@@ -243,7 +246,7 @@ public class MainController {
 		toggleViewMenuItem.disableProperty().bind(toggleViewBinding);
 		viewingModeMenuItem.disableProperty().bind(toggleViewBinding);
 		activateViewMenuItem.disableProperty().bind(noTabExceptHelpBinding);
-		saveAsMenuItem.disableProperty().bind(noTabExceptHelpBinding);
+
 		refreshMenuItem.disableProperty().bind(noTabBinding);
 		openInBrowserMenuItem.disableProperty().bind(rootBindings.add(noTabBinding.or(urlProperty.isNull())));
 		embossMenuItem.disableProperty().bind(rootBindings.add(noTabExceptHelpBinding.or(canEmboss.not())));
@@ -254,6 +257,7 @@ public class MainController {
 		canEmboss.unbind();
 		canExport.unbind();
 		canSave.unbind();
+		canSaveAs.unbind();
 		canToggleView.unbind();
 		urlProperty.unbind();
 		refreshConverterMenuItem.disableProperty().unbind();
@@ -273,6 +277,7 @@ public class MainController {
 			canExport.bind(tabBindings.add(p.fileDetailsProperty().mediaTypeProperty().isEqualTo(FileDetailsCatalog.PEF_FORMAT.getMediaType())));
 			canEmboss.bind(p.canEmboss());
 			canSave.bind(p.canSave());
+			canSaveAs.bind(p.canSaveAs());
 			canToggleView.bind(p.toggleViewProperty());
 			urlProperty.bind(p.urlProperty());
 			if (p.getConverter().isPresent()) {
@@ -311,6 +316,7 @@ public class MainController {
 			canEmboss.set(false);
 			canExport.set(false);
 			canSave.set(false);
+			canSaveAs.set(false);
 			canToggleView.set(false);
 			urlProperty.set(null);
 		}

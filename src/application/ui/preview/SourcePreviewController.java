@@ -51,6 +51,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	@FXML Tab source;
 	private final BooleanProperty canEmbossProperty;
 	private final BooleanProperty canSaveProperty;
+	private final BooleanProperty canSaveAsProperty;
 	private final BooleanProperty modifiedProperty;
 	private final StringProperty urlProperty;
 	private Node sourceContent;
@@ -64,6 +65,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	public SourcePreviewController() {
 		canEmbossProperty = new SimpleBooleanProperty();
 		canSaveProperty = new SimpleBooleanProperty();
+		canSaveAsProperty = new SimpleBooleanProperty();
 		modifiedProperty = new SimpleBooleanProperty();
 		urlProperty = new SimpleStringProperty();
 		fileDetailsProperty = new FileDetailsProperty();
@@ -104,6 +106,15 @@ public class SourcePreviewController extends BorderPane implements Editor {
 
 	private void setupOpen(Editor prv, AnnotatedFile selected) {
 		bindings.clear();
+		canEmbossProperty.unbind();
+		canSaveProperty.unbind();
+		canSaveAsProperty.unbind();
+		modifiedProperty.unbind();
+		urlProperty.unbind();
+		fileDetailsProperty.extensionProperty().unbind();
+		fileDetailsProperty.formatNameProperty().unbind();
+		fileDetailsProperty.propertiesProperty().unbind();
+		fileDetailsProperty.mediaTypeProperty().unbind();
 		previewContent = (Node)prv;
 		preview.setContent(previewContent);
 		source.setText(Messages.LABEL_SOURCE.localize(selected.getFile().getName()));
@@ -141,6 +152,12 @@ public class SourcePreviewController extends BorderPane implements Editor {
 				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX).and(prv.canSave())
 			.or(
 				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(SOURCE_INDEX).and(editor.canSave())
+			)
+		));
+		canSaveAsProperty.bind(bindings.add(
+				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX).and(prv.canSaveAs())
+			.or(
+				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(SOURCE_INDEX).and(editor.canSaveAs())
 			)
 		));
 		modifiedProperty.bind(editor.modifiedProperty());
@@ -227,6 +244,11 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	@Override
 	public ObservableBooleanValue canSave() {
 		return canSaveProperty;
+	}
+	
+	@Override
+	public ObservableBooleanValue canSaveAs() {
+		return canSaveAsProperty;
 	}
 
 	@Override
