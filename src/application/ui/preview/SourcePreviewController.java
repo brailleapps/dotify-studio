@@ -84,17 +84,6 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	@FXML void initialize() {
 	}
 
-	/**
-	 * Returns true if the editor format is supported (the preview format is assumed to be PEF)
-	 * @param editorFormat the editor format
-	 * @return returns true if the editor format is supported
-	 */
-	public static boolean supportsFormat(FileDetails editorFormat) {
-		return supportsFormat(editorFormat, FileDetailsCatalog.PEF_FORMAT);
-	}
-	public static boolean supportsFormat(FileDetails editorFormat, FileDetails previewFormat) {
-		return EditorController.supportsFormat(editorFormat) && PreviewPefController.supportsFormat(previewFormat);
-	}
 
 	/**
 	 * Converts and opens a file.
