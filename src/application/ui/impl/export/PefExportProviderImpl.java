@@ -90,7 +90,7 @@ public class PefExportProviderImpl implements ExportActionProvider {
 
 	@Override
 	public boolean supportsFormat(FileDetails format) {
-		return format.getMediaType().equals(FileDetailsCatalog.PEF_FORMAT.getMediaType());
+		return FileDetailsCatalog.PEF_FORMAT.getMediaType().equals(format.getMediaType());
 	}
 
 	@Override
