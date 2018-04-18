@@ -1,5 +1,23 @@
 [[Table of Contents|Toc]]
 
+# 0.9.0
+## New in this version
+- User interface
+  - Supports templates managing (fixes #34, #50 and #54)
+  - Supports splitting a PEF-file (fixes #56)
+  - Supports merging PEF-files (fixes #55)
+  - Makes it easier to find a specific embosser model in the settings
+  - Disables file actions while converter is running (fixes #70)
+  - Improves menu bindings
+- Embossing
+  - Corrects width calculation on Braillo 300 (fixes brailleapps/braille-utils.impl#1)
+- Dtbook & epub converters
+  - Corrects top-padding of the toc heading
+  - Improves Java 9 compatibility (fixes brailleapps/dotify.task.impl#18)
+  - Removes workaround for tables in the DTBook converter (fixes brailleapps/dotify.task.impl#4)
+- Formatting
+  - Supports referencing spans (closes brailleapps/dotify.api#17 and brailleapps/dotify.formatter.impl#44)
+
 # 0.8.0 #
 ## New in this version ##
 - User interface
