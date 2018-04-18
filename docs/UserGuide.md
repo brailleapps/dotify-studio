@@ -69,6 +69,16 @@ files, use the menu item `Import/Braille text files...`.
 
 If you have a text file that is plain text, but _not_ braille, the above option should be used instead.
 
+## Converter
+The converter is activated when source documents are imported. It provides the necessary transformation from the input to the target format (typically PEF). Each source/target combination can have different options. The available options may also depend on the current value of another option.
+
+### Templates
+Templates can be used to save and load converter options.
+
+When saving a template, the currently set options are stored with the specified name and description. The value for options that have not been set are not stored. Therefore, a change in a default value may cause the template to behave differently than it did before.
+
+When loading a template, set options are restored to their defaults before applying the template.
+
 ## Exporting ##
 The available export commands depend on the file type in the selected editor. Currently, only PEF-files has export commands, but export commands for other file formats may be added in the future.
 
