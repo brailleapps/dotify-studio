@@ -1,5 +1,9 @@
 [[Table of Contents|Toc]]
 
+# 0.9.1
+## New in this version
+- Fixes a problem where a page could become too long 
+
 # 0.9.0
 ## New in this version
 - User interface
