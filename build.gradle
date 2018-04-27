@@ -81,7 +81,7 @@ dependencies {
 	
 	testCompile group: 'junit', name: 'junit', version: "4.7"
 	
-	runtime ('org.daisy.dotify:dotify.formatter.impl:4.2.0') {
+	runtime ('org.daisy.dotify:dotify.formatter.impl:4.2.1') {
 		exclude module: 'Saxon-HE'
 	}
 	runtime 'org.daisy.dotify:dotify.hyphenator.impl:4.0.0'
