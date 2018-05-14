@@ -97,7 +97,7 @@ public class DotifyController extends BorderPane implements Converter {
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Failed to load view", e);
 		}
-		this.input = selected.getFile();
+		this.input = selected.getPath().toFile();
 		refreshRequested = false;
 		closing = false;
 		exeService = Executors.newWorkStealingPool();
@@ -339,7 +339,7 @@ public class DotifyController extends BorderPane implements Converter {
 		private boolean isRunning;
 
 		SourceDocumentWatcher(AnnotatedFile input, File output, String locale, String outputFormat, Consumer<File> resultWatcher) {
-			super(input.getFile());
+			super(input.getPath().toFile());
 			this.annotatedInput = input;
 			this.output = output;
 			this.locale = locale;

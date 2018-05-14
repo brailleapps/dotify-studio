@@ -76,13 +76,13 @@ public class EditorWrapperController extends BorderPane implements Editor {
 		if (EditorController.supportsFormat(selected)) {
 			if (options==null && !previewMaker.supportsFormat(selected)) {
 				EditorController prv = new EditorController();
-				prv.load(selected.getFile(), FormatChecker.isXML(selected));
+				prv.load(selected.getPath().toFile(), FormatChecker.isXML(selected));
 				return prv;
 			} else {
 				SourcePreviewController prv = new SourcePreviewController();
 				prv.open(selected, pr);
 				if (options==null) {
-					pr.open(selected.getFile());
+					pr.open(selected.getPath().toFile());
 				}
 				return prv;
 			}

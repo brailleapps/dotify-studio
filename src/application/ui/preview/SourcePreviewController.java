@@ -104,9 +104,9 @@ public class SourcePreviewController extends BorderPane implements Editor {
 		fileDetails.unbind();
 		previewContent = (Node)prv;
 		preview.setContent(previewContent);
-		source.setText(Messages.LABEL_SOURCE.localize(selected.getFile().getName()));
+		source.setText(Messages.LABEL_SOURCE.localize(selected.getPath().toFile().getName()));
 		EditorController editor = new EditorController();
-		editor.load(selected.getFile(), FormatChecker.isXML(selected));
+		editor.load(selected.getPath().toFile(), FormatChecker.isXML(selected));
 		source.setContent(editor);
 		sourceContent = editor;
 		canEmbossProperty.bind(bindings.add(

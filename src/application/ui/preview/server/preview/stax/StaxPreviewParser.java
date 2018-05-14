@@ -119,6 +119,11 @@ class StaxPreviewParser {
 	}
 	
 	private static class ParsingCancelledException extends Exception {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 4578893206966488021L;
 		
 	}
 	

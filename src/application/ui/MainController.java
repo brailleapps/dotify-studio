@@ -50,7 +50,6 @@ import application.ui.imports.ImportBrailleView;
 import application.ui.imports.ImportMergeView;
 import application.ui.prefs.PreferencesView;
 import application.ui.preview.EditorWrapperController;
-import application.ui.preview.FileDetailsCatalog;
 import application.ui.preview.server.StartupDetails;
 import application.ui.search.SearchController;
 import application.ui.template.TemplateView;
@@ -772,12 +771,12 @@ public class MainController {
 			.filter(spec ->
 				// Currently, this can be viewed as an identity conversion, which isn't supported by the task system.
 				// TODO: Perhaps support this as a special case in this code instead (just open the file without going through the task system).
-				!"pef".equals(spec.getInputFormat())
+				!"pef".equals(spec.getInputType().getIdentifier())
 				// Not all formats in this list are actually extensions.
 				// TODO: Filter these out here until the TaskGroupFactory provides extensions separately. 
-				&& !"dtbook".equals(spec.getInputFormat()) // use xml instead
-				&& !"text".equals(spec.getInputFormat())) // use txt instead
-			.map(spec -> spec.getInputFormat())
+				&& !"dtbook".equals(spec.getInputType().getIdentifier()) // use xml instead
+				&& !"text".equals(spec.getInputType().getIdentifier())) // use txt instead
+			.map(spec -> spec.getInputType().getIdentifier())
 			.distinct();
     }
 

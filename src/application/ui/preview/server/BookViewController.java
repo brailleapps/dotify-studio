@@ -14,12 +14,10 @@ import application.ui.preview.server.preview.stax.StaxPreviewController;
 public class BookViewController {
 	private static final Settings settings = Settings.getSettings();
 	private BookReader bookReader;
-	private AboutBookView aboutBookView;
 	private StaxPreviewController controller;
 
 	public BookViewController(File f) {
 		bookReader = new BookReader(Objects.requireNonNull(f));
-		aboutBookView = null;
 		controller = null;
 	}
 

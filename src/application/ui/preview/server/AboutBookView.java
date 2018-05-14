@@ -19,10 +19,7 @@ import application.l10n.Messages;
 
 public class AboutBookView extends AContainer {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4158397890850715579L;
+
 
 	public AboutBookView(PEFBook book, List<ValidatorMessage> messages) {
 		
