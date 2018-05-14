@@ -31,6 +31,10 @@ public enum FeatureSwitch {
 	 * When on, a character tool is available in the menu.
 	 */
 	CHARACTER_TOOL("on".equalsIgnoreCase(System.getProperty("application.feature.character-tool", "off"))),
+	/**
+	 * When on, file sets are processed
+	 */
+	PROCESS_FILE_SET("on".equalsIgnoreCase(System.getProperty("application.feature.file-set", "off")))
 	;
 
 	private final boolean on;

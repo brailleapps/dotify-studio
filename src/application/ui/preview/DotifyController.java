@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,13 +20,20 @@ import java.util.stream.Collectors;
 import org.daisy.dotify.studio.api.Converter;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.media.FileDetails;
+import org.daisy.streamline.api.media.BaseFolder;
+import org.daisy.streamline.api.media.FileSet;
+import org.daisy.streamline.api.media.FileSetMaker;
 import org.daisy.streamline.api.option.UserOption;
 import org.daisy.streamline.api.option.UserOptionValue;
 import org.daisy.streamline.api.tasks.CompiledTaskSystem;
 import org.daisy.streamline.api.tasks.InternalTask;
 import org.daisy.streamline.api.tasks.TaskSystem;
+import org.daisy.streamline.api.tasks.TaskSystemException;
+import org.daisy.streamline.api.tasks.TaskSystemFactoryException;
 import org.daisy.streamline.api.tasks.TaskSystemFactoryMaker;
+import org.daisy.streamline.engine.PathTools;
 import org.daisy.streamline.engine.RunnerResult;
+import org.daisy.streamline.engine.RunnerResults;
 import org.daisy.streamline.engine.TaskRunner;
 
 import application.common.BuildInfo;
@@ -72,6 +80,7 @@ public class DotifyController extends BorderPane implements Converter {
 	@FXML private CheckBox monitorCheckbox;
 	@FXML private ProgressIndicator progress;
 	private final File input;
+	private final BaseFolder outFolder;
 	private boolean refreshRequested;
 	private Set<UserOption> values;
 	private boolean closing;
@@ -120,7 +129,14 @@ public class DotifyController extends BorderPane implements Converter {
 		setRunning(0);
 		File outFile = File.createTempFile("dotify-studio", "."+outputFormat.getExtension());
 		outFile.deleteOnExit();
-		Thread th = new Thread(new SourceDocumentWatcher(selected, outFile, tag, outputFormat, onSuccess));
+		Thread th;
+		if (FeatureSwitch.PROCESS_FILE_SET.isOn()) {
+			this.outFolder = BaseFolder.with(PathTools.createTempFolder());
+			th = new Thread(new SourceDocumentWatcher(selected, outFolder, tag, outputFormat, onSuccess));
+		} else {
+			this.outFolder = null;
+			th = new Thread(new SourceDocumentWatcher(selected, outFile, tag, outputFormat, onSuccess));
+		}
 		th.setDaemon(true);
 		th.start();
 		requestRefresh();
@@ -129,7 +145,7 @@ public class DotifyController extends BorderPane implements Converter {
 	/**
 	 * Sets options.
 	 * @param ts the task system
-	 * @param opts the runner results
+	 * @param opts the runner resultsList
 	 * @param prvOpts the previous options
 	 */
 	public void setOptions(CompiledTaskSystem ts, List<RunnerResult> opts, Map<String, Object> prvOpts) {
@@ -315,27 +331,70 @@ public class DotifyController extends BorderPane implements Converter {
 	
 	public void closing() {
 		closing = true;
+		if (canRequestUpdate.get()) {
+			new Thread(()->{
+				deleteOutputFolder();
+			}).start();
+		}
+	}
+	
+	private void deleteOutputFolder() {
+		if (outFolder==null) {
+			return;
+		}
+		int maxTries = 9;
+		for (int tries = 0; tries<=maxTries; tries++) {
+			try {
+				PathTools.deleteRecursive(outFolder.getPath());
+				logger.info("Deleted folder: " + outFolder.getPath());
+				break;
+			} catch (IOException e) {
+				if (tries==maxTries) {
+					logger.log(Level.WARNING, "Failed to clean up temporary folder: " + outFolder.getPath(), e);
+				} else {
+					if (logger.isLoggable(Level.FINE)) {
+						logger.log(Level.FINE, "Failed to clean up temporary folder: " + outFolder.getPath(), e);
+					}
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e2) {
+						Thread.currentThread().interrupt();
+						break;
+					}
+				}
+			}
+		}		
 	}
 
 	class SourceDocumentWatcher extends DocumentWatcher {
 		private final AnnotatedFile annotatedInput;
-		private final File output;
+		private final File outputFile;
+		private final BaseFolder outputFolder;
 		private final String locale;
 		private final FileDetails outputFormat;
 		// notify a caller about changes to the result file
 		private final Function<File, Consumer<File>> onSuccess;
-		private Consumer<File> resultWatcher;
-		private boolean isRunning;
+		private Consumer<File> resultWatcher = null;
+		private boolean isRunning = false;
 
 		SourceDocumentWatcher(AnnotatedFile input, File output, String locale, FileDetails outputFormat, Function<File, Consumer<File>> onSuccess) {
 			super(input.getPath().toFile());
 			this.annotatedInput = input;
-			this.output = output;
+			this.outputFile = output;
+			this.outputFolder = null;
 			this.locale = locale;
 			this.outputFormat = outputFormat;
 			this.onSuccess = onSuccess;
-			this.resultWatcher = null;
-			this.isRunning = false;
+		}
+		
+		SourceDocumentWatcher(AnnotatedFile input, BaseFolder output, String locale, FileDetails outputFormat, Function<File, Consumer<File>> onSuccess) {
+			super(input.getPath().toFile());
+			this.annotatedInput = input;
+			this.outputFile = null;
+			this.outputFolder = output;
+			this.locale = locale;
+			this.outputFormat = outputFormat;
+			this.onSuccess = onSuccess;
 		}
 
 		@Override
@@ -366,7 +425,14 @@ public class DotifyController extends BorderPane implements Converter {
 				} else {
 					opts = getParams();
 				}
-				DotifyTask dt = new DotifyTask(annotatedInput, output, locale, outputFormat.getFormatName(), opts);
+				DotifyTaskBase dt;
+				if (outputFile!=null) {
+					dt = new DotifyFileTask(annotatedInput, outputFile, locale, outputFormat.getFormatName(), opts);
+				} else if (outputFolder!=null) {
+					dt = new DotifyFileSetTask(annotatedInput, outputFolder, locale, outputFormat.getFormatName(), opts);
+				} else {
+					throw new AssertionError("Error in code");
+				}
 				dt.setOnFailed(ev->{
 					isRunning = false;
 					setRunning(1);
@@ -376,19 +442,24 @@ public class DotifyController extends BorderPane implements Converter {
 					alert.showAndWait();
 				});
 				dt.setOnSucceeded(ev -> {
-					isRunning = false;
-					setRunning(1);
-					canRequestUpdate.set(true);
 					Platform.runLater(() -> {
-						if (onSuccess!=null) {
-							if (resultWatcher==null) {
-								resultWatcher = onSuccess.apply(output);
-							}
-							resultWatcher.accept(output);
-						}
 						DotifyResult dr = dt.getValue();
+						if (onSuccess!=null) {
+							if (outputFile!=null) {
+								applyResultWatcher(outputFile);
+							} else if (outputFolder!=null) {
+								dr.getFileSet().ifPresent(v->applyResultWatcher(v.getManifest().getPath().toFile()));
+							} else {
+								throw new AssertionError("Error in code");
+							}
+						}
 						setOptions(dr.getTaskSystem(), dr.getResults(), opts);
 						setRunning(1);
+						isRunning = false;
+						canRequestUpdate.set(true);
+						if (closing) {
+							deleteOutputFolder();
+						}
 					});
 				});
 				exeService.submit(dt);
@@ -396,18 +467,24 @@ public class DotifyController extends BorderPane implements Converter {
 				logger.log(Level.SEVERE, "A severe error occurred.", e);
 			}
 		}
+		
+		private void applyResultWatcher(File f) {
+			if (resultWatcher==null) {
+				// Create it
+				resultWatcher = onSuccess.apply(f);
+			}
+			resultWatcher.accept(f);
+		}
 	}
-
-	private class DotifyTask extends Task<DotifyResult> {
-		private final AnnotatedFile inputFile;
-		private final File outputFile;
-		private final String locale;
-		private final String outputFormat;
-		private final Map<String, Object> params;
-
-		DotifyTask(AnnotatedFile inputFile, File outputFile, String locale, String outputFormat, Map<String, Object> params) {
+	
+	private abstract class DotifyTaskBase extends Task<DotifyResult> {
+		protected final AnnotatedFile inputFile;
+		protected final String locale;
+		protected final String outputFormat;
+		protected final Map<String, Object> params;
+		
+		DotifyTaskBase(AnnotatedFile inputFile, String locale, String outputFormat, Map<String, Object> params) {
 			this.inputFile = inputFile;
-			this.outputFile = outputFile;
 			this.locale = locale;
 			this.outputFormat = outputFormat;
 			this.params = new HashMap<>(params);
@@ -417,29 +494,31 @@ public class DotifyController extends BorderPane implements Converter {
 			this.params.put("conversionDate", new Date().toString());
 			this.params.put("allows-ending-volume-on-hyphen", "false");
 		}
-
-		@Override
-		protected DotifyResult call() throws Exception {
+		
+		protected TaskSystem makeTaskSystem() throws TaskSystemFactoryException {
 			String inputFormat = getFormatString(inputFile);
-			TaskSystem ts;
-			ts = TaskSystemFactoryMaker.newInstance().newTaskSystem(inputFormat, outputFormat, locale);
+			TaskSystem ts = TaskSystemFactoryMaker.newInstance().newTaskSystem(inputFormat, outputFormat, locale);
 			logger.info("About to run with parameters " + params);
-
 			logger.info("Thread: " + Thread.currentThread().getThreadGroup());
+			return ts;
+		}
+		
+		protected CompiledTaskSystem setupTaskSystem(TaskSystem ts) throws TaskSystemException {
 			CompiledTaskSystem tl = ts.compile(params);
 			if (vbox.getChildren().isEmpty()) {
 				Platform.runLater(()->{
 					setOptions(tl, null, params);
 				});
 			}
-			
-			TaskRunner.Builder builder = TaskRunner.withName(ts.getName());
-			return new DotifyResult(tl, builder
-					.addProgressListener(v->setRunning(v.getProgress()))
-					.build()
-					.runTasks(inputFile, outputFile, tl));
+			return tl;
 		}
-
+		
+		protected TaskRunner makeTaskRunner(TaskSystem ts) {
+			return TaskRunner.withName(ts.getName())
+				.addProgressListener(v->setRunning(v.getProgress()))
+				.build();
+		}
+		
 		//FIXME: Duplicated from Dotify CLI. If this function is needed to run Dotify, find a home for it
 		private String getFormatString(AnnotatedFile f) {
 			if (f.getFormatName()!=null) {
@@ -454,13 +533,55 @@ public class DotifyController extends BorderPane implements Converter {
 		}
 	}
 
+	private class DotifyFileTask extends DotifyTaskBase {
+		private final File outputFile;
+
+		DotifyFileTask(AnnotatedFile inputFile, File outputFile, String locale, String outputFormat, Map<String, Object> params) {
+			super(inputFile, locale, outputFormat, params);
+			this.outputFile = outputFile;
+		}
+
+		@Override
+		protected DotifyResult call() throws Exception {
+			TaskSystem ts = makeTaskSystem();
+			CompiledTaskSystem tl = setupTaskSystem(ts);
+			return new DotifyResult(tl, makeTaskRunner(ts).runTasks(inputFile, outputFile, tl));
+		}
+
+	}
+	
+	private class DotifyFileSetTask extends DotifyTaskBase {
+		private final BaseFolder outputFile;
+
+		DotifyFileSetTask(AnnotatedFile inputFile, BaseFolder outputFile, String locale, String outputFormat, Map<String, Object> params) {
+			super(inputFile, locale, outputFormat, params);
+			this.outputFile = outputFile;
+		}
+
+		@Override
+		protected DotifyResult call() throws Exception {
+			TaskSystem ts = makeTaskSystem();
+			CompiledTaskSystem tl = setupTaskSystem(ts);
+			return new DotifyResult(tl, makeTaskRunner(ts).runTasks(FileSetMaker.newInstance().create(inputFile, params), outputFile, "result."+outputFormat, tl));
+		}
+
+	}
+
 	private static class DotifyResult {
 		private final CompiledTaskSystem taskSystem;
-		private final List<RunnerResult> results;
+		private final List<RunnerResult> resultsList;
+		private final Optional<FileSet> fileSet;
 
 		private DotifyResult(CompiledTaskSystem taskSystem, List<RunnerResult> results) {
 			this.taskSystem = taskSystem;
-			this.results = results;
+			this.resultsList = results;
+			this.fileSet = Optional.empty();
+		}
+		
+		private DotifyResult(CompiledTaskSystem taskSystem, RunnerResults results) {
+			this.taskSystem = taskSystem;
+			this.resultsList = results.getResults();
+			this.fileSet = results.getFileSet();
 		}
 
 		private CompiledTaskSystem getTaskSystem() {
@@ -468,7 +589,11 @@ public class DotifyController extends BorderPane implements Converter {
 		}
 
 		private List<RunnerResult> getResults() {
-			return results;
+			return resultsList;
+		}
+		
+		private Optional<FileSet> getFileSet() {
+			return fileSet;
 		}
 	}
 
