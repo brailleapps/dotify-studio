@@ -14,7 +14,7 @@ import org.daisy.streamline.api.validity.ValidatorMessage;
  * Provides a consumable message extractor to be used when parsing an xml document.
  * @author Joel Håkansson
  */
-class MessageExctractor { 
+class MessageExtractor { 
 	private static final List<ValidatorMessage> EMPTY_LIST = Collections.emptyList();
 	private static final Comparator<? super ValidatorMessage> MESSAGE_COMPARATOR = (t1, t2)->toDocumentPosition(t1).compareTo(toDocumentPosition(t2)); 
 	private Iterator<ValidatorMessage> messages;
@@ -25,7 +25,7 @@ class MessageExctractor {
 	 * Creates a new instance with the supplied messages.
 	 * @param messages the validation messages
 	 */
-	MessageExctractor(List<ValidatorMessage> messages) {
+	MessageExtractor(List<ValidatorMessage> messages) {
 		// Make sure messages are in document order. They should be already, but since the implementation requires it, we better make sure.
 		this.messages = messages.stream().sorted(MESSAGE_COMPARATOR).iterator();
 	}

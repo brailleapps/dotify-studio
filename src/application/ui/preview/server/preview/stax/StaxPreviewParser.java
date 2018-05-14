@@ -67,7 +67,7 @@ class StaxPreviewParser {
 	private final PEFBook book;
 	private final XMLOutputFactory outFactory;
 	private final SimpleUCharReplacer cr;
-	private final MessageExctractor extractor;
+	private final MessageExtractor extractor;
 	private final ValidationReport report;
 	private int pageNumber;
 	private boolean abort;
@@ -77,7 +77,7 @@ class StaxPreviewParser {
 
 	StaxPreviewParser(PEFBook book, ValidationReport report) {
 		this.book = book;
-		this.extractor = new MessageExctractor(report.getMessages());
+		this.extractor = new MessageExtractor(report.getMessages());
 		this.report = report;
 		this.volumes = new ArrayList<>();
 		this.outFactory = XMLOutputFactory.newInstance();
