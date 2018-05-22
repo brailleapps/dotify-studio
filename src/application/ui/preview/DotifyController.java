@@ -81,14 +81,14 @@ public class DotifyController extends BorderPane implements Converter {
 	/**
 	 * Creates a new options controller.
 	 * @param selected the input file
-	 * @param out output file
 	 * @param tag target locale
 	 * @param outputFormat output format
 	 * @param options converter options
 	 * @param onSuccess 	a function to call when conversion has completed successfully, the returned consumer 
 	 * 						will be called if the result is updated.
+	 * @throws IOException if an I/O error occurs
 	 */
-	public DotifyController(AnnotatedFile selected, File out, String tag, String outputFormat, Map<String, Object> options, Function<File, Consumer<File>> onSuccess) {
+	public DotifyController(AnnotatedFile selected, String tag, String outputFormat, Map<String, Object> options, Function<File, Consumer<File>> onSuccess) throws IOException {
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Dotify.fxml"), Messages.getBundle());
 			fxmlLoader.setRoot(this);
@@ -117,14 +117,16 @@ public class DotifyController extends BorderPane implements Converter {
 		});
 		canRequestUpdate = new SimpleBooleanProperty(false);
 		setRunning(0);
-		DotifyTask dt = new DotifyTask(selected, out, tag, outputFormat, options);
+		File outFile = File.createTempFile("dotify-studio", "."+outputFormat);
+		outFile.deleteOnExit();
+		DotifyTask dt = new DotifyTask(selected, outFile, tag, outputFormat, options);
 		dt.setOnSucceeded(ev -> {
-			Consumer<File> resultWatcher = onSuccess.apply(out);
+			Consumer<File> resultWatcher = onSuccess.apply(outFile);
 			DotifyResult dr = dt.getValue();
 			setOptions(dr.getTaskSystem(), dr.getResults(), options);
 			canRequestUpdate.set(true);
 			setRunning(1);
-			Thread th = new Thread(new SourceDocumentWatcher(selected, out, tag, outputFormat, resultWatcher));
+			Thread th = new Thread(new SourceDocumentWatcher(selected, outFile, tag, outputFormat, resultWatcher));
 			th.setDaemon(true);
 			th.start();
 		});

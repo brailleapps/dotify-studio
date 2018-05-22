@@ -56,10 +56,8 @@ public class EditorWrapperController extends BorderPane implements Editor {
 			OpenableEditor pr = previewMaker.newPreview(previewDetails).orElse(null);
 			prv = getEditor(selected, options, pr, previewMaker);
 			try {
-				File out = File.createTempFile("dotify-studio", "."+previewDetails.getExtension());
-				out.deleteOnExit();
 				String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
-				dotify = new DotifyController(selected, out, tag, previewDetails.getExtension(), options, f ->
+				dotify = new DotifyController(selected, tag, previewDetails.getExtension(), options, f ->
 				{
 					return pr.open(f);
 				});
