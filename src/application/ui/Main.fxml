@@ -24,10 +24,10 @@
             <TabPane fx:id="toolsPane" SplitPane.resizableWithParent="false" />
             <SplitPane fx:id="verticalSplitPane" dividerPositions="0.7" orientation="VERTICAL">
                <items>
-                  <TabPane fx:id="tabPane" tabClosingPolicy="ALL_TABS" />
-                  <TabPane tabClosingPolicy="UNAVAILABLE" side="BOTTOM" fx:id="bottomToolsRoot" SplitPane.resizableWithParent="false">
+                  <TabPane fx:id="tabPane" tabClosingPolicy="SELECTED_TAB" />
+                  <TabPane tabClosingPolicy="SELECTED_TAB" side="TOP" fx:id="bottomToolsRoot" SplitPane.resizableWithParent="false">
                   <Tab text="%tab-problems" fx:id="validationTab"></Tab>
-                  <Tab text="%tab-console">
+                  <Tab text="%tab-console" fx:id="consoleTab">
                   <BorderPane>
                      <center>
                         <WebView fx:id="console" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" />
@@ -141,9 +141,13 @@
                      <accelerator>
                         <KeyCodeCombination alt="DOWN" code="F" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
                      </accelerator></CheckMenuItem>
-                  <CheckMenuItem fx:id="showConsoleMenuItem" mnemonicParsing="false" onAction="#showHideConsole" selected="true" text="%menu-item-show-console">
+                  <CheckMenuItem fx:id="showConsoleMenuItem" mnemonicParsing="false" selected="true" text="%menu-item-show-console">
                      <accelerator>
                         <KeyCodeCombination alt="DOWN" code="C" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator></CheckMenuItem>
+                  <CheckMenuItem fx:id="showValdationMenuItem" mnemonicParsing="false" selected="true" text="%menu-item-show-problems">
+                     <accelerator>
+                        <KeyCodeCombination alt="DOWN" code="P" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
                      </accelerator></CheckMenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="refreshMenuItem" mnemonicParsing="false" onAction="#refresh" text="%menu-item-refresh">

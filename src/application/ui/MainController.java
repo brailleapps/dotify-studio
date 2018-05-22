@@ -67,8 +67,9 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.WeakChangeListener;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
@@ -81,7 +82,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.ToggleButton;
@@ -131,6 +131,7 @@ public class MainController {
 	@FXML private CheckMenuItem showConverterMenuItem;
 	@FXML private CheckMenuItem showSearchMenuItem;
 	@FXML private CheckMenuItem showConsoleMenuItem;
+	@FXML private CheckMenuItem showValdationMenuItem;
 	@FXML private CheckMenuItem watchSourceMenuItem;
 	@FXML private ToggleButton scrollLockButton;
 	@FXML private MenuItem nextEditorViewMenuItem;
@@ -141,6 +142,7 @@ public class MainController {
 	@FXML private MenuItem refreshConverterMenuItem;
 	@FXML private MenuItem applyTemplateMenuItem;
 	@FXML private MenuItem saveTemplateMenuItem;
+	@FXML private Tab consoleTab;
 	@FXML private Tab validationTab;
 	private ValidationController validationController;
 	private final double dividerPosition = 0.2;
@@ -247,6 +249,10 @@ public class MainController {
 		exportMenu.disableProperty().bind(rootBindings.add(noTabExceptHelpBinding.or(canExport.not())));
 		saveMenuItem.disableProperty().bind(rootBindings.add(noTabExceptHelpBinding.or(canSave.not())));
 		saveAsMenuItem.disableProperty().bind(rootBindings.add(noTabExceptHelpBinding.or(canSaveAs.not())));
+		showConsoleMenuItem.selectedProperty().addListener(makeBottomToolsChangeListener(consoleTab));
+		consoleTab.onClosedProperty().set(makeBottomToolsTabCloseHandler(showConsoleMenuItem));
+		showValdationMenuItem.selectedProperty().addListener(makeBottomToolsChangeListener(validationTab));
+		validationTab.onClosedProperty().set(makeBottomToolsTabCloseHandler(showValdationMenuItem));
 		nextEditorViewMenuItem.disableProperty().bind(rootBindings.add(noTabBinding.or(
 					Bindings.size(tabPane.getTabs()).lessThan(2))
 				));
@@ -261,6 +267,42 @@ public class MainController {
 		refreshMenuItem.disableProperty().bind(noTabBinding);
 		openInBrowserMenuItem.disableProperty().bind(rootBindings.add(noTabBinding.or(urlProperty.isNull())));
 		embossMenuItem.disableProperty().bind(rootBindings.add(noTabExceptHelpBinding.or(canEmboss.not())));
+	}
+	
+	private ChangeListener<Boolean> makeBottomToolsChangeListener(Tab tab) {
+		return (o, ov, nv)->{
+			if (nv.booleanValue()) {
+				if (!bottomToolsRoot.getTabs().contains(tab)) {
+					// Previously empty
+					if (bottomToolsRoot.getTabs().isEmpty()) {
+						verticalSplitPane.getItems().add(bottomToolsRoot);
+						verticalSplitPane.setDividerPositions(verticalDividerPositions);
+					}
+					bottomToolsRoot.getTabs().add(tab);
+					bottomToolsRoot.getSelectionModel().select(tab);
+				}
+			} else {
+				if (bottomToolsRoot.getTabs().contains(tab)) { 
+					bottomToolsRoot.getTabs().remove(tab);
+					// Now empty
+					if (bottomToolsRoot.getTabs().isEmpty()) {
+						verticalDividerPositions = verticalSplitPane.getDividerPositions();
+						verticalSplitPane.getItems().remove(bottomToolsRoot);
+					}
+				}
+			}
+		};
+	}
+	
+	private EventHandler<Event> makeBottomToolsTabCloseHandler(CheckMenuItem item) {
+		return v->{
+			item.setSelected(false);
+			// If now empty
+			if (bottomToolsRoot.getTabs().isEmpty()) {
+				verticalDividerPositions = verticalSplitPane.getDividerPositions();
+				verticalSplitPane.getItems().remove(bottomToolsRoot);
+			}
+		};
 	}
 	
 	private void updateTab(Tab ov, Tab nv) {
@@ -383,16 +425,6 @@ public class MainController {
 		synchronized (console) {
 			console.getEngine().loadContent("<html><body></body></html>");
 			console.getEngine().setUserStyleSheetLocation(this.getClass().getResource("resource-files/console.css").toString());
-		}
-	}
-	
-	@FXML void showHideConsole() {
-		if (showConsoleMenuItem.isSelected()) {
-			verticalSplitPane.getItems().add(bottomToolsRoot);
-			verticalSplitPane.setDividerPositions(verticalDividerPositions);
-		} else {
-			verticalDividerPositions = verticalSplitPane.getDividerPositions();
-			verticalSplitPane.getItems().remove(bottomToolsRoot);
 		}
 	}
 
