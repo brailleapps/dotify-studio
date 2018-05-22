@@ -558,24 +558,6 @@ public class MainController {
 		}
     }
     
-    @FXML void toggleSearchArea() {
-    	ObservableList<Divider> dividers = splitPane.getDividers();
-    	//TODO: observe changes and restore to that value
-    	if (dividers.get(0).getPosition()>dividerPosition/2) {
-    		splitPane.setDividerPosition(0, 0);
-    		/*
-    		expandButton.setText(">");
-    		listView.setVisible(false);
-    		searchFor.setVisible(false);*/
-    	} else {
-    		//expandButton.setText("<");
-    		splitPane.setDividerPosition(0, dividerPosition);
-    		/*
-    		listView.setVisible(true);
-    		searchFor.setVisible(true);*/
-    	}
-    }
-    
     @FXML void openPreferences() {
 		PreferencesView dialog = new PreferencesView();
 		dialog.initOwner(root.getScene().getWindow());
