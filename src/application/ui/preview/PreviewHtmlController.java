@@ -7,13 +7,16 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.daisy.dotify.studio.api.DocumentPosition;
 import org.daisy.dotify.studio.api.ExportAction;
 import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.streamline.api.media.FileDetails;
+import org.daisy.streamline.api.validity.ValidationReport;
 
 import application.l10n.Messages;
 import javafx.application.Platform;
@@ -210,6 +213,16 @@ public class PreviewHtmlController extends BorderPane implements OpenableEditor 
 	@Override
 	public ObservableObjectValue<FileDetails> fileDetails() {
 		return fileDetails;
+	}
+	
+	@Override
+	public ObservableObjectValue<Optional<ValidationReport>> validationReport() {
+		return new SimpleObjectProperty<>(Optional.empty());
+	}
+	
+	@Override
+	public boolean scrollTo(DocumentPosition msg) {
+		return false;
 	}
 
 }

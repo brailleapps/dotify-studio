@@ -6,10 +6,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.daisy.streamline.api.media.FileDetails;
+import org.daisy.streamline.api.validity.ValidationReport;
+import org.daisy.streamline.api.validity.ValidatorMessage;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.scene.Node;
@@ -184,5 +187,24 @@ public interface Editor {
 	public void activate();
 	
 	public Node getNode();
+	
+	/**
+	 * A validation report.
+	 * @return the validation report
+	 */
+	public ObservableObjectValue<Optional<ValidationReport>> validationReport();
+	
+	/**
+	 * <p>Scrolls the editor to the specified document location. An implementation is only
+	 * required to support locations that it itself has supplied, for example
+	 * through {@link #validationReport()}. However, in many cases all valid locations
+	 * can easily be supported.</p>
+	 * 
+	 * <p>Supplying an invalid location has no effect.</p> 
+	 * 
+	 * @param location the location
+	 * @return true if the location could be scrolled to, false otherwise
+	 */
+	public boolean scrollTo(DocumentPosition location);
 
 }

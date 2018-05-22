@@ -12,16 +12,20 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import org.daisy.braille.utils.pef.PEFBook;
+import org.daisy.dotify.studio.api.DocumentPosition;
 import org.daisy.dotify.studio.api.ExportAction;
 import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.streamline.api.media.FileDetails;
+import org.daisy.streamline.api.validity.ValidationReport;
 
 import application.l10n.Messages;
 import application.ui.preview.server.Start;
 import application.ui.preview.server.StartupDetails;
 import application.ui.preview.server.preview.stax.BookReaderResult;
+import application.ui.preview.server.preview.stax.StaxPreviewParser;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -66,6 +70,8 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	private final ObservableBooleanValue canSaveAsProperty;
 	private StringProperty urlProperty;
 	private ObjectProperty<FileDetails> fileDetails = new SimpleObjectProperty<>(FileDetailsCatalog.PEF_FORMAT);
+	private ObjectProperty<Optional<ValidationReport>> validationReport = new SimpleObjectProperty<>(Optional.empty());
+	private String pageUrl;
 
 	/**
 	 * Creates a new preview controller.
@@ -139,9 +145,10 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 			protected String call() throws Exception {
 		        try {
 		        	start = new Start();
-		        	return start.start(new StartupDetails.Builder(file).log(false).display(false).build());
+		        	pageUrl = start.start(new StartupDetails.Builder(file).log(false).display(false).build());
+		        	return pageUrl;
 				} catch (Exception e1) {
-					Logger.getLogger(this.getClass().getCanonicalName()).log(Level.SEVERE, "Failed to load server.", e1);;
+					Logger.getLogger(this.getClass().getCanonicalName()).log(Level.SEVERE, "Failed to load server.", e1);
 				}  
 		        return null;
 			}
@@ -151,6 +158,7 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 				this.urlProperty.set(url);
 				if (url!=null) {
 					browser.getEngine().load(url);
+					updateValidation();
 				} else {
 					browser.getEngine().load(getClass().getResource("resource-files/fail.html").toString());
 				}
@@ -169,10 +177,25 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	}
 	
 	/**
-	 * Reloads the web view.
+	 * Reloads the web view. This in turn, will trigger a file update, if the file
+	 * has changed.
 	 */
 	public void reload() {
 		browser.getEngine().reload();
+		updateValidation();
+	}
+	
+	private void updateValidation() {
+		if (start!=null) {
+			Optional<BookReaderResult> res = start.getMainPage().getBookReaderResult();
+			if (res.isPresent()) {
+				validationReport.set(Optional.of(res.get().getValidationReport()));
+			} else {
+				validationReport.set(Optional.empty());
+			}
+		} else {
+			validationReport.set(Optional.empty());
+		}		
 	}
 
 	public ReadOnlyStringProperty urlProperty() {
@@ -191,7 +214,7 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	
 	private Optional<URI> getBookURI() {
 		if (start!=null) {
-			return start.getMainPage().getBookURI();
+			return Optional.of(start.getMainPage().getBookURI());
 		} else {
 			return Optional.<URI>empty();
 		}
@@ -276,6 +299,24 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	@Override
 	public ObservableObjectValue<FileDetails> fileDetails() {
 		return fileDetails;
+	}
+
+	@Override
+	public ObservableObjectValue<Optional<ValidationReport>> validationReport() {
+		return validationReport;
+	}
+	
+	@Override
+	public boolean scrollTo(DocumentPosition location) {
+		int volume = start.getMainPage().getVolumeForPosition(location);
+		String url = pageUrl+"?book.xml&volume="+volume+"#"+StaxPreviewParser.messageId(location);
+		browser.getEngine().load(url);
+		// returns true if there is a validation message at the given location, false otherwise
+		return validationReport.get()
+				.map(v->v.getMessages().stream()).orElse(Stream.empty())
+				.map(v->DocumentPosition.with(v.getLineNumber(), v.getColumnNumber()))
+				.filter(v->v.equals(location))
+				.count()>0;
 	}
 
 }

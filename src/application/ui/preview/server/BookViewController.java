@@ -21,8 +21,12 @@ public class BookViewController {
 		controller = null;
 	}
 
+	/**
+	 * Gets the book uri.
+	 * @return the uri, never null
+	 */
 	public URI getBookURI() {
-		return bookReader.getResult().getURI();
+		return bookReader.getFile().toURI();
 	}
 
 	public PEFBook getBook() {

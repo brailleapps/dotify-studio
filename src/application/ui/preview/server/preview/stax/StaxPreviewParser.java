@@ -32,6 +32,7 @@ import org.daisy.braille.utils.impl.tools.table.DefaultTableProvider;
 import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.dotify.common.text.ConditionalMapper;
 import org.daisy.dotify.common.text.SimpleUCharReplacer;
+import org.daisy.dotify.studio.api.DocumentPosition;
 import org.daisy.streamline.api.validity.ValidationReport;
 import org.daisy.streamline.api.validity.ValidatorMessage;
 
@@ -40,7 +41,7 @@ import application.common.Settings.Keys;
 import application.l10n.Messages;
 import application.ui.preview.server.MainPage;
 
-class StaxPreviewParser {
+public class StaxPreviewParser {
 	private static final Logger logger = Logger.getLogger(StaxPreviewParser.class.getCanonicalName());
 	private static final String PEF_NS = "http://www.daisy.org/ns/2008/pef";
 	private static final QName VOLUME = new QName(PEF_NS, "volume");
@@ -64,6 +65,7 @@ class StaxPreviewParser {
 													.build();
 	
 	private final List<File> volumes;
+	private final List<DocumentPosition> volumeEndPositions;
 	private final PEFBook book;
 	private final XMLOutputFactory outFactory;
 	private final SimpleUCharReplacer cr;
@@ -80,6 +82,7 @@ class StaxPreviewParser {
 		this.extractor = new MessageExtractor(report.getMessages());
 		this.report = report;
 		this.volumes = new ArrayList<>();
+		this.volumeEndPositions = new ArrayList<>();
 		this.outFactory = XMLOutputFactory.newInstance();
 		this.pageNumber = 1;
 		this.abort = false;
@@ -181,6 +184,7 @@ class StaxPreviewParser {
 				}
 			}
 			writePostamble();
+			volumeEndPositions.add(DocumentPosition.with(event.getLocation()));
 		} finally {
 			outStream.close();
 			volumes.add(t1);
@@ -217,7 +221,6 @@ class StaxPreviewParser {
 	
 	private void parsePage(XMLEvent event, XMLEventReader input, int volNumber, int sectionNumber, Context inherit, boolean firstPage) throws XMLStreamException, IOException, ParsingCancelledException {
 		Context props = parseProps(event, inherit);
-		writePagePreamble(pageNumber, sectionNumber, volNumber, firstPage);
 		ArrayList<Row> rows = new ArrayList<>();
 		while (input.hasNext()) {
 			event = input.nextEvent();
@@ -228,6 +231,7 @@ class StaxPreviewParser {
 				break;
 			}
 		}
+		writePagePreamble(pageNumber, sectionNumber, volNumber, firstPage, rows);
 		writeRows(rows, true, props.cols, props.rows);
 		writeRows(rows, false, props.cols, props.rows);
 		writePagePostamble();
@@ -245,7 +249,10 @@ class StaxPreviewParser {
 		int totalRowgap = 0;
 		for (Row r : rows) {
 			totalRowgap += r.rowgap+4;
-			writeRowPreamble((braille?"braille":"text")+(r.messages.isEmpty()?"":" issue"), r.rowgap);
+			StringBuilder classes = new StringBuilder();
+			classes.append(braille?"braille":"text");
+			classes.append(r.messages.isEmpty()?"":" issue");
+			writeRowPreamble(classes.toString(), r.rowgap);
 			String s;
 			if (braille) {
 				s = r.chars;
@@ -273,6 +280,10 @@ class StaxPreviewParser {
 		out.writeCharacters("\n");
 		out.writeEndElement();
 		out.writeCharacters("\n");
+	}
+	
+	public static String messageId(DocumentPosition m) {
+		return String.format("msgId-L%sC%s", m.getLineNumber(), m.getColumnNumber());
 	}
 	
 	private void writeRowPreamble(String cl, int rowgap) throws XMLStreamException {
@@ -768,12 +779,25 @@ class StaxPreviewParser {
 		out.writeCharacters("\n");
 	}
 	
-	private void writePagePreamble(int pageNumber, int sectionNumber, int volNumber, boolean firstPage) throws XMLStreamException {
+	private void writePagePreamble(int pageNumber, int sectionNumber, int volNumber, boolean firstPage, List<Row> rows) throws XMLStreamException {
 		out.writeStartElement(HTML_NS, "div");
 		//out.writeAttribute("id", "");
 		out.writeAttribute("onmouseover", "setPage("+pageNumber+");");
 		out.writeAttribute("class", "cont " + (firstPage?"first":pageNumber%2==0?"even":"odd"));
 		out.writeCharacters("\n");
+		rows.stream()
+			.flatMap(v->v.messages.stream())
+			.map(v->DocumentPosition.with(v.getLineNumber(), v.getColumnNumber()))
+			.distinct()
+			.forEach(m->{
+				try {
+					out.writeStartElement(HTML_NS, "span");
+					out.writeAttribute("id", messageId(m));
+					out.writeEndElement();
+				} catch (XMLStreamException e) {
+					e.printStackTrace();
+				}
+			});
 		out.writeStartElement(HTML_NS, "p");
 		out.writeAttribute("class", "page-header");
 		out.writeAttribute("id", "pagenum"+pageNumber);
@@ -824,6 +848,16 @@ class StaxPreviewParser {
 	 */
 	PEFBook getBook() {
 		return book;
+	}
+	
+	int getVolumeForPosition(DocumentPosition p) {
+		for (int i=volumeEndPositions.size(); i>0; i--) {
+			DocumentPosition vEnd = volumeEndPositions.get(i-1);
+			if (vEnd.isBefore(p)) {
+				return i+1;
+			}
+		}
+		return 1;
 	}
 	
 	/**

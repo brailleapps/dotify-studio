@@ -8,10 +8,12 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.daisy.dotify.studio.api.DocumentPosition;
 import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.ExportAction;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.media.FileDetails;
+import org.daisy.streamline.api.validity.ValidationReport;
 
 import application.common.BindingStore;
 import application.l10n.Messages;
@@ -58,6 +60,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	private Node sourceContent;
 	private Node previewContent;
 	private ObjectProperty<FileDetails> fileDetails;
+	private ObjectProperty<Optional<ValidationReport>> validationReport;
 	private final BindingStore bindings;
 
 	/**
@@ -70,6 +73,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 		modifiedProperty = new SimpleBooleanProperty();
 		urlProperty = new SimpleStringProperty();
 		fileDetails = new SimpleObjectProperty<>();
+		validationReport = new SimpleObjectProperty<>(Optional.empty());
 		bindings = new BindingStore();
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SourcePreview.fxml"), Messages.getBundle());
@@ -102,6 +106,7 @@ public class SourcePreviewController extends BorderPane implements Editor {
 		modifiedProperty.unbind();
 		urlProperty.unbind();
 		fileDetails.unbind();
+		validationReport.unbind();
 		previewContent = (Node)prv;
 		preview.setContent(previewContent);
 		source.setText(Messages.LABEL_SOURCE.localize(selected.getPath().toFile().getName()));
@@ -119,6 +124,11 @@ public class SourcePreviewController extends BorderPane implements Editor {
 			new When(tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX))
 			.then(prv.fileDetails())
 			.otherwise(editor.fileDetails())
+		));
+		validationReport.bind(bindings.add(
+			new When(tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX))
+			.then(prv.validationReport())
+			.otherwise(editor.validationReport())
 		));
 		canSaveProperty.bind(bindings.add(
 				tabs.getSelectionModel().selectedIndexProperty().isEqualTo(PREVIEW_INDEX).and(prv.canSave())
@@ -297,5 +307,15 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	@Override
 	public ObservableObjectValue<FileDetails> fileDetails() {
 		return fileDetails;
+	}
+
+	@Override
+	public ObservableObjectValue<Optional<ValidationReport>> validationReport() {
+		return validationReport;
+	}
+	
+	@Override
+	public boolean scrollTo(DocumentPosition msg) {
+		return getCurrentEditor().map(v->v.scrollTo(msg)).orElse(false);
 	}
 }

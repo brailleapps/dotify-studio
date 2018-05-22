@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import org.daisy.braille.utils.pef.PEFBook;
+import org.daisy.dotify.studio.api.DocumentPosition;
 import org.daisy.streamline.api.validity.ValidationReport;
 
 import javafx.concurrent.Task;
@@ -43,5 +44,9 @@ class StaxPreviewRenderer {
 		} catch (InterruptedException e) {
 			throw e;
 		}
+	}
+	
+	int getVolumeForPosition(DocumentPosition p) {
+		return parser.getVolumeForPosition(p);
 	}
 }

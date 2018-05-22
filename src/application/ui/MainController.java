@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -29,15 +30,18 @@ import org.daisy.braille.utils.pef.PEFFileMerger;
 import org.daisy.braille.utils.pef.PEFFileMerger.SortType;
 import org.daisy.braille.utils.pef.TextHandler;
 import org.daisy.dotify.studio.api.Converter;
+import org.daisy.dotify.studio.api.DocumentPosition;
 import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.ExportActionDescription;
 import org.daisy.dotify.studio.api.ExportActionMaker;
 import org.daisy.streamline.api.identity.IdentityProvider;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.tasks.TaskGroupFactoryMaker;
+import org.daisy.streamline.api.validity.ValidationReport;
 import org.daisy.streamline.api.validity.Validator;
 import org.daisy.streamline.api.validity.ValidatorFactoryMaker;
 import org.daisy.streamline.api.validity.ValidatorFactoryMakerService;
+import org.daisy.streamline.api.validity.ValidatorMessage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -53,6 +57,7 @@ import application.ui.preview.EditorWrapperController;
 import application.ui.preview.server.StartupDetails;
 import application.ui.search.SearchController;
 import application.ui.template.TemplateView;
+import application.ui.validation.ValidationController;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -60,6 +65,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.WeakChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -109,7 +116,7 @@ public class MainController {
 	@FXML private TabPane toolsPane;
 	@FXML private SplitPane splitPane;
 	@FXML private SplitPane verticalSplitPane;
-	@FXML private BorderPane consoleRoot;
+	@FXML private TabPane bottomToolsRoot;
 	@FXML private WebView console;
 	@FXML private ScrollPane consoleScroll;
 	@FXML private MenuItem closeMenuItem;
@@ -134,6 +141,8 @@ public class MainController {
 	@FXML private MenuItem refreshConverterMenuItem;
 	@FXML private MenuItem applyTemplateMenuItem;
 	@FXML private MenuItem saveTemplateMenuItem;
+	@FXML private Tab validationTab;
+	private ValidationController validationController;
 	private final double dividerPosition = 0.2;
 	private final BindingStore tabBindings = new BindingStore();
 	private final BindingStore rootBindings = new BindingStore();
@@ -148,10 +157,13 @@ public class MainController {
 	private BooleanProperty canSaveAs;
 	private BooleanProperty canToggleView;
 	private StringProperty urlProperty;
+	private ChangeListener<Optional<ValidationReport>> validationListener;
 	static final KeyCombination CTRL_F4 = new KeyCodeCombination(KeyCode.F4, KeyCombination.CONTROL_DOWN);
 	private final ExportActionMaker exportActions = ExportActionMaker.newInstance();
 
 	@FXML void initialize() {
+		validationController = new ValidationController();
+		validationTab.setContent(validationController);
 		toolsPane.addEventHandler(KeyEvent.KEY_RELEASED, ev-> {
 			if (CTRL_F4.match(ev)) {
 				Tab t = toolsPane.getSelectionModel().getSelectedItem();
@@ -264,6 +276,7 @@ public class MainController {
 		saveTemplateMenuItem.disableProperty().unbind();
 		exportMenu.getItems().clear();
 		topMenuBar.getMenus().remove(convertMenu);
+		validationController.clear();
 		if (ov!=null && ov.getContent() instanceof Editor) {
 			Editor p = ((Editor)ov.getContent());
 			p.getConverter().ifPresent(v->{
@@ -282,6 +295,28 @@ public class MainController {
 			canSaveAs.bind(p.canSaveAs());
 			canToggleView.bind(p.toggleViewProperty());
 			urlProperty.bind(p.urlProperty());
+			Consumer<ValidatorMessage> selectedMessageAction = v->{
+				p.scrollTo(DocumentPosition.with(v.getLineNumber(), v.getColumnNumber()));
+				p.activate();
+			};
+			// set the change listener, this will cause any previous reference to be unregistered, 
+			// as we use a weak change listener below.
+			validationListener = (o, ov1, nv1) -> {
+				if (nv1.isPresent()) {
+					validationController.setModel(nv1.get(), selectedMessageAction);
+				} else {
+					validationController.clear();
+				}
+			};
+			p.validationReport().addListener(new WeakChangeListener<>(validationListener));
+			{
+				Optional<ValidationReport> r = p.validationReport().getValue();
+				if (r.isPresent()) {
+					validationController.setModel(r.get(), selectedMessageAction);
+				} else {
+					validationController.clear();
+				}
+			}
 			if (p.getConverter().isPresent()) {
 				Converter v = p.getConverter().get();
 				showConverterMenuItem.selectedProperty().bindBidirectional(v.showOptionsProperty());
@@ -353,11 +388,11 @@ public class MainController {
 	
 	@FXML void showHideConsole() {
 		if (showConsoleMenuItem.isSelected()) {
-			verticalSplitPane.getItems().add(consoleRoot);
+			verticalSplitPane.getItems().add(bottomToolsRoot);
 			verticalSplitPane.setDividerPositions(verticalDividerPositions);
 		} else {
 			verticalDividerPositions = verticalSplitPane.getDividerPositions();
-			verticalSplitPane.getItems().remove(consoleRoot);
+			verticalSplitPane.getItems().remove(bottomToolsRoot);
 		}
 	}
 

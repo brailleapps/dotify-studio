@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -27,10 +28,15 @@ import javax.xml.transform.stream.StreamSource;
 import org.daisy.dotify.common.xml.XMLTools;
 import org.daisy.dotify.common.xml.XMLToolsException;
 import org.daisy.dotify.common.xml.XmlEncodingDetectionException;
+import org.daisy.dotify.studio.api.DocumentPosition;
 import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.ExportAction;
 import org.daisy.streamline.api.identity.IdentityProvider;
 import org.daisy.streamline.api.media.FileDetails;
+import org.daisy.streamline.api.media.InputStreamSupplier;
+import org.daisy.streamline.api.validity.ValidationReport;
+import org.daisy.streamline.api.validity.ValidatorFactoryMaker;
+import org.daisy.streamline.api.validity.ValidatorFactoryMakerService;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -85,6 +91,7 @@ public class EditorController extends BorderPane implements Editor {
 	private VirtualizedScrollPane<CodeArea> scrollPane;
 	private FileInfo fileInfo = new FileInfo.Builder((File)null).build();
 	private ObjectProperty<FileDetails> fileDetails = new SimpleObjectProperty<>();
+	private ObjectProperty<Optional<ValidationReport>> validationReport = new SimpleObjectProperty<>(Optional.empty());
 	private ExecutorService executor;
 	private final ReadOnlyBooleanProperty canEmbossProperty;
 	private final BooleanProperty isLoadedProperty;
@@ -150,6 +157,20 @@ public class EditorController extends BorderPane implements Editor {
 				}
 			})
 			.subscribe(this::applyHighlighting);
+		codeArea.richChanges()
+			.filter(ch -> !ch.getInserted().equals(ch.getRemoved()))
+			.successionEnds(Duration.ofMillis(1200))
+			.supplyTask(this::computeValidationAsync)
+			.awaitLatest()
+			.filterMap(v -> {
+				if (v.isSuccess()) {
+					return Optional.of(v.get());
+				} else {
+					v.getFailure().printStackTrace();
+					return Optional.empty();
+				}
+			})
+			.subscribe(v -> validationReport.setValue(v));
 		atMarkProperty.bind(codeArea.getUndoManager().atMarkedPositionProperty());
 		modifiedProperty.bind(bindings.add(atMarkProperty.not().or(hasCancelledUpdateProperty)));
 		canSaveProperty.bind(bindings.add(isLoadedProperty.and(modifiedProperty)));
@@ -162,6 +183,46 @@ public class EditorController extends BorderPane implements Editor {
 	public static boolean supportsFormat(FileDetails editorFormat) {
 		// TODO: also support application/epub+zip
 		return FormatChecker.isText(editorFormat) || FormatChecker.isHTML(editorFormat) || FormatChecker.isXML(editorFormat);
+	}
+	
+	ValidatorFactoryMakerService factory = ValidatorFactoryMaker.newInstance();
+	
+	private Task<Optional<ValidationReport>> computeValidationAsync() {
+		String text = codeArea.getText();
+		FileInfo info = fileInfo;
+		Task<Optional<ValidationReport>> task = new Task<Optional<ValidationReport>>() {
+			@Override
+			protected Optional<ValidationReport> call() throws Exception {
+				if (info.isXml()) {
+					byte[] data = prepareSaveToFile(FileInfo.with(info), info, text);
+					
+					InputStreamSupplier source = new ByteInputStreamSupplier(fileInfo.getFile().toURI().toASCIIString(), data);
+					return factory.newValidator(IdentityProvider.newInstance().identify(source)).map(pv->pv.validate(source));
+				}
+				return Optional.empty();
+			}
+		};
+		executor.execute(task);
+		return task;
+	}
+	
+	private static class ByteInputStreamSupplier implements InputStreamSupplier {
+		private final String systemId;
+		private final byte[] data;
+		private ByteInputStreamSupplier(String systemId, byte[] data) {
+			this.systemId = systemId;
+			this.data = data;
+		}
+
+		@Override
+		public InputStream newInputStream() throws IOException {
+			return new ByteArrayInputStream(data);
+		}
+
+		@Override
+		public String getSystemId() {
+			return systemId;
+		}
 	}
 	
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
@@ -202,9 +263,9 @@ public class EditorController extends BorderPane implements Editor {
 		}
 	}
 
-    private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
-        codeArea.setStyleSpans(0, highlighting);
-    }
+	private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
+		codeArea.setStyleSpans(0, highlighting);
+	}
 
 	/**
 	 * Converts and opens a file.
@@ -532,6 +593,22 @@ public class EditorController extends BorderPane implements Editor {
 	@Override
 	public ObservableObjectValue<FileDetails> fileDetails() {
 		return fileDetails;
+	}
+
+	@Override
+	public ObservableObjectValue<Optional<ValidationReport>> validationReport() {
+		return validationReport;
+	}
+
+	@Override
+	public boolean scrollTo(DocumentPosition msg) {
+		if (msg.getLineNumber()>-1) {
+			codeArea.moveTo(msg.getLineNumber()-1, Math.max(msg.getColumnNumber()-1, 0));
+			codeArea.requestFollowCaret();
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

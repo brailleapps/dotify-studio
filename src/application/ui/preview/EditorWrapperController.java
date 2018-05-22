@@ -8,12 +8,14 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.daisy.dotify.studio.api.Converter;
+import org.daisy.dotify.studio.api.DocumentPosition;
 import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.ExportAction;
 import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.dotify.studio.api.PreviewMaker;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.media.FileDetails;
+import org.daisy.streamline.api.validity.ValidationReport;
 
 import application.common.FeatureSwitch;
 import application.common.Settings;
@@ -197,6 +199,16 @@ public class EditorWrapperController extends BorderPane implements Editor {
 	@Override
 	public Optional<Converter> getConverter() {
 		return Optional.ofNullable(dotify);
+	}
+
+	@Override
+	public ObservableObjectValue<Optional<ValidationReport>> validationReport() {
+		return impl.validationReport();
+	}
+
+	@Override
+	public boolean scrollTo(DocumentPosition msg) {
+		return impl.scrollTo(msg);
 	}
 
 }

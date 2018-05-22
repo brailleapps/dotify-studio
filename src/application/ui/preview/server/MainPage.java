@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.daisy.dotify.studio.api.DocumentPosition;
+
 import java.util.Optional;
 
 import com.googlecode.ajui.Content;
@@ -29,12 +32,16 @@ public class MainPage implements Content {
 		bookController = new BookViewController(f);
 	}
 
-	public Optional<URI> getBookURI() {
-		return Optional.of(bookController.getBookURI());
+	public URI getBookURI() {
+		return bookController.getBookURI();
 	}
 
 	public Optional<BookReaderResult> getBookReaderResult() {
 		return Optional.ofNullable(bookController.getBookReaderResult());
+	}
+	
+	public int getVolumeForPosition(DocumentPosition p) {
+		return bookController.getPreviewView().getVolumeForPosition(p);
 	}
 
 	private Reader previewReader(String key, Context context) {

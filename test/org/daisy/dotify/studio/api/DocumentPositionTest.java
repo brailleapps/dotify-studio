@@ -1,4 +1,4 @@
-package application.ui.preview.server.preview.stax;
+package org.daisy.dotify.studio.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.daisy.dotify.studio.api.DocumentPosition;
 import org.junit.Test;
 
 @SuppressWarnings("javadoc")

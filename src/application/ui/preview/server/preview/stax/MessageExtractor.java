@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.xml.stream.Location;
 
+import org.daisy.dotify.studio.api.DocumentPosition;
 import org.daisy.streamline.api.validity.ValidatorMessage;
 
 /**
@@ -34,8 +35,8 @@ class MessageExtractor {
 		if (!messages.hasNext() && current == null) {
 			return EMPTY_LIST;
 		}
-		DocumentPosition end = toDocumentPosition(endLoc);
-		DocumentPosition start = toDocumentPosition(startLoc);
+		DocumentPosition end = DocumentPosition.with(endLoc);
+		DocumentPosition start = DocumentPosition.with(startLoc);
 		if (start.getLineNumber()<0) {
 			throw new IllegalArgumentException("Line must be >= 0");
 		}
@@ -73,13 +74,13 @@ class MessageExtractor {
 			return ret;
 		}
 	}
-
-	private static DocumentPosition toDocumentPosition(Location l) {
-		return DocumentPosition.with(l.getLineNumber(), l.getColumnNumber());
-	}
 	
 	private static DocumentPosition toDocumentPosition(ValidatorMessage m) {
 		return DocumentPosition.with(m.getLineNumber(), m.getColumnNumber());
+	}
+	
+	public static String messageId(ValidatorMessage m) {
+		return "msgId-" + Integer.toHexString(m.hashCode());
 	}
 
 }

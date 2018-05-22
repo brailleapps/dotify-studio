@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.daisy.braille.utils.pef.PEFBook;
@@ -18,54 +19,51 @@ public class BookReader {
 	private static final Logger logger = Logger.getLogger(BookReader.class.getCanonicalName());
 	private final File source;
 	private Task<BookReaderResult> bookReader;
-	private BookReaderResult book = null;
 	private org.daisy.streamline.api.validity.Validator pv = null;
-	private long lastUpdated;
+	private long lastUpdated = 0;
 
 	public BookReader(final File f) {
 		this.source = Objects.requireNonNull(f);
 		ValidatorFactoryMakerService factory = ValidatorFactoryMaker.newInstance();
 		pv = factory.newValidator("application/x-pef+xml");
-		readBook(f);
+		fileChanged();
 	}
-
-	private void readBook(File f) {
-		lastUpdated = System.currentTimeMillis();
-		bookReader = new Task<BookReaderResult>() {
-			@Override
-			protected BookReaderResult call() throws Exception {
-				Date d = new Date();
-				try {
-					ValidationReport report = null;
-					if (pv != null) {
-						report = pv.validate(f.toURI().toURL());
-					}
-					URI uri = f.toURI();
-					PEFBook p = PEFBook.load(uri);
-					return new BookReaderResult(p, f, uri, report);
-				} finally {
-					logger.info("Book Reader (file): " + (new Date().getTime() - d.getTime()));
-				}
-			}
-		};
-		new Thread(bookReader).start();
+	
+	public File getFile() {
+		return source;
 	}
 
 	public boolean cancel() {
 		return bookReader.cancel();
 	}
 
-	private synchronized void reload() {
-		book = null;
-		if (!bookReader.isDone()) {
-			cancel();
-		}
-		readBook(source);
-	}
-
-	public boolean fileChanged() {
+	private synchronized boolean fileChanged() {
 		if (lastUpdated<source.lastModified()) {
-			reload();
+			if (bookReader!=null && !bookReader.isDone()) {
+				cancel();
+			}
+			lastUpdated = System.currentTimeMillis();
+			bookReader = new Task<BookReaderResult>() {
+				@Override
+				protected BookReaderResult call() throws Exception {
+					Date d = new Date();
+					try {
+						ValidationReport report = null;
+						if (pv != null) {
+							report = pv.validate(source.toURI().toURL());
+						}
+						if (isCancelled()) {
+							return null;
+						}
+						URI uri = source.toURI();
+						PEFBook p = PEFBook.load(uri);
+						return new BookReaderResult(p, source, uri, report);
+					} finally {
+						logger.info("Book Reader (file): " + (new Date().getTime() - d.getTime()));
+					}
+				}
+			};
+			new Thread(bookReader).start();
 			return true;
 		} else {
 			return false;
@@ -74,15 +72,12 @@ public class BookReader {
 
 	public synchronized BookReaderResult getResult() {
 		fileChanged();
-		if (book==null) {
-			try {
-				book = bookReader.get();
-			} catch (InterruptedException | ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+		try {
+			return bookReader.get();
+		} catch (InterruptedException | ExecutionException e1) {
+			logger.log(Level.INFO, "An error occurred.", e1);
+			return null;
 		}
-		return book;
 	}
 
 }

@@ -1,22 +1,29 @@
-package application.ui.preview.server.preview.stax;
-final class DocumentPosition implements Comparable<DocumentPosition> {
+package org.daisy.dotify.studio.api;
+
+import javax.xml.stream.Location;
+
+public final class DocumentPosition implements Comparable<DocumentPosition> {
 	private final int line;
 	private final int column;
 	
-	DocumentPosition(int line, int column) {
+	public DocumentPosition(int line, int column) {
 		this.line = line;
 		this.column = column;
 	}
 	
-	static DocumentPosition with(int line, int column) {
+	public static DocumentPosition with(int line, int column) {
 		return new DocumentPosition(line, column);
 	}
+
+	public static DocumentPosition with(Location l) {
+		return DocumentPosition.with(l.getLineNumber(), l.getColumnNumber());
+	}
 	
-	boolean isBefore(DocumentPosition other) {
+	public boolean isBefore(DocumentPosition other) {
 		return getLineNumber()<other.getLineNumber() || getLineNumber()==other.getLineNumber() && getColumnNumber()<other.getColumnNumber();
 	}
 	
-	boolean isBeforeOrEqual(DocumentPosition other) {
+	public boolean isBeforeOrEqual(DocumentPosition other) {
 		return getLineNumber()<other.getLineNumber() || getLineNumber()==other.getLineNumber() && getColumnNumber()<=other.getColumnNumber();
 	}
 

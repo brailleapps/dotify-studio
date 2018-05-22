@@ -15,16 +15,20 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
+<?import javafx.scene.control.Tab?>
 
 <BorderPane fx:id="root" prefHeight="600.0" prefWidth="800.0" stylesheets="@main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui.MainController">
    <center>
       <SplitPane fx:id="splitPane" dividerPositions="0.0" BorderPane.alignment="CENTER">
          <items>
             <TabPane fx:id="toolsPane" SplitPane.resizableWithParent="false" />
-            <SplitPane fx:id="verticalSplitPane" dividerPositions="0.8" orientation="VERTICAL" SplitPane.resizableWithParent="false">
+            <SplitPane fx:id="verticalSplitPane" dividerPositions="0.7" orientation="VERTICAL">
                <items>
                   <TabPane fx:id="tabPane" tabClosingPolicy="ALL_TABS" />
-                  <BorderPane fx:id="consoleRoot" SplitPane.resizableWithParent="false">
+                  <TabPane tabClosingPolicy="UNAVAILABLE" side="BOTTOM" fx:id="bottomToolsRoot" SplitPane.resizableWithParent="false">
+                  <Tab text="%tab-problems" fx:id="validationTab"></Tab>
+                  <Tab text="%tab-console">
+                  <BorderPane>
                      <center>
                         <WebView fx:id="console" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" />
                      </center>
@@ -51,6 +55,8 @@
                         </HBox>
                      </top>
                   </BorderPane>
+                  </Tab>
+                  </TabPane>
                </items>
             </SplitPane>
          </items>

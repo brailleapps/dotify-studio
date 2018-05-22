@@ -7,6 +7,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
+import org.daisy.dotify.studio.api.DocumentPosition;
+
 import application.common.Settings;
 import application.common.Settings.Keys;
 
@@ -33,10 +35,12 @@ public class StaxPreviewController {
 	}
 	
 	private void update(boolean force) {
-		if (!force && lastUpdated+10000>System.currentTimeMillis()) {
-			return;
+		synchronized (r) {
+			if (!force && lastUpdated+10000>System.currentTimeMillis()) {
+				return;
+			}
+			lastUpdated = System.currentTimeMillis();			
 		}
-		lastUpdated = System.currentTimeMillis();
 		BookReaderResult brr = r.getResult();
 		if (renderer!=null) {
 			// abort rendering and delete files
@@ -62,7 +66,10 @@ public class StaxPreviewController {
 
 	public Reader getReader(int vol) {
 		try {
-			boolean fileChanged = r.fileChanged();
+			boolean fileChanged = false;
+			synchronized(r) {
+				fileChanged = lastUpdated<r.getFile().lastModified();
+			}
 			if (settingsChanged() || fileChanged) {
 				update(fileChanged);
 			}
@@ -73,6 +80,10 @@ public class StaxPreviewController {
 			Thread.currentThread().interrupt();
 			return new StringReader("Failed to read");
 		}
+	}
+	
+	public int getVolumeForPosition(DocumentPosition p) {
+		return renderer.getVolumeForPosition(p);
 	}
 
 }
