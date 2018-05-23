@@ -14,7 +14,8 @@ import java.util.prefs.Preferences;
 public enum Settings {
 	INSTANCE;
 	public enum Keys {version, device, embosser, printMode, table, paper, cutLengthValue, cutLengthUnit, orientation, zFolding, charset, align, brailleFont, textFont, libraryPath, locale,
-		lastOpenPath, lastSavePath, convertTargetFormat};
+		lastOpenPath, lastSavePath, convertTargetFormat, templateDialogOnImport};
+		
 	/**
 	 *  Modify this value when making incompatible changes to the settings structure
 	 */
@@ -158,6 +159,23 @@ public enum Settings {
 	
 	public void setLastSavePath(File path) {
 		setPath(path, Keys.lastSavePath);
+	}
+	
+	/**
+	 * Returns true if the template dialog should be displayed on import, false otherwise.
+	 * @return true if the template dialog should be displayed on import, false otherwise
+	 */
+	public boolean getShowTemplateDialogOnImport() {
+		return Boolean.parseBoolean(getString(Keys.templateDialogOnImport, "true"));
+	}
+	
+	/**
+	 * Sets if the template dialog should be displayed on import. When true, it should.
+	 * When false, it should not. 
+	 * @param value the value
+	 */
+	public void setShowTemplateDialogOnImport(boolean value) {
+		put(Keys.templateDialogOnImport, ""+value);
 	}
 	
 	private Optional<File> getPath(Keys pathKey) {

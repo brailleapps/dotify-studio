@@ -862,7 +862,7 @@ public class MainController {
 	
 	private void selectTemplateAndOpen(File selected) {
 		TemplateView dialog = null;
-		if (FeatureSwitch.TEMPLATE_DIALOG_ON_IMPORT.isOn() && (dialog = new TemplateView(selected)).hasTemplates()) {
+		if (Settings.getSettings().getShowTemplateDialogOnImport() && (dialog = new TemplateView(selected)).hasTemplates()) {
 			// choose template
 			dialog.initOwner(root.getScene().getWindow());
 			dialog.initModality(Modality.APPLICATION_MODAL); 

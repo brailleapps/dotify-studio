@@ -1,85 +1,107 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="rootVBox" minWidth="200.0" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui.prefs.GeneralSettingsController">
-	<children>
-      <Label text="%label-import">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
-      </Label>
-      <HBox>
-         <children>
-            <Label minWidth="100.0" text="%label-target-locale">
+
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui.prefs.GeneralSettingsController">
+   <content>
+      <VBox fx:id="rootVBox" minWidth="200.0" spacing="10.0">
+      	<children>
+            <Label text="%label-import">
                <font>
-                  <Font name="System Bold" size="12.0" />
+                  <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <Region HBox.hgrow="ALWAYS" />
-            <ComboBox fx:id="selectLocale" maxWidth="-Infinity" prefWidth="210.0" />
-         </children>
-      </HBox>
-      <HBox fx:id="hboxOutputFormat">
-         <children>
-	         <Label minWidth="100.0" text="%label-target-format">
+            <HBox>
+               <children>
+                  <Label minWidth="100.0" text="%label-target-locale">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <ComboBox fx:id="selectLocale" maxWidth="-Infinity" prefWidth="210.0" />
+               </children>
+            </HBox>
+            <HBox fx:id="hboxOutputFormat">
+               <children>
+      	         <Label minWidth="100.0" text="%label-target-format">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Region HBox.hgrow="ALWAYS" />
+      	         <ComboBox fx:id="selectOutputFormat" maxWidth="-Infinity" prefWidth="210.0" />
+               </children>
+            </HBox>
+            <HBox fx:id="hboxOutputFormat1">
+               <children>
+                  <Label minWidth="100.0" text="%label-template-dialog">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <CheckBox fx:id="showTemplateDialogCheckbox" mnemonicParsing="false" text="%label-show-on-import" />
+               </children>
+            </HBox>
+            <Label text="%label-preview">
                <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
-            <Region HBox.hgrow="ALWAYS" />
-	         <ComboBox fx:id="selectOutputFormat" maxWidth="-Infinity" prefWidth="210.0" />
-         </children>
-      </HBox>
-      <Label text="%label-preview">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
-      </Label>
-      <BorderPane>
-         <left>
-	         <Label fx:id="previewTranslation" minWidth="100.0" text="%label-translation" BorderPane.alignment="CENTER">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
-         </left>
-         <right>
-	         <ComboBox fx:id="selectTable" maxWidth="-Infinity" prefWidth="210.0" BorderPane.alignment="CENTER" />
-         </right>
-         <bottom>
-	         <Label fx:id="previewDescription" alignment="CENTER_RIGHT" text="Label" textAlignment="RIGHT" wrapText="true" BorderPane.alignment="CENTER_RIGHT" />
-         </bottom>
-      </BorderPane>
-      <BorderPane>
-         <left>
-	         <Label fx:id="brailleFont" minWidth="100.0" text="%label-braille-font" BorderPane.alignment="CENTER">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
-         </left>
-         <right>
-	         <ComboBox fx:id="selectBrailleFont" maxWidth="-Infinity" prefWidth="210.0" BorderPane.alignment="CENTER" />
-         </right>
-      </BorderPane>
-      <BorderPane>
-         <left>
-	         <Label fx:id="textFont" minWidth="100.0" text="%label-text-font" BorderPane.alignment="CENTER">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
-         </left>
-         <right>
-	         <ComboBox fx:id="selectTextFont" maxWidth="-Infinity" prefWidth="210.0" BorderPane.alignment="CENTER" />
-         </right>
-      </BorderPane>
-	</children>
-   <padding>
-      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-   </padding>
-</VBox>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <BorderPane>
+               <left>
+      	         <Label fx:id="previewTranslation" minWidth="100.0" text="%label-translation" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+               </left>
+               <right>
+      	         <ComboBox fx:id="selectTable" maxWidth="-Infinity" prefWidth="210.0" BorderPane.alignment="CENTER" />
+               </right>
+               <bottom>
+      	         <Label fx:id="previewDescription" alignment="CENTER_RIGHT" text="Label" textAlignment="RIGHT" wrapText="true" BorderPane.alignment="CENTER_RIGHT" />
+               </bottom>
+            </BorderPane>
+            <BorderPane>
+               <left>
+      	         <Label fx:id="brailleFont" minWidth="100.0" text="%label-braille-font" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+               </left>
+               <right>
+      	         <ComboBox fx:id="selectBrailleFont" maxWidth="-Infinity" prefWidth="210.0" BorderPane.alignment="CENTER" />
+               </right>
+            </BorderPane>
+            <BorderPane>
+               <left>
+      	         <Label fx:id="textFont" minWidth="100.0" text="%label-text-font" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+               </left>
+               <right>
+      	         <ComboBox fx:id="selectTextFont" maxWidth="-Infinity" prefWidth="210.0" BorderPane.alignment="CENTER" />
+               </right>
+            </BorderPane>
+      	</children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
+   </content>
+</ScrollPane>

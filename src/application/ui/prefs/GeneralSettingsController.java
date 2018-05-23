@@ -23,6 +23,7 @@ import application.ui.preview.FileDetailsCatalog;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -41,6 +42,7 @@ public class GeneralSettingsController {
 	@FXML private ComboBox<FactoryPropertiesAdapter> selectTable;
 	@FXML private ComboBox<FontEntry> selectBrailleFont;
 	@FXML private ComboBox<FontEntry> selectTextFont;
+	@FXML private CheckBox showTemplateDialogCheckbox;
 	@FXML private VBox rootVBox;
 	@FXML private HBox hboxOutputFormat;
 	@FXML private ComboBox<NiceName> selectOutputFormat;
@@ -63,6 +65,11 @@ public class GeneralSettingsController {
 		} else {
 			rootVBox.getChildren().remove(hboxOutputFormat);
 		}
+		
+		showTemplateDialogCheckbox.setSelected(Settings.getSettings().getShowTemplateDialogOnImport());
+		showTemplateDialogCheckbox.selectedProperty().addListener((o, ov, nv)->{
+			Settings.getSettings().setShowTemplateDialogOnImport(nv.booleanValue());
+		});
 
 		previewDescription.setText("");
 		FactoryPropertiesScanner tableScanner = new FactoryPropertiesScanner(()->TableCatalog.newInstance().list(), Keys.charset);
