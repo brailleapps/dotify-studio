@@ -1,4 +1,4 @@
-package application.ui.search;
+package application.ui.library;
 
 import java.io.File;
 import java.io.IOException;

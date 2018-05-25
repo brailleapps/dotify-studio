@@ -1,4 +1,4 @@
-package application.ui.search;
+package application.ui.library;
 
 import org.daisy.braille.utils.pef.PEFBook;
 
