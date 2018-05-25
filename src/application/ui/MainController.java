@@ -711,7 +711,7 @@ public class MainController {
 			if (searchTab==null || !toolsPane.getTabs().contains(searchTab)) {
 				SearchController controller = new SearchController();
 				controller.setOnOpen(book -> addTab(new File(book.getBook().getURI())));
-				searchTab = addTabToTools(controller, Messages.TAB_SEARCH.localize());
+				searchTab = addTabToTools(controller, Messages.TAB_LIBRARY.localize());
 			} else {
 				//focus
 				toolsPane.getSelectionModel().select(searchTab);

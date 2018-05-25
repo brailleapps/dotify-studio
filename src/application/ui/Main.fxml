@@ -143,9 +143,9 @@
           </Menu>
             <Menu mnemonicParsing="false" text="%menu-item-window">
               <items>
-                  <CheckMenuItem fx:id="showSearchMenuItem" mnemonicParsing="false" onAction="#showHideSearch" text="%menu-item-show-search">
+                  <CheckMenuItem fx:id="showSearchMenuItem" mnemonicParsing="false" onAction="#showHideSearch" text="%menu-item-show-library">
                      <accelerator>
-                        <KeyCodeCombination alt="DOWN" code="F" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                        <KeyCodeCombination alt="DOWN" code="L" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
                      </accelerator></CheckMenuItem>
                   <CheckMenuItem fx:id="showConsoleMenuItem" mnemonicParsing="false" selected="true" text="%menu-item-show-console">
                      <accelerator>

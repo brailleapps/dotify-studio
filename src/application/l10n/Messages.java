@@ -135,7 +135,7 @@ public enum Messages {
 	PREFERENCES_WINDOW_TITLE("preferences-window-title"),
 	TAB_EMBOSS("tab-emboss"),
 	TAB_PREVIEW("tab-preview"),
-	TAB_SEARCH("tab-search"),
+	TAB_LIBRARY("tab-library"),
 	TAB_HELP_CONTENTS("tab-help-contents"),
 	TOOLTIP_8_DOT_SUPPORT("tooltip-8-dot-support"),
 	TOOLTIP_6_DOT_ONLY("tooltip-6-dot-only"),
