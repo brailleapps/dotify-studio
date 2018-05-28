@@ -41,11 +41,11 @@ The `Manage paper` tab is used to define and manage custom paper formats.
 To open a file, select the **Open...** menu option in the **File** menu. Dotify Studio supports 
 opening PEF-files and HTML-files for editing with preview and OBFL, XML and TXT for editing without preview.
 
-### Find files ###
+### Library ###
 If you keep your PEF-files below a common folder, they can be found using the metadata supplied with the PEF-files.
 For example by entering the title of a document.
 
-To do this, open the `search` tab in the tools area, select the **Show search** menu option in the **Window** menu. By default
+To do this, open the `Library` tab in the tools area by selecting the **Library** menu option in the **Window** menu. By default
 the "user home folder" is scanned, but it can be changed by clicking the `Select folder` button.
 
 ## Import source documents ##
