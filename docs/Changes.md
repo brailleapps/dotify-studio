@@ -1,5 +1,13 @@
 [[Table of Contents|Toc]]
 
+# 0.10.0
+## New in this version
+- Adds a validation view (fixes #52)
+- Adds find and replace functionality
+- Adds an option to disable the template dialog on import
+- Renames find books view
+- Makes console closeable
+
 # 0.9.1
 ## New in this version
 - Fixes a problem where a page could become too long 
