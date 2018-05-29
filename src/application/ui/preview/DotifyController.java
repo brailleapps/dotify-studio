@@ -119,25 +119,10 @@ public class DotifyController extends BorderPane implements Converter {
 		setRunning(0);
 		File outFile = File.createTempFile("dotify-studio", "."+outputFormat);
 		outFile.deleteOnExit();
-		DotifyTask dt = new DotifyTask(selected, outFile, tag, outputFormat, options);
-		dt.setOnSucceeded(ev -> {
-			Consumer<File> resultWatcher = onSuccess.apply(outFile);
-			DotifyResult dr = dt.getValue();
-			setOptions(dr.getTaskSystem(), dr.getResults(), options);
-			canRequestUpdate.set(true);
-			setRunning(1);
-			Thread th = new Thread(new SourceDocumentWatcher(selected, outFile, tag, outputFormat, resultWatcher));
-			th.setDaemon(true);
-			th.start();
-		});
-		dt.setOnFailed(ev->{
-			canRequestUpdate.set(true);
-			setRunning(1);
-			logger.log(Level.WARNING, "Import failed.", dt.getException());
-			Alert alert = new Alert(AlertType.ERROR, dt.getException().toString(), ButtonType.OK);
-			alert.showAndWait();
-		});
-		exeService.submit(dt);
+		Thread th = new Thread(new SourceDocumentWatcher(selected, outFile, tag, outputFormat, onSuccess));
+		th.setDaemon(true);
+		th.start();
+		requestRefresh();
 	}
 	
 	/**
@@ -337,16 +322,18 @@ public class DotifyController extends BorderPane implements Converter {
 		private final String locale;
 		private final String outputFormat;
 		// notify a caller about changes to the result file
-		private final Consumer<File> resultWatcher;
+		private final Function<File, Consumer<File>> onSuccess;
+		private Consumer<File> resultWatcher;
 		private boolean isRunning;
 
-		SourceDocumentWatcher(AnnotatedFile input, File output, String locale, String outputFormat, Consumer<File> resultWatcher) {
+		SourceDocumentWatcher(AnnotatedFile input, File output, String locale, String outputFormat, Function<File, Consumer<File>> onSuccess) {
 			super(input.getPath().toFile());
 			this.annotatedInput = input;
 			this.output = output;
 			this.locale = locale;
 			this.outputFormat = outputFormat;
-			this.resultWatcher = resultWatcher;
+			this.onSuccess = onSuccess;
+			this.resultWatcher = null;
 			this.isRunning = false;
 		}
 
@@ -378,7 +365,6 @@ public class DotifyController extends BorderPane implements Converter {
 				} else {
 					opts = getParams();
 				}
-				
 				DotifyTask dt = new DotifyTask(annotatedInput, output, locale, outputFormat, opts);
 				dt.setOnFailed(ev->{
 					isRunning = false;
@@ -393,7 +379,10 @@ public class DotifyController extends BorderPane implements Converter {
 					setRunning(1);
 					canRequestUpdate.set(true);
 					Platform.runLater(() -> {
-						if (resultWatcher!=null) {
+						if (onSuccess!=null) {
+							if (resultWatcher==null) {
+								resultWatcher = onSuccess.apply(output);
+							}
 							resultWatcher.accept(output);
 						}
 						DotifyResult dr = dt.getValue();
