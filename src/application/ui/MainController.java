@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -35,7 +36,6 @@ import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.ExportActionDescription;
 import org.daisy.dotify.studio.api.ExportActionMaker;
 import org.daisy.dotify.studio.api.SearchCapabilities;
-import org.daisy.dotify.studio.api.SearchOptions;
 import org.daisy.dotify.studio.api.Searchable;
 import org.daisy.streamline.api.identity.IdentityProvider;
 import org.daisy.streamline.api.media.AnnotatedFile;
@@ -67,19 +67,15 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.WeakChangeListener;
 import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
@@ -102,7 +98,6 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -121,7 +116,6 @@ public class MainController {
 	private static final int CONSOLE_MESSAGE_LIMIT = 500;
 	@FXML private BorderPane root;
 	@FXML private TabPane tabPane;
-	@FXML private TabPane toolsPane;
 	@FXML private SplitPane splitPane;
 	@FXML private SplitPane verticalSplitPane;
 	@FXML private TabPane bottomToolsRoot;
@@ -154,12 +148,12 @@ public class MainController {
 	@FXML private Tab validationTab;
 	private ValidationController validationController;
 	private FindView findDialog;
-	private final double dividerPosition = 0.2;
 	private final BindingStore tabBindings = new BindingStore();
 	private final BindingStore rootBindings = new BindingStore();
-	private Tab searchTab;
+	private TabPane toolsPane;
 	private Tab helpTab;
 	private ExecutorService exeService;
+	private double[] horizontalDividerPositions = {0.15d};
 	private double[] verticalDividerPositions;
 	
 	private BooleanProperty canEmboss;
@@ -174,15 +168,20 @@ public class MainController {
 	private final ExportActionMaker exportActions = ExportActionMaker.newInstance();
 
 	@FXML void initialize() {
+		toolsPane = new TabPane();
+		SplitPane.setResizableWithParent(toolsPane, false);
 		validationController = new ValidationController();
 		validationTab.setContent(validationController);
 		toolsPane.addEventHandler(KeyEvent.KEY_RELEASED, ev-> {
 			if (CTRL_F4.match(ev)) {
 				Tab t = toolsPane.getSelectionModel().getSelectedItem();
 				if (t!=null) {
+					Object o = t.getUserData();
+					if (o instanceof CheckMenuItem) {
+						((CheckMenuItem)o).setSelected(false);
+					}
 					toolsPane.getTabs().remove(t);
 				}
-				adjustToolsArea();
 				ev.consume();
 			}
 		});
@@ -259,6 +258,14 @@ public class MainController {
 		exportMenu.disableProperty().bind(rootBindings.add(noTabExceptHelpBinding.or(canExport.not())));
 		saveMenuItem.disableProperty().bind(rootBindings.add(noTabExceptHelpBinding.or(canSave.not())));
 		saveAsMenuItem.disableProperty().bind(rootBindings.add(noTabExceptHelpBinding.or(canSaveAs.not())));
+		Supplier<Tab> ts = () -> {
+			SearchController controller = new SearchController();
+			controller.setOnOpen(book -> addTab(new File(book.getBook().getURI())));
+			Tab ret = new Tab(Messages.TAB_LIBRARY.localize(), controller);
+			ret.setUserData(showSearchMenuItem);
+			return ret;
+		};
+		showSearchMenuItem.selectedProperty().addListener(makeLeftToolsChangeListener(ts, showSearchMenuItem));
 		showConsoleMenuItem.selectedProperty().addListener(makeBottomToolsChangeListener(consoleTab));
 		consoleTab.onClosedProperty().set(makeBottomToolsTabCloseHandler(showConsoleMenuItem));
 		showValdationMenuItem.selectedProperty().addListener(makeBottomToolsChangeListener(validationTab));
@@ -284,7 +291,7 @@ public class MainController {
 			if (nv.booleanValue()) {
 				if (!bottomToolsRoot.getTabs().contains(tab)) {
 					// Previously empty
-					if (bottomToolsRoot.getTabs().isEmpty()) {
+					if (!verticalSplitPane.getItems().contains(bottomToolsRoot)) {
 						verticalSplitPane.getItems().add(bottomToolsRoot);
 						verticalSplitPane.setDividerPositions(verticalDividerPositions);
 					}
@@ -313,6 +320,48 @@ public class MainController {
 				verticalSplitPane.getItems().remove(bottomToolsRoot);
 			}
 		};
+	}
+	
+	private ChangeListener<Boolean> makeLeftToolsChangeListener(Supplier<Tab> tabSupplier, CheckMenuItem id) {
+		return (o, ov, nv)->{
+			Optional<Tab> t = toolsPane.getTabs().stream()
+					.filter(v->Objects.requireNonNull(id).equals(v.getUserData()))
+					.findFirst();
+			if (nv.booleanValue()) {
+				if (!t.isPresent()) {
+					// Previously empty
+					if (!splitPane.getItems().contains(toolsPane)) {
+						splitPane.getItems().add(0, toolsPane);
+						splitPane.setDividerPositions(horizontalDividerPositions);
+					}
+					Tab tab = tabSupplier.get();
+					tab.onClosedProperty().set(makeLeftToolsTabCloseHandler(id));
+					toolsPane.getTabs().add(tab);
+					toolsPane.getSelectionModel().select(tab);
+				}
+			} else {
+				if (t.isPresent()) {
+					Tab tab = t.get();
+					toolsPane.getTabs().remove(tab);
+					closeLeftToolsTabIfEmpty();
+				}
+			}
+		};
+	}
+	
+	private EventHandler<Event> makeLeftToolsTabCloseHandler(CheckMenuItem item) {
+		return v->{
+			item.setSelected(false);
+			closeLeftToolsTabIfEmpty();
+		};
+	}
+	
+	private void closeLeftToolsTabIfEmpty() {
+		// If now empty
+		if (toolsPane.getTabs().isEmpty()) {
+			horizontalDividerPositions = splitPane.getDividerPositions();
+			splitPane.getItems().remove(toolsPane);
+		}	
 	}
 	
 	private void updateTab(Tab ov, Tab nv) {
@@ -705,50 +754,7 @@ public class MainController {
 		dialog.initModality(Modality.APPLICATION_MODAL); 
 		dialog.showAndWait();
     }
-    
-    @FXML void showHideSearch() {
-		if (showSearchMenuItem.isSelected()) {
-			if (searchTab==null || !toolsPane.getTabs().contains(searchTab)) {
-				SearchController controller = new SearchController();
-				controller.setOnOpen(book -> addTab(new File(book.getBook().getURI())));
-				searchTab = addTabToTools(controller, Messages.TAB_LIBRARY.localize());
-			} else {
-				//focus
-				toolsPane.getSelectionModel().select(searchTab);
-				if (splitPane.getDividerPositions()[0]<dividerPosition/3) {
-					splitPane.setDividerPosition(0, dividerPosition);
-				}
-			}
-		} else {
-			toolsPane.getTabs().remove(searchTab);
-			adjustToolsArea();
-		}
-	}
 
-    private Tab addTabToTools(Parent component, String title) {
-        Tab tab = new Tab();
-        if (title!=null) {
-        	tab.setText(title);
-        }
-        tab.setContent(component);
-        tab.setOnClosed(ev -> {
-        	adjustToolsArea();
-        });
-        if (toolsPane.getTabs().size()==0) {
-    		splitPane.setDividerPosition(0, dividerPosition);
-    	}
-        toolsPane.getTabs().add(tab);
-        toolsPane.getSelectionModel().select(tab);
-        return tab;
-    }
-    
-    private void adjustToolsArea() {
-    	if (toolsPane.getTabs().size()==0) {
-    		splitPane.setDividerPosition(0, 0);
-    	}
-    	showSearchMenuItem.setSelected(toolsPane.getTabs().contains(searchTab));
-    }
-    
     @FXML void showOpenDialog() {
     	Window stage = root.getScene().getWindow();
     	FileChooser fileChooser = new FileChooser();

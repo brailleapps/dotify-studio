@@ -21,7 +21,6 @@
    <center>
       <SplitPane fx:id="splitPane" dividerPositions="0.0" BorderPane.alignment="CENTER">
          <items>
-            <TabPane fx:id="toolsPane" SplitPane.resizableWithParent="false" />
             <SplitPane fx:id="verticalSplitPane" dividerPositions="0.7" orientation="VERTICAL">
                <items>
                   <TabPane fx:id="tabPane" tabClosingPolicy="SELECTED_TAB" />
@@ -143,7 +142,7 @@
           </Menu>
             <Menu mnemonicParsing="false" text="%menu-item-window">
               <items>
-                  <CheckMenuItem fx:id="showSearchMenuItem" mnemonicParsing="false" onAction="#showHideSearch" text="%menu-item-show-library">
+                  <CheckMenuItem fx:id="showSearchMenuItem" mnemonicParsing="false" selected="false" text="%menu-item-show-library">
                      <accelerator>
                         <KeyCodeCombination alt="DOWN" code="L" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
                      </accelerator></CheckMenuItem>
