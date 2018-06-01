@@ -1,11 +1,6 @@
 package application.ui.preview;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -16,10 +11,6 @@ import java.util.stream.Stream;
 
 import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.dotify.studio.api.DocumentPosition;
-import org.daisy.dotify.studio.api.ExportAction;
-import org.daisy.dotify.studio.api.OpenableEditor;
-import org.daisy.dotify.studio.api.SearchCapabilities;
-import org.daisy.dotify.studio.api.SearchOptions;
 import org.daisy.streamline.api.media.FileDetails;
 import org.daisy.streamline.api.validity.ValidationReport;
 
@@ -28,113 +19,40 @@ import application.ui.preview.server.Start;
 import application.ui.preview.server.StartupDetails;
 import application.ui.preview.server.preview.stax.BookReaderResult;
 import application.ui.preview.server.preview.stax.StaxPreviewParser;
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.stage.Window;
 
 /**
  * Provides a preview controller.
  * @author Joel Håkansson
  *
  */
-public class PreviewPefController extends BorderPane implements OpenableEditor {
-	private static final Logger logger = Logger.getLogger(PreviewPefController.class.getCanonicalName());
-	private static final ReadOnlyObjectProperty<SearchCapabilities> SEARCH_CAPABILITIES = new SimpleObjectProperty<>(
-			new SearchCapabilities.Builder()
-			.direction(true)
-			.matchCase(true)
-			.wrap(true)
-			.find(true)
-			.replace(false)
-			.build()
-	);
-	@FXML WebView browser;
-	private Start start;
-	private boolean closing;
-	private EmbossView embossView;
+public class PreviewPefController extends AbstractHtmlController {
 	private final ReadOnlyBooleanProperty canEmbossProperty;
-	private final ReadOnlyBooleanProperty canSaveProperty;
-	private final ObservableBooleanValue canSaveAsProperty;
-	private StringProperty urlProperty;
 	private ObjectProperty<FileDetails> fileDetails = new SimpleObjectProperty<>(FileDetailsCatalog.PEF_FORMAT);
 	private ObjectProperty<Optional<ValidationReport>> validationReport = new SimpleObjectProperty<>(Optional.empty());
+	private Start start;
+	private EmbossView embossView;
 	private String pageUrl;
 
 	/**
 	 * Creates a new preview controller.
 	 */
 	public PreviewPefController() {
-		try {
-			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Preview.fxml"), Messages.getBundle());
-			fxmlLoader.setRoot(this);
-			fxmlLoader.setController(this);
-			fxmlLoader.load();
-		} catch (IOException e) {
-			logger.log(Level.WARNING, "Failed to load view", e);
-		}
-
-        WebEngine webEngine = browser.getEngine();
-        browser.setOnDragOver(event->event.consume());
-        webEngine.setCreatePopupHandler(p-> {
-                Stage stage = new Stage(StageStyle.UTILITY);
-                WebView wv2 = new WebView();
-                stage.setScene(new Scene(wv2));
-                stage.show();
-                return wv2.getEngine();
-            }
-        );
-		closing = false;
+		super();
 		canEmbossProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(true));
-		canSaveProperty = BooleanProperty.readOnlyBooleanProperty(new SimpleBooleanProperty(false));
-		canSaveAsProperty = new SimpleBooleanProperty(true);
-		urlProperty = new SimpleStringProperty();
 	}
-
-	public static boolean supportsFormat(FileDetails format) {
-		return FormatChecker.isPEF(format);
-	}
-
-    class PefDocumentWatcher extends DocumentWatcher {
-    	PefDocumentWatcher(File pef) {
-    		super(pef);
-    	}
-
-		@Override
-		boolean shouldMonitor() {
-			return super.shouldMonitor() && !closing;
-		}
-
-		@Override
-		void performAction() {
-			Platform.runLater(()->reload());
-		}
-
-    }
 
 	/**
 	 * Starts a new preview server.
@@ -143,14 +61,6 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	 */
     @Override
 	public Consumer<File> open(File file) {
-		Thread pwt = null;
-		if (file!=null) {
-			PefDocumentWatcher pefWatcher = new PefDocumentWatcher(file);
-    		pwt = new Thread(pefWatcher);
-    		pwt.setDaemon(true);
-    		pwt.start();
-		}
-		final Thread pefWatcherThread = pwt;
 		Task<String> startServer = new Task<String>() {
 
 			@Override
@@ -179,13 +89,7 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 		Thread th = new Thread(startServer);
 		th.setDaemon(true);
 		th.start();
-		if (pefWatcherThread!=null) {
-			return f2 -> {
-				pefWatcherThread.interrupt();
-			};
-		} else {
-			return f2 -> {};
-		}
+		return super.open(file);
 	}
 	
 	/**
@@ -193,7 +97,7 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	 * has changed.
 	 */
 	public void reload() {
-		browser.getEngine().reload();
+		super.reload();
 		updateValidation();
 	}
 	
@@ -210,28 +114,16 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 		}		
 	}
 
-	public ReadOnlyStringProperty urlProperty() {
-		return urlProperty;
-	}
-	
 	/**
 	 * Informs the controller that it should close.
 	 */
 	public void closing() {
-		closing = true;
+		super.closing();
 		if (start!=null) {
 			start.stopServer();
 		}
 	}
-	
-	private Optional<URI> getBookURI() {
-		if (start!=null) {
-			return Optional.of(start.getMainPage().getBookURI());
-		} else {
-			return Optional.<URI>empty();
-		}
-	}
-	
+
 	/**
 	 * Shows the emboss dialog.
 	 */
@@ -256,22 +148,6 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	}
 
 	@Override
-	public void save() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean saveAs(File f) throws IOException {
-		URI uri = getBookURI().orElseThrow(()->new IOException("Nothing to save."));		
-		try {
-			Files.copy(Paths.get(uri), new FileOutputStream(f));
-			return true;
-		} catch (IOException e) {
-			throw e;
-		}
-	}
-
-	@Override
 	public List<ExtensionFilter> getSaveAsFilters() {
 		return Arrays.asList(new ExtensionFilter(Messages.EXTENSION_FILTER_FILE.localize("PEF"), "*.pef"));
 	}
@@ -279,33 +155,6 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 	@Override
 	public ObservableBooleanValue canEmboss() {
 		return canEmbossProperty;
-	}
-
-	@Override
-	public ObservableBooleanValue canSave() {
-		return canSaveProperty;
-	}
-	
-	@Override
-	public ObservableBooleanValue canSaveAs() {
-		return canSaveAsProperty;
-	}
-
-	@Override
-	public void activate() {
-		browser.requestFocus();
-	}
-	
-	@Override
-	public Node getNode() {
-		return this;
-	}
-
-	@Override
-	public void export(Window ownerWindow, ExportAction action) throws IOException {
-		URI uri = getBookURI().orElseThrow(()->new IOException("Nothing to export."));
-		File input = new File(uri);
-		action.export(ownerWindow, input);
 	}
 
 	@Override
@@ -329,24 +178,6 @@ public class PreviewPefController extends BorderPane implements OpenableEditor {
 				.map(v->DocumentPosition.with(v.getLineNumber(), v.getColumnNumber()))
 				.filter(v->v.equals(location))
 				.count()>0;
-	}
-
-	@Override
-	public boolean findNext(String text, SearchOptions opts) {
-		return (Boolean)browser.getEngine().executeScript(
-			String.format("self.find('%s', %b, %b, %b)", text, 
-			opts.shouldMatchCase(), opts.shouldReverseSearch(), opts.shouldWrapAround())
-		);
-	}
-
-	@Override
-	public void replace(String replace) {
-		// Not supported
-	}
-
-	@Override
-	public ObservableObjectValue<SearchCapabilities> searchCapabilities() {
-		return SEARCH_CAPABILITIES;
 	}
 
 }
