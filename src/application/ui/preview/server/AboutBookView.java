@@ -1,6 +1,7 @@
 package application.ui.preview.server;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.daisy.braille.utils.pef.PEFBook;
@@ -18,8 +19,6 @@ import com.googlecode.ajui.AParagraph;
 import application.l10n.Messages;
 
 public class AboutBookView extends AContainer {
-
-
 
 	public AboutBookView(PEFBook book, List<ValidatorMessage> messages) {
 		
@@ -51,58 +50,77 @@ public class AboutBookView extends AContainer {
 			p.add(new ALabel(sb.toString()));
 			add(p);
 		}
+		
+		List<Item> m = toItemList(book);
+
 		ADefinitionList dl = new ADefinitionList();
-		{
+		for (Item entry : m) {
 			ADefinitionTerm dt = new ADefinitionTerm();
-			dt.add(new ALabel(Messages.SIZE.localize()));
+			dt.add(new ALabel(entry.getTitle()));
 			dl.add(dt);
-		}
-		{	
-			ADefinitionDescription dd = new ADefinitionDescription();
-			dd.add(new ALabel(MessageFormat.format(Messages.SIZE_PAGES.localize(), book.getPages())));
-			dl.add(dd);
-		}
-		{
-	   		StringBuilder s = new StringBuilder();
-	    	for (int i=1; i<=book.getVolumes(); i++) {
-	    		if (i==1) {
-	    			//s.append("(");
-	    		}
-	    		s.append(book.getSheets(i));
-	    		if (i<book.getVolumes()) {
-	    			s.append(" + ");
-	    		} else {
-	    			//s.append(")");
-	    		}
-	    	}
-			{	
+			for (String value : entry.getValues()) {
 				ADefinitionDescription dd = new ADefinitionDescription();
-				dd.add(new ALabel(MessageFormat.format(Messages.SIZE_SHEETS.localize(), book.getSheets(), s)));
+				dd.add(new ALabel(value));
 				dl.add(dd);
 			}
 		}
-		{	
-			ADefinitionDescription dd = new ADefinitionDescription();
-			dd.add(new ALabel(MessageFormat.format(Messages.SIZE_VOLUMES.localize(), book.getVolumes())));
+		add(dl);
+		AParagraph p = new AParagraph();
+		ALink a = new ALink("#");
+		a.addAttribute("onclick", "window.open('book.xml','source'); return false;");
+		a.add(new ALabel(Messages.XSLT_VIEW_SOURCE.localize()));
+		p.add(a);
+		add(p);
+	}
+	
+	private static class Item {
+		private final String title;
+		private final List<String> dd = new ArrayList<>();
+		Item(String title) {
+			this.title = title;
+		}
+		
+		void add(String value) {
+			dd.add(value);
+		}
+		
+		String getTitle() {
+			return title;
+		}
+		
+		List<String> getValues() {
+			return dd;
+		}
+	}
+	
+	private static List<Item> toItemList(PEFBook book) {
+		List<Item> dl = new ArrayList<>();
+		{
+			Item dd = new Item(Messages.SIZE.localize());
 			dl.add(dd);
+			dd.add(MessageFormat.format(Messages.SIZE_PAGES.localize(), book.getPages()));
+			StringBuilder s = new StringBuilder();
+			for (int i=1; i<=book.getVolumes(); i++) {
+				if (i==1) {
+					//s.append("(");
+				}
+				s.append(book.getSheets(i));
+				if (i<book.getVolumes()) {
+					s.append(" + ");
+				} else {
+					//s.append(")");
+				}
+			}
+			dd.add(MessageFormat.format(Messages.SIZE_SHEETS.localize(), book.getSheets(), s));
+			dd.add(MessageFormat.format(Messages.SIZE_VOLUMES.localize(), book.getVolumes()));
 		}
 		{
-			ADefinitionTerm dt = new ADefinitionTerm();
-			dt.add(new ALabel(Messages.DIMENSIONS.localize()));
-			dl.add(dt);
-		}
-		{	
-			ADefinitionDescription dd = new ADefinitionDescription();
-			dd.add(new ALabel(MessageFormat.format(Messages.FILE_DIMENSIONS.localize(), book.getMaxWidth(), book.getMaxHeight())));
+			Item dd = new Item(Messages.DIMENSIONS.localize());
 			dl.add(dd);
+			dd.add(MessageFormat.format(Messages.FILE_DIMENSIONS.localize(), book.getMaxWidth(), book.getMaxHeight()));
 		}
 		{
-			ADefinitionTerm dt = new ADefinitionTerm();
-			dt.add(new ALabel(Messages.DUPLEX.localize()));
-			dl.add(dt);
-		}
-		{	
-			ADefinitionDescription dd = new ADefinitionDescription();
+			Item dd = new Item(Messages.DUPLEX.localize());
 			float ratio = book.getPages()/(float)book.getPageTags();
 			String info;
 			if (ratio<=1) {
@@ -112,43 +130,26 @@ public class AboutBookView extends AContainer {
 			} else {
 				info = Messages.DUPLEX_MIXED.localize();
 			}
-			dd.add(new ALabel(info));
+			dd.add(info);
 			dl.add(dd);
 		}
 		{
-			ADefinitionTerm dt = new ADefinitionTerm();
-			dt.add(new ALabel(Messages.EIGHT_DOT.localize()));
-			dl.add(dt);
-		}
-		{	
-			ADefinitionDescription dd = new ADefinitionDescription();
-			dd.add(new ALabel((book.containsEightDot() ? Messages.YES.localize() : Messages.NO.localize())));
+			Item dd = new Item(Messages.EIGHT_DOT.localize());
+			dd.add((book.containsEightDot() ? Messages.YES.localize() : Messages.NO.localize()));
 			dl.add(dd);
 		}
-		add(dl);
-		dl = new ADefinitionList();
-    	for (String key : book.getMetadataKeys()) {
-    		{
-    			ADefinitionTerm dt = new ADefinitionTerm();
-    			dt.add(new ALabel(Messages.getString("Worker.dc."+key)));
-    			dl.add(dt);
-    		}
-    		for (String value : book.getMetadata(key)) {
-        		{	
-        			ADefinitionDescription dd = new ADefinitionDescription();
-        			dd.add(new ALabel(value));
-        			dl.add(dd);
-        		}
-    		}
-    	}
-    	add(dl);
 
-    	AParagraph p = new AParagraph();
-    	ALink a = new ALink("#");
-    	a.addAttribute("onclick", "window.open('book.xml','source'); return false;");
-    	a.add(new ALabel(Messages.XSLT_VIEW_SOURCE.localize()));
-    	p.add(a);
-    	add(p);
+		// This item retains the visual separation between the items above and the ones that follow. It can be removed.
+		dl.add(new Item("\u00A0"));
+
+		for (String key : book.getMetadataKeys()) {
+			Item dd = new Item(Messages.getString("Worker.dc."+key));
+			dl.add(dd);
+			for (String value : book.getMetadata(key)) {
+				dd.add(value);
+			}
+		}
+		return dl;
 	}
 	
 	static ADefinitionList buildMessagesList(List<ValidatorMessage> messages) {
