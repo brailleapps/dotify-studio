@@ -47,6 +47,8 @@ public final class StartupDetails {
 	public static Optional<StartupDetails> parse(String[] args) {
 		if (args.length==2 && args[0].equalsIgnoreCase("-open")) {
 			return Optional.of(new StartupDetails.Builder(new File(args[1])).build());
+		} else if (args.length==1 && new File(args[0]).exists()) {
+			return Optional.of(new StartupDetails.Builder(new File(args[0])).build());
 		} else {
 			return Optional.empty();
 		}
