@@ -1,5 +1,12 @@
 [[Table of Contents|Toc]]
 
+# 0.10.1
+## New in this version
+- Updates Norwegian translation
+- Supports passing a file path as the only startup argument
+- Improves the left tools panel implementation
+- Removes code duplication in DotifyController (fixes #68)
+
 # 0.10.0
 ## New in this version
 - Adds a validation view (fixes #52)
