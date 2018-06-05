@@ -12,6 +12,7 @@ import java.util.logging.Logger;
  */
 abstract class DocumentWatcher implements Runnable {
 	private static final Logger logger = Logger.getLogger(DocumentWatcher.class.getCanonicalName());
+	private final Object lock = new Object();
 	protected final File file;
 	private final long pollTime;
 	private long modified;
@@ -70,10 +71,23 @@ abstract class DocumentWatcher implements Runnable {
 				logger.info("Waiting for changes in " + file);
 			}
 			try {
-				Thread.sleep(pollTime);
+				synchronized (lock) {
+					lock.wait(pollTime);
+				}
 			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				break;
 			}
 		}
 		logger.info("Removing watcher on " + file);
+	}
+	
+	/**
+	 * Triggers the action now, if the action should be performed.
+	 */
+	public void trigger() {
+		synchronized (lock) {
+			lock.notifyAll();
+		}
 	}
 }

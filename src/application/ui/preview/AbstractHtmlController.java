@@ -93,9 +93,8 @@ public abstract class AbstractHtmlController extends BorderPane implements Opena
 			wth = new Thread(watcher);
 			wth.setDaemon(true);
 			wth.start();
-			final Thread watcherThread = wth;
 			return f2 -> {
-				watcherThread.interrupt();
+				watcher.trigger();
 			};
 		} else {
 			return f2 -> {};
