@@ -385,11 +385,10 @@ public class MainController {
 				watchSourceMenuItem.selectedProperty().unbindBidirectional(v.watchSourceProperty());
 			});
 		}
-		if (nv!=null) {
-			Object x = nv.getContent();
-			if (x instanceof Searchable) {
-				setSearchCapabilities((Searchable)x);
-			}
+		if (nv!=null && nv.getContent() instanceof Searchable) {
+			setSearchCapabilities((Searchable)nv.getContent());
+		} else {
+			setSearchCapabilities(null);
 		}
 		if (nv!=null && nv.getContent() instanceof Editor) {
 			Editor p = ((Editor)nv.getContent());
