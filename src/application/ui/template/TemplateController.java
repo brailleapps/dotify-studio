@@ -57,7 +57,7 @@ public class TemplateController {
 		if (!isEmpty()) {
 			getConfigurationsCatalog().getConfigurationDetails().stream()
 					.sorted((o1, o2) -> {
-						return o1.getKey().compareTo(o2.getKey());
+						return o1.getNiceName().compareTo(o2.getNiceName());
 					})
 					.forEach(conf->{
 						boolean removable = getConfigurationsCatalog().isRemovable(conf.getKey());
