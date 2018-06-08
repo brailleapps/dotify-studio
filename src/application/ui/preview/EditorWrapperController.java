@@ -226,4 +226,9 @@ public class EditorWrapperController extends BorderPane implements Editor {
 		return impl.searchCapabilities();
 	}
 
+	@Override
+	public String getSelectedText() {
+		return impl.getSelectedText();
+	}
+
 }

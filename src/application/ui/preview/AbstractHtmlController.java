@@ -197,4 +197,9 @@ public abstract class AbstractHtmlController extends BorderPane implements Opena
 	public ObservableObjectValue<SearchCapabilities> searchCapabilities() {
 		return SEARCH_CAPABILITIES;
 	}
+	
+	@Override
+	public String getSelectedText() {
+		return browser.getEngine().executeScript("window.getSelection().toString()").toString();
+	}
 }

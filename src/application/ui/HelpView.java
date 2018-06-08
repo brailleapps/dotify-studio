@@ -56,4 +56,9 @@ class HelpView extends BorderPane implements Searchable {
 	public void replace(String replace) {
 		// Not supported
 	}
+
+	@Override
+	public String getSelectedText() {
+		return wv.getEngine().executeScript("window.getSelection().toString()").toString();
+	}
 }

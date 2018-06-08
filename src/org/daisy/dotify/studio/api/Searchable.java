@@ -28,5 +28,11 @@ public interface Searchable {
 	 * @param replace the replacement text
 	 */
 	public void replace(String replace);
+	
+	/**
+	 * Gets the selected text, or an empty string if no text is selected.
+	 * @return the selected text
+	 */
+	public String getSelectedText();
 
 }

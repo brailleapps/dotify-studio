@@ -660,4 +660,9 @@ public class EditorController extends BorderPane implements Editor {
 		return SEARCH_CAPABILITIES;
 	}
 
+	@Override
+	public String getSelectedText() {
+		return codeArea.getSelectedText();
+	}
+
 }

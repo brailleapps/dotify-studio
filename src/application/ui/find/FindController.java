@@ -12,7 +12,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -52,6 +51,10 @@ public class FindController {
 	
 	public String getFindText() {
 		return findField.getText();
+	}
+	
+	public void setFindText(String value) {
+		findField.setText(value);
 	}
 	
 	public String getReplaceText() {

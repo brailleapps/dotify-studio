@@ -343,5 +343,10 @@ public class SourcePreviewController extends BorderPane implements Editor {
 	public ObservableObjectValue<SearchCapabilities> searchCapabilities() {
 		return searchCapabilities;
 	}
+
+	@Override
+	public String getSelectedText() {
+		return getCurrentEditor().map(v->v.getSelectedText()).orElse("");
+	}
 	
 }

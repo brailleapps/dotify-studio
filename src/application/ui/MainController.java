@@ -638,6 +638,11 @@ public class MainController {
 			}));
 			setSearchCapabilities(getSelectedSearchable().orElse(null));
 		}
+		getSelectedSearchable().ifPresent(v->{
+			if (!"".equals(v.getSelectedText())) {
+				findDialog.getController().setFindText(v.getSelectedText());
+			}
+		});
 		if (!findDialog.isShowing()) {
 			findDialog.show();
 		}
