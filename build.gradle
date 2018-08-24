@@ -1,7 +1,16 @@
-apply plugin: 'java'
-apply plugin: 'application'
-apply plugin: 'maven'
-apply plugin: "signing"
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies { classpath ('com.vladsch.flexmark:flexmark-all:0.19.3') }
+}
+
+plugins {
+	id 'java'
+	id 'application'
+	id 'maven'
+	id 'signing'
+}
 
 mainClassName = "application.ui.MainFx"
 compileJava.options.encoding = 'UTF-8'
@@ -91,13 +100,6 @@ dependencies {
 		exclude module: 'Saxon-HE'
 	}
 
-}
-
-buildscript {
-    repositories {
-    	mavenCentral()
-    }
-	dependencies { classpath ('com.vladsch.flexmark:flexmark-all:0.19.3') }
 }
 
 task copyDocResources(type: Copy) {
