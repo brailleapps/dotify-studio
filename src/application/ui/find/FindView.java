@@ -2,7 +2,6 @@ package application.ui.find;
 
 import java.io.IOException;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,7 +15,6 @@ import javafx.stage.Stage;
  * @author Joel Håkansson
  */
 public class FindView extends Stage {
-	private static final Logger logger = Logger.getLogger(FindView.class.getCanonicalName());
 	private final FindController controller;
 	private final ResourceBundle resources;
 

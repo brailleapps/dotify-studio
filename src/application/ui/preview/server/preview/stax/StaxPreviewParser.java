@@ -166,8 +166,7 @@ public class StaxPreviewParser {
 	private void parseVolume(XMLEvent event, XMLEventReader input, int volNumber) throws XMLStreamException, IOException, ParsingCancelledException {
 		File t1 = File.createTempFile("Preview", ".tmp");
 		t1.deleteOnExit();
-		OutputStream outStream = new FileOutputStream(t1);
-		try {
+		try (OutputStream outStream = new FileOutputStream(t1)) {
 			out = outFactory.createXMLStreamWriter(new OutputStreamWriter(outStream, "utf-8"));
 			out.setDefaultNamespace(HTML_NS);
 			writePreamble(volNumber);
@@ -186,7 +185,6 @@ public class StaxPreviewParser {
 			writePostamble();
 			volumeEndPositions.add(DocumentPosition.with(event.getLocation()));
 		} finally {
-			outStream.close();
 			volumes.add(t1);
 		}
 	}
