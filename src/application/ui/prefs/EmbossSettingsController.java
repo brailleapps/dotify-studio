@@ -155,7 +155,7 @@ public class EmbossSettingsController extends BorderPane {
 					});
 			parent.getChildren().add(makerItem);
 			if (!"".equals(currentMake)) {
-				conf.getEmbosserCatalog().list(v->true);
+				conf.getEmbosserCatalog().listEmbossers(v->true);
 				embosserItem = new PreferenceItem(Messages.LABEL_EMBOSSER.localize(), wrapEmbossers(conf.getEmbossers().stream()
 						.filter(v->v.getMake().equals(currentMake)).collect(Collectors.toList())), config.embosser, (o, t0, t1) -> {
 					Settings.getSettings().put(Keys.embosser, t1.getKey());
