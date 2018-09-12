@@ -8,9 +8,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.daisy.braille.utils.api.paper.Length;
-import org.daisy.braille.utils.api.paper.Paper;
-import org.daisy.braille.utils.api.paper.PaperCatalog;
+import org.daisy.dotify.api.paper.Length;
+import org.daisy.dotify.api.paper.Paper;
+import org.daisy.dotify.api.paper.PaperCatalog;
 
 import application.common.Configuration;
 import application.common.NiceName;

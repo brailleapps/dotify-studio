@@ -5,22 +5,22 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.daisy.braille.utils.api.embosser.Embosser;
-import org.daisy.braille.utils.api.embosser.EmbosserCatalog;
-import org.daisy.braille.utils.api.embosser.EmbosserFactoryProperties;
-import org.daisy.braille.utils.api.embosser.EmbosserFeatures;
-import org.daisy.braille.utils.api.embosser.EmbosserProperties.PrintMode;
-import org.daisy.braille.utils.api.embosser.PrintPage;
-import org.daisy.braille.utils.api.embosser.PrintPage.Shape;
-import org.daisy.braille.utils.api.factory.FactoryProperties;
-import org.daisy.braille.utils.api.paper.Length;
-import org.daisy.braille.utils.api.paper.PageFormat;
-import org.daisy.braille.utils.api.paper.Paper;
-import org.daisy.braille.utils.api.paper.PaperCatalog;
-import org.daisy.braille.utils.api.paper.RollPaperFormat;
-import org.daisy.braille.utils.api.paper.SheetPaperFormat;
-import org.daisy.braille.utils.api.paper.TractorPaperFormat;
-import org.daisy.braille.utils.api.table.TableCatalog;
+import org.daisy.dotify.api.embosser.Embosser;
+import org.daisy.dotify.api.embosser.EmbosserCatalog;
+import org.daisy.dotify.api.embosser.EmbosserFactoryProperties;
+import org.daisy.dotify.api.embosser.EmbosserFeatures;
+import org.daisy.dotify.api.embosser.EmbosserProperties.PrintMode;
+import org.daisy.dotify.api.embosser.PrintPage;
+import org.daisy.dotify.api.embosser.PrintPage.Shape;
+import org.daisy.dotify.api.factory.FactoryProperties;
+import org.daisy.dotify.api.paper.Length;
+import org.daisy.dotify.api.paper.PageFormat;
+import org.daisy.dotify.api.paper.Paper;
+import org.daisy.dotify.api.paper.PaperCatalog;
+import org.daisy.dotify.api.paper.RollPaperFormat;
+import org.daisy.dotify.api.paper.SheetPaperFormat;
+import org.daisy.dotify.api.paper.TractorPaperFormat;
+import org.daisy.dotify.api.table.TableCatalog;
 
 import application.common.Settings.Keys;
 

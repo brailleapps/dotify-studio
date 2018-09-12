@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.daisy.braille.utils.api.factory.FactoryProperties;
+import org.daisy.dotify.api.factory.FactoryProperties;
 
 import application.common.FactoryPropertiesAdapter;
 import application.common.Settings;

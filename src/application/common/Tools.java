@@ -1,6 +1,6 @@
 package application.common;
 
-import org.daisy.braille.utils.api.paper.Length;
+import org.daisy.dotify.api.paper.Length;
 
 /**
  * Provides tools common to both e2u and application packages.

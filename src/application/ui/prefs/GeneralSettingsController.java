@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import org.daisy.braille.utils.api.table.BrailleConstants;
-import org.daisy.braille.utils.api.table.TableCatalog;
+import org.daisy.dotify.api.table.BrailleConstants;
+import org.daisy.dotify.api.table.TableCatalog;
 import org.daisy.streamline.api.media.FileDetails;
 
 import application.common.FactoryPropertiesAdapter;

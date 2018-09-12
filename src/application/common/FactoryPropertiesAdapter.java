@@ -1,6 +1,6 @@
 package application.common;
 
-import org.daisy.braille.utils.api.factory.FactoryProperties;
+import org.daisy.dotify.api.factory.FactoryProperties;
 
 public class FactoryPropertiesAdapter extends NiceName implements Comparable<FactoryPropertiesAdapter> {
 	private final FactoryProperties p;

@@ -5,10 +5,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.daisy.braille.utils.api.embosser.EmbosserProperties;
-import org.daisy.braille.utils.api.embosser.PrintPage.Shape;
-import org.daisy.braille.utils.api.paper.Length;
-import org.daisy.braille.utils.api.paper.SheetPaperFormat;
+import org.daisy.dotify.api.embosser.EmbosserProperties;
+import org.daisy.dotify.api.embosser.PrintPage.Shape;
+import org.daisy.dotify.api.paper.Length;
+import org.daisy.dotify.api.paper.SheetPaperFormat;
 
 import application.common.NiceName;
 import application.l10n.Messages;

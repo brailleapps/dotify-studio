@@ -1,10 +1,10 @@
 package application.ui.prefs;
 
-import org.daisy.braille.utils.api.paper.Length;
-import org.daisy.braille.utils.api.paper.Paper;
-import org.daisy.braille.utils.api.paper.RollPaper;
-import org.daisy.braille.utils.api.paper.SheetPaper;
-import org.daisy.braille.utils.api.paper.TractorPaper;
+import org.daisy.dotify.api.paper.Length;
+import org.daisy.dotify.api.paper.Paper;
+import org.daisy.dotify.api.paper.RollPaper;
+import org.daisy.dotify.api.paper.SheetPaper;
+import org.daisy.dotify.api.paper.TractorPaper;
 
 import application.common.NiceName;
 import application.l10n.Messages;

@@ -2,7 +2,7 @@ package application.ui.prefs;
 
 import java.util.Collection;
 
-import org.daisy.braille.utils.api.factory.FactoryProperties;
+import org.daisy.dotify.api.factory.FactoryProperties;
 
 @FunctionalInterface
 interface ListFactoryProperties {
