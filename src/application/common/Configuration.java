@@ -178,6 +178,10 @@ public class Configuration {
 		return embosserCatalog;
 	}
 	
+	public PaperCatalog getPaperCatalog() {
+		return paperCatalog;
+	}
+	
 	public Collection<EmbosserFactoryProperties> getEmbossers() {
 		return embossers;
 	}

@@ -6,11 +6,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
-import org.daisy.braille.utils.api.paper.CustomPaperCollection;
 import org.daisy.braille.utils.api.paper.Length;
 import org.daisy.braille.utils.api.paper.Paper;
+import org.daisy.braille.utils.api.paper.PaperCatalog;
 
+import application.common.Configuration;
 import application.common.NiceName;
 import application.common.Tools;
 import application.l10n.Messages;
@@ -35,8 +37,8 @@ import javafx.scene.layout.BorderPane;
  */
 public class PaperSettingsController extends BorderPane {
 	private static final Logger logger = Logger.getLogger(PaperSettingsController.class.getCanonicalName());
-	private CustomPaperCollection coll;
 	private final OptionNiceNames nn = new OptionNiceNames();
+	private PaperCatalog pc;
 	@FXML private ListView<PaperAdapter> list;
 	@FXML private TextField nameField;
 	@FXML private TextField descriptionField;
@@ -66,7 +68,6 @@ public class PaperSettingsController extends BorderPane {
 	}
 
 	@FXML void initialize() {
-		coll = CustomPaperCollection.getInstance();
 		addLengths(units1);
 		addLengths(units2);
 		sheetPaper.setUserData(new SheetPaperToggle());
@@ -83,13 +84,11 @@ public class PaperSettingsController extends BorderPane {
 	    		alert.showAndWait()
 	    			.filter(response -> response == ButtonType.OK)
 	    			.ifPresent(response -> {
-						try {
-							hasUpdates = true;
-							coll.remove(pa.getPaper());
-							list.getItems().remove(pa);
-						} catch (IOException e) {
-							logger.log(Level.WARNING, "Failed to delete paper.", e);
+						hasUpdates = true;
+						if (!getPaperCatalog().remove(pa.getPaper())) {
+							logger.log(Level.WARNING, "Failed to delete paper.");
 						}
+						list.getItems().remove(pa);
 	    			});
 			} else {
 				System.out.println(ev.getCharacter());
@@ -97,9 +96,16 @@ public class PaperSettingsController extends BorderPane {
 		});
 	}
 	
+	private PaperCatalog getPaperCatalog() {
+		if (pc==null) {
+			pc = Configuration.getConfiguration().getPaperCatalog();
+		}
+		return pc;
+	}
+	
 	private void updateList() {
 		list.getItems().clear();
-		list.getItems().addAll(wrap(coll.list()));
+		list.getItems().addAll(wrap(getPaperCatalog().list().stream().filter(v->getPaperCatalog().isRemovable(v)).collect(Collectors.toList())));
 	}
 	
 	private static List<PaperAdapter> wrap(Collection<Paper> props) {
@@ -149,10 +155,8 @@ public class PaperSettingsController extends BorderPane {
 			if (validate()) {
 				Length l1 = Tools.parseLength(field1.getText(), units1.getSelectionModel().getSelectedItem().getKey());
 				Length l2 = Tools.parseLength(field2.getText(), units2.getSelectionModel().getSelectedItem().getKey());
-				try {
-					coll.addNewSheetPaper(nameField.getText(), descriptionField.getText(), l1, l2);
-				} catch (IOException e) {
-					logger.log(Level.WARNING, "Failed to add paper", e);
+				if (!getPaperCatalog().addNewSheetPaper(nameField.getText(), descriptionField.getText(), l1, l2)) {					
+					logger.log(Level.WARNING, "Failed to add paper.");
 				}
 			}
 		}
@@ -170,10 +174,8 @@ public class PaperSettingsController extends BorderPane {
 			if (validate()) {
 				Length l1 = Tools.parseLength(field1.getText(), units1.getSelectionModel().getSelectedItem().getKey());
 				Length l2 = Tools.parseLength(field2.getText(), units2.getSelectionModel().getSelectedItem().getKey());
-				try {
-					coll.addNewTractorPaper(nameField.getText(), descriptionField.getText(), l1, l2);
-				} catch (IOException e) {
-					logger.log(Level.WARNING, "Failed to add paper", e);
+				if (!getPaperCatalog().addNewTractorPaper(nameField.getText(), descriptionField.getText(), l1, l2)) {
+					logger.log(Level.WARNING, "Failed to add paper.");
 				}
 			}			
 		}
@@ -192,10 +194,8 @@ public class PaperSettingsController extends BorderPane {
 		public void addPaper() {
 			if (validate()) {
 				Length l1 = Tools.parseLength(field1.getText(), units1.getSelectionModel().getSelectedItem().getKey());
-				try {
-					coll.addNewRollPaper(nameField.getText(), descriptionField.getText(), l1);
-				} catch (IOException e) {
-					logger.log(Level.WARNING, "Failed to add paper", e);
+				if (!getPaperCatalog().addNewRollPaper(nameField.getText(), descriptionField.getText(), l1)) {
+					logger.log(Level.WARNING, "Failed to add paper.");
 				}
 			}
 		}
