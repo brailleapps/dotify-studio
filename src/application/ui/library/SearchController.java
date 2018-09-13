@@ -14,8 +14,8 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.braille.utils.pef.PEFBookLoader;
-import org.daisy.braille.utils.pef.PEFLibrary;
 import org.daisy.braille.utils.pef.PEFSearchIndex;
+import org.daisy.dotify.common.io.FileIO;
 import org.xml.sax.SAXException;
 
 import application.common.Settings;
@@ -161,7 +161,7 @@ public class SearchController extends VBox {
 		protected PEFSearchIndex call() throws Exception {
 			PEFSearchIndex search = new PEFSearchIndex(1);
 			PEFBookLoader loader = new PEFBookLoader();
-			Collection<File> files = PEFLibrary.listFiles(Settings.getSettings().getLibraryPath(), true);
+			Collection<File> files = FileIO.listFilesRecursive(Settings.getSettings().getLibraryPath(), ".pef");
 			int i = 0;
 			updateProgress(i, files.size());
 			for (File f : files) {

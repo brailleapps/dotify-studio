@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.daisy.braille.utils.pef.FileTools;
+import org.daisy.dotify.common.io.FileIO;
 
 import application.l10n.Messages;
 import application.ui.preview.server.StartupDetails;
@@ -57,7 +57,7 @@ public class MainFx extends Application {
 			// list jars and convert to URL's
 			File plugins = new File(parent, "plugins");
 			if (plugins.isDirectory()) {
-				URL[] jars = FileTools.toURL(listFiles(plugins).toArray(new File[]{}));
+				URL[] jars = FileIO.toURL(listFiles(plugins).toArray(new File[]{}));
 				for (URL u : jars) {
 					logger.info("Found jars " + u);
 				}
