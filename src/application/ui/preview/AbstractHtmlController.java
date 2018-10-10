@@ -13,6 +13,7 @@ import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.dotify.studio.api.SearchCapabilities;
 import org.daisy.dotify.studio.api.SearchOptions;
 
+import application.common.Settings;
 import application.l10n.Messages;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -69,11 +70,13 @@ public abstract class AbstractHtmlController extends BorderPane implements Opena
 			logger.log(Level.WARNING, "Failed to load view", e);
 		}
 
+		browser.zoomProperty().bind(Settings.getSettings().zoomLevelProperty());
 		WebEngine webEngine = browser.getEngine();
 		browser.setOnDragOver(event->event.consume());
 		webEngine.setCreatePopupHandler(p-> {
 			Stage stage = new Stage(StageStyle.UTILITY);
 			WebView wv2 = new WebView();
+			wv2.zoomProperty().bind(Settings.getSettings().zoomLevelProperty());
 			stage.setScene(new Scene(wv2));
 			stage.show();
 			return wv2.getEngine();

@@ -114,6 +114,9 @@ import javafx.stage.WindowEvent;
 public class MainController {
 	private static final Logger logger = Logger.getLogger(MainController.class.getCanonicalName());
 	private static final int CONSOLE_MESSAGE_LIMIT = 500;
+	private static final double ZOOM_IN_LIMIT = 3.0;
+	private static final double ZOOM_OUT_LIMIT = 0.5;
+	private static final double ZOOM_INCREMENT = 0.25;
 	@FXML private BorderPane root;
 	@FXML private TabPane tabPane;
 	@FXML private SplitPane splitPane;
@@ -144,6 +147,8 @@ public class MainController {
 	@FXML private MenuItem refreshConverterMenuItem;
 	@FXML private MenuItem applyTemplateMenuItem;
 	@FXML private MenuItem saveTemplateMenuItem;
+	@FXML private MenuItem zoomInMenuItem;
+	@FXML private MenuItem zoomOutMenuItem;
 	@FXML private Tab consoleTab;
 	@FXML private Tab validationTab;
 	private ValidationController validationController;
@@ -165,6 +170,8 @@ public class MainController {
 	private ChangeListener<Optional<ValidationReport>> validationListener;
 	private ChangeListener<SearchCapabilities> searchCapabilitiesListener;
 	static final KeyCombination CTRL_F4 = new KeyCodeCombination(KeyCode.F4, KeyCombination.CONTROL_DOWN);
+	static final KeyCombination CTRL_MINUS = new KeyCodeCombination(KeyCode.MINUS, KeyCombination.CONTROL_DOWN);
+	static final KeyCombination CTRL_PLUS = new KeyCodeCombination(KeyCode.PLUS, KeyCombination.CONTROL_DOWN);
 	private final ExportActionMaker exportActions = ExportActionMaker.newInstance();
 
 	@FXML void initialize() {
@@ -284,6 +291,15 @@ public class MainController {
 		refreshMenuItem.disableProperty().bind(noTabBinding);
 		openInBrowserMenuItem.disableProperty().bind(rootBindings.add(noTabBinding.or(urlProperty.isNull())));
 		embossMenuItem.disableProperty().bind(rootBindings.add(noTabExceptHelpBinding.or(canEmboss.not())));
+		zoomInMenuItem.disableProperty().bind(
+				Settings.getSettings().zoomLevelProperty().greaterThanOrEqualTo(ZOOM_IN_LIMIT)
+				.or(noTabBinding)
+			);
+		zoomOutMenuItem.disableProperty().bind(
+				Settings.getSettings().zoomLevelProperty().lessThanOrEqualTo(ZOOM_OUT_LIMIT)
+				.or(noTabBinding)
+			);
+		
 	}
 	
 	private ChangeListener<Boolean> makeBottomToolsChangeListener(Tab tab) {
@@ -613,6 +629,16 @@ public class MainController {
 
 	@FXML void refreshConverter() {
 		getSelectedPreview().flatMap(v->v.getConverter()).ifPresent(v->v.apply());
+	}
+	
+	@FXML void zoomIn() {
+		double zoom = Math.min(Settings.getSettings().getZoomLevel()+ZOOM_INCREMENT, ZOOM_IN_LIMIT);
+		Settings.getSettings().setZoomLevel(zoom);
+	}
+	
+	@FXML void zoomOut() {
+		double zoom = Math.max(Settings.getSettings().getZoomLevel()-ZOOM_INCREMENT, ZOOM_OUT_LIMIT);
+		Settings.getSettings().setZoomLevel(zoom);
 	}
 	
 	@FXML void saveTemplate() {

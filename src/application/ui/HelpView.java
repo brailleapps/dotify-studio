@@ -4,6 +4,7 @@ import org.daisy.dotify.studio.api.SearchCapabilities;
 import org.daisy.dotify.studio.api.SearchOptions;
 import org.daisy.dotify.studio.api.Searchable;
 
+import application.common.Settings;
 import application.l10n.Messages;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -26,6 +27,7 @@ class HelpView extends BorderPane implements Searchable {
 	private WebView wv;
 	HelpView() {
 		wv = new WebView();
+		wv.zoomProperty().bind(Settings.getSettings().zoomLevelProperty());
 		wv.setOnDragOver(event->event.consume());
 		setCenter(wv);
 	}

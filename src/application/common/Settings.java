@@ -7,6 +7,9 @@ import java.util.Optional;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+
 /**
  * Provides a store for settings.
  * @author Joel Håkansson
@@ -14,13 +17,14 @@ import java.util.prefs.Preferences;
 public enum Settings {
 	INSTANCE;
 	public enum Keys {version, device, embosser, printMode, table, paper, cutLengthValue, cutLengthUnit, orientation, zFolding, charset, align, brailleFont, textFont, libraryPath, locale,
-		lastOpenPath, lastSavePath, convertTargetFormat, templateDialogOnImport};
+		lastOpenPath, lastSavePath, convertTargetFormat, templateDialogOnImport, zoomLevel};
 		
 	/**
 	 *  Modify this value when making incompatible changes to the settings structure
 	 */
 	private final static String PREFS_VERSION = "1";
-    private Preferences p;
+	private Preferences p;
+	private DoubleProperty zoom;
 	
     /**
      * Creates a new settings node at the specified path and with the specified defaults.
@@ -47,8 +51,14 @@ public enum Settings {
         	}
         	// Update the version of the application used to write this
         	p.put(Keys.version.toString(), BuildInfo.VERSION);
-        }
-    }
+		}
+		zoom = new SimpleDoubleProperty(getDouble(Keys.zoomLevel, 1.0));
+		zoom.addListener((o, ov, nv)->{
+			if (!ov.equals(nv)) {
+			put(Keys.zoomLevel, Double.toString(nv.doubleValue()));
+			}
+		});
+	}
     
     /**
      * Gets the settings instance.
@@ -120,6 +130,15 @@ public enum Settings {
 		return p.get(getRegKey(key), def);
 	}
 	
+	private double getDouble(Keys key, double def) {
+		try {
+			String value = getString(key);
+			return value!=null?Double.parseDouble(value):def;
+		} catch (NullPointerException | NumberFormatException e) {
+			return def;
+		}
+	}
+	
 	public void resetKey(Keys key) {
 		p.remove(getRegKey(key));
 	}
@@ -167,6 +186,18 @@ public enum Settings {
 	 */
 	public boolean getShowTemplateDialogOnImport() {
 		return Boolean.parseBoolean(getString(Keys.templateDialogOnImport, "true"));
+	}
+	
+	public double getZoomLevel() {
+		return zoom.get();
+	}
+	
+	public void setZoomLevel(double value) {
+		zoom.set(value);
+	}
+	
+	public DoubleProperty zoomLevelProperty() {
+		return zoom;
 	}
 	
 	/**

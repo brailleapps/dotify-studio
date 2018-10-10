@@ -48,8 +48,10 @@ import org.fxmisc.richtext.model.StyleSpans;
 import org.xml.sax.InputSource;
 
 import application.common.BindingStore;
+import application.common.Settings;
 import application.l10n.Messages;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -146,6 +148,9 @@ public class EditorController extends BorderPane implements Editor {
 	
 	@FXML void initialize() {
 		codeArea = new CodeArea();
+		// CodeArea doesn't appear to have a zoomProperty like WebView,
+		// instead the css property below is used to change the size of everything
+		codeArea.styleProperty().bind(Bindings.format("-fx-font-size: %.2fpt;", Settings.getSettings().zoomLevelProperty().multiply(15)));
 		codeArea.getStylesheets().add(this.getClass().getResource("resource-files/codearea.css").toExternalForm());
 		codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
 		/*

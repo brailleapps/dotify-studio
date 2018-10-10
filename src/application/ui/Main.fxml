@@ -160,6 +160,15 @@
                         <KeyCodeCombination alt="UP" code="F5" control="UP" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="zoomInMenuItem" mnemonicParsing="false" onAction="#zoomIn" text="%menu-item-zoom-in">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="PLUS" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem fx:id="zoomOutMenuItem" mnemonicParsing="false" onAction="#zoomOut" text="%menu-item-zoom-out">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="MINUS" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="nextEditorViewMenuItem" mnemonicParsing="false" onAction="#nextEditor" text="%menu-item-next-editor">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="F7" control="UP" meta="UP" shift="UP" shortcut="UP" />
