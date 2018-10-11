@@ -87,6 +87,9 @@ public class EditorController extends BorderPane implements Editor {
 	private static final Logger logger = Logger.getLogger(EditorController.class.getCanonicalName());
 	private static final TransformerFactory XSLT_FACTORY = TransformerFactory.newInstance();
 	private static final char BYTE_ORDER_MARK = '\uFEFF';
+	private static final int SYNTAX_HIGHLIGHTING_SIZE_LIMIT = 3_100_000; // This value has been tested
+	private static final int VALIDATION_SIZE_LIMIT = 10_000_000; // This value is not tested, a lower or higher value may be better
+	private static final int SIZE_WARNING_LIMIT = Math.min(SYNTAX_HIGHLIGHTING_SIZE_LIMIT, VALIDATION_SIZE_LIMIT);
 	private static final ReadOnlyObjectProperty<SearchCapabilities> SEARCH_CAPABILITIES = new SimpleObjectProperty<>(
 			new SearchCapabilities.Builder()
 			.direction(false)
@@ -207,12 +210,13 @@ public class EditorController extends BorderPane implements Editor {
 	ValidatorFactoryMakerService factory = ValidatorFactoryMaker.newInstance();
 	
 	private Task<Optional<ValidationReport>> computeValidationAsync() {
-		String text = codeArea.getText();
 		FileInfo info = fileInfo;
+		boolean run = info.isXml() && codeArea.getLength()<VALIDATION_SIZE_LIMIT;
+		String text = run?codeArea.getText():"";
 		Task<Optional<ValidationReport>> task = new Task<Optional<ValidationReport>>() {
 			@Override
 			protected Optional<ValidationReport> call() throws Exception {
-				if (info.isXml()) {
+				if (run) {
 					byte[] data = prepareSaveToFile(FileInfo.with(info), info, text);
 					
 					InputStreamSupplier source = new ByteInputStreamSupplier(fileInfo.getFile().toURI().toASCIIString(), data);
@@ -245,11 +249,12 @@ public class EditorController extends BorderPane implements Editor {
 	}
 	
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
+    	boolean run = fileInfo.isXml()&&codeArea.getLength()<SYNTAX_HIGHLIGHTING_SIZE_LIMIT;
         String text = codeArea.getText();
         Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
             @Override
             protected StyleSpans<Collection<String>> call() throws Exception {
-                return fileInfo.isXml()?XMLStyleHelper.computeHighlighting(text):XMLStyleHelper.noStyles(text);
+                return run?XMLStyleHelper.computeHighlighting(text):XMLStyleHelper.noStyles(text);
             }
         };
         executor.execute(task);
@@ -303,6 +308,14 @@ public class EditorController extends BorderPane implements Editor {
 		FileInfo.Builder builder = new FileInfo.Builder(f);
 		try {
 			String text = loadData(Files.readAllBytes(f.toPath()), builder, xml);
+			if (text.length()>SIZE_WARNING_LIMIT) {
+				Platform.runLater(()->{
+					Alert alert = new Alert(AlertType.WARNING,
+							Messages.MESSAGE_WARNING_OPENING_LARGE_FILE_IN_EDITOR.localize(text.length()),
+							ButtonType.OK);
+					alert.showAndWait();
+				});
+			}
 			codeArea.replaceText(0, codeArea.getLength(), text);
 			if (fileInfo==null || !f.equals(fileInfo.getFile())) {
 				codeArea.getUndoManager().forgetHistory();
