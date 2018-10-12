@@ -20,7 +20,7 @@ USA
 
 Core Technology
 ---------------
-This software is based on the __Dotify__, __Braille Utils__ and __Streamline__ libraries
+This software is based on the __Dotify__ and __Streamline__ libraries
 under the GNU Lesser General Public License (version 2.1).
 See https://github.com/brailleapps for more information.
 
