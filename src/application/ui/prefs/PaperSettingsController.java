@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -16,10 +17,13 @@ import application.common.Configuration;
 import application.common.NiceName;
 import application.common.Tools;
 import application.l10n.Messages;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -39,6 +43,7 @@ public class PaperSettingsController extends BorderPane {
 	private static final Logger logger = Logger.getLogger(PaperSettingsController.class.getCanonicalName());
 	private final OptionNiceNames nn = new OptionNiceNames();
 	private PaperCatalog pc;
+	private BooleanBinding validPaperBinding;
 	@FXML private ListView<PaperAdapter> list;
 	@FXML private TextField nameField;
 	@FXML private TextField descriptionField;
@@ -52,6 +57,7 @@ public class PaperSettingsController extends BorderPane {
 	@FXML private RadioButton tractorPaper;
 	@FXML private RadioButton rollPaper;
 	@FXML private ToggleGroup addPaper;
+	@FXML private Button addButton;
 
 	/**
 	 * Creates a new paper settings controller.
@@ -94,6 +100,39 @@ public class PaperSettingsController extends BorderPane {
 				System.out.println(ev.getCharacter());
 			}
 		});
+		validPaperBinding = Bindings.createBooleanBinding(
+			()->getCurrentPaper().map(v->v.validate()).orElse(false),
+			field1.textProperty(),
+			units1.getSelectionModel().selectedIndexProperty(),
+			field2.textProperty(),
+			units2.getSelectionModel().selectedIndexProperty(),
+			addPaper.selectedToggleProperty(),
+			nameField.textProperty()
+		);
+		addButton.disableProperty().bind(validPaperBinding.not());
+	}
+	
+	private Optional<PaperToggle> getCurrentPaper() {
+		Toggle t = addPaper.getSelectedToggle();
+		return t==null ? Optional.empty() : Optional.of((PaperToggle)t.getUserData());
+	}
+	
+	private boolean validateField1() {
+		try {
+			Tools.parseLength(field1.getText(), units1.getSelectionModel().getSelectedItem().getKey());
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	private boolean validateField2() {
+		try {
+			Tools.parseLength(field2.getText(), units2.getSelectionModel().getSelectedItem().getKey());
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 	private PaperCatalog getPaperCatalog() {
@@ -119,6 +158,7 @@ public class PaperSettingsController extends BorderPane {
 	interface PaperToggle {
 		void toggleState();
 		void addPaper();
+		boolean validate();
 	}
 	
 	private abstract class AbstractPaperToggle implements PaperToggle {
@@ -131,16 +171,11 @@ public class PaperSettingsController extends BorderPane {
 			units2.setVisible(visible);
 		}
 		
-		boolean validate() {
-			if (!"".equals(nameField.getText())) {
-				return true;
-			} else {
-				logger.warning("No name");
-				return false;
-			}
+		@Override
+		public boolean validate() {
+			return !"".equals(nameField.getText())&&validateField1();
 		}
-		
-		//TODO: improve error handling (all paper types, see below)
+
 	}
 	
 	private class SheetPaperToggle extends AbstractPaperToggle {
@@ -160,6 +195,11 @@ public class PaperSettingsController extends BorderPane {
 				}
 			}
 		}
+
+		@Override
+		public boolean validate() {
+			return super.validate() && validateField2();
+		}
 	}
 	
 	private class TractorPaperToggle extends AbstractPaperToggle {
@@ -177,7 +217,12 @@ public class PaperSettingsController extends BorderPane {
 				if (!getPaperCatalog().addNewTractorPaper(nameField.getText(), descriptionField.getText(), l1, l2)) {
 					logger.log(Level.WARNING, "Failed to add paper.");
 				}
-			}			
+			}
+		}
+		
+		@Override
+		public boolean validate() {
+			return super.validate() && validateField2();
 		}
 
 	}

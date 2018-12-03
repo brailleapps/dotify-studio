@@ -106,7 +106,7 @@
             </BorderPane>
             <BorderPane>
                <right>
-                  <Button mnemonicParsing="false" onAction="#addPaper" text="%button-add" BorderPane.alignment="CENTER" />
+                  <Button fx:id="addButton" mnemonicParsing="false" onAction="#addPaper" text="%button-add" BorderPane.alignment="CENTER" />
                </right>
             </BorderPane>
          </children>
