@@ -17,7 +17,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 public enum Settings {
 	INSTANCE;
 	public enum Keys {version, device, embosser, printMode, table, paper, cutLengthValue, cutLengthUnit, orientation, zFolding, charset, align, brailleFont, textFont, libraryPath, locale,
-		lastOpenPath, lastSavePath, convertTargetFormat, templateDialogOnImport, zoomLevel};
+		lastOpenPath, lastSavePath, convertTargetFormat, templateDialogOnImport, zoomLevel, autosave};
 		
 	/**
 	 *  Modify this value when making incompatible changes to the settings structure
@@ -188,6 +188,14 @@ public enum Settings {
 		return Boolean.parseBoolean(getString(Keys.templateDialogOnImport, "true"));
 	}
 	
+	/**
+	 * Returns true if editors should auto-save changes, false otherwise.
+	 * @return true if editors should auto-save changes, false otherwise
+	 */
+	public boolean shouldAutoSave() {
+		return Boolean.parseBoolean(getString(Keys.autosave, "false"));
+	}
+	
 	public double getZoomLevel() {
 		return zoom.get();
 	}
@@ -207,6 +215,15 @@ public enum Settings {
 	 */
 	public void setShowTemplateDialogOnImport(boolean value) {
 		put(Keys.templateDialogOnImport, ""+value);
+	}
+	
+	/**
+	 * Sets if auto-save should be active. When true, it should.
+	 * When false, it should not. 
+	 * @param value the value
+	 */
+	public void setAutoSave(boolean value) {
+		put(Keys.autosave, ""+value);
 	}
 	
 	private Optional<File> getPath(Keys pathKey) {

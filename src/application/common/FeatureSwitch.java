@@ -23,6 +23,10 @@ public enum FeatureSwitch {
 	 * When on, the progress indicator in the Dotify panel uses progress values reported from the task system   
 	 */
 	REPORT_PROGRESS("on".equalsIgnoreCase(System.getProperty("application.feature.report-progress", "off"))),
+	/**
+	 * When on, autosave is available in settings.
+	 */
+	AUTOSAVE("on".equalsIgnoreCase(System.getProperty("application.feature.autosave", "off"))),
 	;
 
 	private final boolean on;

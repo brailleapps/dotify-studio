@@ -43,8 +43,10 @@ public class GeneralSettingsController {
 	@FXML private ComboBox<FontEntry> selectBrailleFont;
 	@FXML private ComboBox<FontEntry> selectTextFont;
 	@FXML private CheckBox showTemplateDialogCheckbox;
+	@FXML private CheckBox autosaveCheckbox;
 	@FXML private VBox rootVBox;
 	@FXML private HBox hboxOutputFormat;
+	@FXML private HBox hboxAutosave;
 	@FXML private ComboBox<NiceName> selectOutputFormat;
 	@FXML private ComboBox<String> selectLocale;
 
@@ -64,6 +66,14 @@ public class GeneralSettingsController {
 			selectOutputFormat.valueProperty().addListener((ov, t0, t1)->Settings.getSettings().setConvertTargetFormat(t1.getKey()));
 		} else {
 			rootVBox.getChildren().remove(hboxOutputFormat);
+		}
+		if (FeatureSwitch.AUTOSAVE.isOn()) {
+			autosaveCheckbox.setSelected(Settings.getSettings().shouldAutoSave());
+			autosaveCheckbox.selectedProperty().addListener((o, ov, nv)->{
+				Settings.getSettings().setAutoSave(nv.booleanValue());
+			});
+		} else {
+			rootVBox.getChildren().remove(hboxAutosave);
 		}
 		
 		showTemplateDialogCheckbox.setSelected(Settings.getSettings().getShowTemplateDialogOnImport());

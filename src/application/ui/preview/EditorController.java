@@ -48,6 +48,7 @@ import org.fxmisc.richtext.model.StyleSpans;
 import org.xml.sax.InputSource;
 
 import application.common.BindingStore;
+import application.common.FeatureSwitch;
 import application.common.Settings;
 import application.l10n.Messages;
 import javafx.application.Platform;
@@ -193,6 +194,12 @@ public class EditorController extends BorderPane implements Editor {
 				}
 			})
 			.subscribe(v -> validationReport.setValue(v));
+		if (FeatureSwitch.AUTOSAVE.isOn()) {
+			codeArea.richChanges()
+				.filter(ch -> canSaveProperty.get())
+				.successionEnds(Duration.ofMillis(300))
+				.subscribe(v->autosave());
+		}
 		atMarkProperty.bind(codeArea.getUndoManager().atMarkedPositionProperty());
 		modifiedProperty.bind(bindings.add(atMarkProperty.not().or(hasCancelledUpdateProperty)));
 		canSaveProperty.bind(bindings.add(isLoadedProperty.and(modifiedProperty)));
@@ -261,6 +268,21 @@ public class EditorController extends BorderPane implements Editor {
         return task;
     }
     
+
+	private void autosave() {
+		if (Settings.getSettings().shouldAutoSave() && isInSaveableState()) {
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine("Autosave...");
+			}
+			try {
+				updateFileInfo(saveToFileSynchronized(fileInfo.getFile(), fileInfo, codeArea.getText()));
+				codeArea.getUndoManager().mark();
+			} catch (IOException e) {
+				logger.log(Level.WARNING, "Autosave failed.", e);
+			}
+		}
+	}
+
 	private synchronized void askForUpdate() {
 		if (needsUpdate) {
 			needsUpdate = false;
@@ -447,14 +469,18 @@ public class EditorController extends BorderPane implements Editor {
 	 * @return returns true if save should proceed.
 	 */
 	private boolean confirmSave() {
+		if (!isInSaveableState()) {
+			Alert alert = new Alert(AlertType.WARNING, Messages.MESSAGE_CONFIRM_SAVE_MALFORMED_XML.localize(), ButtonType.YES, ButtonType.CANCEL);
+			Optional<ButtonType> res = alert.showAndWait();
+			return res.map(v->v.equals(ButtonType.YES)).orElse(false);
+		} else {
+			return true;
+		}
+	}
+	
+	private boolean isInSaveableState() {
 		try {
-			if (fileInfo.isXml() && !XMLTools.isWellformedXML(new InputSource(new ByteArrayInputStream(prepareSaveToFile(FileInfo.with(fileInfo), fileInfo, codeArea.getText()))))) {
-				Alert alert = new Alert(AlertType.WARNING, Messages.MESSAGE_CONFIRM_SAVE_MALFORMED_XML.localize(), ButtonType.YES, ButtonType.CANCEL);
-				Optional<ButtonType> res = alert.showAndWait();
-				return res.map(v->v.equals(ButtonType.YES)).orElse(false);
-			} else {
-				return true;
-			}
+			return !(fileInfo.isXml() && !XMLTools.isWellformedXML(new InputSource(new ByteArrayInputStream(prepareSaveToFile(FileInfo.with(fileInfo), fileInfo, codeArea.getText())))));
 		} catch (XMLToolsException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
