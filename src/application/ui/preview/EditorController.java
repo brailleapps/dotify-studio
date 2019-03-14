@@ -286,14 +286,19 @@ public class EditorController extends BorderPane implements Editor {
 	private synchronized void askForUpdate() {
 		if (needsUpdate) {
 			needsUpdate = false;
+			boolean modified = modifiedProperty.get();
 			Platform.runLater(()->{
-				Alert alert = new Alert(AlertType.CONFIRMATION, Messages.MESSAGE_FILE_MODIFIED_BY_ANOTHER_APPLICATION.localize(), ButtonType.YES, ButtonType.CANCEL);
+				Alert alert = new Alert(AlertType.CONFIRMATION, 
+						modified?
+							Messages.MESSAGE_FILE_MODIFIED_BY_ANOTHER_APPLICATION.localize():
+							Messages.MESSAGE_FILE_MODIFIED_BY_ANOTHER_APPLICATION_NO_OVERWRITE.localize(),
+						ButtonType.YES, ButtonType.CANCEL);
 				Optional<ButtonType> res = alert.showAndWait();
 				Optional<ButtonType> yes = res.filter(v->v.equals(ButtonType.YES));
 				if (yes.isPresent()) {
 					yes
 					.ifPresent(v->{
-						load(fileInfo.getFile(), fileInfo.isXml());
+						load(fileInfo.getFile(), fileInfo.isXml(), false);
 					});					
 				} else {
 					hasCancelledUpdateProperty.set(true);
@@ -319,6 +324,10 @@ public class EditorController extends BorderPane implements Editor {
 	 * @param xml if the file is xml
 	 */
 	public void load(File f, boolean xml) {
+		load(f, xml, true);
+	}
+
+	private void load(File f, boolean xml, boolean resetScroll) {
 		if (!xml) {
 			optionsBox.getChildren().remove(xmlTools);
 		} else {
@@ -344,7 +353,9 @@ public class EditorController extends BorderPane implements Editor {
 			}
 			codeArea.getUndoManager().mark();
 			codeArea.selectRange(0, 0);
-			codeArea.scrollToPixel(Point2D.ZERO);
+			if (resetScroll) {
+				codeArea.scrollToPixel(Point2D.ZERO);
+			}
 			isLoadedProperty.set(true);
 		} catch (IOException | XmlEncodingDetectionException e) {
 			logger.warning("Failed to read: " + f);
