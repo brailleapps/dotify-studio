@@ -54,7 +54,7 @@ public class EditorWrapperController extends BorderPane implements Editor {
 					FileDetailsCatalog.forMediaType(Settings.getSettings().getConvertTargetFormat())
 					:FileDetailsCatalog.PEF_FORMAT;
 			OpenableEditor pr = previewMaker.newPreview(previewDetails).orElse(null);
-			prv = getEditor(selected, options, pr, previewMaker);
+			prv = getEditor(selected, pr);
 			try {
 				String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
 				dotify = new DotifyController(selected, tag, previewDetails.getExtension(), options, f ->
@@ -66,26 +66,25 @@ public class EditorWrapperController extends BorderPane implements Editor {
 			}
 		} else {
 			OpenableEditor pr = previewMaker.newPreview(selected).orElse(null);
-			prv = getEditor(selected, options, pr, previewMaker);
+			prv = getEditor(selected, pr);
+			if (pr!=null) {
+				pr.open(selected.getPath().toFile());
+			}
 		}
 		EditorWrapperController ret = new EditorWrapperController(prv, dotify);
 		ret.setCenter(prv.getNode());
 		return ret;
 	}
 	
-	private static Editor getEditor(AnnotatedFile selected, Map<String, Object> options, OpenableEditor pr, PreviewMaker previewMaker) {
-		// For now, we assume that the target format is PEF and that is supported or that no conversion is done
+	private static Editor getEditor(AnnotatedFile selected, OpenableEditor pr) {
 		if (EditorController.supportsFormat(selected)) {
-			if (options==null && !previewMaker.supportsFormat(selected)) {
+			if (pr==null) {
 				EditorController prv = new EditorController();
 				prv.load(selected.getPath().toFile(), FormatChecker.isXML(selected));
 				return prv;
 			} else {
 				SourcePreviewController prv = new SourcePreviewController();
 				prv.open(selected, pr);
-				if (options==null) {
-					pr.open(selected.getPath().toFile());
-				}
 				return prv;
 			}
 		} else {
