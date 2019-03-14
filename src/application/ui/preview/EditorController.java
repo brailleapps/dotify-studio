@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -31,8 +32,8 @@ import org.daisy.dotify.common.xml.XMLTools;
 import org.daisy.dotify.common.xml.XMLToolsException;
 import org.daisy.dotify.common.xml.XmlEncodingDetectionException;
 import org.daisy.dotify.studio.api.DocumentPosition;
-import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.ExportAction;
+import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.dotify.studio.api.SearchCapabilities;
 import org.daisy.dotify.studio.api.SearchOptions;
 import org.daisy.streamline.api.identity.IdentityProvider;
@@ -84,7 +85,7 @@ import javafx.stage.Window;
  * @author Joel Håkansson
  *
  */
-public class EditorController extends BorderPane implements Editor {
+public class EditorController extends BorderPane implements OpenableEditor {
 	private static final Logger logger = Logger.getLogger(EditorController.class.getCanonicalName());
 	private static final TransformerFactory XSLT_FACTORY = TransformerFactory.newInstance();
 	private static final char BYTE_ORDER_MARK = '\uFEFF';
@@ -122,6 +123,7 @@ public class EditorController extends BorderPane implements Editor {
 	private final SimpleBooleanProperty hasCancelledUpdateProperty;
 	private final BooleanProperty atMarkProperty;
 	private final BindingStore bindings;
+	private final boolean readOnly;
 	private ChangeWatcher changeWatcher;
 	private boolean needsUpdate = false;
 	private Long lastSaved = 0l;
@@ -132,6 +134,10 @@ public class EditorController extends BorderPane implements Editor {
 	 * Creates a new preview controller.
 	 */
 	public EditorController() {
+		this(false);
+	}
+
+	public EditorController(boolean readOnly) {
 		modifiedProperty = new SimpleBooleanProperty();
 		hasCancelledUpdateProperty = new SimpleBooleanProperty(false);
 		atMarkProperty = new SimpleBooleanProperty();
@@ -140,6 +146,7 @@ public class EditorController extends BorderPane implements Editor {
 		canSaveProperty = new SimpleBooleanProperty();
 		urlProperty = new SimpleStringProperty();
 		bindings = new BindingStore();
+		this.readOnly = readOnly;
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Editor.fxml"), Messages.getBundle());
 			fxmlLoader.setRoot(this);
@@ -153,6 +160,7 @@ public class EditorController extends BorderPane implements Editor {
 	
 	@FXML void initialize() {
 		codeArea = new CodeArea();
+		codeArea.setEditable(!readOnly);
 		// CodeArea doesn't appear to have a zoomProperty like WebView,
 		// instead the css property below is used to change the size of everything
 		codeArea.styleProperty().bind(Bindings.format("-fx-font-size: %.2fpt;", Settings.getSettings().zoomLevelProperty().multiply(15)));
@@ -195,7 +203,7 @@ public class EditorController extends BorderPane implements Editor {
 				}
 			})
 			.subscribe(v -> validationReport.setValue(v));
-		if (FeatureSwitch.AUTOSAVE.isOn()) {
+		if (FeatureSwitch.AUTOSAVE.isOn() && !readOnly) {
 			codeArea.richChanges()
 				.filter(ch -> canSaveProperty.get())
 				.successionEnds(Duration.ofMillis(500))
@@ -312,9 +320,13 @@ public class EditorController extends BorderPane implements Editor {
 	}
 	
 	private synchronized void requestUpdate() {
-		needsUpdate = true;
-		if (codeArea.isFocused()) {
-			askForUpdate();
+		if (!readOnly) {
+			needsUpdate = true;
+			if (codeArea.isFocused()) {
+				askForUpdate();
+			}
+		} else {
+			Platform.runLater(()->load(fileInfo.getFile(), fileInfo.isXml(), false));
 		}
 	}
 
@@ -322,6 +334,11 @@ public class EditorController extends BorderPane implements Editor {
 		codeArea.setStyleSpans(0, highlighting);
 	}
 
+	@Override
+	public Consumer<File> open(File f) {
+		load(f, FormatChecker.isXML(IdentityProvider.newInstance().identify(f)));
+		return v->{};
+	}
 	/**
 	 * Converts and opens a file.
 	 * @param f the file
@@ -351,6 +368,7 @@ public class EditorController extends BorderPane implements Editor {
 					alert.showAndWait();
 				});
 			}
+			codeArea.setEditable(!readOnly);
 			codeArea.replaceText(0, codeArea.getLength(), text);
 			if (fileInfo==null || !f.equals(fileInfo.getFile())) {
 				codeArea.getUndoManager().forgetHistory();

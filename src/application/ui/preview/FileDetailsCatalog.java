@@ -47,6 +47,27 @@ public class FileDetailsCatalog {
 		public Map<String, Object> getProperties() {
 			return Collections.emptyMap();
 		}};
+		
+		public static final FileDetails TEXT_FORMAT = new FileDetails(){
+			@Override
+			public String getFormatName() {
+				return "text";
+			}
+
+			@Override
+			public String getExtension() {
+				return "txt";
+			}
+
+			@Override
+			public String getMediaType() {
+				return "text/plain";
+			}
+
+			@Override
+			public Map<String, Object> getProperties() {
+				return Collections.emptyMap();
+			}};
 
 
 	private FileDetailsCatalog() {
@@ -58,6 +79,8 @@ public class FileDetailsCatalog {
 			return PEF_FORMAT;
 		} else if (mediaType.equals(HTML_FORMAT.getMediaType())) {
 			return HTML_FORMAT;
+		} else if (mediaType.equals(TEXT_FORMAT.getMediaType())) {
+			return TEXT_FORMAT;
 		} else {
 			return new MediaTypeDetails(mediaType);
 		}

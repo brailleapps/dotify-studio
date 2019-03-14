@@ -65,7 +65,7 @@ public class EditorWrapperController extends BorderPane implements Editor {
 				e.printStackTrace();
 			}
 		} else {
-			OpenableEditor pr = previewMaker.newPreview(selected).orElse(null);
+			OpenableEditor pr = previewMaker.newPreview(selected).filter(v->!(v instanceof EditorController)).orElse(null);
 			prv = getEditor(selected, pr);
 			if (pr!=null) {
 				pr.open(selected.getPath().toFile());

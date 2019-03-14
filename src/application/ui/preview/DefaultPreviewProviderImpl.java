@@ -8,7 +8,7 @@ public class DefaultPreviewProviderImpl implements PreviewProvider {
 	
 	@Override
 	public boolean supportsFormat(FileDetails format) {
-		return FormatChecker.isPEF(format) || FormatChecker.isHTML(format);
+		return FormatChecker.isPEF(format) || FormatChecker.isHTML(format) || FormatChecker.isText(format);
 	}
 
 	@Override
@@ -19,6 +19,8 @@ public class DefaultPreviewProviderImpl implements PreviewProvider {
 		} else if (FormatChecker.isHTML(selected)) {
 			PreviewHtmlController prv = new PreviewHtmlController();
 			return prv;
+		} else if (FormatChecker.isText(selected)) {
+			return new EditorController(true);
 		}
 		throw new RuntimeException();
 	}
