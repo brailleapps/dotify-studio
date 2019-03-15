@@ -38,8 +38,7 @@ class EmbossTask extends Task<Void> {
 
 	@Override
 	protected Void call() throws Exception {
-		//TODO: include range (requires release of pef-tools v2.3.0)
-		logger.info("About to emboss " + (copies>1?copies + " copies ":"") + "on " + deviceName + " with alignment " + align);
+		logger.info("About to emboss " + (copies>1?copies + " copies ":"") + "on " + deviceName + " with alignment " + align + " and range " + range);
 		if (FeatureSwitch.EMBOSSING.isOn()) {
 			for (int i=0; i<copies; i++) {
 				try (InputStream iss = url.openStream()) {

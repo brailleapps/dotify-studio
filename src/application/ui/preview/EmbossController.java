@@ -99,7 +99,7 @@ public class EmbossController {
 			((RangeToggle)t2.getUserData()).toggleRange();
 		});
 		volumes.textProperty().addListener((o, v1, v2)->{
-			 if (!v2.matches("([1-9]\\d*)?")) {
+			 if (!v2.matches("([1-9]\\d*(-([1-9]\\d*)?)?)?")) {
 				 volumes.setText(v1);
 			 }
 		});
@@ -230,14 +230,22 @@ public class EmbossController {
 				if ("".equals(value)) {
 					throw new FailedToGetRangeException(Messages.ERROR_EMPTY_VOLUME_NUMBER.localize());
 				}
+				Range vr;
 				try {
-					int v = Integer.parseInt(value);
-					if (v<1) {
+					vr = Range.parseRange(value);
+					if (vr.getTo()==Integer.MAX_VALUE) {
+						vr = new Range(vr.getFrom(), book.getVolumes());
+					}
+				} catch (IllegalArgumentException e) {
+					throw new FailedToGetRangeException(Messages.ERROR_FAILED_TO_PARSE_PAGE_RANGE.localize(value));
+				}
+				try {
+					if (vr.getFrom()<1) {
 						throw new FailedToGetRangeException(Messages.ERROR_VOLUME_NUMBER_LESS_THAN_ONE.localize());
-					} else if (v>book.getVolumes()) {
-						throw new FailedToGetRangeException(Messages.ERROR_VOLUME_NUMBER_OUT_OF_RANGE.localize(v, book.getVolumes()));
+					} else if (vr.getTo()>book.getVolumes()) {
+						throw new FailedToGetRangeException(Messages.ERROR_VOLUME_NUMBER_OUT_OF_RANGE.localize(vr.getTo(), book.getVolumes()));
 					} else {
-						return new Range(book.getFirstPage(v), book.getLastPage(v));
+						return new Range(book.getFirstPage(vr.getFrom()), book.getLastPage(vr.getTo()));
 					}
 				} catch (NumberFormatException e) {
 					throw new FailedToGetRangeException(Messages.ERROR_FAILED_TO_PARSE_VOLUME_NUMBER.localize(value));
