@@ -17,7 +17,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 public enum Settings {
 	INSTANCE;
 	public enum Keys {version, device, embosser, printMode, table, paper, cutLengthValue, cutLengthUnit, orientation, zFolding, charset, align, brailleFont, textFont, libraryPath, locale,
-		lastOpenPath, lastSavePath, convertTargetFormat, templateDialogOnImport, zoomLevel, autosave};
+		lastOpenPath, lastSavePath, convertTargetFormat, templateDialogOnImport, zoomLevel, autosave, lineNumbers, wordWrap};
 		
 	/**
 	 *  Modify this value when making incompatible changes to the settings structure
@@ -189,6 +189,22 @@ public enum Settings {
 	}
 	
 	/**
+	 * Returns true if editors should wrap lines, false otherwise.
+	 * @return true if editors should wrap lines, false otherwise
+	 */
+	public boolean shouldWrapLines() {
+		return Boolean.parseBoolean(getString(Keys.wordWrap, "true"));
+	}
+	
+	/**
+	 * Returns true if editors should display line numbers changes, false otherwise.
+	 * @return true if editors should display line numbers  changes, false otherwise
+	 */
+	public boolean shouldShowLineNumbers() {
+		return Boolean.parseBoolean(getString(Keys.lineNumbers, "true"));
+	}
+	
+	/**
 	 * Returns true if editors should auto-save changes, false otherwise.
 	 * @return true if editors should auto-save changes, false otherwise
 	 */
@@ -216,7 +232,25 @@ public enum Settings {
 	public void setShowTemplateDialogOnImport(boolean value) {
 		put(Keys.templateDialogOnImport, ""+value);
 	}
+
+	/**
+	 * Sets if line numbers should be visible in the editors. When true, they should.
+	 * When false, they should not. 
+	 * @param value the value
+	 */
+	public void setLineNumbers(boolean value) {
+		put(Keys.lineNumbers, ""+value);
+	}
 	
+	/**
+	 * Sets if word wrap should be active in the editors. When true, it should.
+	 * When false, it should not. 
+	 * @param value the value
+	 */
+	public void setWordWrap(boolean value) {
+		put(Keys.wordWrap, ""+value);
+	}
+
 	/**
 	 * Sets if auto-save should be active. When true, it should.
 	 * When false, it should not. 

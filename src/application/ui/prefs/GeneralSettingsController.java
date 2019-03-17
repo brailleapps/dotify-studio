@@ -42,6 +42,8 @@ public class GeneralSettingsController {
 	@FXML private ComboBox<FontEntry> selectBrailleFont;
 	@FXML private ComboBox<FontEntry> selectTextFont;
 	@FXML private CheckBox showTemplateDialogCheckbox;
+	@FXML private CheckBox lineNumbersCheckbox;
+	@FXML private CheckBox wordWrapCheckbox;
 	@FXML private CheckBox autosaveCheckbox;
 	@FXML private VBox rootVBox;
 	@FXML private HBox hboxOutputFormat;
@@ -66,6 +68,16 @@ public class GeneralSettingsController {
 		} else {
 			rootVBox.getChildren().remove(hboxOutputFormat);
 		}
+		wordWrapCheckbox.setSelected(Settings.getSettings().shouldWrapLines());
+		wordWrapCheckbox.selectedProperty().addListener((o, ov, nv)->{
+			Settings.getSettings().setWordWrap(nv.booleanValue());
+		});
+		
+		lineNumbersCheckbox.setSelected(Settings.getSettings().shouldShowLineNumbers());
+		lineNumbersCheckbox.selectedProperty().addListener((o, ov, nv)->{
+			Settings.getSettings().setLineNumbers(nv.booleanValue());
+		});
+		
 		if (FeatureSwitch.AUTOSAVE.isOn()) {
 			autosaveCheckbox.setSelected(Settings.getSettings().shouldAutoSave());
 			autosaveCheckbox.selectedProperty().addListener((o, ov, nv)->{

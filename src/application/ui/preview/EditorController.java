@@ -165,7 +165,7 @@ public class EditorController extends BorderPane implements OpenableEditor {
 		// instead the css property below is used to change the size of everything
 		codeArea.styleProperty().bind(Bindings.format("-fx-font-size: %.2fpt;", Settings.getSettings().zoomLevelProperty().multiply(15)));
 		codeArea.getStylesheets().add(this.getClass().getResource("resource-files/codearea.css").toExternalForm());
-		codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+		
 		/*
 		codeArea.textProperty().addListener((obs, oldText, newText)-> {
 			codeArea.setStyleSpans(0, XMLStyleHelper.computeHighlighting(newText));
@@ -215,9 +215,12 @@ public class EditorController extends BorderPane implements OpenableEditor {
 		atMarkProperty.bind(codeArea.getUndoManager().atMarkedPositionProperty());
 		modifiedProperty.bind(bindings.add(atMarkProperty.not().or(hasCancelledUpdateProperty)));
 		canSaveProperty.bind(bindings.add(isLoadedProperty.and(modifiedProperty)));
-		codeArea.setWrapText(true);
 		scrollPane = new VirtualizedScrollPane<>(codeArea);
-		scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+		lineNumbers.setSelected(Settings.getSettings().shouldShowLineNumbers());
+		toggleLineNumbers();
+		wordWrap.setSelected(Settings.getSettings().shouldWrapLines());
+		toggleWordWrap();
+		
 		setCenter(scrollPane);
 	}
 	

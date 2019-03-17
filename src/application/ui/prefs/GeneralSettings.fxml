@@ -54,6 +54,33 @@
                   <CheckBox fx:id="showTemplateDialogCheckbox" mnemonicParsing="false" text="%label-show-on-import" />
                </children>
             </HBox>
+            <Label text="%label-editor">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <HBox>
+               <children>
+      	         <Label minWidth="100.0" text="%label-word-wrap">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Region HBox.hgrow="ALWAYS" />
+      	         <CheckBox fx:id="wordWrapCheckbox" mnemonicParsing="false" text="%label-word-wrap" />
+               </children>
+            </HBox>
+            <HBox>
+               <children>
+      	         <Label minWidth="100.0" text="%label-line-numbers">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Region HBox.hgrow="ALWAYS" />
+      	         <CheckBox fx:id="lineNumbersCheckbox" mnemonicParsing="false" text="%label-line-numbers" />
+               </children>
+            </HBox>
             <HBox fx:id="hboxAutosave">
                <children>
       	         <Label minWidth="100.0" text="%label-auto-save">
