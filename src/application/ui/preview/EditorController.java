@@ -104,6 +104,7 @@ public class EditorController extends BorderPane implements Editor {
 	@FXML HBox optionsBox;
 	@FXML CheckBox wordWrap;
 	@FXML CheckBox lineNumbers;
+	@FXML CheckBox autosave;
 	@FXML Label encodingLabel;
 	@FXML Label bomLabel;
 	@FXML HBox xmlTools;
@@ -197,8 +198,11 @@ public class EditorController extends BorderPane implements Editor {
 		if (FeatureSwitch.AUTOSAVE.isOn()) {
 			codeArea.richChanges()
 				.filter(ch -> canSaveProperty.get())
-				.successionEnds(Duration.ofMillis(300))
+				.successionEnds(Duration.ofMillis(500))
 				.subscribe(v->autosave());
+			autosave.setSelected(Settings.getSettings().shouldAutoSave());
+		} else {
+			optionsBox.getChildren().remove(autosave);
 		}
 		atMarkProperty.bind(codeArea.getUndoManager().atMarkedPositionProperty());
 		modifiedProperty.bind(bindings.add(atMarkProperty.not().or(hasCancelledUpdateProperty)));
@@ -270,7 +274,7 @@ public class EditorController extends BorderPane implements Editor {
     
 
 	private void autosave() {
-		if (Settings.getSettings().shouldAutoSave() && isInSaveableState()) {
+		if (autosave.isSelected() && isInSaveableState()) {
 			if (logger.isLoggable(Level.FINE)) {
 				logger.fine("Autosave...");
 			}
@@ -404,6 +408,14 @@ public class EditorController extends BorderPane implements Editor {
 			codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
 		} else {
 			codeArea.setParagraphGraphicFactory(null);
+		}
+	}
+	
+	@FXML void toggleAutosave() {
+		if (autosave.isSelected()) {
+			// run autosave manually in case there are unsaved changes,
+			// since it is only run when edits are made
+			autosave();
 		}
 	}
 	

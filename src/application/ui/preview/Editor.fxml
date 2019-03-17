@@ -15,6 +15,7 @@
          <children>
             <CheckBox fx:id="wordWrap" mnemonicParsing="false" onAction="#toggleWordWrap" selected="true" text="%label-word-wrap" />
             <CheckBox fx:id="lineNumbers" mnemonicParsing="false" onAction="#toggleLineNumbers" selected="true" text="%label-line-numbers" />
+            <CheckBox fx:id="autosave" mnemonicParsing="false" onAction="#toggleAutosave" selected="false" text="%label-auto-save" />
             <HBox alignment="CENTER" spacing="10.0" fx:id="xmlTools">
                <children>
                   <Button fx:id="indentButton" mnemonicParsing="false" onAction="#correctFormatting">
