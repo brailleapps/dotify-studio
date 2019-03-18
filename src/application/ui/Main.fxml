@@ -140,12 +140,13 @@
           		<CheckMenuItem fx:id="watchSourceMenuItem" mnemonicParsing="false" text="%checkbox-watch-source"/>
           	</items>
           </Menu>
-            <Menu mnemonicParsing="false" text="%menu-item-window">
+            <Menu fx:id="windowMenu" mnemonicParsing="false" text="%menu-item-window">
               <items>
                   <CheckMenuItem fx:id="showSearchMenuItem" mnemonicParsing="false" selected="false" text="%menu-item-show-library">
                      <accelerator>
                         <KeyCodeCombination alt="DOWN" code="L" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
                      </accelerator></CheckMenuItem>
+                  <CheckMenuItem fx:id="showCharacterToolMenuItem" text="%menu-item-character-tool"></CheckMenuItem>
                   <CheckMenuItem fx:id="showConsoleMenuItem" mnemonicParsing="false" selected="true" text="%menu-item-show-console">
                      <accelerator>
                         <KeyCodeCombination alt="DOWN" code="C" control="UP" meta="UP" shift="DOWN" shortcut="UP" />

@@ -27,6 +27,10 @@ public enum FeatureSwitch {
 	 * When on, autosave is available in settings.
 	 */
 	AUTOSAVE("on".equalsIgnoreCase(System.getProperty("application.feature.autosave", "off"))),
+	/**
+	 * When on, a character tool is available in the menu.
+	 */
+	CHARACTER_TOOL("on".equalsIgnoreCase(System.getProperty("application.feature.character-tool", "off"))),
 	;
 
 	private final boolean on;

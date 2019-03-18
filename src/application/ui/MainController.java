@@ -26,10 +26,10 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.daisy.dotify.api.table.TableCatalog;
 import org.daisy.braille.utils.pef.PEFFileMerger;
 import org.daisy.braille.utils.pef.PEFFileMerger.SortType;
 import org.daisy.braille.utils.pef.TextHandler;
+import org.daisy.dotify.api.table.TableCatalog;
 import org.daisy.dotify.studio.api.Converter;
 import org.daisy.dotify.studio.api.DocumentPosition;
 import org.daisy.dotify.studio.api.Editor;
@@ -62,6 +62,7 @@ import application.ui.prefs.PreferencesView;
 import application.ui.preview.EditorWrapperController;
 import application.ui.preview.server.StartupDetails;
 import application.ui.template.TemplateView;
+import application.ui.tools.CharacterToolController;
 import application.ui.validation.ValidationController;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -127,6 +128,7 @@ public class MainController {
 	@FXML private MenuItem closeMenuItem;
 	@FXML private MenuBar topMenuBar;
 	@FXML private Menu convertMenu;
+	@FXML private Menu windowMenu;
 	@FXML private Menu exportMenu;
 	@FXML private MenuItem saveMenuItem;
 	@FXML private MenuItem saveAsMenuItem;
@@ -135,6 +137,7 @@ public class MainController {
 	@FXML private MenuItem embossMenuItem;
 	@FXML private CheckMenuItem showConverterMenuItem;
 	@FXML private CheckMenuItem showSearchMenuItem;
+	@FXML private CheckMenuItem showCharacterToolMenuItem;
 	@FXML private CheckMenuItem showConsoleMenuItem;
 	@FXML private CheckMenuItem showValdationMenuItem;
 	@FXML private CheckMenuItem watchSourceMenuItem;
@@ -250,6 +253,9 @@ public class MainController {
 		canToggleView = new SimpleBooleanProperty();
 		urlProperty = new SimpleStringProperty();
 		topMenuBar.getMenus().remove(convertMenu);
+		if (!FeatureSwitch.CHARACTER_TOOL.isOn()) {
+			windowMenu.getItems().remove(showCharacterToolMenuItem);
+		}
 		//add menu bindings
 		Platform.runLater(()->setMenuBindings());
 	}
@@ -273,6 +279,13 @@ public class MainController {
 			return ret;
 		};
 		showSearchMenuItem.selectedProperty().addListener(makeLeftToolsChangeListener(ts, showSearchMenuItem));
+		if (FeatureSwitch.CHARACTER_TOOL.isOn()) {
+			showCharacterToolMenuItem.selectedProperty().addListener(makeLeftToolsChangeListener(()->{
+			Tab ret = new Tab(Messages.TAB_CHARACTER_TOOL.localize(), new CharacterToolController());
+			ret.setUserData(showCharacterToolMenuItem);
+			return ret;
+			}, showCharacterToolMenuItem));
+		}
 		showConsoleMenuItem.selectedProperty().addListener(makeBottomToolsChangeListener(consoleTab));
 		consoleTab.onClosedProperty().set(makeBottomToolsTabCloseHandler(showConsoleMenuItem));
 		showValdationMenuItem.selectedProperty().addListener(makeBottomToolsChangeListener(validationTab));
