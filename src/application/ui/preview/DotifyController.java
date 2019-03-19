@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import org.daisy.dotify.studio.api.Converter;
 import org.daisy.streamline.api.media.AnnotatedFile;
+import org.daisy.streamline.api.media.FileDetails;
 import org.daisy.streamline.api.option.UserOption;
 import org.daisy.streamline.api.option.UserOptionValue;
 import org.daisy.streamline.api.tasks.CompiledTaskSystem;
@@ -88,7 +89,7 @@ public class DotifyController extends BorderPane implements Converter {
 	 * 						will be called if the result is updated.
 	 * @throws IOException if an I/O error occurs
 	 */
-	public DotifyController(AnnotatedFile selected, String tag, String outputFormat, Map<String, Object> options, Function<File, Consumer<File>> onSuccess) throws IOException {
+	public DotifyController(AnnotatedFile selected, String tag, FileDetails outputFormat, Map<String, Object> options, Function<File, Consumer<File>> onSuccess) throws IOException {
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Dotify.fxml"), Messages.getBundle());
 			fxmlLoader.setRoot(this);
@@ -117,7 +118,7 @@ public class DotifyController extends BorderPane implements Converter {
 		});
 		canRequestUpdate = new SimpleBooleanProperty(false);
 		setRunning(0);
-		File outFile = File.createTempFile("dotify-studio", "."+outputFormat);
+		File outFile = File.createTempFile("dotify-studio", "."+outputFormat.getExtension());
 		outFile.deleteOnExit();
 		Thread th = new Thread(new SourceDocumentWatcher(selected, outFile, tag, outputFormat, onSuccess));
 		th.setDaemon(true);
@@ -320,13 +321,13 @@ public class DotifyController extends BorderPane implements Converter {
 		private final AnnotatedFile annotatedInput;
 		private final File output;
 		private final String locale;
-		private final String outputFormat;
+		private final FileDetails outputFormat;
 		// notify a caller about changes to the result file
 		private final Function<File, Consumer<File>> onSuccess;
 		private Consumer<File> resultWatcher;
 		private boolean isRunning;
 
-		SourceDocumentWatcher(AnnotatedFile input, File output, String locale, String outputFormat, Function<File, Consumer<File>> onSuccess) {
+		SourceDocumentWatcher(AnnotatedFile input, File output, String locale, FileDetails outputFormat, Function<File, Consumer<File>> onSuccess) {
 			super(input.getPath().toFile());
 			this.annotatedInput = input;
 			this.output = output;
@@ -365,7 +366,7 @@ public class DotifyController extends BorderPane implements Converter {
 				} else {
 					opts = getParams();
 				}
-				DotifyTask dt = new DotifyTask(annotatedInput, output, locale, outputFormat, opts);
+				DotifyTask dt = new DotifyTask(annotatedInput, output, locale, outputFormat.getFormatName(), opts);
 				dt.setOnFailed(ev->{
 					isRunning = false;
 					setRunning(1);

@@ -57,7 +57,7 @@ public class EditorWrapperController extends BorderPane implements Editor {
 			prv = getEditor(selected, pr);
 			try {
 				String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
-				dotify = new DotifyController(selected, tag, previewDetails.getExtension(), options, f ->
+				dotify = new DotifyController(selected, tag, previewDetails, options, f ->
 				{
 					return pr.open(f);
 				});
