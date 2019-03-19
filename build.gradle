@@ -64,7 +64,7 @@ jar {
 
 repositories {
     mavenCentral()
-    mavenLocal()
+    //mavenLocal()
     maven { url "https://oss.sonatype.org/content/groups/staging" }
     //maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
 }
@@ -74,7 +74,7 @@ dependencies {
 
 	//TODO: This is in the compile group because it unfortunately contains some API-like features.
 	compile 'org.daisy.braille:braille-utils.impl:6.0.0'
-	compile ('org.daisy.braille:braille-utils.pef-tools:5.0.0') {
+	compile ('org.daisy.braille:braille-utils.pef-tools:5.0.1') {
 		exclude module: 'Saxon-HE'
 	}
 	compile 'com.googlecode.ajui:ajui:1.0.0'
