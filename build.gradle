@@ -55,7 +55,7 @@ jar {
 			'Implementation-Version': version,
 			'Implementation-URL': "$repositoryURL",
 			'Main-Class': 'application.ui.MainFx',
-			'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
+			'Class-Path': configurations.runtimeClasspath.collect { it.getName() }.join(' ')
 			)
 		}
 	}
