@@ -1,5 +1,27 @@
 [[Table of Contents|Toc]]
 
+# 0.11.0
+## New in this version
+
+- User Interface
+  - Adds zoom feature to preview, editor and help views
+  - Supports opening larger files (fixes #76)
+  - Supports volume range in emboss dialog
+  - Sorts templates after name and increases the size of the the template window
+  - Improves validation in the "manage papers" tab (fixes #69)
+  - Changes warning when file has not been modified (fixes #47)
+  - Opens find dialog with selected text
+  - Updates find dialog when the last tab is closed or if the new tab doesn't support searching
+  - Adds license information
+- Embossing
+  - Fixes a problem with page ranges on Index V4 and V5 embossers
+- Input format converters
+  - Supports staircase tables in html/epub (fixes brailleapps/dotify.task.impl#8)
+- Formatting
+  - Improves error reporting in OBFL-files (fixes brailleapps/dotify.formatter.impl#52)
+  - Fixes a bug in vertical-position
+  - Supports BreakBefore.SHEET (fixes brailleapps/dotify.formatter.impl#53)
+
 # 0.10.1
 ## New in this version
 - Updates Norwegian translation
