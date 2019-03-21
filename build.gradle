@@ -186,6 +186,8 @@ publishing {
 			from components.java
 			artifact sourcesJar
 			artifact javadocJar
+			artifact distZip
+			artifact distTar
 			/*
 			if (isReleaseVersion) {
 				beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
