@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,6 +41,8 @@ import org.daisy.dotify.studio.api.Searchable;
 import org.daisy.streamline.api.identity.IdentityProvider;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.tasks.TaskGroupFactoryMaker;
+import org.daisy.streamline.api.tasks.TaskSystemFactoryException;
+import org.daisy.streamline.api.tasks.TaskSystemFactoryMaker;
 import org.daisy.streamline.api.validity.ValidationReport;
 import org.daisy.streamline.api.validity.Validator;
 import org.daisy.streamline.api.validity.ValidatorFactoryMaker;
@@ -51,6 +54,7 @@ import org.w3c.dom.Element;
 import application.common.BindingStore;
 import application.common.FeatureSwitch;
 import application.common.Settings;
+import application.common.Settings.Keys;
 import application.l10n.Messages;
 import application.ui.about.AboutView;
 import application.ui.find.FindController;
@@ -60,6 +64,7 @@ import application.ui.imports.ImportMergeView;
 import application.ui.library.SearchController;
 import application.ui.prefs.PreferencesView;
 import application.ui.preview.EditorWrapperController;
+import application.ui.preview.FileDetailsCatalog;
 import application.ui.preview.server.StartupDetails;
 import application.ui.template.TemplateView;
 import application.ui.tools.CharacterToolController;
@@ -927,12 +932,16 @@ public class MainController {
      * Returns a new stream with unique input formats.
      * @return
      */
-    private static Stream<String> newImportExtensionStream() {
-    	return TaskGroupFactoryMaker.newInstance().listAll().stream()
+	private static Stream<String> newImportExtensionStream() {
+		String outputFormat = FileDetailsCatalog.forMediaType(Settings.getSettings().getConvertTargetFormat()).getFormatName();
+		String locale = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
+		TaskSystemFactoryMaker tgf = TaskSystemFactoryMaker.newInstance();
+		return TaskGroupFactoryMaker.newInstance().listAll().stream()
 			.filter(spec ->
+				canCreate(tgf, spec.getInputType().getIdentifier(), outputFormat, locale)
 				// Currently, this can be viewed as an identity conversion, which isn't supported by the task system.
 				// TODO: Perhaps support this as a special case in this code instead (just open the file without going through the task system).
-				!"pef".equals(spec.getInputType().getIdentifier())
+				&& !outputFormat.equals(spec.getInputType().getIdentifier())
 				// Not all formats in this list are actually extensions.
 				// TODO: Filter these out here until the TaskGroupFactory provides extensions separately. 
 				&& !"dtbook".equals(spec.getInputType().getIdentifier()) // use xml instead
@@ -941,6 +950,14 @@ public class MainController {
 			.distinct();
     }
 
+	private static boolean canCreate(TaskSystemFactoryMaker tgf, String inputFormat, String outputFormat, String locale) {
+		try {
+			return tgf.newTaskSystem(inputFormat, outputFormat, locale)!=null;
+		} catch (TaskSystemFactoryException e) {
+			return false;
+		}
+	}
+	
     @FXML void showImportDialog() {
     	Window stage = root.getScene().getWindow();
     	FileChooser fileChooser = new FileChooser();
