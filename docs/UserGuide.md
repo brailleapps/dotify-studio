@@ -9,8 +9,6 @@ Before you can convert to or emboss a PEF-file, you must complete the setup. The
 ### General ###
 The `General` tab contains a couple of basic settings, such as the target locale used when converting source documents into PEF and the preview font used when viewing a PEF-file.
 
-Currently the target locale must be `sv-SE` in order to convert a document into PEF.
-
 ![Setup view](images/GeneralSetup.png)
 
 _Screenshot of general setup view._ 
@@ -49,7 +47,6 @@ To do this, open the `Library` tab in the tools area by selecting the **Library*
 the "user home folder" is scanned, but it can be changed by clicking the `Select folder` button.
 
 ## Import source documents ##
-Note that the target locale must be `sv-SE` for this to work.
 
 A source document is a document that isn't braille yet, but can be. To import source documents, use the menu item `Import/Source document...`. 
 

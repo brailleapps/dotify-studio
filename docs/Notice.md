@@ -26,6 +26,10 @@ See https://github.com/brailleapps for more information.
 
 Third-party software
 --------------------
+__Liblouis__
+  at http://liblouis.org
+  under the GNU Lesser General Public License (version 2.1)
+
 __Jing__
   by James Clark at Google Code (http://code.google.com/p/jing-trang/)
   under the new BSD License.
@@ -77,3 +81,11 @@ __ReactFX__
 __OSGi libraries__
   by The OSGi Alliance (http://www.osgi.org/)
   under the Apache License (version 2.0).
+
+  __JNA__
+  at https://github.com/java-native-access/jna/
+  under the GNU Lesser General Public License (version 2.1)
+
+__SLF4J__
+  at https://www.slf4j.org
+  under the MIT license

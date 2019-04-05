@@ -27,10 +27,6 @@ used "braille" text formats.
 Dotify Studio supports a range of embossers, including popular [Index](http://www.indexbraille.com/) and [Braillo](http://www.braillo.com/) embossers. Note however that several embossers are untested, due to lack of access and/or time.
 
 For details, see the complete list of supported embossers by accessing the embosser drop down in `Preferences/Emboss`.
-  
-### Translator Limitations ###
-Unfortunately, only Swedish _braille_ is supported when using the following menu item `Import/Source document...`. This is primarily due to
-missing braille translations.
 
 ## Installation ##
 
@@ -68,8 +64,8 @@ menu item to configure the embosser. Once the embosser has been fully configured
 test document will be available. This document can be used to verify that the configuration works as
 intended.
 
-Before you can convert a file for the first time, the target locale has to be configured. Go to the `Preferences`
-menu item to configure the target locale. Currently, the target locale must be `sv-SE`.
+Before converting a file for the first time, the target locale should be configured. Go to the `Preferences`
+menu item to configure the target locale.
 
 For details, see the [[User guide|UserGuide]].
 

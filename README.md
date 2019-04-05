@@ -5,10 +5,6 @@
 # Dotify Studio #
 Provides an accessible graphical user interface for creating, managing and embossing PEF-files.
 
-## Limitations ##
-The `Import/Document...` menu item is unfortunately restricted to Swedish. If you want to try this feature on a system that
-is configured for another locale go to `Preferences/General/Target locale` and set it to `sv-SE`.
-
 ## Using ##
 Download the latest release and install (or unpack) it. For more information, see the user guide in the docs folder.
 
