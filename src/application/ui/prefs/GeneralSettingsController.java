@@ -2,9 +2,7 @@ package application.ui.prefs;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -15,6 +13,7 @@ import org.daisy.streamline.api.media.FileDetails;
 
 import application.common.FactoryPropertiesAdapter;
 import application.common.FeatureSwitch;
+import application.common.LocaleEntry;
 import application.common.NiceName;
 import application.common.Settings;
 import application.common.Settings.Keys;
@@ -48,7 +47,7 @@ public class GeneralSettingsController {
 	@FXML private HBox hboxOutputFormat;
 	@FXML private HBox hboxAutosave;
 	@FXML private ComboBox<NiceName> selectOutputFormat;
-	@FXML private ComboBox<String> selectLocale;
+	@FXML private ComboBox<LocaleEntry> selectLocale;
 
 	@FXML void initialize() {
 		if (FeatureSwitch.SELECT_OUTPUT_FORMAT.isOn()) {
@@ -113,19 +112,19 @@ public class GeneralSettingsController {
 		th.setDaemon(true);
 		th.start();	
 		
-		selectLocale.getItems().addAll(toString(Locale.getAvailableLocales()));
+		List<LocaleEntry> locales = Arrays.asList(Locale.getAvailableLocales())
+			.stream()
+			.filter(v->v.getVariant().isEmpty())
+			.map(LocaleEntry::new)
+			.sorted()
+			.collect(Collectors.toList());
+		selectLocale.getItems().addAll(locales);
 		String tag = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
-		selectLocale.getSelectionModel().select(tag);
-		selectLocale.valueProperty().addListener((ov, t0, t1)->Settings.getSettings().put(Keys.locale, t1));
-	}
-	
-	private List<String> toString(Locale[] locales) {
-		List<String> ret = new ArrayList<>();
-		for (Locale l : locales) {
-			ret.add(l.toLanguageTag());
-		}
-		Collections.sort(ret);
-		return ret;
+		locales.stream()
+			.filter(v->v.getKey().equals(tag))
+			.findFirst()
+			.ifPresent(v->selectLocale.getSelectionModel().select(v));
+		selectLocale.valueProperty().addListener((ov, t0, t1)->Settings.getSettings().put(Keys.locale, t1.getKey()));
 	}
 	
 	private class FontScanner extends Task<Void> {
