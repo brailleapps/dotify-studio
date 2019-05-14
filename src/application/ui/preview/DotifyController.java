@@ -129,6 +129,7 @@ public class DotifyController extends BorderPane implements Converter {
 		setRunning(0);
 		File outFile = File.createTempFile("dotify-studio", "."+outputFormat.getExtension());
 		outFile.deleteOnExit();
+		overrideParameters.setValue(options);
 		Thread th;
 		if (FeatureSwitch.PROCESS_FILE_SET.isOn()) {
 			this.outFolder = BaseFolder.with(PathTools.createTempFolder());
