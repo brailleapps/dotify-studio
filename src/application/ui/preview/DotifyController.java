@@ -158,9 +158,11 @@ public class DotifyController extends BorderPane implements Converter {
 		Map<String, Object> ui = getParams();
 		clear();
 		values = new HashSet<>();
-		UserOption.Builder optBuilder = new UserOption.Builder(PRODUCT_LOCALE_KEY).defaultValue(locale);
+		UserOption.Builder optBuilder = new UserOption.Builder(PRODUCT_LOCALE_KEY)
+				.displayName(Messages.LABEL_TARGET_LOCALE.localize())
+				.defaultValue(locale);
 		SupportedLocales.list().stream()
-			.map(v->new UserOptionValue.Builder(v.toLanguageTag()).description(v.getDisplayName()).build())
+			.map(v->new UserOptionValue.Builder(v.toLanguageTag()).displayName(v.getDisplayName()).build())
 			.forEach(v->optBuilder.addValue(v));
 		displayItems(Messages.LABEL_GENERAL.localize(),
 				Arrays.asList(optBuilder.build()), 

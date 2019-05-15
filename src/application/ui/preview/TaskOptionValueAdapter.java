@@ -27,7 +27,7 @@ public class TaskOptionValueAdapter {
 
 	@Override
 	public String toString() {
-		return value.getName();
+		return value.getDisplayName();
 	}
 
 }

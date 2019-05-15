@@ -26,7 +26,7 @@ public class OptionItem extends BorderPane {
 	private static final String OPTIONS_CLASS = "option-changed";
 	private final boolean disabled;
 	private final String originalValue;
-	private Text key;
+	private String key;
 	private ChoiceBox<TaskOptionValueAdapter> choiceValue;
 	private TextField stringValue;
 	private Text description;
@@ -41,8 +41,8 @@ public class OptionItem extends BorderPane {
 		this.disabled = disabled;
 		HBox keyValue = new HBox();
 		keyValue.setSpacing(5);
-		key = new Text(option.getKey());
-		keyValue.getChildren().add(key);
+		this.key = option.getKey();
+		keyValue.getChildren().add(new Text(option.getDisplayName()));
 		Region r = new Region();
 		HBox.setHgrow(r, Priority.ALWAYS);
 		keyValue.getChildren().add(r);
@@ -96,7 +96,7 @@ public class OptionItem extends BorderPane {
 	 * @return returns the key
 	 */
 	public String getKey() {
-		return key.getText();
+		return key;
 	}
 	
 	/**

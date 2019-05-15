@@ -86,6 +86,7 @@ public enum Messages {
 	TITLE_SAVE_AS_DIALOG("title-save-as-dialog"),
 	TITLE_TEMPLATES_DIALOG("title-templates-dialog"),
 	TITLE_SAVE_TEMPLATES_DIALOG("title-save-template-dialog"),
+	LABEL_TARGET_LOCALE("label-target-locale"),
 	LABEL_BRAILLE_FONT("label-braille-font"),
 	LABEL_TEXT_FONT("label-text-font"),
 	LABEL_TRANSLATION("label-translation"),
