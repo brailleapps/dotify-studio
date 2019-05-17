@@ -2,10 +2,12 @@ package application.ui.preview;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -19,8 +21,8 @@ import java.util.stream.Collectors;
 
 import org.daisy.dotify.studio.api.Converter;
 import org.daisy.streamline.api.media.AnnotatedFile;
-import org.daisy.streamline.api.media.FileDetails;
 import org.daisy.streamline.api.media.BaseFolder;
+import org.daisy.streamline.api.media.FileDetails;
 import org.daisy.streamline.api.media.FileSet;
 import org.daisy.streamline.api.media.FileSetMaker;
 import org.daisy.streamline.api.option.UserOption;
@@ -71,6 +73,7 @@ import javafx.stage.Modality;
  */
 public class DotifyController extends BorderPane implements Converter {
 	private static final Logger logger = Logger.getLogger(DotifyController.class.getCanonicalName());
+	private static final String PRODUCT_LOCALE_KEY = "product-locale";
 	private final Wrapper<Map<String, Object>> overrideParameters = new Wrapper<>();
 	@FXML private ScrollPane options;
 	@FXML private VBox tools;
@@ -87,6 +90,7 @@ public class DotifyController extends BorderPane implements Converter {
 	private ExecutorService exeService;
 	private BooleanProperty showOptions;
 	private BooleanProperty canRequestUpdate;
+	private String locale;
 
 	/**
 	 * Creates a new options controller.
@@ -108,6 +112,7 @@ public class DotifyController extends BorderPane implements Converter {
 			logger.log(Level.WARNING, "Failed to load view", e);
 		}
 		this.input = selected.getPath().toFile();
+		this.locale = tag;
 		refreshRequested = false;
 		closing = false;
 		exeService = Executors.newWorkStealingPool();
@@ -131,12 +136,12 @@ public class DotifyController extends BorderPane implements Converter {
 		Thread th;
 		if (FeatureSwitch.PROCESS_FILE_SET.isOn()) {
 			this.outFolder = BaseFolder.with(PathTools.createTempFolder());
-			th = new Thread(new SourceDocumentWatcher(selected, outFolder, tag, outputFormat, onSuccess));
+			th = new Thread(new SourceDocumentWatcher(selected, outFolder, outputFormat, onSuccess));
 		} else {
 			this.outFolder = null;
 			File outFile = File.createTempFile("dotify-studio", "."+outputFormat.getExtension());
 			outFile.deleteOnExit();
-			th = new Thread(new SourceDocumentWatcher(selected, outFile, tag, outputFormat, onSuccess));
+			th = new Thread(new SourceDocumentWatcher(selected, outFile, outputFormat, onSuccess));
 		}
 		th.setDaemon(true);
 		th.start();
@@ -153,6 +158,16 @@ public class DotifyController extends BorderPane implements Converter {
 		Map<String, Object> ui = getParams();
 		clear();
 		values = new HashSet<>();
+		UserOption.Builder optBuilder = new UserOption.Builder(PRODUCT_LOCALE_KEY).defaultValue(locale);
+		Arrays.asList(Locale.getAvailableLocales())
+			.stream()
+			.filter(v->v.getVariant().isEmpty())
+			.sorted((o1, o2)->o1.toLanguageTag().compareTo(o2.toLanguageTag()))
+			.map(v->new UserOptionValue.Builder(v.toLanguageTag()).description(v.getDisplayName()).build())
+			.forEach(v->optBuilder.addValue(v));
+		displayItems(Messages.LABEL_GENERAL.localize(),
+				Arrays.asList(optBuilder.build()), 
+				prvOpts);
 		displayItems(ts.getName(), ts.getOptions(), prvOpts);
 		if (opts!=null) {
 			for (RunnerResult r : opts) {
@@ -371,29 +386,26 @@ public class DotifyController extends BorderPane implements Converter {
 		private final AnnotatedFile annotatedInput;
 		private final File outputFile;
 		private final BaseFolder outputFolder;
-		private final String locale;
 		private final FileDetails outputFormat;
 		// notify a caller about changes to the result file
 		private final Function<File, Consumer<File>> onSuccess;
 		private Consumer<File> resultWatcher = null;
 		private boolean isRunning = false;
 
-		SourceDocumentWatcher(AnnotatedFile input, File output, String locale, FileDetails outputFormat, Function<File, Consumer<File>> onSuccess) {
+		SourceDocumentWatcher(AnnotatedFile input, File output, FileDetails outputFormat, Function<File, Consumer<File>> onSuccess) {
 			super(input.getPath().toFile());
 			this.annotatedInput = input;
 			this.outputFile = output;
 			this.outputFolder = null;
-			this.locale = locale;
 			this.outputFormat = outputFormat;
 			this.onSuccess = onSuccess;
 		}
 		
-		SourceDocumentWatcher(AnnotatedFile input, BaseFolder output, String locale, FileDetails outputFormat, Function<File, Consumer<File>> onSuccess) {
+		SourceDocumentWatcher(AnnotatedFile input, BaseFolder output, FileDetails outputFormat, Function<File, Consumer<File>> onSuccess) {
 			super(input.getPath().toFile());
 			this.annotatedInput = input;
 			this.outputFile = null;
 			this.outputFolder = output;
-			this.locale = locale;
 			this.outputFormat = outputFormat;
 			this.onSuccess = onSuccess;
 		}
@@ -427,10 +439,11 @@ public class DotifyController extends BorderPane implements Converter {
 					opts = getParams();
 				}
 				DotifyTaskBase dt;
+				String loc = Optional.ofNullable(opts.get(PRODUCT_LOCALE_KEY)).map(v->v.toString()).orElse(locale);
 				if (outputFile!=null) {
-					dt = new DotifyFileTask(annotatedInput, outputFile, locale, outputFormat, opts);
+					dt = new DotifyFileTask(annotatedInput, outputFile, loc, outputFormat, opts);
 				} else if (outputFolder!=null) {
-					dt = new DotifyFileSetTask(annotatedInput, outputFolder, locale, outputFormat, opts);
+					dt = new DotifyFileSetTask(annotatedInput, outputFolder, loc, outputFormat, opts);
 				} else {
 					throw new AssertionError("Error in code");
 				}

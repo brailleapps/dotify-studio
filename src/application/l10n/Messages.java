@@ -113,6 +113,7 @@ public enum Messages {
 	LABEL_SOURCE("label-source"),
 	LABEL_RESULT("label-result"),
 	LABEL_MAKE("label-make"),
+	LABEL_GENERAL("label-general"),
 	MESSAGE_SIX_DOT_ONLY("message-six-dot-only"),
 	MESSAGE_SEARCH_RESULT("message-search-result"),
 	MESSAGE_UNKNOWN_AUTHOR("message-unknown-author"),
