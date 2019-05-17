@@ -127,8 +127,6 @@ public class DotifyController extends BorderPane implements Converter {
 		});
 		canRequestUpdate = new SimpleBooleanProperty(false);
 		setRunning(0);
-		File outFile = File.createTempFile("dotify-studio", "."+outputFormat.getExtension());
-		outFile.deleteOnExit();
 		overrideParameters.setValue(options);
 		Thread th;
 		if (FeatureSwitch.PROCESS_FILE_SET.isOn()) {
@@ -136,6 +134,8 @@ public class DotifyController extends BorderPane implements Converter {
 			th = new Thread(new SourceDocumentWatcher(selected, outFolder, tag, outputFormat, onSuccess));
 		} else {
 			this.outFolder = null;
+			File outFile = File.createTempFile("dotify-studio", "."+outputFormat.getExtension());
+			outFile.deleteOnExit();
 			th = new Thread(new SourceDocumentWatcher(selected, outFile, tag, outputFormat, onSuccess));
 		}
 		th.setDaemon(true);
@@ -428,9 +428,9 @@ public class DotifyController extends BorderPane implements Converter {
 				}
 				DotifyTaskBase dt;
 				if (outputFile!=null) {
-					dt = new DotifyFileTask(annotatedInput, outputFile, locale, outputFormat.getFormatName(), opts);
+					dt = new DotifyFileTask(annotatedInput, outputFile, locale, outputFormat, opts);
 				} else if (outputFolder!=null) {
-					dt = new DotifyFileSetTask(annotatedInput, outputFolder, locale, outputFormat.getFormatName(), opts);
+					dt = new DotifyFileSetTask(annotatedInput, outputFolder, locale, outputFormat, opts);
 				} else {
 					throw new AssertionError("Error in code");
 				}
@@ -481,10 +481,10 @@ public class DotifyController extends BorderPane implements Converter {
 	private abstract class DotifyTaskBase extends Task<DotifyResult> {
 		protected final AnnotatedFile inputFile;
 		protected final String locale;
-		protected final String outputFormat;
+		protected final FileDetails outputFormat;
 		protected final Map<String, Object> params;
 		
-		DotifyTaskBase(AnnotatedFile inputFile, String locale, String outputFormat, Map<String, Object> params) {
+		DotifyTaskBase(AnnotatedFile inputFile, String locale, FileDetails outputFormat, Map<String, Object> params) {
 			this.inputFile = inputFile;
 			this.locale = locale;
 			this.outputFormat = outputFormat;
@@ -498,7 +498,7 @@ public class DotifyController extends BorderPane implements Converter {
 		
 		protected TaskSystem makeTaskSystem() throws TaskSystemFactoryException {
 			String inputFormat = getFormatString(inputFile);
-			TaskSystem ts = TaskSystemFactoryMaker.newInstance().newTaskSystem(inputFormat, outputFormat, locale);
+			TaskSystem ts = TaskSystemFactoryMaker.newInstance().newTaskSystem(inputFormat, outputFormat.getFormatName(), locale);
 			logger.info("About to run with parameters " + params);
 			logger.info("Thread: " + Thread.currentThread().getThreadGroup());
 			return ts;
@@ -537,7 +537,7 @@ public class DotifyController extends BorderPane implements Converter {
 	private class DotifyFileTask extends DotifyTaskBase {
 		private final File outputFile;
 
-		DotifyFileTask(AnnotatedFile inputFile, File outputFile, String locale, String outputFormat, Map<String, Object> params) {
+		DotifyFileTask(AnnotatedFile inputFile, File outputFile, String locale, FileDetails outputFormat, Map<String, Object> params) {
 			super(inputFile, locale, outputFormat, params);
 			this.outputFile = outputFile;
 		}
@@ -554,7 +554,7 @@ public class DotifyController extends BorderPane implements Converter {
 	private class DotifyFileSetTask extends DotifyTaskBase {
 		private final BaseFolder outputFile;
 
-		DotifyFileSetTask(AnnotatedFile inputFile, BaseFolder outputFile, String locale, String outputFormat, Map<String, Object> params) {
+		DotifyFileSetTask(AnnotatedFile inputFile, BaseFolder outputFile, String locale, FileDetails outputFormat, Map<String, Object> params) {
 			super(inputFile, locale, outputFormat, params);
 			this.outputFile = outputFile;
 		}
@@ -563,7 +563,7 @@ public class DotifyController extends BorderPane implements Converter {
 		protected DotifyResult call() throws Exception {
 			TaskSystem ts = makeTaskSystem();
 			CompiledTaskSystem tl = setupTaskSystem(ts);
-			return new DotifyResult(tl, makeTaskRunner(ts).runTasks(FileSetMaker.newInstance().create(inputFile, params), outputFile, "result."+outputFormat, tl));
+			return new DotifyResult(tl, makeTaskRunner(ts).runTasks(FileSetMaker.newInstance().create(inputFile, params), outputFile, "result."+outputFormat.getExtension(), tl));
 		}
 
 	}
