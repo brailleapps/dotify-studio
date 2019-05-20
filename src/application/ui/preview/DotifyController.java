@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -41,6 +40,7 @@ import org.daisy.streamline.engine.TaskRunner;
 import application.common.BuildInfo;
 import application.common.FeatureSwitch;
 import application.common.Singleton;
+import application.common.SupportedLocales;
 import application.l10n.Messages;
 import application.ui.template.TemplateView;
 import javafx.application.Platform;
@@ -159,10 +159,7 @@ public class DotifyController extends BorderPane implements Converter {
 		clear();
 		values = new HashSet<>();
 		UserOption.Builder optBuilder = new UserOption.Builder(PRODUCT_LOCALE_KEY).defaultValue(locale);
-		Arrays.asList(Locale.getAvailableLocales())
-			.stream()
-			.filter(v->v.getVariant().isEmpty())
-			.sorted((o1, o2)->o1.toLanguageTag().compareTo(o2.toLanguageTag()))
+		SupportedLocales.list().stream()
 			.map(v->new UserOptionValue.Builder(v.toLanguageTag()).description(v.getDisplayName()).build())
 			.forEach(v->optBuilder.addValue(v));
 		displayItems(Messages.LABEL_GENERAL.localize(),

@@ -17,6 +17,7 @@ import application.common.LocaleEntry;
 import application.common.NiceName;
 import application.common.Settings;
 import application.common.Settings.Keys;
+import application.common.SupportedLocales;
 import application.l10n.Messages;
 import application.ui.preview.FileDetailsCatalog;
 import javafx.application.Platform;
@@ -124,9 +125,8 @@ public class GeneralSettingsController {
 		th.setDaemon(true);
 		th.start();	
 		
-		List<LocaleEntry> locales = Arrays.asList(Locale.getAvailableLocales())
+		List<LocaleEntry> locales = SupportedLocales.list()
 			.stream()
-			.filter(v->v.getVariant().isEmpty())
 			.map(LocaleEntry::new)
 			.sorted()
 			.collect(Collectors.toList());
