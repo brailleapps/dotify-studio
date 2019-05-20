@@ -1029,13 +1029,22 @@ public class MainController {
 	}
 
 	boolean confirmShutdown() {
+		boolean confirmsShutdown;
 		if (isAnyModified()) {
 			Alert alert = new Alert(AlertType.CONFIRMATION, Messages.MESSAGE_CONFIRM_QUIT_UNSAVED_CHANGES.localize(), ButtonType.YES, ButtonType.CANCEL);
 			Optional<ButtonType> res = alert.showAndWait();
-			return res.map(v->(Boolean)v.equals(ButtonType.YES)).orElse(false);
+			confirmsShutdown = res.map(v->(Boolean)v.equals(ButtonType.YES)).orElse(false);
 		} else {
-			return true;
+			confirmsShutdown = true;
 		}
+		if (confirmsShutdown) {
+			tabPane.getTabs().stream()
+			.map(t->t.getContent())
+			.filter(n->(n instanceof Editor))
+			.map(n->(Editor)n)
+			.forEach(v->v.closing());
+		}
+		return confirmsShutdown;
 	}
 
 	private boolean isAnyModified() {
