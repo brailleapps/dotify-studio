@@ -1,5 +1,7 @@
 package application.ui.preview;
 
+import java.util.Optional;
+
 import org.daisy.streamline.api.option.UserOption;
 import org.daisy.streamline.api.option.UserOptionValue;
 
@@ -52,6 +54,7 @@ public class OptionItem extends BorderPane {
 			keyValue.getChildren().add(above);
 		} else if (option.hasValues()) {
 			choiceValue = new ChoiceBox<>();
+			choiceValue.getItems().add(new TaskOptionValueAdapter(new UserOptionValue.Builder("").displayName("").build()));
 			TaskOptionValueAdapter selected = null;
 			for (UserOptionValue v : option.getValues()) {
 				TaskOptionValueAdapter current = new TaskOptionValueAdapter(v);
@@ -142,7 +145,9 @@ public class OptionItem extends BorderPane {
 	 */
 	public String getValue() {
 		if (choiceValue!=null) {
-			return choiceValue.getSelectionModel().getSelectedItem().getValue().getName();
+			return Optional.ofNullable(choiceValue.getSelectionModel().getSelectedItem())
+					.map(v->v.getValue().getName())
+					.orElse("");
 		} else if (stringValue!=null) {
 			return stringValue.getText();
 		} else if (disabled) {
