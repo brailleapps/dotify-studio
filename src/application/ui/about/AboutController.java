@@ -5,6 +5,7 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.stream.Collectors;
 
 import application.common.BuildInfo;
 import application.l10n.Messages;
@@ -12,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -30,6 +32,7 @@ public class AboutController {
 	@FXML private Hyperlink pefLink;
 	@FXML private Hyperlink contributeLink;
 	@FXML private Button ok;
+	@FXML private TextArea configTextArea;
 
 	/**
 	 * Initializes the controller.
@@ -40,6 +43,10 @@ public class AboutController {
 				System.getProperty("java.version")));
 		pefLink.setText(PEF_URL);
 		contributeLink.setText(BRAILLE_APPS_URL);
+		configTextArea.setText(System.getProperties().entrySet().stream()
+				.sorted((v1, v2)->String.valueOf(v1.getKey()).compareTo(String.valueOf(v2.getKey())))
+				.map(v->v.getKey()+"="+v.getValue())
+				.collect(Collectors.joining("\n", "", "")));
 	}
 
 	/**
