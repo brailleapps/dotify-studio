@@ -17,6 +17,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -38,6 +39,9 @@ import org.daisy.dotify.studio.api.ExportActionDescription;
 import org.daisy.dotify.studio.api.ExportActionMaker;
 import org.daisy.dotify.studio.api.SearchCapabilities;
 import org.daisy.dotify.studio.api.Searchable;
+import org.daisy.streamline.api.details.FormatDetails;
+import org.daisy.streamline.api.details.FormatDetailsProvider;
+import org.daisy.streamline.api.details.FormatDetailsProviderService;
 import org.daisy.streamline.api.identity.IdentityProvider;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.media.FormatIdentifier;
@@ -515,9 +519,11 @@ public class MainController {
 	}
 	
 	private static boolean canDropFiles(List<File> files) {
-		List<String> exts = newImportExtensionStream()
+		Set<String> exts = newImportFormatDetailsStream()
+			.flatMap(v->v.getExtensions().stream())
+			.distinct()
 			.map(val -> "."+val.toLowerCase())
-			.collect(Collectors.toList());
+			.collect(Collectors.toSet());
 		for (File f : files) {
 			if (!(f.getName().endsWith(".pef")||exts.contains(getExtension(f.getName().toLowerCase())))) {
 				return false;
@@ -931,36 +937,44 @@ public class MainController {
      * Returns a new stream with unique input formats.
      * @return
      */
-	private static Stream<String> newImportExtensionStream() {
+	private static Stream<FormatDetails> newImportFormatDetailsStream() {
 		String outputFormat = FileDetailsCatalog.forMediaType(Settings.getSettings().getConvertTargetFormat()).getFormatName();
 		String locale = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
 		TaskSystemFactoryMaker tgf = TaskSystemFactoryMaker.newInstance();
+		FormatDetailsProviderService detailsProvider = FormatDetailsProvider.newInstance();
 		return tgf.listForOutput(FormatIdentifier.with(outputFormat), locale).stream()
-			.filter(spec ->
+			.map(spec -> spec.getInputType())
+			.distinct()
+			.filter(v->
 				// Currently, this can be viewed as an identity conversion, which isn't supported by the task system.
 				// TODO: Perhaps support this as a special case in this code instead (just open the file without going through the task system).
-				!outputFormat.equals(spec.getInputType().getIdentifier())
-				// Not all formats in this list are actually extensions.
-				// TODO: Filter these out here until the TaskGroupFactory provides extensions separately. 
-				&& !"dtbook".equals(spec.getInputType().getIdentifier()) // use xml instead
-				&& !"text".equals(spec.getInputType().getIdentifier())) // use txt instead
-			.map(spec -> spec.getInputType().getIdentifier())
-			.distinct();
+				!outputFormat.equals(v.getIdentifier())
+			)
+			.map(v->detailsProvider.getDetails(v))
+			.filter(v->v.isPresent())
+			.map(v->v.get());
     }
 
     @FXML void showImportDialog() {
     	Window stage = root.getScene().getWindow();
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle(Messages.TITLE_IMPORT_SOURCE_DOCUMENT_DIALOG.localize());
-		List<String> exts = newImportExtensionStream()
+		List<FormatDetails> details = newImportFormatDetailsStream()
+				.collect(Collectors.toList());
+
+		fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_SUPPORTED_FILES.localize(), details.stream()
+				.flatMap(v -> v.getExtensions().stream())
+				.distinct()
 				.map(val -> "*."+val)
-				.collect(Collectors.toList()); 
-		fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_SUPPORTED_FILES.localize(), exts));
+				.collect(Collectors.toList())));
 		// All extensions are individually as well
-		// TODO: additional information from the TaskGroupFactory about the formats (i.e. descriptions) would be useful for this list
 		fileChooser.getExtensionFilters().addAll(
-				exts.stream()
-				.map(ext->new ExtensionFilter(toFilesDesc(ext), ext))
+				details.stream()
+				.map(d->new ExtensionFilter(
+						d.getDisplayName(), d.getExtensions().stream().map(val -> "*."+val)
+						.collect(Collectors.toList())
+					)
+				)
 				.collect(Collectors.toList())
 				);
 		fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_ALL_FILES.localize(), "*.*"));

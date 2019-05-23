@@ -9,7 +9,10 @@ import java.util.stream.Collectors;
 
 import org.daisy.dotify.api.table.BrailleConstants;
 import org.daisy.dotify.api.table.TableCatalog;
+import org.daisy.streamline.api.details.FormatDetailsProvider;
+import org.daisy.streamline.api.details.FormatDetailsProviderService;
 import org.daisy.streamline.api.media.FileDetails;
+import org.daisy.streamline.api.media.FormatIdentifier;
 
 import application.common.FactoryPropertiesAdapter;
 import application.common.FeatureSwitch;
@@ -58,13 +61,16 @@ public class GeneralSettingsController {
 			// Note that the issue with this isn't to generate the list of outputs, this can be done easily.
 			// However, currently there isn't a way to filter the list of inputs based on the selected output
 			// (in the import dialog). Html is allowed in the list, because it has a reasonably broad support.
+			FormatDetailsProviderService detailsProvider = FormatDetailsProvider.newInstance();
 			selectOutputFormat.getItems().addAll(
 					Arrays.asList(FileDetailsCatalog.PEF_FORMAT, FileDetailsCatalog.HTML_FORMAT, FileDetailsCatalog.FORMATTED_TEXT_FORMAT).stream()
-					.map(v->new NiceName(v.getMediaType(), v.getFormatName()))
+					.map(v->new NiceName(v.getMediaType(), 
+							detailsProvider.getDetails(FormatIdentifier.with(v.getFormatName())).map(v2->v2.getDisplayName()).orElse(v.getFormatName())
+							))
 					.collect(Collectors.toList())
 			);
 			FileDetails current = FileDetailsCatalog.forMediaType(Settings.getSettings().getConvertTargetFormat());
-			selectOutputFormat.getSelectionModel().select(new NiceName(current.getMediaType(), current.getFormatName()));
+			selectOutputFormat.getSelectionModel().select(new NiceName(current.getMediaType(), detailsProvider.getDetails(FormatIdentifier.with(current.getFormatName())).map(v2->v2.getDisplayName()).orElse(current.getFormatName())));
 			selectOutputFormat.valueProperty().addListener((ov, t0, t1)->Settings.getSettings().setConvertTargetFormat(t1.getKey()));
 		} else {
 			rootVBox.getChildren().remove(hboxOutputFormat);
