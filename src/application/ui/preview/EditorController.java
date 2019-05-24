@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
@@ -557,13 +558,13 @@ public class EditorController extends BorderPane implements OpenableEditor {
 		// the new location is on a different file system.
 		File ft = File.createTempFile("save", ".tmp", f.getParentFile());
 		Files.write(ft.toPath(), bytes);
-		if (!ft.renameTo(f)) {
-			if (!f.delete() || !ft.renameTo(f)) {
-				Platform.runLater(()->{
-					Alert alert = new Alert(AlertType.WARNING, Messages.ERROR_FAILED_TO_WRITE_TO_FILE.localize(f.getName()), ButtonType.OK);
-					alert.showAndWait();
-				});
-			}
+		try {
+			Files.move(ft.toPath(), f.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			Platform.runLater(()->{
+				Alert alert = new Alert(AlertType.WARNING, Messages.ERROR_FAILED_TO_WRITE_TO_FILE.localize(f.getName()), ButtonType.OK);
+				alert.showAndWait();
+			});
 		}
 		return builder.build();
 	}
