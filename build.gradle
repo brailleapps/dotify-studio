@@ -73,8 +73,6 @@ repositories {
 dependencies {
 	compileOnly 'org.osgi:org.osgi.service.component.annotations:1.3.0'
 
-	//TODO: This is in the compile group because it unfortunately contains some API-like features.
-	compile 'org.daisy.braille:braille-utils.impl:6.0.0'
 	compile ('org.daisy.braille:braille-utils.pef-tools:5.0.1') {
 		exclude module: 'Saxon-HE'
 	}
@@ -100,6 +98,7 @@ dependencies {
 	runtimeOnly ('org.daisy.dotify:dotify.task.impl:4.7.0') {
 		exclude module: 'Saxon-HE'
 	}
+	runtimeOnly 'org.daisy.braille:braille-utils.impl:6.0.0'
 
 }
 

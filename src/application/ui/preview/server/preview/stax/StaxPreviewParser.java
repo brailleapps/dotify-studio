@@ -10,8 +10,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
@@ -24,12 +26,11 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.XMLEvent;
 
+import org.daisy.braille.utils.pef.PEFBook;
+import org.daisy.dotify.api.factory.FactoryProperties;
 import org.daisy.dotify.api.table.BrailleConstants;
-import org.daisy.dotify.api.table.BrailleConverter;
 import org.daisy.dotify.api.table.Table;
 import org.daisy.dotify.api.table.TableCatalog;
-import org.daisy.braille.utils.impl.tools.table.DefaultTableProvider;
-import org.daisy.braille.utils.pef.PEFBook;
 import org.daisy.dotify.common.text.ConditionalMapper;
 import org.daisy.dotify.common.text.SimpleUCharReplacer;
 import org.daisy.dotify.studio.api.DocumentPosition;
@@ -92,31 +93,39 @@ public class StaxPreviewParser {
 		// the previous behavior of xpath function translate, in other words, keeping characters with  
 		// no translation. This is not supported by the braille converter.
 		this.cr = new SimpleUCharReplacer();
-		BrailleConverter bc = getTable().newBrailleConverter();
-		if (bc.supportsEightDot()) {
-			String input = BrailleConstants.BRAILLE_PATTERNS_256;
-			String tr = bc.toText(input);
-			for (int i=0; i<tr.length(); i++) {
-				cr.put((int)input.charAt(i), ""+tr.charAt(i));
-			}
-		} else {
-			String input = BrailleConstants.BRAILLE_PATTERNS_64;
-			String tr = bc.toText(input);
-			for (int i=0; i<tr.length(); i++) {
-				cr.put((int)input.charAt(i), ""+tr.charAt(i));
-			}
-		}
+		getTable()
+			.map(v->v.newBrailleConverter())
+			.ifPresent(bc->{
+				if (bc.supportsEightDot()) {
+					String input = BrailleConstants.BRAILLE_PATTERNS_256;
+					String tr = bc.toText(input);
+					for (int i=0; i<tr.length(); i++) {
+						cr.put((int)input.charAt(i), ""+tr.charAt(i));
+					}
+				} else {
+					String input = BrailleConstants.BRAILLE_PATTERNS_64;
+					String tr = bc.toText(input);
+					for (int i=0; i<tr.length(); i++) {
+						cr.put((int)input.charAt(i), ""+tr.charAt(i));
+					}
+				}
+			});
 	}
 
-	private static Table getTable() {
+	private static Optional<Table> getTable() {
 		String charset = Settings.getSettings().getString(Keys.charset);
-		Table table = null;
+		Optional<Table> table = Optional.empty();
 		if (charset!=null) { 
-			table = TableCatalog.newInstance().get(charset);
+			table = Optional.ofNullable(TableCatalog.newInstance().get(charset));
 		}
-		if (table==null) {
-			table = TableCatalog.newInstance().get(DefaultTableProvider.TableType.EN_US.getIdentifier());
-			Settings.getSettings().getSetPref(Keys.charset, table.getIdentifier());
+		if (!table.isPresent()) {
+			TableCatalog tc = TableCatalog.newInstance();
+			Collection<FactoryProperties> list = tc.list();
+			table = list.stream()
+					.filter(v->v.getIdentifier().endsWith(".EN_US"))
+					.findFirst()
+					.map(v->tc.get(v.getIdentifier()));
+			table.ifPresent(t->Settings.getSettings().getSetPref(Keys.charset, t.getIdentifier()));
 		}
 		return table;
 	}
