@@ -59,7 +59,7 @@ public class GeneralSettingsController {
 			// However, currently there isn't a way to filter the list of inputs based on the selected output
 			// (in the import dialog). Html is allowed in the list, because it has a reasonably broad support.
 			selectOutputFormat.getItems().addAll(
-					Arrays.asList(FileDetailsCatalog.PEF_FORMAT, FileDetailsCatalog.HTML_FORMAT, FileDetailsCatalog.TEXT_FORMAT).stream()
+					Arrays.asList(FileDetailsCatalog.PEF_FORMAT, FileDetailsCatalog.HTML_FORMAT, FileDetailsCatalog.FORMATTED_TEXT_FORMAT).stream()
 					.map(v->new NiceName(v.getMediaType(), v.getFormatName()))
 					.collect(Collectors.toList())
 			);

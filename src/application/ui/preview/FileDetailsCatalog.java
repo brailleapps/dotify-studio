@@ -48,10 +48,10 @@ public class FileDetailsCatalog {
 			return Collections.emptyMap();
 		}};
 		
-		public static final FileDetails TEXT_FORMAT = new FileDetails(){
+		public static final FileDetails FORMATTED_TEXT_FORMAT = new FileDetails(){
 			@Override
 			public String getFormatName() {
-				return "text";
+				return "formatted-text";
 			}
 
 			@Override
@@ -79,8 +79,8 @@ public class FileDetailsCatalog {
 			return PEF_FORMAT;
 		} else if (mediaType.equals(HTML_FORMAT.getMediaType())) {
 			return HTML_FORMAT;
-		} else if (mediaType.equals(TEXT_FORMAT.getMediaType())) {
-			return TEXT_FORMAT;
+		} else if (mediaType.equals(FORMATTED_TEXT_FORMAT.getMediaType())) {
+			return FORMATTED_TEXT_FORMAT;
 		} else {
 			return new MediaTypeDetails(mediaType);
 		}
