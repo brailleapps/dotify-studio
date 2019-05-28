@@ -40,8 +40,7 @@ import org.daisy.dotify.studio.api.SearchCapabilities;
 import org.daisy.dotify.studio.api.Searchable;
 import org.daisy.streamline.api.identity.IdentityProvider;
 import org.daisy.streamline.api.media.AnnotatedFile;
-import org.daisy.streamline.api.tasks.TaskGroupFactoryMaker;
-import org.daisy.streamline.api.tasks.TaskSystemFactoryException;
+import org.daisy.streamline.api.media.FormatIdentifier;
 import org.daisy.streamline.api.tasks.TaskSystemFactoryMaker;
 import org.daisy.streamline.api.validity.ValidationReport;
 import org.daisy.streamline.api.validity.Validator;
@@ -936,12 +935,11 @@ public class MainController {
 		String outputFormat = FileDetailsCatalog.forMediaType(Settings.getSettings().getConvertTargetFormat()).getFormatName();
 		String locale = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
 		TaskSystemFactoryMaker tgf = TaskSystemFactoryMaker.newInstance();
-		return TaskGroupFactoryMaker.newInstance().listAll().stream()
+		return tgf.listForOutput(FormatIdentifier.with(outputFormat), locale).stream()
 			.filter(spec ->
-				canCreate(tgf, spec.getInputType().getIdentifier(), outputFormat, locale)
 				// Currently, this can be viewed as an identity conversion, which isn't supported by the task system.
 				// TODO: Perhaps support this as a special case in this code instead (just open the file without going through the task system).
-				&& !outputFormat.equals(spec.getInputType().getIdentifier())
+				!outputFormat.equals(spec.getInputType().getIdentifier())
 				// Not all formats in this list are actually extensions.
 				// TODO: Filter these out here until the TaskGroupFactory provides extensions separately. 
 				&& !"dtbook".equals(spec.getInputType().getIdentifier()) // use xml instead
@@ -950,14 +948,6 @@ public class MainController {
 			.distinct();
     }
 
-	private static boolean canCreate(TaskSystemFactoryMaker tgf, String inputFormat, String outputFormat, String locale) {
-		try {
-			return tgf.newTaskSystem(inputFormat, outputFormat, locale)!=null;
-		} catch (TaskSystemFactoryException e) {
-			return false;
-		}
-	}
-	
     @FXML void showImportDialog() {
     	Window stage = root.getScene().getWindow();
     	FileChooser fileChooser = new FileChooser();
