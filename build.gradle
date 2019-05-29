@@ -81,7 +81,7 @@ dependencies {
 	compile 'org.daisy.dotify:dotify.api:5.0.0'
 	compile 'org.daisy.streamline:streamline-api:1.4.0'
 	compile 'org.daisy.dotify:dotify.common:4.4.0'
-	compile ('org.daisy.streamline:streamline-engine:1.2.0') {
+	compile ('org.daisy.streamline:streamline-engine:1.3.0') {
 		exclude module: 'streamline-api'
 	}
 	compile 'org.fxmisc.richtext:richtextfx:0.8.2'

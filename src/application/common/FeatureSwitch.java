@@ -34,7 +34,12 @@ public enum FeatureSwitch {
 	/**
 	 * When on, file sets are processed
 	 */
-	PROCESS_FILE_SET("on".equalsIgnoreCase(System.getProperty("application.feature.file-set", "off")))
+	PROCESS_FILE_SET("on".equalsIgnoreCase(System.getProperty("application.feature.file-set", "off"))),
+	/**
+	 * When on, import allows importing of the target format, if some enhancing tasks are available 
+	 * for the target format.
+	 */
+	IMPORT_TARGET_FORMAT("on".equalsIgnoreCase(System.getProperty("application.feature.import-target-format", "off")))
 	;
 
 	private final boolean on;

@@ -946,9 +946,7 @@ public class MainController {
 			.map(spec -> spec.getInputType())
 			.distinct()
 			.filter(v->
-				// Currently, this can be viewed as an identity conversion, which isn't supported by the task system.
-				// TODO: Perhaps support this as a special case in this code instead (just open the file without going through the task system).
-				!outputFormat.equals(v.getIdentifier())
+				FeatureSwitch.IMPORT_TARGET_FORMAT.isOn() || !outputFormat.equals(v.getIdentifier())
 			)
 			.map(v->detailsProvider.getDetails(v))
 			.filter(v->v.isPresent())
