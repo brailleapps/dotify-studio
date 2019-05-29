@@ -100,7 +100,7 @@ dependencies {
 	}
 	runtimeOnly 'org.daisy.braille:braille-utils.impl:7.0.0'
 
-	runtimeOnly ('org.daisy.streamline:format-catalog:1.0.0') {
+	runtimeOnly ('org.daisy.streamline:format-catalog:1.1.0') {
 		exclude module: 'streamline-api'
 	}
 
