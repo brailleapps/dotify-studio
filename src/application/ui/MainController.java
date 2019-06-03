@@ -813,12 +813,9 @@ public class MainController {
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle(Messages.TITLE_OPEN_DIALOG.localize());
 		if (FeatureSwitch.OPEN_OTHER_TYPES.isOn()) {
-			List<String> exts = Arrays.asList("*.pef", "*.xml", "*.txt", "*.html", "*.obfl");
-			List<ExtensionFilter> filters = exts.stream()
-					.map(ext -> new ExtensionFilter(toFilesDesc(ext), ext))
-					.collect(Collectors.toList());
-			fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_SUPPORTED_FILES.localize(), exts));
-			fileChooser.getExtensionFilters().addAll(filters);
+			List<FormatDetails> details = getDetails("pef", "xml", "text", "html", "xhtml", "obfl");
+			fileChooser.getExtensionFilters().add(toSupportedFilesExtensionFilter(details.stream()));
+			fileChooser.getExtensionFilters().addAll(toExtensionFilterList(details.stream()));
 		} else {
 			fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_FILE.localize("PEF"), "*.pef"));
 		}
@@ -828,6 +825,16 @@ public class MainController {
     		Settings.getSettings().setLastOpenPath(selected.getParentFile());
     		addTab(selected);
     	}
+    }
+    
+    private static List<FormatDetails> getDetails(String ... exts) {
+    	FormatDetailsProviderService detailsProvider = FormatDetailsProvider.newInstance();
+    	return Arrays.asList(exts)
+    		.stream()
+    		.map(id->detailsProvider.getDetails(FormatIdentifier.with(id)))
+    		.filter(v->v.isPresent())
+    		.map(v->v.get())
+    		.collect(Collectors.toList());
     }
 
     @FXML void showImportBrailleDialog() {
@@ -951,7 +958,24 @@ public class MainController {
 			.map(v->detailsProvider.getDetails(v))
 			.filter(v->v.isPresent())
 			.map(v->v.get());
-    }
+	}
+	
+	private static List<ExtensionFilter> toExtensionFilterList(Stream<FormatDetails> details) {
+		return details.map(d->new ExtensionFilter(
+						d.getDisplayName(), d.getExtensions().stream().map(val -> "*."+val)
+						.collect(Collectors.toList())
+					)
+				)
+				.collect(Collectors.toList());
+	}
+	
+	private static ExtensionFilter toSupportedFilesExtensionFilter(Stream<FormatDetails> details) {
+		return new ExtensionFilter(Messages.EXTENSION_FILTER_SUPPORTED_FILES.localize(), details
+				.flatMap(v -> v.getExtensions().stream())
+				.distinct()
+				.map(val -> "*."+val)
+				.collect(Collectors.toList()));
+	}
 
     @FXML void showImportDialog() {
     	Window stage = root.getScene().getWindow();
@@ -960,21 +984,9 @@ public class MainController {
 		List<FormatDetails> details = newImportFormatDetailsStream()
 				.collect(Collectors.toList());
 
-		fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_SUPPORTED_FILES.localize(), details.stream()
-				.flatMap(v -> v.getExtensions().stream())
-				.distinct()
-				.map(val -> "*."+val)
-				.collect(Collectors.toList())));
+		fileChooser.getExtensionFilters().add(toSupportedFilesExtensionFilter(details.stream()));
 		// All extensions are individually as well
-		fileChooser.getExtensionFilters().addAll(
-				details.stream()
-				.map(d->new ExtensionFilter(
-						d.getDisplayName(), d.getExtensions().stream().map(val -> "*."+val)
-						.collect(Collectors.toList())
-					)
-				)
-				.collect(Collectors.toList())
-				);
+		fileChooser.getExtensionFilters().addAll(toExtensionFilterList(details.stream()));
 		fileChooser.getExtensionFilters().add(new ExtensionFilter(Messages.EXTENSION_FILTER_ALL_FILES.localize(), "*.*"));
 		Settings.getSettings().getLastOpenPath().ifPresent(v->fileChooser.setInitialDirectory(v));
     	File selected = fileChooser.showOpenDialog(stage);
@@ -982,13 +994,6 @@ public class MainController {
     		Settings.getSettings().setLastOpenPath(selected.getParentFile());
     		selectTemplateAndOpen(selected);
     	}
-    }
-    
-    private static String toFilesDesc(String ext) {
-    	String ext2 = ext.startsWith("*.")?ext.substring(2):ext;
-    	return Messages.EXTENSION_FILTER_FILE.localize(ext2.length()>3
-    			?ext2.substring(0, 1).toUpperCase() + ext2.substring(1)
-    			:ext2.toUpperCase());
     }
 	
 	private void selectTemplateAndOpen(File selected) {
