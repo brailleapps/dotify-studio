@@ -17,7 +17,7 @@ public final class FormatChecker {
 	}
 
 	public static boolean isHTML(FileDetails af) { 
-		return af.getMediaType()!=null && ("text/html".equals(af.getMediaType())
+		return af.getMediaType()!=null && (("text/html".equals(af.getMediaType()) || "application/xhtml+xml".equals(af.getMediaType())) 
 				|| isXML(af) && "html".equals(af.getProperties().get("local-name"))
 				);
 	}
