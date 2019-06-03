@@ -28,7 +28,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
  */
 public class PreviewHtmlController extends AbstractHtmlController {
 	private final ReadOnlyBooleanProperty canEmbossProperty;
-	private ObjectProperty<FileDetails> fileDetails = new SimpleObjectProperty<>(FileDetailsCatalog.HTML_FORMAT);
+	private ObjectProperty<FileDetails> fileDetails = new SimpleObjectProperty<>(FileDetailsCatalog.XHTML_FORMAT);
 
 	/**
 	 * Creates a new preview controller.

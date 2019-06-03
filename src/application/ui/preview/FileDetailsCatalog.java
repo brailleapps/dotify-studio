@@ -27,20 +27,20 @@ public class FileDetailsCatalog {
 			return Collections.emptyMap();
 		}};
 		
-	public static final FileDetails HTML_FORMAT = new FileDetails(){
+	public static final FileDetails XHTML_FORMAT = new FileDetails(){
 		@Override
 		public String getFormatName() {
-			return "html";
+			return "xhtml";
 		}
 
 		@Override
 		public String getExtension() {
-			return "html";
+			return "xhtml";
 		}
 
 		@Override
 		public String getMediaType() {
-			return "text/html";
+			return "application/xhtml+xml";
 		}
 
 		@Override
@@ -77,8 +77,8 @@ public class FileDetailsCatalog {
 	public static FileDetails forMediaType(String mediaType) {
 		if (mediaType.equals(PEF_FORMAT.getMediaType())) {
 			return PEF_FORMAT;
-		} else if (mediaType.equals(HTML_FORMAT.getMediaType())) {
-			return HTML_FORMAT;
+		} else if (mediaType.equals(XHTML_FORMAT.getMediaType())) {
+			return XHTML_FORMAT;
 		} else if (mediaType.equals(FORMATTED_TEXT_FORMAT.getMediaType())) {
 			return FORMATTED_TEXT_FORMAT;
 		} else {

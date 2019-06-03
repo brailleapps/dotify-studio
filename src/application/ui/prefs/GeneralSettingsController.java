@@ -63,7 +63,7 @@ public class GeneralSettingsController {
 			// (in the import dialog). Html is allowed in the list, because it has a reasonably broad support.
 			FormatDetailsProviderService detailsProvider = FormatDetailsProvider.newInstance();
 			selectOutputFormat.getItems().addAll(
-					Arrays.asList(FileDetailsCatalog.PEF_FORMAT, FileDetailsCatalog.HTML_FORMAT, FileDetailsCatalog.FORMATTED_TEXT_FORMAT).stream()
+					Arrays.asList(FileDetailsCatalog.PEF_FORMAT, FileDetailsCatalog.XHTML_FORMAT, FileDetailsCatalog.FORMATTED_TEXT_FORMAT).stream()
 					.map(v->new NiceName(v.getMediaType(), 
 							detailsProvider.getDetails(FormatIdentifier.with(v.getFormatName())).map(v2->v2.getDisplayName()).orElse(v.getFormatName())
 							))
