@@ -18,19 +18,19 @@ public enum FeatureSwitch {
 	/**
 	 * Defines if it should be possible to select output format
 	 */
-	SELECT_OUTPUT_FORMAT("on".equalsIgnoreCase(System.getProperty("application.feature.select-output-format", "off"))),
+	SELECT_OUTPUT_FORMAT("on".equalsIgnoreCase(System.getProperty("application.feature.select-output-format", "on"))),
 	/**
 	 * When on, the progress indicator in the Dotify panel uses progress values reported from the task system   
 	 */
-	REPORT_PROGRESS("on".equalsIgnoreCase(System.getProperty("application.feature.report-progress", "off"))),
+	REPORT_PROGRESS("on".equalsIgnoreCase(System.getProperty("application.feature.report-progress", "on"))),
 	/**
 	 * When on, autosave is available in settings.
 	 */
-	AUTOSAVE("on".equalsIgnoreCase(System.getProperty("application.feature.autosave", "off"))),
+	AUTOSAVE("on".equalsIgnoreCase(System.getProperty("application.feature.autosave", "on"))),
 	/**
 	 * When on, a character tool is available in the menu.
 	 */
-	CHARACTER_TOOL("on".equalsIgnoreCase(System.getProperty("application.feature.character-tool", "off"))),
+	CHARACTER_TOOL("on".equalsIgnoreCase(System.getProperty("application.feature.character-tool", "on"))),
 	/**
 	 * When on, file sets are processed
 	 */
