@@ -20,12 +20,16 @@ USA
 
 Core Technology
 ---------------
-This software is based on the __Dotify__ and __Streamline__ libraries
+This software is based on the __Dotify__ libraries
 under the GNU Lesser General Public License (version 2.1).
 See https://github.com/brailleapps for more information.
 
 Third-party software
 --------------------
+__Streamline__
+  at https://www.ologolo.org
+  under the GNU Lesser General Public License (version 2.1)
+
 __Liblouis__
   at http://liblouis.org
   under the GNU Lesser General Public License (version 2.1)

@@ -1,5 +1,43 @@
 [[Table of Contents|Toc]]
 
+# 1.0.0
+## New in this version
+- User Interface
+  - Enables output format selection, progress estimate, auto-save and character tool features
+  - Improves extension filters in open dialog
+  - Adds empty value to ChoiceBox
+  - Adds configuration tab to About window
+  - Supports setting target locale in converter options
+  - Adds editor defaults to settings panel
+  - Uses display name for locales in settings
+  - Improves input format selection accuracy
+  - Fixes a problem with saving to file
+  - Fixes a problem where the selected template was not applied
+  - Improves cleanup when exiting the application
+- Translators
+  - Adds Liblouis translators for the following locales:  af, ar, as, awa, bn, bra, ca, chr, ckb, cs, cy, da, de, de-CH, el, en, en-GB, en-US, eo, es, fa, fi, fr, ga, gez, gu, haw, hi, hr, hu, iu, kha, kn, ko, lt, lv, mi, ml, mn, mni, mr, ne, nl, nl-BE, no, or, pa, pl, pt, ru, sa sd, sk, sl, sr, ta, te and vi
+  - Supports locale 'sv'
+- Input format converters
+  - Supports docx, odt and html input
+  - Adds more options to Text2ObflTask
+  - Removes xml:lang validation from dtbook converter
+  - Removes a debug message in the epub converter
+  - Improves task names
+- Formatting
+  - Supports flow into header/footer (fixes brailleapps/dotify.formatter.impl#63)
+  - Enhances volume-transition
+  - Fixes marker-reference issue (fixes brailleapps/dotify.formatter.impl#39, closes brailleapps/dotify.formatter.impl#94)
+  - Fixes a problem with vertical position (fixes brailleapps/dotify.formatter.impl#92, closes brailleapps/dotify.formatter.impl#96)
+  - Fixes a page number offset problem (part of brailleapps/dotify.formatter.impl#97)
+  - Fixes a case where an volume breaking solution could not be found (part of brailleapps/dotify.formatter.impl#97)
+  - Fixes a situation that could cause a StackOverflowException when looking up markers (part of brailleapps/dotify.formatter.impl#97)
+  - Fixes a problem with uneven margins
+  - Fixes a problem where no solution was found (closes brailleapps/dotify.formatter.impl#104)
+- Other
+  - Adds a feature switch with file set support
+  - Fixes a NullPointerException
+  - Improves documentation
+
 # 0.11.0
 ## New in this version
 
