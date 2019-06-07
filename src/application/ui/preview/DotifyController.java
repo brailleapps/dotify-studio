@@ -187,7 +187,7 @@ public class DotifyController extends BorderPane implements Converter {
 		addGroupTitle(title);
 		List<UserOption> sortedOptions = options.stream()
 				.sorted((o1, o2) -> {
-					return o1.getKey().compareTo(o2.getKey());
+					return o1.getDisplayName().compareTo(o2.getDisplayName());
 				})
 				.collect(Collectors.toList());
 		for (UserOption o : sortedOptions) {
