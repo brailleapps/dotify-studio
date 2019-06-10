@@ -94,7 +94,7 @@ dependencies {
 	}
 	runtimeOnly 'org.daisy.dotify:dotify.hyphenator.impl:5.0.0'
 	runtimeOnly 'org.daisy.dotify:dotify.text.impl:5.0.0'
-	runtimeOnly 'org.daisy.dotify:dotify.translator.impl:5.0.0'
+	runtimeOnly 'org.daisy.dotify:dotify.translator.impl:5.1.0'
 	runtimeOnly ('org.daisy.dotify:dotify.task.impl:5.0.0') {
 		exclude module: 'Saxon-HE'
 	}
