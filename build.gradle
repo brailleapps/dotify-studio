@@ -10,6 +10,7 @@ plugins {
 	id 'application'
 	id 'maven-publish'
 	id 'signing'
+	id 'org.ajoberstar.grgit' version '3.1.1'
 }
 
 mainClassName = "application.ui.MainFx"
@@ -22,8 +23,9 @@ javadoc {
 }
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
-
-def repoRevision = System.getenv("REPO_REVISION")!=null?System.getenv("REPO_REVISION"):repositoryRevision
+ 
+def repoRevision = grgit.status().clean ? grgit.head().getId() 
+			: (System.getenv("REPO_REVISION")!=null ? System.getenv("REPO_REVISION") : repositoryRevision)
 
 group = "org.daisy.dotify"
 
