@@ -72,6 +72,7 @@ import application.ui.preview.FileDetailsCatalog;
 import application.ui.preview.server.StartupDetails;
 import application.ui.template.TemplateView;
 import application.ui.tools.CharacterToolController;
+import application.ui.tools.NavigatorToolController;
 import application.ui.validation.ValidationController;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -109,6 +110,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebView;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
@@ -147,6 +149,7 @@ public class MainController {
 	@FXML private CheckMenuItem showConverterMenuItem;
 	@FXML private CheckMenuItem showSearchMenuItem;
 	@FXML private CheckMenuItem showCharacterToolMenuItem;
+	@FXML private CheckMenuItem showFolderToolMenuItem;
 	@FXML private CheckMenuItem showConsoleMenuItem;
 	@FXML private CheckMenuItem showValdationMenuItem;
 	@FXML private CheckMenuItem watchSourceMenuItem;
@@ -185,6 +188,7 @@ public class MainController {
 	static final KeyCombination CTRL_MINUS = new KeyCodeCombination(KeyCode.MINUS, KeyCombination.CONTROL_DOWN);
 	static final KeyCombination CTRL_PLUS = new KeyCodeCombination(KeyCode.PLUS, KeyCombination.CONTROL_DOWN);
 	private final ExportActionMaker exportActions = ExportActionMaker.newInstance();
+	private NavigatorToolController folderToolController = null;
 
 	@FXML void initialize() {
 		toolsPane = new TabPane();
@@ -233,6 +237,9 @@ public class MainController {
 					Platform.runLater(() -> {
 						if (file.getName().endsWith(".pef")) {
 							addTab(file);
+						} else if (file.isDirectory()) {
+							getFolderToolController().addPath(file.toPath());
+							showFolderToolMenuItem.selectedProperty().set(true);
 						} else {
 							selectTemplateAndOpen(file);
 						}
@@ -295,6 +302,12 @@ public class MainController {
 			return ret;
 			}, showCharacterToolMenuItem));
 		}
+		showFolderToolMenuItem.selectedProperty().addListener(makeLeftToolsChangeListener(()->{
+		Tab ret = new Tab(Messages.TAB_NAVIGATOR_TOOL.localize(), getFolderToolController());
+		ret.setUserData(showFolderToolMenuItem);
+		return ret;
+		}, showFolderToolMenuItem));
+		
 		showConsoleMenuItem.selectedProperty().addListener(makeBottomToolsChangeListener(consoleTab));
 		consoleTab.onClosedProperty().set(makeBottomToolsTabCloseHandler(showConsoleMenuItem));
 		showValdationMenuItem.selectedProperty().addListener(makeBottomToolsChangeListener(validationTab));
@@ -322,6 +335,17 @@ public class MainController {
 				.or(noTabBinding)
 			);
 		
+	}
+	
+	private synchronized NavigatorToolController getFolderToolController() {
+		if (folderToolController==null) {
+			folderToolController = new NavigatorToolController(v-> {	
+				System.out.println("Selected " + v);
+				addTab(v.toFile());
+			}
+			);
+		}
+		return folderToolController;
 	}
 	
 	private ChangeListener<Boolean> makeBottomToolsChangeListener(Tab tab) {
@@ -526,7 +550,11 @@ public class MainController {
 			.map(val -> "."+val.toLowerCase())
 			.collect(Collectors.toSet());
 		for (File f : files) {
-			if (!(f.getName().endsWith(".pef")||exts.contains(getExtension(f.getName().toLowerCase())))) {
+			if (!(
+					f.getName().endsWith(".pef")
+					||exts.contains(getExtension(f.getName().toLowerCase()))
+					||f.isDirectory()
+				)) {
 				return false;
 			}
 		}
@@ -827,6 +855,19 @@ public class MainController {
     		addTab(selected);
     	}
     }
+    
+    @FXML void showOpenFolderDialog() {
+    	Window stage = root.getScene().getWindow();
+    	DirectoryChooser dirChooser = new DirectoryChooser();
+    	dirChooser.setTitle(Messages.TITLE_OPEN_FOLDER_DIALOG.localize());
+    	Settings.getSettings().getLastOpenPath().ifPresent(v->dirChooser.setInitialDirectory(v));
+    	File selected = dirChooser.showDialog(stage);
+    	if (selected!=null) {
+    		Settings.getSettings().setLastOpenPath(selected);
+    		getFolderToolController().addPath(selected.toPath());
+    		showFolderToolMenuItem.selectedProperty().set(true);
+    	}
+    }
 
     @FXML void showImportBrailleDialog() {
     	Window stage = root.getScene().getWindow();
@@ -1119,7 +1160,7 @@ public class MainController {
     
     private void setupEditor(Tab tab, File source, Map<String, Object> options) {
 		AnnotatedFile ai = IdentityProvider.newInstance().identify(source);
-		EditorWrapperController prv = EditorWrapperController.newInstance(ai, options);
+		EditorWrapperController prv = EditorWrapperController.newInstance(ai, options).orElseThrow(RuntimeException::new);
 		tab.setOnClosed(ev ->  {
 			prv.closing();
 		});

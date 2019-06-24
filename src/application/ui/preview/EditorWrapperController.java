@@ -45,7 +45,7 @@ public class EditorWrapperController extends BorderPane implements Editor {
 		setLeft(dotify);
 	}
 
-	public static EditorWrapperController newInstance(AnnotatedFile selected, Map<String, Object> options) {
+	public static Optional<EditorWrapperController> newInstance(AnnotatedFile selected, Map<String, Object> options) {
 		PreviewMaker previewMaker = PreviewMaker.newInstance();
 		DotifyController dotify = null;
 		Editor prv;
@@ -69,11 +69,13 @@ public class EditorWrapperController extends BorderPane implements Editor {
 			prv = getEditor(selected, pr);
 			if (pr!=null) {
 				pr.open(selected.getPath().toFile());
+			} else if (prv==null) {
+				return Optional.empty();
 			}
 		}
 		EditorWrapperController ret = new EditorWrapperController(prv, dotify);
 		ret.setCenter(prv.getNode());
-		return ret;
+		return Optional.of(ret);
 	}
 	
 	private static Editor getEditor(AnnotatedFile selected, OpenableEditor pr) {

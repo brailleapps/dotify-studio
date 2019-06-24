@@ -71,6 +71,8 @@
                         <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                      </accelerator>
                   </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#showOpenFolderDialog" text="%menu-item-open-folder">
+                  </MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#save" text="%menu-item-save">
                      <accelerator>
@@ -151,6 +153,11 @@
                         <KeyCodeCombination alt="DOWN" code="L" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
                      </accelerator></CheckMenuItem>
                   <CheckMenuItem fx:id="showCharacterToolMenuItem" text="%menu-item-character-tool"></CheckMenuItem>
+                  <CheckMenuItem fx:id="showFolderToolMenuItem" text="%menu-item-navigator-tool">
+                   <accelerator>
+                        <KeyCodeCombination alt="DOWN" code="N" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator>
+                  </CheckMenuItem>
                   <CheckMenuItem fx:id="showConsoleMenuItem" mnemonicParsing="false" selected="true" text="%menu-item-show-console">
                      <accelerator>
                         <KeyCodeCombination alt="DOWN" code="C" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
