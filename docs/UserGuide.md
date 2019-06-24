@@ -59,7 +59,7 @@ The import panel options are dynamic, which means that available options may dep
 some cases, additional options can be activated by changing the value of an "activator" parameter. In this case, the import
 must be re-run before the additional options show up.
 
-## Import braille text files ##
+### Import braille text files ###
 A braille text file is a text file containing line breaks and form feeds to indicate where lines and pages end. In addition,
 a small set of characters is used, essentially corresponding one-to-one with a braille cell. To import braille text
 files, use the menu item `Import/Braille text files...`.
@@ -75,6 +75,9 @@ Templates can be used to save and load converter options.
 When saving a template, the currently set options are stored with the specified name and description. The value for options that have not been set are not stored. Therefore, a change in a default value may cause the template to behave differently than it did before.
 
 When loading a template, set options are restored to their defaults before applying the template.
+
+### Merge PEF-files ###
+A set of single volume PEF-files can be merged into a multi-volume PEF-file using the menu item `File/Import/Merge PEF-files`. All files selected in the import dialog will be included in the merged file. The identifier and file merge order can be configured in the dialog that appears after the files have been chosen.
 
 ## Exporting ##
 The available export commands depend on the file type in the selected editor. Currently, only PEF-files has export commands, but export commands for other file formats may be added in the future.
