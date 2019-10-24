@@ -37,6 +37,7 @@ import org.daisy.dotify.studio.api.DocumentPosition;
 import org.daisy.dotify.studio.api.Editor;
 import org.daisy.dotify.studio.api.ExportActionDescription;
 import org.daisy.dotify.studio.api.ExportActionMaker;
+import org.daisy.dotify.studio.api.PreviewMaker;
 import org.daisy.dotify.studio.api.SearchCapabilities;
 import org.daisy.dotify.studio.api.Searchable;
 import org.daisy.streamline.api.details.FormatDetails;
@@ -813,7 +814,7 @@ public class MainController {
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle(Messages.TITLE_OPEN_DIALOG.localize());
 		if (FeatureSwitch.OPEN_OTHER_TYPES.isOn()) {
-			List<FormatDetails> details = getDetails("pef", "xml", "text", "html", "xhtml", "obfl");
+			List<FormatDetails> details = PreviewMaker.newInstance().listDetails();
 			fileChooser.getExtensionFilters().add(toSupportedFilesExtensionFilter(details.stream()));
 			fileChooser.getExtensionFilters().addAll(toExtensionFilterList(details.stream()));
 		} else {
@@ -825,16 +826,6 @@ public class MainController {
     		Settings.getSettings().setLastOpenPath(selected.getParentFile());
     		addTab(selected);
     	}
-    }
-    
-    private static List<FormatDetails> getDetails(String ... exts) {
-    	FormatDetailsProviderService detailsProvider = FormatDetailsProvider.newInstance();
-    	return Arrays.asList(exts)
-    		.stream()
-    		.map(id->detailsProvider.getDetails(FormatIdentifier.with(id)))
-    		.filter(v->v.isPresent())
-    		.map(v->v.get())
-    		.collect(Collectors.toList());
     }
 
     @FXML void showImportBrailleDialog() {
