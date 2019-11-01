@@ -33,6 +33,7 @@ import org.daisy.dotify.common.xml.XMLTools;
 import org.daisy.dotify.common.xml.XMLToolsException;
 import org.daisy.dotify.common.xml.XmlEncodingDetectionException;
 import org.daisy.dotify.studio.api.DocumentPosition;
+import org.daisy.dotify.studio.api.DocumentWatcher;
 import org.daisy.dotify.studio.api.ExportAction;
 import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.dotify.studio.api.SearchCapabilities;
@@ -679,12 +680,12 @@ public class EditorController extends BorderPane implements OpenableEditor {
 		}
 
 		@Override
-		boolean shouldMonitor() {
+		public boolean shouldMonitor() {
 			return super.shouldMonitor() && !closing && shouldMonitor && file==fileInfo.getFile();
 		}
 
 		@Override
-		boolean shouldPerformAction() {
+		public boolean shouldPerformAction() {
 			synchronized (lastSaved) {
 				return super.shouldPerformAction() && lastSaved<file.lastModified();
 			}
@@ -695,7 +696,7 @@ public class EditorController extends BorderPane implements OpenableEditor {
 		}
 
 		@Override
-		void performAction() {
+		public void performAction() {
 			requestUpdate();
 		}
 		

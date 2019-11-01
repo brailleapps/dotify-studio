@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.daisy.dotify.studio.api.Converter;
+import org.daisy.dotify.studio.api.DocumentWatcher;
 import org.daisy.streamline.api.media.AnnotatedFile;
 import org.daisy.streamline.api.media.BaseFolder;
 import org.daisy.streamline.api.media.FileDetails;
@@ -410,17 +411,17 @@ public class DotifyController extends BorderPane implements Converter {
 		}
 
 		@Override
-		boolean shouldMonitor() {
+		public boolean shouldMonitor() {
 			return super.shouldMonitor() && !closing;
 		}
 
 		@Override
-		boolean shouldPerformAction() {
+		public boolean shouldPerformAction() {
 			return !isRunning && ((super.shouldPerformAction() && isWatching()) || refreshRequested());
 		}
 
 		@Override
-		void performAction() {
+		public void performAction() {
 			try {
 				isRunning = true;
 				setRunning(0);

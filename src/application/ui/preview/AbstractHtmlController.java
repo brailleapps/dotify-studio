@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.daisy.dotify.studio.api.DocumentWatcher;
 import org.daisy.dotify.studio.api.ExportAction;
 import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.dotify.studio.api.SearchCapabilities;
@@ -110,12 +111,12 @@ public abstract class AbstractHtmlController extends BorderPane implements Opena
 		}
 
 		@Override
-		boolean shouldMonitor() {
+		public boolean shouldMonitor() {
 			return super.shouldMonitor() && !closing;
 		}
 
 		@Override
-		void performAction() {
+		public void performAction() {
 			Platform.runLater(()->reload());
 		}
 

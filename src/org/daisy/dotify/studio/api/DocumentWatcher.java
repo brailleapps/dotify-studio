@@ -1,4 +1,4 @@
-package application.ui.preview;
+package org.daisy.dotify.studio.api;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -10,7 +10,7 @@ import java.util.logging.Logger;
  * @author Joel Håkansson
  *
  */
-abstract class DocumentWatcher implements Runnable {
+public abstract class DocumentWatcher implements Runnable {
 	private static final Logger logger = Logger.getLogger(DocumentWatcher.class.getCanonicalName());
 	private final Object lock = new Object();
 	protected final File file;
@@ -21,7 +21,7 @@ abstract class DocumentWatcher implements Runnable {
 	 * Creates a new document watcher for the specified file.
 	 * @param input the file to watch
 	 */
-	DocumentWatcher(File input) {
+	public DocumentWatcher(File input) {
 		this(input, 1000);
 	}
 
@@ -31,7 +31,7 @@ abstract class DocumentWatcher implements Runnable {
 	 * @param input the file to watch
 	 * @param pollTime the time to sleep between polling, in milliseconds
 	 */
-	DocumentWatcher(File input, long pollTime) {
+	public DocumentWatcher(File input, long pollTime) {
 		this.file = input;
 		this.pollTime = pollTime;
 		this.modified = input.lastModified();
@@ -42,7 +42,7 @@ abstract class DocumentWatcher implements Runnable {
 	 * the file should be monitored as long as it exists.
 	 * @return true if the watcher should stay alive, false otherwise
 	 */
-	boolean shouldMonitor() {
+	public boolean shouldMonitor() {
 		return true;
 	}
 
@@ -52,14 +52,14 @@ abstract class DocumentWatcher implements Runnable {
 	 * date is more recent than what it was last time the action was performed.
 	 * @return true if the watcher should perform its action, false otherwise
 	 */
-	boolean shouldPerformAction() {
+	public boolean shouldPerformAction() {
 		return file.exists() && modified<file.lastModified();
 	}
 	
 	/**
 	 * Performs the action.
 	 */
-	abstract void performAction();
+	public abstract void performAction();
 
 	@Override
 	public void run() { 
