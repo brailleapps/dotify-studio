@@ -1024,7 +1024,7 @@ public class MainController {
      * @return
      */
 	private static Stream<FormatDetails> newImportFormatDetailsStream() {
-		String outputFormat = FileDetailsCatalog.forMediaType(Settings.getSettings().getConvertTargetFormat()).getFormatName();
+		String outputFormat = FileDetailsCatalog.forMediaType(Settings.getSettings().getConvertTargetMediaType()).getFormatName();
 		String locale = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
 		TaskSystemFactoryMaker tgf = TaskSystemFactoryMaker.newInstance();
 		FormatDetailsProviderService detailsProvider = FormatDetailsProvider.newInstance();

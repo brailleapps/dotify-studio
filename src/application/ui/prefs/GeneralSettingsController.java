@@ -69,9 +69,9 @@ public class GeneralSettingsController {
 							))
 					.collect(Collectors.toList())
 			);
-			FileDetails current = FileDetailsCatalog.forMediaType(Settings.getSettings().getConvertTargetFormat());
+			FileDetails current = FileDetailsCatalog.forMediaType(Settings.getSettings().getConvertTargetMediaType());
 			selectOutputFormat.getSelectionModel().select(new NiceName(current.getMediaType(), detailsProvider.getDetails(FormatIdentifier.with(current.getFormatName())).map(v2->v2.getDisplayName()).orElse(current.getFormatName())));
-			selectOutputFormat.valueProperty().addListener((ov, t0, t1)->Settings.getSettings().setConvertTargetFormat(t1.getKey()));
+			selectOutputFormat.valueProperty().addListener((ov, t0, t1)->Settings.getSettings().setConvertTargetMediaType(t1.getKey()));
 		} else {
 			rootVBox.getChildren().remove(hboxOutputFormat);
 		}

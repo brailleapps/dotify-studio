@@ -143,11 +143,11 @@ public enum Settings {
 		p.remove(getRegKey(key));
 	}
 	
-	public String getConvertTargetFormat() {
+	public String getConvertTargetMediaType() {
 		return getString(Keys.convertTargetFormat, "application/x-pef+xml");
 	}
 	
-	public void setConvertTargetFormat(String mediaType) {
+	public void setConvertTargetMediaType(String mediaType) {
 		put(Keys.convertTargetFormat, mediaType);
 	}
 	

@@ -51,7 +51,7 @@ public class EditorWrapperController extends BorderPane implements Editor {
 		Editor prv;
 		if (options!=null) {
 			FileDetails previewDetails = FeatureSwitch.SELECT_OUTPUT_FORMAT.isOn()?
-					FileDetailsCatalog.forMediaType(Settings.getSettings().getConvertTargetFormat())
+					FileDetailsCatalog.forMediaType(Settings.getSettings().getConvertTargetMediaType())
 					:FileDetailsCatalog.PEF_FORMAT;
 			OpenableEditor pr = previewMaker.newPreview(previewDetails).orElse(null);
 			prv = getEditor(selected, pr);
