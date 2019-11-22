@@ -2,7 +2,6 @@ package application.ui.prefs;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -11,8 +10,7 @@ import org.daisy.dotify.api.table.BrailleConstants;
 import org.daisy.dotify.api.table.TableCatalog;
 import org.daisy.streamline.api.details.FormatDetailsProvider;
 import org.daisy.streamline.api.details.FormatDetailsProviderService;
-import org.daisy.streamline.api.media.FileDetails;
-import org.daisy.streamline.api.media.FormatIdentifier;
+import org.daisy.streamline.api.tasks.TaskGroupFactoryMaker;
 
 import application.common.FactoryPropertiesAdapter;
 import application.common.FeatureSwitch;
@@ -22,7 +20,6 @@ import application.common.Settings;
 import application.common.Settings.Keys;
 import application.common.SupportedLocales;
 import application.l10n.Messages;
-import application.ui.preview.FileDetailsCatalog;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -57,21 +54,23 @@ public class GeneralSettingsController {
 
 	@FXML void initialize() {
 		if (FeatureSwitch.SELECT_OUTPUT_FORMAT.isOn()) {
-			// TODO: This list should be created dynamically from available outputs.
-			// Note that the issue with this isn't to generate the list of outputs, this can be done easily.
-			// However, currently there isn't a way to filter the list of inputs based on the selected output
-			// (in the import dialog). Html is allowed in the list, because it has a reasonably broad support.
 			FormatDetailsProviderService detailsProvider = FormatDetailsProvider.newInstance();
-			selectOutputFormat.getItems().addAll(
-					Arrays.asList(FileDetailsCatalog.PEF_FORMAT, FileDetailsCatalog.XHTML_FORMAT, FileDetailsCatalog.FORMATTED_TEXT_FORMAT).stream()
-					.map(v->new NiceName(v.getMediaType(), 
-							detailsProvider.getDetails(FormatIdentifier.with(v.getFormatName())).map(v2->v2.getDisplayName()).orElse(v.getFormatName())
-							))
-					.collect(Collectors.toList())
-			);
-			FileDetails current = FileDetailsCatalog.forMediaType(Settings.getSettings().getConvertTargetMediaType());
-			selectOutputFormat.getSelectionModel().select(new NiceName(current.getMediaType(), detailsProvider.getDetails(FormatIdentifier.with(current.getFormatName())).map(v2->v2.getDisplayName()).orElse(current.getFormatName())));
-			selectOutputFormat.valueProperty().addListener((ov, t0, t1)->Settings.getSettings().setConvertTargetMediaType(t1.getKey()));
+			List<NiceName> nn = TaskGroupFactoryMaker.newInstance().listAll().stream()
+					.map(v->detailsProvider.getDetails(v.getOutputType()))
+					.filter(v->v.isPresent())
+					.map(v->v.get())
+					.distinct()
+					.map(v->new NiceName(
+							v.getIdentifier().getIdentifier(), 
+							v.getDisplayName()))
+					.collect(Collectors.toList());
+			selectOutputFormat.getItems().addAll(nn);
+			String current = Settings.getSettings().getConvertTargetFormatName();
+			nn.stream()
+				.filter(v->v.getKey().equals(current))
+				.findFirst()
+				.ifPresent(v->selectOutputFormat.getSelectionModel().select(v));
+			selectOutputFormat.valueProperty().addListener((ov, t0, t1)->Settings.getSettings().setConvertTargetFormatName(t1.getKey()));
 		} else {
 			rootVBox.getChildren().remove(hboxOutputFormat);
 		}

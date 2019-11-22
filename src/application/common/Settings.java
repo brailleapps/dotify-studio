@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import application.ui.preview.FileDetailsCatalog;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 
@@ -17,7 +18,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 public enum Settings {
 	INSTANCE;
 	public enum Keys {version, device, embosser, printMode, table, paper, cutLengthValue, cutLengthUnit, orientation, zFolding, charset, align, brailleFont, textFont, libraryPath, locale,
-		lastOpenPath, lastSavePath, convertTargetFormat, templateDialogOnImport, zoomLevel, autosave, lineNumbers, wordWrap};
+		lastOpenPath, lastSavePath, /** @deprecated use convertTargetFormatName */convertTargetFormat, convertTargetFormatName, templateDialogOnImport, zoomLevel, autosave, lineNumbers, wordWrap};
 		
 	/**
 	 *  Modify this value when making incompatible changes to the settings structure
@@ -58,6 +59,18 @@ public enum Settings {
 			put(Keys.zoomLevel, Double.toString(nv.doubleValue()));
 			}
 		});
+		// This check exist because the value of this setting has changed from media type to format identifier.
+		// If a valid media type is encountered, formatName will be non null and the format name saved.
+		// The next time the format name is encountered, no match will be found.
+		// TODO: remove this once several releases have been made
+		String formatName = p.get(Keys.convertTargetFormatName.toString(), null);
+		if (formatName==null) {
+			// Convert media type to format name
+			formatName = FileDetailsCatalog.forMediaType(getConvertTargetMediaType()).getFormatName();
+			if (formatName!=null) {
+				setConvertTargetFormatName(formatName);
+			}
+		}
 	}
     
     /**
@@ -143,12 +156,17 @@ public enum Settings {
 		p.remove(getRegKey(key));
 	}
 	
-	public String getConvertTargetMediaType() {
-		return getString(Keys.convertTargetFormat, "application/x-pef+xml");
+	public String getConvertTargetFormatName() {
+		return getString(Keys.convertTargetFormatName, "pef");
 	}
 	
-	public void setConvertTargetMediaType(String mediaType) {
-		put(Keys.convertTargetFormat, mediaType);
+	public void setConvertTargetFormatName(String name) {
+		put(Keys.convertTargetFormatName, name);
+	}
+	
+	@Deprecated
+	private String getConvertTargetMediaType() {
+		return getString(Keys.convertTargetFormat, "application/x-pef+xml");
 	}
 	
 	public File getLibraryPath() {

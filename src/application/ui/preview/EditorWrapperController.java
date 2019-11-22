@@ -15,8 +15,11 @@ import org.daisy.dotify.studio.api.OpenableEditor;
 import org.daisy.dotify.studio.api.PreviewMaker;
 import org.daisy.dotify.studio.api.SearchCapabilities;
 import org.daisy.dotify.studio.api.SearchOptions;
+import org.daisy.streamline.api.details.FormatDetailsProvider;
 import org.daisy.streamline.api.media.AnnotatedFile;
+import org.daisy.streamline.api.media.DefaultFileDetails;
 import org.daisy.streamline.api.media.FileDetails;
+import org.daisy.streamline.api.media.FormatIdentifier;
 import org.daisy.streamline.api.validity.ValidationReport;
 
 import application.common.FeatureSwitch;
@@ -44,6 +47,18 @@ public class EditorWrapperController extends BorderPane implements Editor {
 		this.canEmboss = dotify!=null ? dotify.isIdleProperty().and(impl.canEmboss()):impl.canEmboss();
 		setLeft(dotify);
 	}
+	
+	private static FileDetails getDetailsForFormat() {
+		return FormatDetailsProvider.newInstance()
+			.getDetails(FormatIdentifier.with(Settings.getSettings().getConvertTargetFormatName()))
+			.map(v->{
+				DefaultFileDetails.Builder fd = new DefaultFileDetails.Builder()
+						.formatName(v.getIdentifier().getIdentifier());
+				v.getExtensions().stream().findAny().ifPresent(x->fd.extension(x));
+				v.getMediaType().ifPresent(x->fd.mediaType(x));
+				return fd.build();
+			}).orElseThrow(RuntimeException::new);
+	}
 
 	public static Optional<EditorWrapperController> newInstance(AnnotatedFile selected, Map<String, Object> options) {
 		PreviewMaker previewMaker = PreviewMaker.newInstance();
@@ -51,8 +66,9 @@ public class EditorWrapperController extends BorderPane implements Editor {
 		Editor prv;
 		if (options!=null) {
 			FileDetails previewDetails = FeatureSwitch.SELECT_OUTPUT_FORMAT.isOn()?
-					FileDetailsCatalog.forMediaType(Settings.getSettings().getConvertTargetMediaType())
-					:FileDetailsCatalog.PEF_FORMAT;
+				getDetailsForFormat()
+				:FileDetailsCatalog.PEF_FORMAT;
+			
 			OpenableEditor pr = previewMaker.newPreview(previewDetails).orElse(null);
 			prv = getEditor(selected, pr);
 			try {

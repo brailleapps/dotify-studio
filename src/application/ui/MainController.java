@@ -68,7 +68,6 @@ import application.ui.imports.ImportMergeView;
 import application.ui.library.SearchController;
 import application.ui.prefs.PreferencesView;
 import application.ui.preview.EditorWrapperController;
-import application.ui.preview.FileDetailsCatalog;
 import application.ui.preview.server.StartupDetails;
 import application.ui.template.TemplateView;
 import application.ui.tools.CharacterToolController;
@@ -1024,7 +1023,7 @@ public class MainController {
      * @return
      */
 	private static Stream<FormatDetails> newImportFormatDetailsStream() {
-		String outputFormat = FileDetailsCatalog.forMediaType(Settings.getSettings().getConvertTargetMediaType()).getFormatName();
+		String outputFormat = Settings.getSettings().getConvertTargetFormatName();
 		String locale = Settings.getSettings().getString(Keys.locale, Locale.getDefault().toLanguageTag());
 		TaskSystemFactoryMaker tgf = TaskSystemFactoryMaker.newInstance();
 		FormatDetailsProviderService detailsProvider = FormatDetailsProvider.newInstance();
