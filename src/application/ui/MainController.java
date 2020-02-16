@@ -236,7 +236,11 @@ public class MainController {
 				for (File file : db.getFiles()) {
 					Platform.runLater(() -> {
 						if (file.getName().endsWith(".pef")) {
-							addTab(file);
+							try {
+								addTab(file);
+							} catch (EditorNotFoundException e) {
+								throw new RuntimeException(e);
+							}
 						} else if (file.isDirectory()) {
 							getFolderToolController().addPath(file.toPath());
 							showFolderToolMenuItem.selectedProperty().set(true);
@@ -289,7 +293,13 @@ public class MainController {
 		saveAsMenuItem.disableProperty().bind(rootBindings.add(noTabExceptHelpBinding.or(canSaveAs.not())));
 		Supplier<Tab> ts = () -> {
 			SearchController controller = new SearchController();
-			controller.setOnOpen(book -> addTab(new File(book.getBook().getURI())));
+			controller.setOnOpen(book -> {
+				try {
+					addTab(new File(book.getBook().getURI()));
+				} catch (EditorNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+			});
 			Tab ret = new Tab(Messages.TAB_LIBRARY.localize(), controller);
 			ret.setUserData(showSearchMenuItem);
 			return ret;
@@ -340,10 +350,23 @@ public class MainController {
 	private synchronized NavigatorToolController getFolderToolController() {
 		if (folderToolController==null) {
 			folderToolController = new NavigatorToolController(v-> {	
-				System.out.println("Selected " + v);
-				addTab(v.toFile());
-			}
-			);
+				try {
+					addTab(v.toFile());
+				} catch (EditorNotFoundException e) {
+					if (Desktop.isDesktopSupported()) {
+						Alert alert = new Alert(AlertType.CONFIRMATION, Messages.ERROR_UNSUPPORTED_FILE_TYPE_IN_EDITOR.localize(), ButtonType.YES, ButtonType.CANCEL);
+						alert.showAndWait();
+						if (alert.getResult()==ButtonType.YES) {
+							try {
+								Desktop.getDesktop().open(v.toFile());
+							} catch (IOException e1) {
+								Alert alert2 = new Alert(AlertType.INFORMATION, e1.getLocalizedMessage(), ButtonType.OK);
+								alert2.showAndWait();
+							}
+						}
+					}
+				}
+			});
 		}
 		return folderToolController;
 	}
@@ -619,7 +642,13 @@ public class MainController {
 	}
 	
 	void openArgs(StartupDetails args) {
-		Platform.runLater(()->addTab(args.getFile().getName(), args));
+		Platform.runLater(()->{
+			try {
+				addTab(args.getFile().getName(), args);
+			} catch (EditorNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+		});
 	}
 	
 	private Optional<Editor> getSelectedPreview() {
@@ -811,7 +840,7 @@ public class MainController {
 						updateTab(t, t);
 						// TODO: Restore document position
 					}
-				} catch (IOException e) {
+				} catch (IOException | EditorNotFoundException e) {
 					Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
 		    		alert.showAndWait();
 				}
@@ -826,7 +855,11 @@ public class MainController {
 		dialog.showAndWait();
 		File generated = dialog.generatedTestFile();
 		if (generated!=null) {
-			addTab(generated.getName(), StartupDetails.open(generated));
+			try {
+				addTab(generated.getName(), StartupDetails.open(generated));
+			} catch (EditorNotFoundException e) {
+				throw new RuntimeException(e);
+			}
 		}
     }
     
@@ -852,7 +885,11 @@ public class MainController {
     	File selected = fileChooser.showOpenDialog(stage);
     	if (selected!=null) {
     		Settings.getSettings().setLastOpenPath(selected.getParentFile());
-    		addTab(selected);
+    		try {
+				addTab(selected);
+			} catch (EditorNotFoundException e) {
+				throw new RuntimeException(e);
+			}
     	}
     }
     
@@ -902,7 +939,11 @@ public class MainController {
 			    	});
 			    	importTask.setOnSucceeded(e->{
 			    		Platform.runLater(()->{
-			    			addTab(output);
+			    			try {
+								addTab(output);
+							} catch (EditorNotFoundException e1) {
+								throw new RuntimeException(e1);
+							}
 			    		});
 			    	});
 			    	exeService.submit(importTask);
@@ -962,7 +1003,13 @@ public class MainController {
 			    		});
 			    	});
 					importTask.setOnSucceeded(e->{
-			    		Platform.runLater(()->addTab(output));
+			    		Platform.runLater(()->{
+							try {
+								addTab(output);
+							} catch (EditorNotFoundException e1) {
+								throw new RuntimeException(e1);
+							}
+						});
 			    	});
 					exeService.submit(importTask);
 	    		} catch (IOException e) {
@@ -1037,10 +1084,18 @@ public class MainController {
 			dialog.showAndWait();
 			if (dialog.getSelectedConfiguration().isPresent()) {
 				// convert then add tab
-				addSourceTab(selected, dialog.getSelectedConfiguration().get());
+				try {
+					addSourceTab(selected, dialog.getSelectedConfiguration().get());
+				} catch (EditorNotFoundException e) {
+					throw new RuntimeException(e);
+				}
 			}
 		} else {
-			addSourceTab(selected, Collections.emptyMap());
+			try {
+				addSourceTab(selected, Collections.emptyMap());
+			} catch (EditorNotFoundException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 
@@ -1121,18 +1176,18 @@ public class MainController {
 		}
 	}
     
-    private void addTab(File f) { 
+    private void addTab(File f) throws EditorNotFoundException { 
     	addTab(f.getName(), StartupDetails.open(f));
     }
 
-    private void addTab(String title, StartupDetails args) {
+    private void addTab(String title, StartupDetails args) throws EditorNotFoundException {
         Tab tab = new Tab();
         setTab(tab, title, args, null);
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().select(tab);
     }
     
-    private void setTab(Tab tab, String title, StartupDetails args, Map<String, Object> options) {
+    private void setTab(Tab tab, String title, StartupDetails args, Map<String, Object> options) throws EditorNotFoundException {
     	if (title==null && args.getFile()!=null) {
         	title = args.getFile().getAbsolutePath();
         }
@@ -1149,7 +1204,7 @@ public class MainController {
 				.getResource(source ? "resource-files/source-doc.png" : "resource-files/braille-doc.png")));
 	}
     
-    private void addSourceTab(File source, Map<String, Object> options) {
+    private void addSourceTab(File source, Map<String, Object> options) throws EditorNotFoundException {
         Tab tab = new Tab();
         setGraphic(source.getName(), tab);
         tab.setText(source.getName());
@@ -1158,9 +1213,9 @@ public class MainController {
         tabPane.getSelectionModel().select(tab);
     }
     
-    private void setupEditor(Tab tab, File source, Map<String, Object> options) {
+    private void setupEditor(Tab tab, File source, Map<String, Object> options) throws EditorNotFoundException {
 		AnnotatedFile ai = IdentityProvider.newInstance().identify(source);
-		EditorWrapperController prv = EditorWrapperController.newInstance(ai, options).orElseThrow(RuntimeException::new);
+		EditorWrapperController prv = EditorWrapperController.newInstance(ai, options).orElseThrow(EditorNotFoundException::new);
 		tab.setOnClosed(ev ->  {
 			prv.closing();
 		});
