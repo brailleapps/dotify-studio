@@ -47,7 +47,10 @@ import org.daisy.streamline.api.validity.ValidatorFactoryMakerService;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.MultiChangeBuilder;
 import org.fxmisc.richtext.model.StyleSpans;
+import org.fxmisc.richtext.model.TwoDimensional.Bias;
+import org.fxmisc.richtext.model.TwoDimensional.Position;
 import org.xml.sax.InputSource;
 
 import application.common.BindingStore;
@@ -75,6 +78,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.input.KeyCode;
@@ -177,6 +181,44 @@ public class EditorController extends BorderPane implements OpenableEditor {
 		codeArea.focusedProperty().addListener((o, ov, nv) -> {
 			if (nv && needsUpdate) {
 				askForUpdate();
+			}
+		});
+		codeArea.addEventFilter(KeyEvent.KEY_PRESSED, e->{
+			if (e.getCode()==KeyCode.TAB) {
+				IndexRange range = codeArea.getSelection();
+				int startP = codeArea.offsetToPosition(range.getStart(), Bias.Backward).getMajor();
+				Position end = codeArea.offsetToPosition(range.getEnd(), Bias.Backward);
+				int endP = end.getMajor();
+				if (end.getMinor()==0 && startP<endP) {
+					// subtract one paragraph if the selection ends before the first character of the last paragraph
+					endP--;
+				}
+				if (e.isShiftDown()) {
+					for (int i=startP; i<=endP; i++) {
+						String t = codeArea.getText(i);
+						// create the multi change builder only if a change is to be performed
+						MultiChangeBuilder<Collection<String>, String, Collection<String>> mb = null;
+						if (!t.isEmpty() && Character.isWhitespace(t.codePointAt(0))) {
+							if (mb==null) {
+								mb = codeArea.createMultiChange();
+							}
+							mb.deleteText(i, 0, i, 1);
+						}
+						if (mb!=null) {
+							mb.commit();
+						}
+					}
+					e.consume();
+				} else if (range.getLength()>0) {
+					// only add indent for selections, otherwise treat as regular tab
+					
+					MultiChangeBuilder<Collection<String>, String, Collection<String>> mb = codeArea.createMultiChange();
+					for (int i=startP; i<=endP; i++) {
+						mb.insertText(i, 0, "\t");
+					}
+					mb.commit();
+					e.consume();
+				}
 			}
 		});
 		codeArea.addEventHandler(KeyEvent.KEY_RELEASED, e->{
