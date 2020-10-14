@@ -77,6 +77,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -175,6 +177,21 @@ public class EditorController extends BorderPane implements OpenableEditor {
 		codeArea.focusedProperty().addListener((o, ov, nv) -> {
 			if (nv && needsUpdate) {
 				askForUpdate();
+			}
+		});
+		codeArea.addEventHandler(KeyEvent.KEY_RELEASED, e->{
+			if (e.getCode()==KeyCode.ENTER) {
+				int current = codeArea.getCurrentParagraph();
+				if (current>1) {
+					String text = codeArea.getParagraph(current-1).getText();
+					StringBuilder sb = new StringBuilder();
+					for (int i=0; i<text.length() && (text.charAt(i)=='\t' || text.charAt(i)==' '); i++) {
+						sb.append(text.charAt(i));
+					}
+					if (sb.length()>0) {
+						codeArea.insertText(codeArea.getCaretPosition(), sb.toString());
+					}
+				}
 			}
 		});
 		codeArea.richChanges()
