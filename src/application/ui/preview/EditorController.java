@@ -219,21 +219,22 @@ public class EditorController extends BorderPane implements OpenableEditor {
 					mb.commit();
 					e.consume();
 				}
-			}
-		});
-		codeArea.addEventHandler(KeyEvent.KEY_RELEASED, e->{
-			if (e.getCode()==KeyCode.ENTER) {
+			} else if (e.getCode()==KeyCode.ENTER) {
 				int current = codeArea.getCurrentParagraph();
 				if (current>1) {
-					String text = codeArea.getParagraph(current-1).getText();
+					String text = codeArea.getParagraph(current).getText();
 					StringBuilder sb = new StringBuilder();
-					for (int i=0; i<text.length() && (text.charAt(i)=='\t' || text.charAt(i)==' '); i++) {
-						sb.append(text.charAt(i));
+					sb.append(getLineSeparator());
+					int j = 0;
+					for (int i=0; i<text.length() && j<codeArea.getCaretColumn() && Character.isWhitespace(text.codePointAt(i)); i=text.offsetByCodePoints(i, 1)) {
+						sb.appendCodePoint(text.codePointAt(i));
+						j++;
 					}
-					if (sb.length()>0) {
-						codeArea.insertText(codeArea.getCaretPosition(), sb.toString());
-					}
+					codeArea.insertText(codeArea.getCaretPosition(), sb.toString());
+				} else {
+					codeArea.insertText(codeArea.getCaretPosition(), getLineSeparator());
 				}
+				e.consume();
 			}
 		});
 		codeArea.richChanges()
@@ -283,6 +284,10 @@ public class EditorController extends BorderPane implements OpenableEditor {
 		toggleWordWrap();
 		
 		setCenter(scrollPane);
+	}
+	
+	private String getLineSeparator() {
+		return "\n";
 	}
 	
 	public static boolean supportsFormat(FileDetails editorFormat) {
