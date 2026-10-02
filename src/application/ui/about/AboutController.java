@@ -23,7 +23,7 @@ import javafx.stage.Stage;
  *
  */
 public class AboutController {
-	private static final String PEF_URL = "http://pef-format.org";
+	private static final String PEF_URL = "https://format.mtm.se/pef/";
 	private static final String BRAILLE_APPS_URL = "https://github.com/brailleapps";
 	@FXML private Label title;
 	@FXML private Text description;
